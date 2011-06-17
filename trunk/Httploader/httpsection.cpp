@@ -6,6 +6,9 @@ HttpSection::HttpSection(QObject *parent) : QObject(parent) /*:
     clear();
     mutex = new QMutex();
     watcher = new QTime();
+    proxytype = QNetworkProxy::NoProxy;
+    proxyaddr.clear();
+    proxy_auth.clear();
 }
 
 void HttpSection::clear()
@@ -44,6 +47,23 @@ void HttpSection::run()
     GTcpSocket *s = new GTcpSocket();
     soc = s;
 
+    if(proxytype != QNetworkProxy::NoProxy)
+    {
+        QNetworkProxy myproxy;
+        myproxy.setHostName(proxyaddr.host());
+        myproxy.setPort(proxyaddr.port());
+        myproxy.setType(proxytype);
+        if(!proxy_auth.isEmpty())
+        {
+            QString udata(QByteArray::fromBase64(proxy_auth.toAscii()));
+            QStringList _udata = udata.split(":");
+            if(_udata.size() > 1)
+            {
+                myproxy.setUser(_udata.value(0));
+                myproxy.setPassword(_udata.value(1));
+            }
+        }
+    }
 
 
     s->setMode(false); //переключаем режим сокета на внешний тайминг
@@ -422,4 +442,19 @@ QString HttpSection::attachedFileName(const QString &cont_dispos) const
         return str;
     }
     return QString();
+}
+
+void HttpSection::setProxy(const QUrl &_proxy, QNetworkProxy::ProxyType _ptype, const QString &base64_userdata)
+{
+    if(_ptype == QNetworkProxy::NoProxy)
+    {
+        proxyaddr.clear();
+        proxytype = _ptype;
+        proxy_auth.clear();
+        return;
+    }
+
+    proxyaddr = _proxy;
+    proxytype = _ptype;
+    proxy_auth = base64_userdata;
 }

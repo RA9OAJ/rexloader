@@ -42,6 +42,7 @@ enum Error{
 };
 
 enum ProxyType{
+    PROXY_NOPROXY,
     PROXY_DEFAULT,
     PROXY_SOCKS5,
     PROXY_HTTP
@@ -81,7 +82,7 @@ public:
     virtual QString taskFilePath(int id_task) const =0; //вохвращает полный путь к локальному файлу
     virtual QString errorString(int _err) const =0; //возвращает строку по заданному коду ошибки
     virtual QString statusString(int _stat) const =0; //возвращает строку статуса по заданному коду
-    virtual void setProxy(int id_task, const QUrl &_proxy, LInterface::ProxyType _ptype)=0; //устанавливает прокси
+    virtual void setProxy(int id_task, const QUrl &_proxy, LInterface::ProxyType _ptype, const QString &data_base64)=0; //устанавливает прокси
 
 };
 

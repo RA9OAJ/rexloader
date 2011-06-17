@@ -266,6 +266,20 @@ void HttpLoader::startDownload(int id_task)
     if(!tsk->referer.isEmpty())sect->setReferer(tsk->referer);
     sect->setLastModified(tsk->last_modif);
 
+    if(tsk->proxy_type != LInterface::PROXY_NOPROXY)
+    {
+        QNetworkProxy::ProxyType proxytype;
+        switch(tsk->proxy_type)
+        {
+        case LInterface::PROXY_HTTP: proxytype = QNetworkProxy::HttpProxy; break;
+        case LInterface::PROXY_SOCKS5: proxytype = QNetworkProxy::Socks5Proxy; break;
+        case LInterface::PROXY_DEFAULT: proxytype = QNetworkProxy::DefaultProxy; break;
+        default: proxytype = QNetworkProxy::NoProxy; break;
+        }
+
+        sect->setProxy(tsk->proxy, proxytype, tsk->proxy_auth);
+    }
+
     connect(this,SIGNAL(sheduleImpulse()),sect,SLOT(transferActSlot())/*, Qt::QueuedConnection*/);
     connect(sect,SIGNAL(errorSignal(int)),this,SLOT(sectError(int))/*, Qt::QueuedConnection*/);
     connect(sect,SIGNAL(transferCompleted(qint64)),this,SLOT(acceptSectionData())/*, Qt::QueuedConnection*/);
@@ -588,6 +602,20 @@ void HttpLoader::addSection(int id_task)
     sect->setUserAgent(uAgent);
     if(!_task->referer.isEmpty())sect->setReferer(_task->referer);
     sect->setLastModified(_task->last_modif);
+
+    if(_task->proxy_type != LInterface::PROXY_NOPROXY)
+    {
+        QNetworkProxy::ProxyType proxytype;
+        switch(_task->proxy_type)
+        {
+        case LInterface::PROXY_HTTP: proxytype = QNetworkProxy::HttpProxy; break;
+        case LInterface::PROXY_SOCKS5: proxytype = QNetworkProxy::Socks5Proxy; break;
+        case LInterface::PROXY_DEFAULT: proxytype = QNetworkProxy::DefaultProxy; break;
+        default: proxytype = QNetworkProxy::NoProxy; break;
+        }
+
+        sect->setProxy(_task->proxy, proxytype, _task->proxy_auth);
+    }
 
     connect(this,SIGNAL(sheduleImpulse()),sect,SLOT(transferActSlot())/*, Qt::QueuedConnection*/);
     connect(sect,SIGNAL(errorSignal(int)),this,SLOT(sectError(int))/*, Qt::QueuedConnection*/);
@@ -1008,12 +1036,13 @@ QString HttpLoader::statusString(int _stat) const
     return "";
 }
 
-void HttpLoader::setProxy(int id_task, const QUrl &_proxy, LInterface::ProxyType _ptype)
+void HttpLoader::setProxy(int id_task, const QUrl &_proxy, LInterface::ProxyType _ptype, const QString &data_base64)
 {
     if(!task_list->contains(id_task))return;
     Task *tsk = task_list->value(id_task);
     tsk->proxy = _proxy;
     tsk->proxy_type = _ptype;
+    tsk->proxy_auth = data_base64;
 }
 
 Q_EXPORT_PLUGIN2(HttpLoader, HttpLoader)
