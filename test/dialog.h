@@ -8,7 +8,7 @@
 #include <QMessageBox>
 #include <QPluginLoader>
 #include <QTranslator>
-#include "../HttpLoader/LoaderInterface.h"
+#include "../Httploader/LoaderInterface.h"
 #include <QDebug>
 #include <QUrl>
 

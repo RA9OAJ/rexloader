@@ -8,7 +8,7 @@ Dialog::Dialog(QWidget *parent) :
     ui(new Ui::Dialog)
 {
     ui->setupUi(this);
-    QString plug = QApplication::applicationDirPath()+"/libHttpLoader.so";
+    QString plug = QApplication::applicationDirPath()+"/lib/rexloader/plugins/libHttpLoader.so";
     qDebug()<<QApplication::applicationDirPath();
     QFile ft(plug);
     if(ft.exists())qDebug()<<"YES";
