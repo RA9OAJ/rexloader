@@ -33,6 +33,9 @@ public:
         _maxSections = 1;
         last_size = 0;
         cur_speed = 0;
+        proxy_auth.clear();
+        proxy.clear();
+        proxy_type = LInterface::PROXY_NOPROXY;
     }
 
     ~Task()
@@ -50,6 +53,7 @@ public:
 
     QUrl url;
     QUrl proxy; //адрес прокси сервера
+    QString proxy_auth; //данные для аутентификации на прокси в base64
     QString MIME;
     QString filepath; //путь к локальному файлу
     QString authData; //данные авторизации
@@ -108,7 +112,7 @@ public:
     virtual QString taskFilePath(int id_task) const; //вохвращает полный путь к локальному файлу
     virtual QString errorString(int _err) const; //возвращает строку по заданному коду ошибки
     virtual QString statusString(int _stat) const; //возвращает строку статуса по заданному коду
-    virtual void setProxy(int id_task, const QUrl &_proxy, LInterface::ProxyType _ptype); //устанавливает прокси
+    virtual void setProxy(int id_task, const QUrl &_proxy, LInterface::ProxyType _ptype, const QString &data_base64); //устанавливает прокси
 
 signals:
     void sheduleImpulse(); //сигнал генериться с интервалом шедулера

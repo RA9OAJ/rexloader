@@ -11,6 +11,7 @@
 #include <QMutex>
 #include <QLocale>
 #include <QPointer>
+#include <QNetworkProxy>
 #include "gtcpsocket.h"
 
 class HttpSection : public QObject/*: public QThread*/
@@ -49,6 +50,7 @@ public:
     int socketError() const; //возвращает ошибки сокета
     qint64 realSpeed() const; //возвращает реальную возможную скорость скачивания
     bool freedMemory()const;
+    void setProxy(const QUrl &_proxy, QNetworkProxy::ProxyType _ptype, const QString &base64_userdata);
 
 public slots:
     void transferActSlot(); //слот-посредник
@@ -107,6 +109,10 @@ private:
     QHash<QString, QString> header; //хеш-массив для хранения ответа сервера
     QTime *watcher;
     QMutex *mutex;
+
+    QUrl proxyaddr; //адрес прокси сервера
+    QNetworkProxy::ProxyType proxytype; //тип прокси сервера
+    QString proxy_auth; //данны для аутентификации на прокси сервере
 };
 
 #endif // HTTPSECTION_H
