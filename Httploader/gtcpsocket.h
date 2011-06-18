@@ -6,8 +6,6 @@
 #include <QTimer>
 #include <QByteArray>
 
-#include <QDebug>
-
 class GTcpSocket : public QSslSocket
 {
 Q_OBJECT
