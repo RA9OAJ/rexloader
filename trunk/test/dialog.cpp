@@ -145,7 +145,7 @@ void Dialog::startDownload()
         ui->url->setStyleSheet("border-color: red;");
         return;
     }
-    loader->setMaxSectionsOnTask(6);
+    loader->setMaxSectionsOnTask(1);
     task_id = /*loader->loadTaskFile("/home/rav/1.mp4");*/loader->addTask(myurl);
     if(!task_id)return;
     QFileInfo info(ui->url->text());
@@ -164,6 +164,7 @@ void Dialog::startDownload()
 
     //loader->setDownSpeed(15*1024*1024);
     loader->setTaskFilePath(task_id, path);
+    loader->setProxy(task_id, QUrl("proxy://109.230.216.23:1080/"),LInterface::PROXY_SOCKS5,"");
     loader->startDownload(task_id);
 
     ui->Stop->setEnabled(true);

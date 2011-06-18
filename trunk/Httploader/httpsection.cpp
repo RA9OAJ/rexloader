@@ -49,20 +49,21 @@ void HttpSection::run()
 
     if(proxytype != QNetworkProxy::NoProxy)
     {
-        QNetworkProxy myproxy;
-        myproxy.setHostName(proxyaddr.host());
-        myproxy.setPort(proxyaddr.port());
-        myproxy.setType(proxytype);
-        if(!proxy_auth.isEmpty())
+        myproxy = new QNetworkProxy;
+        myproxy->setHostName(proxyaddr.host());
+        myproxy->setPort(proxyaddr.port());
+        myproxy->setType(proxytype);
+        if(proxy_auth != "")
         {
             QString udata(QByteArray::fromBase64(proxy_auth.toAscii()));
             QStringList _udata = udata.split(":");
             if(_udata.size() > 1)
             {
-                myproxy.setUser(_udata.value(0));
-                myproxy.setPassword(_udata.value(1));
+                myproxy->setUser(_udata.value(0));
+                myproxy->setPassword(_udata.value(1));
             }
         }
+        s->setProxy(*myproxy);
     }
 
 
@@ -390,6 +391,7 @@ void HttpSection::socketErrorSlot(QAbstractSocket::SocketError _err)
     _errno = _err;
     if(_err == QAbstractSocket::RemoteHostClosedError)return;
     stopDownloading();
+
     emit errorSignal(_errno);
 }
 

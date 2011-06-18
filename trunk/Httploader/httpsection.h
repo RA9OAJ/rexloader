@@ -113,6 +113,7 @@ private:
     QUrl proxyaddr; //адрес прокси сервера
     QNetworkProxy::ProxyType proxytype; //тип прокси сервера
     QString proxy_auth; //данны для аутентификации на прокси сервере
+    QNetworkProxy *myproxy;
 };
 
 #endif // HTTPSECTION_H
