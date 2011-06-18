@@ -54,9 +54,65 @@
      <x>0</x>
      <y>0</y>
      <width>687</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuURL">
+    <property name="title">
+     <string>URL</string>
+    </property>
+    <addaction name="actionAdd_URL"/>
+    <addaction name="actionDelURL"/>
+    <addaction name="separator"/>
+    <addaction name="actionDelURLFiles"/>
+   </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>Задания</string>
+    </property>
+    <addaction name="actionStart"/>
+    <addaction name="actionStop"/>
+    <addaction name="actionStartAll"/>
+    <addaction name="actionStopAll"/>
+    <addaction name="separator"/>
+    <addaction name="actionTaskPropert"/>
+   </widget>
+   <widget class="QMenu" name="menu_2">
+    <property name="title">
+     <string>Автоматизация</string>
+    </property>
+    <widget class="QMenu" name="menu_3">
+     <property name="title">
+      <string>По завершении заданий</string>
+     </property>
+     <addaction name="actionPoweroff"/>
+    </widget>
+    <addaction name="actionSchedule"/>
+    <addaction name="menu_3"/>
+   </widget>
+   <widget class="QMenu" name="menu_4">
+    <property name="title">
+     <string>Настройка</string>
+    </property>
+    <addaction name="actionpluginsShow"/>
+    <addaction name="separator"/>
+    <addaction name="actionAppSettings"/>
+   </widget>
+   <widget class="QMenu" name="menu_5">
+    <property name="title">
+     <string>Помощь</string>
+    </property>
+    <addaction name="actionHelp"/>
+    <addaction name="actionOnlineHelp"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout"/>
+    <addaction name="actionAboutQt"/>
+   </widget>
+   <addaction name="menuURL"/>
+   <addaction name="menu"/>
+   <addaction name="menu_2"/>
+   <addaction name="menu_4"/>
+   <addaction name="menu_5"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -67,6 +123,98 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionAdd_URL">
+   <property name="text">
+    <string>Добавить URL</string>
+   </property>
+   <property name="shortcut">
+    <string>Ins</string>
+   </property>
+  </action>
+  <action name="actionDelURL">
+   <property name="text">
+    <string>Удалить URL</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="actionStart">
+   <property name="text">
+    <string>Запустить</string>
+   </property>
+  </action>
+  <action name="actionStop">
+   <property name="text">
+    <string>Приостановить</string>
+   </property>
+  </action>
+  <action name="actionStartAll">
+   <property name="text">
+    <string>Запустить все</string>
+   </property>
+  </action>
+  <action name="actionStopAll">
+   <property name="text">
+    <string>Приостановить все</string>
+   </property>
+  </action>
+  <action name="actionTaskPropert">
+   <property name="text">
+    <string>Свойства задания</string>
+   </property>
+  </action>
+  <action name="actionSchedule">
+   <property name="text">
+    <string>Расписание</string>
+   </property>
+  </action>
+  <action name="actionPoweroff">
+   <property name="text">
+    <string>Выключить компьютер</string>
+   </property>
+  </action>
+  <action name="actionpluginsShow">
+   <property name="text">
+    <string>Плагины</string>
+   </property>
+  </action>
+  <action name="actionAppSettings">
+   <property name="text">
+    <string>Настройки приложения</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>Помощь по программе</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
+  <action name="actionOnlineHelp">
+   <property name="text">
+    <string>Online руководства</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>О программе</string>
+   </property>
+  </action>
+  <action name="actionAboutQt">
+   <property name="text">
+    <string>О Qt</string>
+   </property>
+  </action>
+  <action name="actionDelURLFiles">
+   <property name="text">
+    <string>Удалить URL и результат</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+Del</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
