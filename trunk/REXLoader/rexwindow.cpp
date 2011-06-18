@@ -13,6 +13,10 @@ REXWindow::REXWindow(QWidget *parent) :
     sz1 << 150 << 800;
     ui->splitter->setSizes(sz);
     ui->splitter_2->setSizes(sz1);
+
+    trayicon = new QSystemTrayIcon(this);
+    trayicon->setIcon(QIcon(":/appimages/trayicon.png"));
+    trayicon->show();
 }
 
 void REXWindow::showNotice(const QString &title, const QString &text, int type)

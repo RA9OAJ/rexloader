@@ -1,1 +1,5 @@
-<RCC/>
+<RCC>
+    <qresource prefix="/appimages">
+        <file alias="trayicon.png">images/RExLoader_64x64.png</file>
+    </qresource>
+</RCC>

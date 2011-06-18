@@ -70,10 +70,21 @@
     <property name="title">
      <string>Задания</string>
     </property>
+    <widget class="QMenu" name="menu_6">
+     <property name="title">
+      <string>Скорость загрузки</string>
+     </property>
+     <addaction name="actionWeryLow"/>
+     <addaction name="actionLow"/>
+     <addaction name="actionNormal"/>
+     <addaction name="actionHigh"/>
+    </widget>
     <addaction name="actionStart"/>
     <addaction name="actionStop"/>
     <addaction name="actionStartAll"/>
     <addaction name="actionStopAll"/>
+    <addaction name="separator"/>
+    <addaction name="menu_6"/>
     <addaction name="separator"/>
     <addaction name="actionTaskPropert"/>
    </widget>
@@ -213,6 +224,26 @@
    </property>
    <property name="shortcut">
     <string>Shift+Del</string>
+   </property>
+  </action>
+  <action name="actionWeryLow">
+   <property name="text">
+    <string>Очень низкая</string>
+   </property>
+  </action>
+  <action name="actionLow">
+   <property name="text">
+    <string>Низкая</string>
+   </property>
+  </action>
+  <action name="actionNormal">
+   <property name="text">
+    <string>Нормальная</string>
+   </property>
+  </action>
+  <action name="actionHigh">
+   <property name="text">
+    <string>Высокая</string>
    </property>
   </action>
  </widget>
