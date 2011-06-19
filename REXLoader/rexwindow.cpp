@@ -17,6 +17,8 @@ REXWindow::REXWindow(QWidget *parent) :
     trayicon = new QSystemTrayIcon(this);
     trayicon->setIcon(QIcon(":/appimages/trayicon.png"));
     trayicon->show();
+
+    //openDataBase();
 }
 
 void REXWindow::showNotice(const QString &title, const QString &text, int type)
@@ -35,6 +37,43 @@ void REXWindow::loadSettings()
 }
 
 void REXWindow::openDataBase()
+{
+    QString homedir = QDir::homePath()+"/.rexloader";
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+
+    db.setDatabaseName(homedir+"/tasks.db");
+    if(!db.open())
+    {
+        trayicon->showMessage(tr("Warning!"),tr("Can not create a database file. This is not a critical error and the application will run, but all data on the tasks will not be saved. Check your access privileges on read and write in the home directory, or if exists directory '.rexloader' delete him self."),QSystemTrayIcon::Warning);
+        db.setDatabaseName(":tasks.db");
+        db.open();
+
+        QSqlQuery qr;
+        qr.prepare("CREATE TABLE tasks ("
+                "id INTEGER PRIMARY KEY,"
+                "url TEXT,"
+                "datecreate TEXT,"
+                "filename TEXT,"
+                "currentsize TEXT,"
+                "totalsize TEXT,"
+                "downtime TEXT,"
+                "lasterror TEXT,"
+                "mime TEXT,"
+                "categoryid TEXT);");
+        if(!qr.exec())
+        {
+            //!!!!!!!!!!!!!!!
+        }
+    }
+}
+
+void REXWindow::processExists(bool flag)
+{
+    allright = flag;
+}
+
+void REXWindow::showTrayIcon()
 {
 
 }

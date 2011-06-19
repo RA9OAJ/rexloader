@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QSystemTrayIcon>
+#include <QtSql/QtSql>
+#include <QDir>
 #include <QStringList>
 #include <QHash>
 #include <QList>
@@ -24,6 +26,7 @@ public:
 
 public slots:
     //void updateTaskSheet(); //обновляет содержимое таблицы списка заданий
+    void processExists(bool flag); //указывает окну программы, существует ли другой аналогичный процесс, если да, то программа не запускается
 
 protected:
     void changeEvent(QEvent *e);
@@ -31,6 +34,7 @@ protected:
     void saveSettings(); //сохраняет свойства приложения
     void loadSettings(); //загружает свйоства приложения
     //int loadPlugins(); //сканирует директории в поисках доступных плагинов, возвращает количество найденных и загруженных плагинов.
+    void showTrayIcon();
 
 protected slots:
     //void scheuler();
@@ -42,6 +46,7 @@ private:
     QStringList pluginDirs; //список с директориями, в которых могут быть плагины
     QHash<int,QStringList> *mesqueue; //очередь сообщений
     QList<int> *tasklist; //список дескрипторов активных заданий
+    bool allright; //признак того, можно ли запускать все компоненты программы или же её выполнение должно немедленно прекратиться
 
 };
 
