@@ -46,13 +46,45 @@ void checkDatabase()
     QSqlDatabase::removeDatabase(dbname);
 }
 
+void addURL(const QStringList &_argv)
+{
+    if(_argv.size() <= 1)return;
 
+    QString homedir = QDir::homePath();
+    QDir homeapp;
+    QString dbname;
+    homeapp.cd(homedir+"./rexloader");
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+
+    if(!QFile::exists(homeapp.path()+"/tasks.db")) db.setDatabaseName(":tasks.db");
+    else db.setDatabaseName(homeapp.path()+"/task.db");
+
+    if(!db.open())
+    {
+        //Здесь добавляем сообщение в error.log
+    }
+
+    QUrl url;
+    QSqlQuery qr;
+    for(int i=1; i<_argv.size(); i++)
+    {
+        url.clear();
+        url.setEncodedUrl(_argv.value(i));
+        if(url.isValid() && !url.scheme().isEmpty())
+        {
+            //запрос на вставку новой строки в таблицу заданий
+        }
+    }
+}
 
 int main(int argc, char *argv[])
 {
     checkDatabase();
 
     QApplication a(argc, argv);
+
+
 
     REXWindow w;
     w.show();
