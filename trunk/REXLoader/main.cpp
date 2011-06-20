@@ -55,7 +55,6 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     REXWindow w;
-    QTimer::singleShot(10,&w,SLOT(close()));
     w.show();
 
     return a.exec();
