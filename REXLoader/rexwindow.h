@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QSystemTrayIcon>
+#include <QMessageBox>
 #include <QtSql/QtSql>
 #include <QDir>
 #include <QStringList>
@@ -22,11 +23,10 @@ public:
     virtual ~REXWindow();
 
     void showNotice(const QString &title, const QString &text, int type = 0);
-    //void showMessage(const QString &title, const QString &text, int rang = 50,QSystemTrayIcon::MessageIcon type = QSystemTrayIcon::Information);
+
 
 public slots:
     //void updateTaskSheet(); //обновляет содержимое таблицы списка заданий
-    void processExists(bool flag); //указывает окну программы, существует ли другой аналогичный процесс, если да, то программа не запускается
 
 protected:
     void changeEvent(QEvent *e);
@@ -34,19 +34,22 @@ protected:
     void saveSettings(); //сохраняет свойства приложения
     void loadSettings(); //загружает свйоства приложения
     //int loadPlugins(); //сканирует директории в поисках доступных плагинов, возвращает количество найденных и загруженных плагинов.
-    void showTrayIcon();
 
 protected slots:
-    //void scheuler();
+    void scheuler(); //внутренний планировщик с интервалом в 1 секунду
 
 private:
+    void lockProcess(bool flag=true); //позволяет создать/удалить файл блокировки процесса
+
     Ui::REXWindow *ui;
     QSystemTrayIcon *trayicon;
 
     QStringList pluginDirs; //список с директориями, в которых могут быть плагины
     QHash<int,QStringList> *mesqueue; //очередь сообщений
     QList<int> *tasklist; //список дескрипторов активных заданий
-    bool allright; //признак того, можно ли запускать все компоненты программы или же её выполнение должно немедленно прекратиться
+    QString apphomedir; //путь к рабочему каталогу приложения, где хранятся все его файлы конфигураций
+    QString dbconnect;
+    bool sched_flag; //признак разрешения работы планировщика
 
 };
 

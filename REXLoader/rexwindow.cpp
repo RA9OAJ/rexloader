@@ -7,6 +7,7 @@ REXWindow::REXWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    sched_flag = true;
     QList<int> sz;
     QList<int> sz1;
     sz << 800 << 150;
@@ -18,7 +19,12 @@ REXWindow::REXWindow(QWidget *parent) :
     trayicon->setIcon(QIcon(":/appimages/trayicon.png"));
     trayicon->show();
 
-    //openDataBase();
+    apphomedir = QDir::homePath()+"/.rexloader";
+
+    lockProcess();
+    openDataBase();
+
+    scheuler();
 }
 
 void REXWindow::showNotice(const QString &title, const QString &text, int type)
@@ -45,42 +51,41 @@ void REXWindow::openDataBase()
     db.setDatabaseName(homedir+"/tasks.db");
     if(!db.open())
     {
-        trayicon->showMessage(tr("Warning!"),tr("Can not create a database file. This is not a critical error and the application will run, but all data on the tasks will not be saved. Check your access privileges on read and write in the home directory, or if exists directory '.rexloader' delete him self."),QSystemTrayIcon::Warning);
-        db.setDatabaseName(":tasks.db");
-        db.open();
-
-        QSqlQuery qr;
-        qr.prepare("CREATE TABLE tasks ("
-                "id INTEGER PRIMARY KEY,"
-                "url TEXT,"
-                "datecreate TEXT,"
-                "filename TEXT,"
-                "currentsize TEXT,"
-                "totalsize TEXT,"
-                "downtime TEXT,"
-                "lasterror TEXT,"
-                "mime TEXT,"
-                "categoryid TEXT);");
-        if(!qr.exec())
-        {
-            //!!!!!!!!!!!!!!!
-        }
+        setEnabled(false);
+        int quit_ok = QMessageBox::critical(this,tr("Critical Error!"),tr("Can not create a database file. This is a critical error and the application will close. Check your access privileges on read and write in the home directory, or if exists directory '.rexloader' delete him self."));
+        if(quit_ok == QMessageBox::Ok)QTimer::singleShot(0,this,SLOT(close()));
     }
+    dbconnect = db.connectionName();
 }
 
-void REXWindow::processExists(bool flag)
+void REXWindow::lockProcess(bool flag)
 {
-    allright = flag;
+    QFile fl(apphomedir+"/proc.lock");
+    if(flag)
+    {
+        fl.open(QFile::WriteOnly);
+        QString dtime = QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:ss");
+        fl.write(dtime.toAscii());
+        fl.close();
+    }
+    else fl.remove();
 }
 
-void REXWindow::showTrayIcon()
+void REXWindow::scheuler()
 {
+    if(!sched_flag)return;
+    lockProcess(true);
 
+    QTimer::singleShot(1000,this,SLOT(scheuler()));
 }
 
 REXWindow::~REXWindow()
 {
     delete ui;
+    sched_flag = false;
+
+
+    lockProcess(false);
 }
 
 void REXWindow::changeEvent(QEvent *e)

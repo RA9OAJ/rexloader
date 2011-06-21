@@ -17,27 +17,18 @@ void checkDatabase()
         homeapp.cd(homedir+"/.rexloader");
 
         bool dbfile = true;
-        if(!QFile::exists(homeapp.path()+"/tasks.db"))
-        {
-            dbfile = false;
-            QFile fl(homeapp.path()+"/tasks.db");
-            fl.open(QFile::WriteOnly);
-            fl.close();
-        }
+        if(!QFile::exists(homeapp.path()+"/tasks.db"))dbfile = false;
+
         db.setDatabaseName(homeapp.path()+"/tasks.db");
 
         if(!db.open())
         {
-            qDebug()<<"FUCK!";
-            db.setDatabaseName(":memory:");
-            if(!db.open())
-            {
+             qDebug()<<"0. ";
                 //записываем ошибку в error.log
                 return;
-            }
         }
 
-        if(!dbfile || db.databaseName() == ":memory:")
+        if(!dbfile)
         {
             QSqlQuery *qr = new QSqlQuery;
             bool flag = qr->exec("CREATE TABLE tasks ("
@@ -54,7 +45,8 @@ void checkDatabase()
 
             if(!flag)
             {
-                qDebug()<<qr->lastError();
+                qDebug()<<"1. "<<qr->lastError().text()<<qr->lastQuery();
+                //записываем ошибку в error.log
             }
 
             qr->clear();
@@ -65,7 +57,8 @@ void checkDatabase()
 
             if(!flag)
             {
-                qDebug()<<qr->lastError();
+                qDebug()<<"1. "<<qr->lastError().text()<<qr->lastQuery();
+                //записываем ошибку в error.log
             }
 
             delete(qr);
@@ -79,20 +72,24 @@ void addURL(const QStringList &_argv)
 {
     if(_argv.size() <= 1)return;
 
-    QString homedir = QDir::homePath();
+    QString homedir = QDir::homePath()+"/.rexloader";
     QDir homeapp;
     QString dbname;
-    homeapp.cd(homedir+"./rexloader");
+    if(!homeapp.cd(homedir))
+    {
+        //Здесь добавляем сообщение в error.log
+        return;
+    }
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-
-        if(!QFile::exists(homeapp.path()+"/tasks.db")) db.setDatabaseName(":memory:");
-        else db.setDatabaseName(homeapp.path()+"/task.db");
+        db.setDatabaseName(homeapp.path()+"/tasks.db");
+        qDebug()<<db.databaseName();
 
         if(!db.open())
         {
             //Здесь добавляем сообщение в error.log
+            return;
         }
 
         dbname = db.connectionName();
@@ -104,12 +101,13 @@ void addURL(const QStringList &_argv)
             url.clear();
             url.setUrl(_argv.value(i));
             if(url.isValid() && !url.scheme().isEmpty())
-            {
-                qr.prepare("INSERT INTO newtasks SET url=%1;");
-                qr.bindValue(1,url.toString());
+            {qDebug()<<"YES";
+                qr.prepare("INSERT INTO newtasks (url) VALUES (:url)");
+                qr.bindValue(":url",url.toString());
                 if(!qr.exec())
                 {
                     //тут записываем сообщение об ошибке в error.log
+                    return;
                 }
             }
             else if(QFile::exists(_argv.value(i)))
@@ -119,6 +117,7 @@ void addURL(const QStringList &_argv)
                 if(!qr.exec())
                 {
                     //тут записываем сообщение об ошибке в error.log
+                    return;
                 }
             }
         }
@@ -126,16 +125,42 @@ void addURL(const QStringList &_argv)
     QSqlDatabase::removeDatabase(dbname);
 }
 
+bool firstProcess()
+{
+    QString homeappdir = QDir::homePath()+"/.rexloader";
+
+    if(QFile::exists(homeappdir+"/proc.lock"))
+    {
+        QFile fl(homeappdir+"/proc.lock");
+        fl.open(QFile::ReadOnly);
+        QString string = fl.readLine(1024);
+        QDateTime proc_time;
+        QDateTime cur_time = QDateTime::currentDateTime();
+        proc_time = QDateTime::fromString(string,"yyyy-MM-ddThh:mm:ss");
+        qDebug()<<proc_time;
+        if(proc_time.secsTo(cur_time) > 5)
+        {
+            fl.remove();
+            return true;
+        }
+        return false;
+    }
+    return true;
+}
+
 int main(int argc, char *argv[])
 {
     checkDatabase();
 
     QApplication a(argc, argv);
-    //addURL(a.arguments());
+    addURL(a.arguments());
+    if(firstProcess())
+    {
+        REXWindow w;
 
+        w.show();
 
-    REXWindow w;
-    w.show();
-
-    return a.exec();
+        return a.exec();
+    }
+    return 1;
 }
