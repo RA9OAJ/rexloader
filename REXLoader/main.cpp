@@ -41,6 +41,7 @@ void checkDatabase()
                 "downtime TEXT,"
                 "lasterror TEXT,"
                 "mime TEXT,"
+                "tstatus INTEGER DEFAULT 0,"
                 "categoryid TEXT);");
 
             if(!flag)

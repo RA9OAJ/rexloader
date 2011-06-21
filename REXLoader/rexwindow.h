@@ -26,7 +26,7 @@ public:
 
 
 public slots:
-    //void updateTaskSheet(); //обновляет содержимое таблицы списка заданий
+    void updateTaskSheet(); //обновляет содержимое таблицы списка заданий
 
 protected:
     void changeEvent(QEvent *e);
