@@ -79,6 +79,11 @@ void REXWindow::scheuler()
     QTimer::singleShot(1000,this,SLOT(scheuler()));
 }
 
+void REXWindow::updateTaskSheet()
+{
+
+}
+
 REXWindow::~REXWindow()
 {
     delete ui;
