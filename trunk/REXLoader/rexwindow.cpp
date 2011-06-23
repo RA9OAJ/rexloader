@@ -18,9 +18,10 @@ REXWindow::REXWindow(QWidget *parent) :
     sz1 << 150 << 800;
     ui->splitter->setSizes(sz);
     ui->splitter_2->setSizes(sz1);
-    ui->tableWidget->hideColumn(0);
+    /*ui->tableWidget->hideColumn(0);
     ui->tableWidget->hideColumn(1);
-    ui->tableWidget->hideColumn(2);
+    ui->tableWidget->hideColumn(2);*/
+    ui->tableWidget->verticalHeader()->hide();
     ui->tableWidget->horizontalHeader()->setMovable(true);
 
     trayicon = new QSystemTrayIcon(this);
@@ -35,6 +36,7 @@ REXWindow::REXWindow(QWidget *parent) :
     qDebug()<<plugfiles;
 
     scheuler();
+    updateTaskSheet();
 }
 
 void REXWindow::showNotice(const QString &title, const QString &text, int type)
@@ -65,6 +67,12 @@ void REXWindow::openDataBase()
         int quit_ok = QMessageBox::critical(this,tr("Critical Error!"),tr("Can not open a database file. This is a critical error and the application will close. Check your access privileges on read and write in the home directory, or if exists directory '.rexloader' delete him self."));
         if(quit_ok == QMessageBox::Ok)QTimer::singleShot(0,this,SLOT(close()));
     }
+
+    /*Для отладки*/
+    QSqlQuery qr;
+    qDebug()<<qr.exec("INSERT INTO tasks (url,datecreate,filename,currentsize,totalsize,downtime,lasterror,mime,tstatus,categoryid,note) VALUES ('url_','2011-06-23T13:00:00','noname.html','100','1000','120','error','mime','0','1','note');");
+    /*----------*/
+
     dbconnect = db.connectionName();
 }
 
@@ -119,6 +127,61 @@ void REXWindow::updateTaskSheet()
 {
     QSqlQuery qr("SELECT * FROM tasks");
     while(qr.next())
+    {
+        int cur_row = ui->tableWidget->rowCount();
+        ui->tableWidget->setRowCount(ui->tableWidget->rowCount()+1);
+        QTableWidgetItem *item = new QTableWidgetItem;
+        item->setData(Qt::DisplayRole,qr.value(0).toString());
+        ui->tableWidget->setItem(cur_row,0,item);
+
+        item = new QTableWidgetItem;
+        item->setData(Qt::DisplayRole,QDateTime::fromString(qr.value(2).toString(),"yyyy-MM-ddThh:mm:ss"));
+        ui->tableWidget->setItem(cur_row,1,item);
+
+        item = new QTableWidgetItem;
+        item->setData(Qt::DisplayRole,qr.value(1).toString());
+        ui->tableWidget->setItem(cur_row,3,item);
+
+        item = new QTableWidgetItem;
+        item->setData(Qt::DisplayRole,qr.value(0).toString());
+        ui->tableWidget->setItem(cur_row,0,item);
+
+        item = new QTableWidgetItem;
+        item->setData(Qt::DisplayRole,qr.value(0).toString());
+        ui->tableWidget->setItem(cur_row,0,item);
+
+        item = new QTableWidgetItem;
+        item->setData(Qt::DisplayRole,qr.value(0).toString());
+        ui->tableWidget->setItem(cur_row,0,item);
+
+        item = new QTableWidgetItem;
+        item->setData(Qt::DisplayRole,qr.value(0).toString());
+        ui->tableWidget->setItem(cur_row,0,item);
+
+        item = new QTableWidgetItem;
+        item->setData(Qt::DisplayRole,qr.value(0).toString());
+        ui->tableWidget->setItem(cur_row,0,item);
+
+        item = new QTableWidgetItem;
+        item->setData(Qt::DisplayRole,qr.value(0).toString());
+        ui->tableWidget->setItem(cur_row,0,item);
+
+        item = new QTableWidgetItem;
+        item->setData(Qt::DisplayRole,qr.value(0).toString());
+        ui->tableWidget->setItem(cur_row,0,item);
+
+        item = new QTableWidgetItem;
+        item->setData(Qt::DisplayRole,qr.value(0).toString());
+        ui->tableWidget->setItem(cur_row,0,item);
+
+        item = new QTableWidgetItem;
+        item->setData(Qt::DisplayRole,qr.value(0).toString());
+        ui->tableWidget->setItem(cur_row,0,item);
+
+        item = new QTableWidgetItem;
+        item->setData(Qt::DisplayRole,qr.value(0).toString());
+        ui->tableWidget->setItem(cur_row,0,item);
+    }
 }
 
 REXWindow::~REXWindow()
