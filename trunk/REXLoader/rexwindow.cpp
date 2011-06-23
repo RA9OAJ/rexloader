@@ -10,6 +10,10 @@ REXWindow::REXWindow(QWidget *parent) :
     sched_flag = true;
     QList<int> sz;
     QList<int> sz1;
+    QDir libdir(QApplication::applicationDirPath());
+    libdir.cdUp();
+    pluginDirs << libdir.absolutePath()+"/lib/rexloader/plugins" << QDir::homePath()+"/.rexloader/plugins";
+
     sz << 800 << 150;
     sz1 << 150 << 800;
     ui->splitter->setSizes(sz);
@@ -27,6 +31,8 @@ REXWindow::REXWindow(QWidget *parent) :
 
     lockProcess();
     openDataBase();
+    qDebug()<<loadPlugins();
+    qDebug()<<plugfiles;
 
     scheuler();
 }
@@ -56,10 +62,36 @@ void REXWindow::openDataBase()
     if(!db.open())
     {
         setEnabled(false);
-        int quit_ok = QMessageBox::critical(this,tr("Critical Error!"),tr("Can not create a database file. This is a critical error and the application will close. Check your access privileges on read and write in the home directory, or if exists directory '.rexloader' delete him self."));
+        int quit_ok = QMessageBox::critical(this,tr("Critical Error!"),tr("Can not open a database file. This is a critical error and the application will close. Check your access privileges on read and write in the home directory, or if exists directory '.rexloader' delete him self."));
         if(quit_ok == QMessageBox::Ok)QTimer::singleShot(0,this,SLOT(close()));
     }
     dbconnect = db.connectionName();
+}
+
+int REXWindow::loadPlugins()
+{
+    for(int i=0; i<pluginDirs.size(); i++)
+    {
+        QDir dir(pluginDirs.value(i));
+        QStringList plg = dir.entryList(QDir::Files);
+
+        for(int y=0; y<plg.size(); y++)
+        {
+            QPluginLoader plug(pluginDirs.value(i)+"/"+plg.value(y));
+            if(!plug.load())continue;
+            LoaderInterface *ldr = qobject_cast<LoaderInterface*>(plug.instance());
+            pluglist.insert(pluglist.size()+1,ldr);
+            plugfiles.insert(pluglist.size(),pluginDirs.value(i)+"/"+plg.value(y));
+
+            QStringList protocols = ldr->protocols();
+            for(int x=0; x<protocols.size(); x++)
+            {
+                if(plugproto.value(protocols.value(x)))continue;
+                plugproto.insert(protocols.value(x),pluglist.size());
+            }
+        }
+    }
+    return pluglist.size();
 }
 
 void REXWindow::lockProcess(bool flag)
@@ -85,7 +117,8 @@ void REXWindow::scheuler()
 
 void REXWindow::updateTaskSheet()
 {
-
+    QSqlQuery qr("SELECT * FROM tasks");
+    while(qr.next())
 }
 
 REXWindow::~REXWindow()

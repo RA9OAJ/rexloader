@@ -9,6 +9,8 @@
 #include <QStringList>
 #include <QHash>
 #include <QList>
+#include <QPluginLoader>
+#include "../Httploader/LoaderInterface.h"
 
 namespace Ui {
     class REXWindow;
@@ -33,7 +35,7 @@ protected:
     void openDataBase(); //создает/открывает существующую базу данных закачек
     void saveSettings(); //сохраняет свойства приложения
     void loadSettings(); //загружает свйоства приложения
-    //int loadPlugins(); //сканирует директории в поисках доступных плагинов, возвращает количество найденных и загруженных плагинов.
+    int loadPlugins(); //сканирует директории в поисках доступных плагинов, возвращает количество найденных и загруженных плагинов.
 
 protected slots:
     void scheuler(); //внутренний планировщик с интервалом в 1 секунду
@@ -51,6 +53,9 @@ private:
     QString dbconnect;
     bool sched_flag; //признак разрешения работы планировщика
 
+    QHash<int,QString> plugfiles; //хэш путей к файлам плагинов
+    QHash<int,LoaderInterface*> pluglist; //хэш ссылок на плагины
+    QHash<QString,int> plugproto; //хэш дескрипторов плагинов с соответствующими протоколами
 };
 
 #endif // REXWINDOW_H
