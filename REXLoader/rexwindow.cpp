@@ -23,6 +23,8 @@ REXWindow::REXWindow(QWidget *parent) :
     ui->tableWidget->hideColumn(2);*/
     ui->tableWidget->verticalHeader()->hide();
     ui->tableWidget->horizontalHeader()->setMovable(true);
+    ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableWidget->setEditTriggers(QTableWidget::NoEditTriggers);
 
     trayicon = new QSystemTrayIcon(this);
     trayicon->setIcon(QIcon(":/appimages/trayicon.png"));
@@ -131,7 +133,7 @@ void REXWindow::updateTaskSheet()
         int cur_row = ui->tableWidget->rowCount();
         ui->tableWidget->setRowCount(ui->tableWidget->rowCount()+1);
         QTableWidgetItem *item = new QTableWidgetItem;
-        item->setData(Qt::DisplayRole,qr.value(0).toString());
+        item->setData(Qt::DisplayRole,qr.value(0).toInt());
         ui->tableWidget->setItem(cur_row,0,item);
 
         item = new QTableWidgetItem;
@@ -143,24 +145,25 @@ void REXWindow::updateTaskSheet()
         ui->tableWidget->setItem(cur_row,3,item);
 
         item = new QTableWidgetItem;
-        item->setData(Qt::DisplayRole,qr.value(0).toString());
-        ui->tableWidget->setItem(cur_row,0,item);
+        item->setData(Qt::DisplayRole,qr.value(3).toString());
+        ui->tableWidget->setItem(cur_row,4,item);
 
         item = new QTableWidgetItem;
-        item->setData(Qt::DisplayRole,qr.value(0).toString());
-        ui->tableWidget->setItem(cur_row,0,item);
+        item->setData(Qt::DisplayRole,qr.value(9).toInt());
+        ui->tableWidget->setItem(cur_row,5,item);
 
         item = new QTableWidgetItem;
-        item->setData(Qt::DisplayRole,qr.value(0).toString());
-        ui->tableWidget->setItem(cur_row,0,item);
+        item->setData(Qt::DisplayRole,100*qr.value(4).toInt()/qr.value(5).toInt());
+        item->setText(QString::number(100*qr.value(4).toInt()/qr.value(5).toInt())+"%");
+        ui->tableWidget->setItem(cur_row,6,item);
 
         item = new QTableWidgetItem;
-        item->setData(Qt::DisplayRole,qr.value(0).toString());
-        ui->tableWidget->setItem(cur_row,0,item);
+        item->setData(Qt::DisplayRole,qr.value(5).toInt());
+        ui->tableWidget->setItem(cur_row,7,item);
 
         item = new QTableWidgetItem;
-        item->setData(Qt::DisplayRole,qr.value(0).toString());
-        ui->tableWidget->setItem(cur_row,0,item);
+        item->setData(Qt::DisplayRole,qr.value(4).toString());
+        ui->tableWidget->setItem(cur_row,8,item);
 
         item = new QTableWidgetItem;
         item->setData(Qt::DisplayRole,qr.value(0).toString());
