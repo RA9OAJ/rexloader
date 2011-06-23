@@ -5,7 +5,7 @@ TARGET = HttpLoader
 TEMPLATE = lib
 CODECFORTR = UTF-8
 
-DESTDIR = ../test-build-desktop/lib/rexloader/plugins
+DESTDIR = ../REXLoader-build-desktop/lib/rexloader/plugins
 
 SOURCES = httploader.cpp \
     httpsection.cpp \

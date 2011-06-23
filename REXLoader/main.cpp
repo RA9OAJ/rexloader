@@ -13,7 +13,10 @@ void checkDatabase()
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
         dbname = db.connectionName();
         if(!homeapp.exists(homedir+"/.rexloader"))
+        {
             homeapp.mkpath(homedir+"/.rexloader");
+            homeapp.mkpath(homedir+"/.rexloader/plugins");
+        }
         homeapp.cd(homedir+"/.rexloader");
 
         bool dbfile = true;
@@ -42,7 +45,8 @@ void checkDatabase()
                 "lasterror TEXT,"
                 "mime TEXT,"
                 "tstatus INTEGER DEFAULT 0,"
-                "categoryid TEXT);");
+                "categoryid TEXT,"
+                "note TEXT);");
 
             if(!flag)
             {
