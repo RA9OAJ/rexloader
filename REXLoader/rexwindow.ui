@@ -31,79 +31,7 @@
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <widget class="QTableWidget" name="tableWidget">
-        <property name="sortingEnabled">
-         <bool>true</bool>
-        </property>
-        <attribute name="horizontalHeaderStretchLastSection">
-         <bool>false</bool>
-        </attribute>
-        <column>
-         <property name="text">
-          <string>id</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>datecreate</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>task_id</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>url</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>File</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Status</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Progress</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Total Size</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Left</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Time</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Note</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>lasterror</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>mime</string>
-         </property>
-        </column>
-       </widget>
+       <widget class="QTableView" name="tableView"/>
        <widget class="QTabWidget" name="tabWidget">
         <property name="tabPosition">
          <enum>QTabWidget::South</enum>
@@ -144,7 +72,7 @@
      <x>0</x>
      <y>0</y>
      <width>687</width>
-     <height>21</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuURL">

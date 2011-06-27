@@ -12,9 +12,11 @@ TEMPLATE = app
 DESTDIR = ./bin
 
 SOURCES += main.cpp\
-        rexwindow.cpp
+        rexwindow.cpp \
+    titemmodel.cpp
 
-HEADERS  += rexwindow.h
+HEADERS  += rexwindow.h \
+    titemmodel.h
 
 FORMS    += rexwindow.ui
 
