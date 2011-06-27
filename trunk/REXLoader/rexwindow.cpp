@@ -18,13 +18,6 @@ REXWindow::REXWindow(QWidget *parent) :
     sz1 << 150 << 800;
     ui->splitter->setSizes(sz);
     ui->splitter_2->setSizes(sz1);
-    /*ui->tableWidget->hideColumn(0);
-    ui->tableWidget->hideColumn(1);
-    ui->tableWidget->hideColumn(2);*/
-    ui->tableWidget->verticalHeader()->hide();
-    ui->tableWidget->horizontalHeader()->setMovable(true);
-    ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->tableWidget->setEditTriggers(QTableWidget::NoEditTriggers);
 
     trayicon = new QSystemTrayIcon(this);
     trayicon->setIcon(QIcon(":/appimages/trayicon.png"));
@@ -128,12 +121,12 @@ void REXWindow::scheuler()
 void REXWindow::updateTaskSheet()
 {
     QSqlQuery qr("SELECT * FROM tasks");
-    while(qr.next())
+   /* while(qr.next())
     {
         int cur_row = ui->tableWidget->rowCount();
         ui->tableWidget->setRowCount(ui->tableWidget->rowCount()+1);
         QTableWidgetItem *item = new QTableWidgetItem;
-        item->setData(Qt::DisplayRole,qr.value(0).toInt());
+        item->setData(Qt::EditRole,qr.value(0).toInt());
         ui->tableWidget->setItem(cur_row,0,item);
 
         item = new QTableWidgetItem;
@@ -184,7 +177,7 @@ void REXWindow::updateTaskSheet()
         item = new QTableWidgetItem;
         item->setData(Qt::DisplayRole,qr.value(0).toString());
         ui->tableWidget->setItem(cur_row,0,item);
-    }
+    }*/
 }
 
 REXWindow::~REXWindow()
