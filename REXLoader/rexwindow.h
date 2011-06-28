@@ -10,6 +10,8 @@
 #include <QHash>
 #include <QList>
 #include <QPluginLoader>
+#include "titemmodel.h"
+
 #include "../Httploader/LoaderInterface.h"
 
 namespace Ui {
@@ -56,6 +58,7 @@ private:
     QHash<int,QString> plugfiles; //хэш путей к файлам плагинов
     QHash<int,LoaderInterface*> pluglist; //хэш ссылок на плагины
     QHash<QString,int> plugproto; //хэш дескрипторов плагинов с соответствующими протоколами
+    TItemModel *model;
 };
 
 #endif // REXWINDOW_H

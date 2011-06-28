@@ -30,6 +30,10 @@ REXWindow::REXWindow(QWidget *parent) :
     qDebug()<<loadPlugins();
     qDebug()<<plugfiles;
 
+    model = new TItemModel(this);
+    model->updateModel();
+    ui->tableView->setModel(model);
+
     scheuler();
     updateTaskSheet();
 }
