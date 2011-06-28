@@ -27,7 +27,7 @@ public slots:
 
 protected:
     QSqlQuery *qr;
-    int row,column;
+    int grow,gcolumn;
 
 };
 
