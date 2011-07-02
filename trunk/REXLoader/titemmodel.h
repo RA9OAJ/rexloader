@@ -20,15 +20,12 @@ public:
     virtual QModelIndex parent(const QModelIndex &child) const;
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
-signals:
-
 public slots:
     bool updateModel(const QSqlDatabase &db = QSqlDatabase());
 
 protected:
     QSqlQuery *qr;
     int grow,gcolumn;
-
 };
 
 #endif // TITEMMODEL_H

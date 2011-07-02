@@ -14,14 +14,18 @@ bool TItemModel::updateModel(const QSqlDatabase &db)
     qr = 0;
 
     qr = new QSqlQuery("SELECT * FROM tasks;",db);
-    if(!qr->exec())return false;
+    if(!qr->exec())
+    {
+        reset();
+        return false;
+    }
 
     if(!qr->isSelect() || qr->size() < 0)
         while(qr->next())++grow;
     else grow = qr->size();
 
     gcolumn = qr->record().count();
-    qDebug()<<grow<<gcolumn;
+    reset();
     return true;
 }
 
@@ -39,7 +43,6 @@ int TItemModel::columnCount(const QModelIndex &parent) const
 
 QVariant TItemModel::data(const QModelIndex &index, int role) const
 {
-    qDebug()<<"1111"<<index;
     if(index.row() > grow || index.column() > gcolumn)return QVariant();
     qr->seek(index.row());
     if(role == Qt::DisplayRole)
