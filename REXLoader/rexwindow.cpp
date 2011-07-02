@@ -27,12 +27,23 @@ REXWindow::REXWindow(QWidget *parent) :
 
     lockProcess();
     openDataBase();
-    qDebug()<<loadPlugins();
-    qDebug()<<plugfiles;
+
+    if(!loadPlugins())
+    {
+        setEnabled(false);
+        int quit_ok = QMessageBox::critical(this,windowTitle()+" - "+tr("Critical Error"),tr("Could not find any plug-in application will be closed.\r\n Check the files in the plugins directory '.rexloader' and '/usr/{local/}lib/rexloader/plugins'."));
+        if(quit_ok == QMessageBox::Ok)QTimer::singleShot(0,this,SLOT(close()));
+    }
 
     model = new TItemModel(this);
     model->updateModel();
-    ui->tableView->setModel(model);
+    sfmodel = new QSortFilterProxyModel(this);
+    sfmodel->setSourceModel(model);
+    ui->tableView->setModel(sfmodel);
+    ui->tableView->setSortingEnabled(true);
+    ui->tableView->sortByColumn(0,Qt::AscendingOrder);
+    ui->tableView->setAutoScroll(true);
+    ui->tableView->horizontalHeader()->setMovable(true);
 
     scheuler();
     updateTaskSheet();
@@ -63,13 +74,13 @@ void REXWindow::openDataBase()
     if(!db.open())
     {
         setEnabled(false);
-        int quit_ok = QMessageBox::critical(this,tr("Critical Error!"),tr("Can not open a database file. This is a critical error and the application will close. Check your access privileges on read and write in the home directory, or if exists directory '.rexloader' delete him self."));
+        int quit_ok = QMessageBox::critical(this,windowTitle()+" - "+tr("Critical Error"),tr("Can not open a database file.\r\n This is a critical error and the application will close.\r\n Check your access privileges on read and write in the home directory, or if exists directory '.rexloader' delete him self."));
         if(quit_ok == QMessageBox::Ok)QTimer::singleShot(0,this,SLOT(close()));
     }
 
     /*Для отладки*/
     QSqlQuery qr;
-    qDebug()<<qr.exec("INSERT INTO tasks (url,datecreate,filename,currentsize,totalsize,downtime,lasterror,mime,tstatus,categoryid,note) VALUES ('url_','2011-06-23T13:00:00','noname.html','100','1000','120','error','mime','0','1','note');");
+    qr.exec("INSERT INTO tasks (url,datecreate,filename,currentsize,totalsize,downtime,lasterror,mime,tstatus,categoryid,note) VALUES ('url_','2011-06-23T13:00:00','noname.html','100','1000','120','error','mime','0','1','note');");
     /*----------*/
 
     dbconnect = db.connectionName();
@@ -124,71 +135,14 @@ void REXWindow::scheuler()
 
 void REXWindow::updateTaskSheet()
 {
-    QSqlQuery qr("SELECT * FROM tasks");
-   /* while(qr.next())
-    {
-        int cur_row = ui->tableWidget->rowCount();
-        ui->tableWidget->setRowCount(ui->tableWidget->rowCount()+1);
-        QTableWidgetItem *item = new QTableWidgetItem;
-        item->setData(Qt::EditRole,qr.value(0).toInt());
-        ui->tableWidget->setItem(cur_row,0,item);
-
-        item = new QTableWidgetItem;
-        item->setData(Qt::DisplayRole,QDateTime::fromString(qr.value(2).toString(),"yyyy-MM-ddThh:mm:ss"));
-        ui->tableWidget->setItem(cur_row,1,item);
-
-        item = new QTableWidgetItem;
-        item->setData(Qt::DisplayRole,qr.value(1).toString());
-        ui->tableWidget->setItem(cur_row,3,item);
-
-        item = new QTableWidgetItem;
-        item->setData(Qt::DisplayRole,qr.value(3).toString());
-        ui->tableWidget->setItem(cur_row,4,item);
-
-        item = new QTableWidgetItem;
-        item->setData(Qt::DisplayRole,qr.value(9).toInt());
-        ui->tableWidget->setItem(cur_row,5,item);
-
-        item = new QTableWidgetItem;
-        item->setData(Qt::DisplayRole,100*qr.value(4).toInt()/qr.value(5).toInt());
-        item->setText(QString::number(100*qr.value(4).toInt()/qr.value(5).toInt())+"%");
-        ui->tableWidget->setItem(cur_row,6,item);
-
-        item = new QTableWidgetItem;
-        item->setData(Qt::DisplayRole,qr.value(5).toInt());
-        ui->tableWidget->setItem(cur_row,7,item);
-
-        item = new QTableWidgetItem;
-        item->setData(Qt::DisplayRole,qr.value(4).toString());
-        ui->tableWidget->setItem(cur_row,8,item);
-
-        item = new QTableWidgetItem;
-        item->setData(Qt::DisplayRole,qr.value(0).toString());
-        ui->tableWidget->setItem(cur_row,0,item);
-
-        item = new QTableWidgetItem;
-        item->setData(Qt::DisplayRole,qr.value(0).toString());
-        ui->tableWidget->setItem(cur_row,0,item);
-
-        item = new QTableWidgetItem;
-        item->setData(Qt::DisplayRole,qr.value(0).toString());
-        ui->tableWidget->setItem(cur_row,0,item);
-
-        item = new QTableWidgetItem;
-        item->setData(Qt::DisplayRole,qr.value(0).toString());
-        ui->tableWidget->setItem(cur_row,0,item);
-
-        item = new QTableWidgetItem;
-        item->setData(Qt::DisplayRole,qr.value(0).toString());
-        ui->tableWidget->setItem(cur_row,0,item);
-    }*/
+    model->updateModel();
+    ui->tableView->update();
 }
 
 REXWindow::~REXWindow()
 {
     delete ui;
     sched_flag = false;
-
 
     lockProcess(false);
 }

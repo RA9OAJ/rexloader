@@ -10,6 +10,8 @@
 #include <QHash>
 #include <QList>
 #include <QPluginLoader>
+#include <QSortFilterProxyModel>
+#include <QtGui>
 #include "titemmodel.h"
 
 #include "../Httploader/LoaderInterface.h"
@@ -59,6 +61,7 @@ private:
     QHash<int,LoaderInterface*> pluglist; //хэш ссылок на плагины
     QHash<QString,int> plugproto; //хэш дескрипторов плагинов с соответствующими протоколами
     TItemModel *model;
+    QSortFilterProxyModel *sfmodel;
 };
 
 #endif // REXWINDOW_H
