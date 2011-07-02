@@ -44,6 +44,7 @@ REXWindow::REXWindow(QWidget *parent) :
     ui->tableView->sortByColumn(0,Qt::AscendingOrder);
     ui->tableView->setAutoScroll(true);
     ui->tableView->horizontalHeader()->setMovable(true);
+    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     scheuler();
     updateTaskSheet();
@@ -80,7 +81,7 @@ void REXWindow::openDataBase()
 
     /*Для отладки*/
     QSqlQuery qr;
-    qr.exec("INSERT INTO tasks (url,datecreate,filename,currentsize,totalsize,downtime,lasterror,mime,tstatus,categoryid,note) VALUES ('url_','2011-06-23T13:00:00','noname.html','100','1000','120','error','mime','0','1','note');");
+    qr.exec("INSERT INTO tasks (url,datecreate,filename,currentsize,totalsize,downtime,lasterror,mime,tstatus,categoryid,note) VALUES ('url_','2011-06-23T13:00:00','noname.html','100','1000','120','error','mime','3','1','note');");
     /*----------*/
 
     dbconnect = db.connectionName();

@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/appimages">
         <file alias="trayicon.png">images/RExLoader_64x64.png</file>
+        <file alias="start_24x24.png">images/start_24x24.png</file>
+        <file alias="start_32x32.png">images/start_32x32.png</file>
+        <file alias="start_48x48.png">images/start_48x48.png</file>
     </qresource>
 </RCC>

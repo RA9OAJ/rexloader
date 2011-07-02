@@ -3,6 +3,7 @@
 
 #include <QAbstractItemModel>
 #include <QtSql/QtSql>
+#include "../Httploader/LoaderInterface.h"
 
 class TItemModel : public QAbstractItemModel
 {

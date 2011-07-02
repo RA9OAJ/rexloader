@@ -48,6 +48,42 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
     if(role == Qt::DisplayRole)
         return qr->value(index.column());
 
+    if(role == Qt::BackgroundColorRole)
+    {
+        switch(qr->value(9).toInt())
+        {
+        case LInterface::ON_PAUSE: return QColor("#ffec70");
+        case LInterface::ERROR_TASK: return QColor("#ff3030");
+        case -100: return QColor("#ff8787");
+        case LInterface::ACCEPT_QUERY:
+        case LInterface::SEND_QUERY:
+        case LInterface::REDIRECT:
+        case LInterface::STOPPING:
+        case LInterface::ON_LOAD: return QColor("#63b563");
+        case LInterface::FINISHED: return QColor("#63a3b5");
+
+        default: return QVariant();
+        }
+    }
+
+    if(role == Qt::DecorationRole && index.column() == 9)
+    {
+        switch(qr->value(9).toInt())
+        {
+        //case LInterface::ON_PAUSE: return QIcon(":/appimages/start_24x24.png");
+        //case LInterface::ERROR_TASK: return QColor("#ff3030");
+        //case -100: return QColor("#ff8787");
+        case LInterface::ACCEPT_QUERY:
+        case LInterface::SEND_QUERY:
+        case LInterface::REDIRECT:
+        case LInterface::STOPPING:
+        case LInterface::ON_LOAD: return QIcon(":/appimages/start_24x24.png");
+        //case LInterface::FINISHED: return QColor("#63a3b5");
+
+        default: return QVariant();
+        }
+    }
+
     return QVariant();
 }
 

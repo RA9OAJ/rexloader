@@ -72,7 +72,7 @@
      <x>0</x>
      <y>0</y>
      <width>687</width>
-     <height>27</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuURL">
@@ -169,6 +169,10 @@
    </property>
   </action>
   <action name="actionStart">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/appimages/start_48x48.png</normaloff>:/appimages/start_48x48.png</iconset>
+   </property>
    <property name="text">
     <string>Запустить</string>
    </property>
@@ -266,6 +270,8 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
