@@ -45,8 +45,29 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
 {
     if(index.row() > grow || index.column() > gcolumn)return QVariant();
     qr->seek(index.row());
+
     if(role == Qt::DisplayRole)
+    {
+        if(index.column() == 9)
+        {
+            switch(qr->value(9).toInt())
+            {
+            case LInterface::ON_PAUSE: return QString(tr("Suspended"));
+            case LInterface::ERROR_TASK: return QString(tr("Error"));
+            case -100: return QString(tr("Waiting"));
+            case LInterface::ACCEPT_QUERY:
+            case LInterface::SEND_QUERY:
+            case LInterface::REDIRECT:
+            case LInterface::STOPPING:
+            case LInterface::ON_LOAD: return QString::number(qr->value(4).toInt()*100/qr->value(5).toInt())+QString("%");
+            case LInterface::FINISHED: return QString(tr("Completed"));
+
+            default: return QVariant();
+            }
+        }
+
         return qr->value(index.column());
+    }
 
     if(role == Qt::BackgroundColorRole)
     {
@@ -71,8 +92,8 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         switch(qr->value(9).toInt())
         {
         case LInterface::ON_PAUSE: return QIcon(":/appimages/pause_24x24.png");
-        //case LInterface::ERROR_TASK: return QColor("#ff3030");
-        //case -100: return QColor("#ff8787");
+        case LInterface::ERROR_TASK: return QIcon(":/appimages/error_24x24.png");
+        case -100: return QIcon(":/appimages/queue_24x24.png");
         case LInterface::ACCEPT_QUERY:
         case LInterface::SEND_QUERY:
         case LInterface::REDIRECT:

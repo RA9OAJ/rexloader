@@ -10,5 +10,11 @@
         <file alias="pause_48x48.png">images/pause_48x48.png</file>
         <file alias="finish_32x32.png">images/finish_32x32.png</file>
         <file alias="finish_24x24.png">images/finish_24x24.png</file>
+        <file alias="error_24x24.png">images/error_24x24.png</file>
+        <file alias="error_32x32.png">images/error_32x32.png</file>
+        <file alias="error_48x48.png">images/error_48x48.png</file>
+        <file alias="queue_48x48.png">images/queue_48x48.png</file>
+        <file alias="queue_32x32.png">images/queue_32x32.png</file>
+        <file alias="queue_24x24.png">images/queue_24x24.png</file>
     </qresource>
 </RCC>
