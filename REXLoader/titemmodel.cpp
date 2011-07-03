@@ -105,6 +105,25 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         }
     }
 
+
+    if(role == Qt::ToolTipRole)
+    {
+        QString tooltip;
+        QString totalszStr;
+        QString cursz;
+        QString percent = QString::number(qr->value(4).toInt()*100/qr->value(5).toInt());
+        qint64 totalsz = qr->value(5).toInt();
+
+        QStringList _tmp = sizeForHumans(totalsz);
+        totalszStr = _tmp.value(0)+_tmp.value(1);
+        _tmp.clear();
+        _tmp = sizeForHumans(qr->value(4).toInt());
+        cursz = _tmp.value(0)+_tmp.value(1);
+
+        tooltip = QString(tr("URL: %1\r\nFilename: %2\r\nTotal size: %3\r\nLeft: %4 (%5%)\r\n\Down. speed: %6")).arg(qr->value(1).toString(),qr->value(3).toString(),totalszStr,cursz,percent);
+        return tooltip;
+    }
+
     if(role == 100) //для сортировки
         return qr->value(index.column());
 
@@ -133,6 +152,17 @@ QModelIndex TItemModel::index(int row, int column, const QModelIndex &parent) co
 
     qr->seek(row);
     return createIndex(row,column,&qr->record().field(column));
+}
+
+QStringList TItemModel::sizeForHumans(qint64 sz)
+{
+    QStringList outstrings;
+    if(sz >= 1073741824)outstrings << QString::number(sz/1073741824) << tr(" GB");
+    else if(sz >= 1048576)outstrings << QString::number(sz/1048576) << tr(" MB");
+    else if(sz >= 1024)outstrings << QString::number(sz/1024) << tr(" kB");
+    else outstrings << QString::number(sz) << tr(" bytes");
+
+    return outstrings;
 }
 
 TItemModel::~TItemModel()

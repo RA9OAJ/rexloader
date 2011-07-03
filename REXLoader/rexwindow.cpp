@@ -55,6 +55,12 @@ void REXWindow::createInterface()
     ui->tableView->setAutoScroll(true);
     ui->tableView->horizontalHeader()->setMovable(true);
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableView->hideColumn(0);
+    ui->tableView->hideColumn(1);
+    ui->tableView->hideColumn(4);
+    ui->tableView->hideColumn(7);
+    ui->tableView->hideColumn(8);
+    ui->tableView->hideColumn(10);
 
     //настраиваем панель инструментов
     ui->mainToolBar->addAction(ui->actionAdd_URL);
@@ -181,6 +187,17 @@ REXWindow::~REXWindow()
     sched_flag = false;
 
     lockProcess(false);
+}
+
+QStringList REXWindow::sizeForHumans(qint64 sz)
+{
+    QStringList outstrings;
+    if(sz >= 1073741824)outstrings << QString::number(sz/1073741824) << tr(" GB");
+    else if(sz >= 1048576)outstrings << QString::number(sz/1048576) << tr(" MB");
+    else if(sz >= 1024)outstrings << QString::number(sz/1024) << tr(" kB");
+    else outstrings << QString::number(sz) << tr(" bytes");
+
+    return outstrings;
 }
 
 void REXWindow::changeEvent(QEvent *e)
