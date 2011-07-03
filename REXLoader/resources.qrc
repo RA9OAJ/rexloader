@@ -4,5 +4,11 @@
         <file alias="start_24x24.png">images/start_24x24.png</file>
         <file alias="start_32x32.png">images/start_32x32.png</file>
         <file alias="start_48x48.png">images/start_48x48.png</file>
+        <file alias="finish_48x48.png">images/finish_48x48.png</file>
+        <file alias="pause_24x24.png">images/pause_24x24.png</file>
+        <file alias="pause_32x32.png">images/pause_32x32.png</file>
+        <file alias="pause_48x48.png">images/pause_48x48.png</file>
+        <file alias="finish_32x32.png">images/finish_32x32.png</file>
+        <file alias="finish_24x24.png">images/finish_24x24.png</file>
     </qresource>
 </RCC>

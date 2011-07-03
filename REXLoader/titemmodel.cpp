@@ -52,15 +52,15 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
     {
         switch(qr->value(9).toInt())
         {
-        case LInterface::ON_PAUSE: return QColor("#ffec70");
-        case LInterface::ERROR_TASK: return QColor("#ff3030");
-        case -100: return QColor("#ff8787");
+        case LInterface::ON_PAUSE: return QColor("#fff3a4");
+        case LInterface::ERROR_TASK: return QColor("#ff5757");
+        case -100: return QColor("#ffbdbd");
         case LInterface::ACCEPT_QUERY:
         case LInterface::SEND_QUERY:
         case LInterface::REDIRECT:
         case LInterface::STOPPING:
-        case LInterface::ON_LOAD: return QColor("#63b563");
-        case LInterface::FINISHED: return QColor("#63a3b5");
+        case LInterface::ON_LOAD: return QColor("#b4e1b4");
+        case LInterface::FINISHED: return QColor("#abc2c8");
 
         default: return QVariant();
         }
@@ -70,7 +70,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
     {
         switch(qr->value(9).toInt())
         {
-        //case LInterface::ON_PAUSE: return QIcon(":/appimages/start_24x24.png");
+        case LInterface::ON_PAUSE: return QIcon(":/appimages/pause_24x24.png");
         //case LInterface::ERROR_TASK: return QColor("#ff3030");
         //case -100: return QColor("#ff8787");
         case LInterface::ACCEPT_QUERY:
@@ -78,7 +78,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         case LInterface::REDIRECT:
         case LInterface::STOPPING:
         case LInterface::ON_LOAD: return QIcon(":/appimages/start_24x24.png");
-        //case LInterface::FINISHED: return QColor("#63a3b5");
+        case LInterface::FINISHED: return QIcon(":/appimages/finish_24x24.png");
 
         default: return QVariant();
         }

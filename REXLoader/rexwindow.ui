@@ -178,6 +178,10 @@
    </property>
   </action>
   <action name="actionStop">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/appimages/pause_48x48.png</normaloff>:/appimages/pause_48x48.png</iconset>
+   </property>
    <property name="text">
     <string>Приостановить</string>
    </property>
