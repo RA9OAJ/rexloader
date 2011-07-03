@@ -46,6 +46,7 @@ protected slots:
 
 private:
     void lockProcess(bool flag=true); //позволяет создать/удалить файл блокировки процесса
+    void createInterface(); //настраивает элемкнты графического интерфейса
 
     Ui::REXWindow *ui;
     QSystemTrayIcon *trayicon;
@@ -62,6 +63,8 @@ private:
     QHash<QString,int> plugproto; //хэш дескрипторов плагинов с соответствующими протоколами
     TItemModel *model;
     QSortFilterProxyModel *sfmodel;
+
+    QToolButton *spdbtn;
 };
 
 #endif // REXWINDOW_H

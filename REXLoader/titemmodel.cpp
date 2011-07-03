@@ -105,6 +105,9 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         }
     }
 
+    if(role == 100) //для сортировки
+        return qr->value(index.column());
+
     return QVariant();
 }
 
