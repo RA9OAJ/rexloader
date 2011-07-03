@@ -253,21 +253,33 @@
    </property>
   </action>
   <action name="actionWeryLow">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Очень низкая</string>
    </property>
   </action>
   <action name="actionLow">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Низкая</string>
    </property>
   </action>
   <action name="actionNormal">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>Нормальная</string>
+    <string>Средняя</string>
    </property>
   </action>
   <action name="actionHigh">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Высокая</string>
    </property>

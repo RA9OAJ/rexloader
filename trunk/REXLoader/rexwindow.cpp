@@ -35,9 +35,19 @@ REXWindow::REXWindow(QWidget *parent) :
         if(quit_ok == QMessageBox::Ok)QTimer::singleShot(0,this,SLOT(close()));
     }
 
+    createInterface();
+
+    scheuler();
+    updateTaskSheet();
+}
+
+void REXWindow::createInterface()
+{
+    //настраиваем таблицу
     model = new TItemModel(this);
     model->updateModel();
     sfmodel = new QSortFilterProxyModel(this);
+    sfmodel->setSortRole(100);
     sfmodel->setSourceModel(model);
     ui->tableView->setModel(sfmodel);
     ui->tableView->setSortingEnabled(true);
@@ -46,8 +56,33 @@ REXWindow::REXWindow(QWidget *parent) :
     ui->tableView->horizontalHeader()->setMovable(true);
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-    scheuler();
-    updateTaskSheet();
+    //настраиваем панель инструментов
+    ui->mainToolBar->addAction(ui->actionAdd_URL);
+    ui->mainToolBar->addAction(ui->actionDelURL);
+    ui->mainToolBar->addSeparator();
+    ui->mainToolBar->addAction(ui->actionStart);
+    ui->mainToolBar->addAction(ui->actionStop);
+    ui->mainToolBar->addSeparator();
+    ui->mainToolBar->addAction(ui->actionStartAll);
+    ui->mainToolBar->addAction(ui->actionStopAll);
+    ui->mainToolBar->addSeparator();
+
+    //кнопка-меню для выбора скорости
+    spdbtn = new QToolButton(this);
+    QMenu *spdmenu = new QMenu(spdbtn);
+    spdmenu->addAction(ui->actionWeryLow);
+    spdmenu->addAction(ui->actionLow);
+    spdmenu->addAction(ui->actionNormal);
+    spdmenu->addAction(ui->actionHigh);
+    ui->actionHigh->setChecked(true);
+    spdbtn->setMenu(spdmenu);
+    spdbtn->setPopupMode(QToolButton::InstantPopup);
+    if(ui->actionHigh->isChecked())spdbtn->setIcon(ui->actionHigh->icon());
+    else if(ui->actionNormal->isChecked())spdbtn->setIcon(ui->actionNormal->icon());
+    else if(ui->actionLow->isChecked())spdbtn->setIcon(ui->actionLow->icon());
+    else if(ui->actionWeryLow->isChecked())spdbtn->setIcon(ui->actionWeryLow->icon());
+    ui->mainToolBar->addWidget(spdbtn);
+
 }
 
 void REXWindow::showNotice(const QString &title, const QString &text, int type)
