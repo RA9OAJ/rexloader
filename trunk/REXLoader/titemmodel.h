@@ -20,6 +20,7 @@ public:
     virtual QModelIndex index(int row, int column, const QModelIndex &parent) const;
     virtual QModelIndex parent(const QModelIndex &child) const;
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+    static QStringList sizeForHumans(qint64 sz);
 
 public slots:
     bool updateModel(const QSqlDatabase &db = QSqlDatabase());

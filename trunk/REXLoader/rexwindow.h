@@ -29,6 +29,7 @@ public:
     virtual ~REXWindow();
 
     void showNotice(const QString &title, const QString &text, int type = 0);
+    static QStringList sizeForHumans(qint64 sz);
 
 
 public slots:
