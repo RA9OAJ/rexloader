@@ -55,12 +55,12 @@ void REXWindow::createInterface()
     ui->tableView->setAutoScroll(true);
     ui->tableView->horizontalHeader()->setMovable(true);
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->tableView->hideColumn(0);
+    /*ui->tableView->hideColumn(0);
     ui->tableView->hideColumn(1);
     ui->tableView->hideColumn(4);
     ui->tableView->hideColumn(7);
     ui->tableView->hideColumn(8);
-    ui->tableView->hideColumn(10);
+    ui->tableView->hideColumn(10);*/
 
     //настраиваем панель инструментов
     ui->mainToolBar->addAction(ui->actionAdd_URL);
@@ -122,7 +122,7 @@ void REXWindow::openDataBase()
 
     /*Для отладки*/
     QSqlQuery qr;
-    qr.exec("INSERT INTO tasks (url,datecreate,filename,currentsize,totalsize,downtime,lasterror,mime,tstatus,categoryid,note) VALUES ('url_','2011-06-23T13:00:00','noname.html','100','1000','120','error','mime','3','1','note');");
+    qr.exec("INSERT INTO tasks (url,datecreate,filename,currentsize,totalsize,downtime,lasterror,mime,tstatus,categoryid,note) VALUES ('url_','2011-06-23T13:00:00','noname.html','100','1000','120','error','mime','0','1','note');");
     /*----------*/
 
     dbconnect = db.connectionName();
