@@ -46,6 +46,7 @@ void checkDatabase()
                 "mime TEXT,"
                 "tstatus INTEGER DEFAULT 0,"
                 "categoryid TEXT,"
+                "speed_avg TEXT,"
                 "note TEXT);");
 
             if(!flag)

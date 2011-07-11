@@ -38,7 +38,7 @@ int TItemModel::rowCount(const QModelIndex &parent) const
 int TItemModel::columnCount(const QModelIndex &parent) const
 {
     if(!qr)return 0;
-    return gcolumn;
+    return gcolumn+1;
 }
 
 QVariant TItemModel::data(const QModelIndex &index, int role) const
@@ -48,6 +48,22 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
 
     if(role == Qt::DisplayRole)
     {
+        if(index.column() == gcolumn) //добавление виртуальной колонки скорости скачивания
+        {
+            switch(qr->value(9).toInt())
+            {
+            case LInterface::ON_PAUSE:
+            case LInterface::ERROR_TASK:
+            case -100:
+            case LInterface::FINISHED: return QVariant();
+
+            default:
+                QStringList _tmp = speedForHumans(curspeed.value(qr->value(0).toInt()));
+                QString curspd_ = _tmp.value(0)+_tmp.value(1);
+                return curspd_;
+            }
+        }
+
         if(index.column() == 9)
         {
             switch(qr->value(9).toInt())
@@ -120,7 +136,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         _tmp = sizeForHumans(qr->value(4).toInt());
         cursz = _tmp.value(0)+_tmp.value(1);
 
-        tooltip = QString(tr("URL: %1\r\nFilename: %2\r\nTotal size: %3\r\nLeft: %4 (%5%)\r\n\Down. speed: %6")).arg(qr->value(1).toString(),qr->value(3).toString(),totalszStr,cursz,percent);
+        tooltip = QString(tr("URL: %1\r\nFilename: %2\r\nTotal size: %3\r\nLeft: %4 (%5%)\r\nDown. speed: %6")).arg(qr->value(1).toString(),qr->value(3).toString(),totalszStr,cursz,percent);
         return tooltip;
     }
 
@@ -136,6 +152,9 @@ QVariant TItemModel::headerData(int section, Qt::Orientation orientation, int ro
 
     if(!qr || gcolumn == 0)return QVariant();
 
+    if(section == gcolumn && orientation == Qt::Horizontal) //добавление виртуальной колонки скорости скачивания
+        return QString("Down. speed");
+
     if(orientation == Qt::Horizontal)
         return qr->record().field(section).name();
     else return QVariant();
@@ -149,8 +168,14 @@ QModelIndex TItemModel::parent(const QModelIndex &child) const
 QModelIndex TItemModel::index(int row, int column, const QModelIndex &parent) const
 {
     if(row > grow || column > gcolumn || !qr) return QModelIndex();
-
     qr->seek(row);
+
+    if(column == gcolumn)
+    {
+        qint64 _spd = curspeed.value(qr->value(0).toInt());
+        return createIndex(row,column,&_spd); //добавление виртуальной колонки скорости скачивания
+    }
+
     return createIndex(row,column,&qr->record().field(column));
 }
 
@@ -160,7 +185,19 @@ QStringList TItemModel::sizeForHumans(qint64 sz)
     if(sz >= 1073741824)outstrings << QString::number(sz/1073741824) << tr(" GB");
     else if(sz >= 1048576)outstrings << QString::number(sz/1048576) << tr(" MB");
     else if(sz >= 1024)outstrings << QString::number(sz/1024) << tr(" kB");
-    else outstrings << QString::number(sz) << tr(" bytes");
+    else outstrings << QString::number(sz) << tr(" Bytes");
+
+    return outstrings;
+}
+
+QStringList TItemModel::speedForHumans(qint64 sp, bool in_bytes)
+{
+    QStringList outstrings;
+    if(in_bytes)sp = sp/8; // в случае, если скорость в байт/с
+    if(sp >= 1073741824)outstrings << QString::number(sp/1073741824) << (in_bytes ? tr(" GB/s"):tr(" Gbps"));
+    else if(sp >= 1048576)outstrings << QString::number(sp/1048576) << (in_bytes ? tr(" MB/s"):tr(" Mbps"));
+    else if(sp >= 1024)outstrings << QString::number(sp/1024) << (in_bytes ? tr(" kB/s"):tr(" Kbps"));
+    else outstrings << QString::number(sp) << (in_bytes ? tr(" B/s"):tr(" bps"));;
 
     return outstrings;
 }

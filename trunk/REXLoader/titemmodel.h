@@ -21,6 +21,7 @@ public:
     virtual QModelIndex parent(const QModelIndex &child) const;
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     static QStringList sizeForHumans(qint64 sz);
+    static QStringList speedForHumans(qint64 sp, bool in_bytes = false);
 
 public slots:
     bool updateModel(const QSqlDatabase &db = QSqlDatabase());
@@ -28,6 +29,7 @@ public slots:
 protected:
     QSqlQuery *qr;
     int grow,gcolumn;
+    QHash<int,qint64>curspeed;
 };
 
 #endif // TITEMMODEL_H
