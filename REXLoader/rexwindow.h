@@ -34,6 +34,8 @@ public:
 
 public slots:
     void updateTaskSheet(); //обновляет содержимое таблицы списка заданий
+    void startTrayIconAnimaion();
+    void stopTrayIconAnimation();
 
 protected:
     void changeEvent(QEvent *e);
@@ -44,6 +46,7 @@ protected:
 
 protected slots:
     void scheuler(); //внутренний планировщик с интервалом в 1 секунду
+    void updateTrayIcon();
 
 private:
     void lockProcess(bool flag=true); //позволяет создать/удалить файл блокировки процесса

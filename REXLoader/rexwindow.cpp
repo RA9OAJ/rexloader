@@ -181,6 +181,21 @@ void REXWindow::updateTaskSheet()
     ui->tableView->update();
 }
 
+void REXWindow::startTrayIconAnimaion()
+{
+
+}
+
+void REXWindow::stopTrayIconAnimation()
+{
+
+}
+
+void REXWindow::updateTrayIcon()
+{
+
+}
+
 REXWindow::~REXWindow()
 {
     delete ui;
