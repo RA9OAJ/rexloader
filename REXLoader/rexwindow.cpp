@@ -73,6 +73,9 @@ void REXWindow::createInterface()
     ui->mainToolBar->addAction(ui->actionStopAll);
     ui->mainToolBar->addSeparator();
 
+    //соединяем сигналы и слоты
+    connect(ui->actionAdd_URL,SIGNAL(triggered()),this,SLOT(showAddTaskDialog()));
+
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);
     QMenu *spdmenu = new QMenu(spdbtn);
@@ -196,23 +199,18 @@ void REXWindow::updateTrayIcon()
 
 }
 
+void REXWindow::showAddTaskDialog()
+{
+    AddTaskDialog *dlg = new AddTaskDialog(this);
+    dlg->show();
+}
+
 REXWindow::~REXWindow()
 {
     delete ui;
     sched_flag = false;
 
     lockProcess(false);
-}
-
-QStringList REXWindow::sizeForHumans(qint64 sz)
-{
-    QStringList outstrings;
-    if(sz >= 1073741824)outstrings << QString::number(sz/1073741824) << tr(" GB");
-    else if(sz >= 1048576)outstrings << QString::number(sz/1048576) << tr(" MB");
-    else if(sz >= 1024)outstrings << QString::number(sz/1024) << tr(" kB");
-    else outstrings << QString::number(sz) << tr(" bytes");
-
-    return outstrings;
 }
 
 void REXWindow::changeEvent(QEvent *e)
