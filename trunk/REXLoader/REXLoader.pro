@@ -13,12 +13,15 @@ DESTDIR = ./bin
 
 SOURCES += main.cpp\
         rexwindow.cpp \
-    titemmodel.cpp
+    titemmodel.cpp \
+    addtaskdialog.cpp
 
 HEADERS  += rexwindow.h \
-    titemmodel.h
+    titemmodel.h \
+    addtaskdialog.h
 
-FORMS    += rexwindow.ui
+FORMS    += rexwindow.ui \
+    addtaskdialog.ui
 
 RESOURCES += \
     resources.qrc
