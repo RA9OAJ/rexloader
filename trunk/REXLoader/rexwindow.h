@@ -13,6 +13,7 @@
 #include <QSortFilterProxyModel>
 #include <QtGui>
 #include "titemmodel.h"
+#include "addtaskdialog.h"
 
 #include "../Httploader/LoaderInterface.h"
 
@@ -29,8 +30,6 @@ public:
     virtual ~REXWindow();
 
     void showNotice(const QString &title, const QString &text, int type = 0);
-    static QStringList sizeForHumans(qint64 sz);
-
 
 public slots:
     void updateTaskSheet(); //обновляет содержимое таблицы списка заданий
@@ -47,6 +46,7 @@ protected:
 protected slots:
     void scheuler(); //внутренний планировщик с интервалом в 1 секунду
     void updateTrayIcon();
+    void showAddTaskDialog();
 
 private:
     void lockProcess(bool flag=true); //позволяет создать/удалить файл блокировки процесса
