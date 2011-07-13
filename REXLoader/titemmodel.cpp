@@ -127,6 +127,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         QString tooltip;
         QString totalszStr;
         QString cursz;
+        QString spd;
         QString percent = QString::number(qr->value(4).toInt()*100/qr->value(5).toInt());
         qint64 totalsz = qr->value(5).toInt();
 
@@ -135,8 +136,15 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         _tmp.clear();
         _tmp = sizeForHumans(qr->value(4).toInt());
         cursz = _tmp.value(0)+_tmp.value(1);
+        _tmp.clear();
+        if(qr->value(9).toInt() == LInterface::ON_LOAD)
+        {
+            _tmp = speedForHumans(curspeed.value(qr->value(0).toInt()));
+            spd = _tmp.value(0)+_tmp.value(1);
+        }
+        else spd = "---";
 
-        tooltip = QString(tr("URL: %1\r\nFilename: %2\r\nTotal size: %3\r\nLeft: %4 (%5%)\r\nDown. speed: %6")).arg(qr->value(1).toString(),qr->value(3).toString(),totalszStr,cursz,percent);
+        tooltip = QString(tr("URL: %1\r\nFilename: %2\r\nTotal size: %3\r\nLeft: %4 (%5%)\r\nDown. speed: %6")).arg(qr->value(1).toString(),qr->value(3).toString(),totalszStr,cursz,percent,spd);
         return tooltip;
     }
 
