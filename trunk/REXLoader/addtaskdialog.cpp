@@ -1,32 +1,43 @@
 #include "addtaskdialog.h"
 #include "ui_addtaskdialog.h"
 
-AddTaskDialog::AddTaskDialog(QWidget *parent) :
+AddTaskDialog::AddTaskDialog(const QString &dir, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AddTaskDialog)
 {
     ui->setupUi(this);
 
     mydb = &QSqlDatabase::database();
-    loadDatabaseData();
-    setAttribute(Qt::WA_AlwaysShowToolTips);
-    scanClipboard();
+
+    ui->locationEdit->setText(dir);
+    downDir = dir;
+
+    construct();
 }
 
-AddTaskDialog::AddTaskDialog(QSqlDatabase &db_, QWidget *parent) :
+AddTaskDialog::AddTaskDialog(const QString &dir, QSqlDatabase &db_, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AddTaskDialog)
 {
     ui->setupUi(this);
 
     mydb = &db_;
-    loadDatabaseData();
-    scanClipboard();
+
+    ui->locationEdit->setText(dir);
+    downDir = dir;
+
+    construct();
 }
 
-void AddTaskDialog::setDefaultDir(const QString &dir)
+void AddTaskDialog::construct()
 {
-    ui->locationEdit->setText(dir);
+    setWindowTitle("REXLoader - "+tr("New task"));
+
+    loadDatabaseData();
+    connect(ui->categoryBox,SIGNAL(currentIndexChanged(int)),this,SLOT(updateLocation(int)));
+
+    setAttribute(Qt::WA_AlwaysShowToolTips);
+    scanClipboard();
 }
 
 AddTaskDialog::~AddTaskDialog()
@@ -44,22 +55,30 @@ void AddTaskDialog::loadDatabaseData()
     ui->urlBox->setCurrentIndex(-1);
 
     qr.clear();
-    qr.exec("SELECT * FROM categories ORDER BY parent ASC");
+    qr.exec("SELECT * FROM categories");
     int otherId = 0;
+    qDebug()<<downDir;
     while(qr.next())
     {
         QString cattitle;
         if(qr.value(1).toString() == "#downloads")continue;
-        else if(qr.value(1).toString() == "#archives")cattitle = tr("Archives");
-        else if(qr.value(1).toString() == "#apps")cattitle = tr("Applications");
-        else if(qr.value(1).toString() == "#audio")cattitle = tr("Audio files");
-        else if(qr.value(1).toString() == "#video")cattitle = tr("Video files");
-        else if(qr.value(1).toString() == "#other"){cattitle = tr("Other"); otherId = qr.value(0).toInt();}
-
+        else if(qr.value(1).toString() == "#archives"){cattitle = tr("Archives"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
+        else if(qr.value(1).toString() == "#apps"){cattitle = tr("Applications"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
+        else if(qr.value(1).toString() == "#audio"){cattitle = tr("Audio"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
+        else if(qr.value(1).toString() == "#video"){cattitle = tr("Video"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
+        else if(qr.value(1).toString() == "#other"){cattitle = tr("All Downloads"); otherId = qr.value(0).toInt();dirs.insert(qr.value(0).toInt(),downDir);}
+        else {cattitle = qr.value(1).toString(); dirs.insert(qr.value(0).toInt(),qr.value(2).toString());}
+        qDebug()<<qr.value(1).toString();
         ui->categoryBox->addItem(cattitle, qr.value(0).toInt());
     }
     ui->categoryBox->setCurrentIndex(ui->categoryBox->findData(QVariant(otherId)));
 
+}
+
+void AddTaskDialog::updateLocation(int index)
+{
+    int catId = ui->categoryBox->itemData(index).toInt();
+    ui->locationEdit->setText(dirs.value(catId));
 }
 
 void AddTaskDialog::scanClipboard()

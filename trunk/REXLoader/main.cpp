@@ -71,7 +71,7 @@ void checkDatabase()
             flag = qr->exec("CREATE TABLE categories ("
                             "id INTEGER PRIMARY KEY,"
                             "title TEXT,"
-                            "parent INTEGER DEFAULT 0);");
+                            "dir TEXT);");
 
             if(!flag)
             {
@@ -80,12 +80,12 @@ void checkDatabase()
             }
 
             qr->clear();
-            QString queries("INSERT INTO categories (title,parent) VALUES ('#downloads',0);\r\n"
-                            "INSERT INTO categories (title,parent) VALUES ('#archives', (SELECT id FROM categories WHERE title='#downloads'));\r\n"
-                            "INSERT INTO categories (title,parent) VALUES ('#apps',(SELECT id FROM categories WHERE title='#downloads'));\r\n"
-                            "INSERT INTO categories (title,parent) VALUES ('#audio',(SELECT id FROM categories WHERE title='#downloads'))\r\n;"
-                            "INSERT INTO categories (title,parent) VALUES ('#video',(SELECT id FROM categories WHERE title='#downloads'));\r\n"
-                            "INSERT INTO categories (title,parent) VALUES ('#other',(SELECT id FROM categories WHERE title='#downloads'));");
+            QString queries("INSERT INTO categories (title,dir) VALUES ('#downloads','');\r\n"
+                            "INSERT INTO categories (title,dir) VALUES ('#archives','');\r\n"
+                            "INSERT INTO categories (title,dir) VALUES ('#apps','');\r\n"
+                            "INSERT INTO categories (title,dir) VALUES ('#audio','')\r\n;"
+                            "INSERT INTO categories (title,dir) VALUES ('#video','');\r\n"
+                            "INSERT INTO categories (title,dir) VALUES ('#other','');");
             QStringList querstr = queries.split("\r\n");
             for(int i=0; i<querstr.size(); i++)
             {
