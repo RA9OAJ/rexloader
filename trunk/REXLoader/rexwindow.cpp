@@ -206,6 +206,7 @@ void REXWindow::updateTrayIcon()
 void REXWindow::showAddTaskDialog()
 {
     AddTaskDialog *dlg = new AddTaskDialog(downDir, this);
+    dlg->setValidProtocols(plugproto);
     dlg->show();
 }
 

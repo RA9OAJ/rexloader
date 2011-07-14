@@ -35,9 +35,40 @@ void AddTaskDialog::construct()
 
     loadDatabaseData();
     connect(ui->categoryBox,SIGNAL(currentIndexChanged(int)),this,SLOT(updateLocation(int)));
+    connect(ui->urlBox,SIGNAL(editTextChanged(QString)),this,SLOT(urlValidator()));
 
     setAttribute(Qt::WA_AlwaysShowToolTips);
+    ui->errorFrame->setHidden(true);
+
     scanClipboard();
+}
+
+void AddTaskDialog::setValidProtocols(const QHash<QString, int> &schemes)
+{
+    protocols = schemes.keys();
+}
+
+void AddTaskDialog::urlValidator()
+{
+    if(protocols.isEmpty())return;
+
+    QUrl url(ui->urlBox->currentText());
+    QString errorStr;
+
+    if(!url.isValid())errorStr = tr("URL is not correct. Enter another URL or adjust it.");
+    else if(!protocols.contains(url.scheme().toLower()))errorStr = tr("This protocol is not supported. Check whether there is a protocol\r\nfor working with this protocol and whether it is activated.");
+
+    if(errorStr.isEmpty())
+    {
+        ui->errorFrame->setHidden(true);
+        ui->buttonBox->button(QDialogButtonBox::Ok)->setDisabled(false);
+    }
+    else
+    {
+        ui->errorLabel->setText(errorStr);
+        ui->errorFrame->setHidden(false);
+        ui->buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
+    }
 }
 
 AddTaskDialog::~AddTaskDialog()
