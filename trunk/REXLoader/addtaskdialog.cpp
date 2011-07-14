@@ -45,6 +45,8 @@ void AddTaskDialog::scanClipboard()
 {
     const QClipboard *clipbrd = QApplication::clipboard();
 
+    QUrl url(clipbrd->text());
+    if(url.isValid() && url.scheme() != "")
         ui->urlBox->setEditText(clipbrd->text());
 }
 
