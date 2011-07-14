@@ -15,10 +15,8 @@ class AddTaskDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit AddTaskDialog(QWidget *parent = 0);
-    explicit AddTaskDialog(QSqlDatabase &db_, QWidget *parent = 0);
-
-    void setDefaultDir(const QString &dir);
+    explicit AddTaskDialog(const QString &dir, QWidget *parent = 0);
+    explicit AddTaskDialog(const QString &dir, QSqlDatabase &db_, QWidget *parent = 0);
 
     ~AddTaskDialog();
 
@@ -27,13 +25,19 @@ signals:
 
 protected:
     void changeEvent(QEvent *e);
+    void construct();
     void loadDatabaseData();
     void scanClipboard();
+
+protected slots:
+    void updateLocation(int index);
 
 private:
     Ui::AddTaskDialog *ui;
 
     QSqlDatabase *mydb;
+    QString downDir;
+    QMap<int, QString> dirs;
 };
 
 #endif // ADDTASKDIALOG_H

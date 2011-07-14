@@ -72,6 +72,46 @@
     </layout>
    </item>
    <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="styleSheet">
+        <string notr="true">font: bold 12px;</string>
+       </property>
+       <property name="text">
+        <string>Category</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="categoryBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="editable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>128</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QLabel" name="label_2">
@@ -117,43 +157,6 @@
         <string/>
        </property>
       </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Category</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="categoryBox">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="editable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>128</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
      </item>
     </layout>
    </item>
@@ -230,23 +233,9 @@
     </layout>
    </item>
   </layout>
-  <zorder>urlBox</zorder>
-  <zorder>label</zorder>
-  <zorder>label_2</zorder>
-  <zorder>locationEdit</zorder>
-  <zorder>browseButton</zorder>
-  <zorder>label_3</zorder>
-  <zorder>categoryBox</zorder>
-  <zorder>horizontalSpacer</zorder>
-  <zorder>line</zorder>
-  <zorder>label_4</zorder>
-  <zorder>textEdit</zorder>
-  <zorder>verticalSpacer</zorder>
-  <zorder>buttonBox</zorder>
-  <zorder>horizontalSpacer_2</zorder>
   <zorder></zorder>
-  <zorder>buttonBox</zorder>
-  <zorder>buttonBox</zorder>
+  <zorder></zorder>
+  <zorder>line</zorder>
  </widget>
  <tabstops>
   <tabstop>urlBox</tabstop>

@@ -205,8 +205,7 @@ void REXWindow::updateTrayIcon()
 
 void REXWindow::showAddTaskDialog()
 {
-    AddTaskDialog *dlg = new AddTaskDialog(this);
-    dlg->setDefaultDir(downDir);
+    AddTaskDialog *dlg = new AddTaskDialog(downDir, this);
     dlg->show();
 }
 
