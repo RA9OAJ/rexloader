@@ -14,6 +14,10 @@ REXWindow::REXWindow(QWidget *parent) :
     libdir.cdUp();
     pluginDirs << libdir.absolutePath()+"/lib/rexloader/plugins" << QDir::homePath()+"/.rexloader/plugins";
 
+    downDir = QDir::homePath()+"/Downloads";
+    if(!QDir().exists(downDir))
+        QDir().mkpath(downDir);
+
     sz << 800 << 150;
     sz1 << 150 << 800;
     ui->splitter->setSizes(sz);
@@ -202,6 +206,7 @@ void REXWindow::updateTrayIcon()
 void REXWindow::showAddTaskDialog()
 {
     AddTaskDialog *dlg = new AddTaskDialog(this);
+    dlg->setDefaultDir(downDir);
     dlg->show();
 }
 

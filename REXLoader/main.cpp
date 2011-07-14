@@ -63,7 +63,39 @@ void checkDatabase()
 
             if(!flag)
             {
-                qDebug()<<"1. "<<qr->lastError().text()<<qr->lastQuery();
+                qDebug()<<"2. "<<qr->lastError().text()<<qr->lastQuery();
+                //записываем ошибку в error.log
+            }
+
+            qr->clear();
+            flag = qr->exec("CREATE TABLE categories ("
+                            "id INTEGER PRIMARY KEY,"
+                            "title TEXT,"
+                            "parent INTEGER DEFAULT 0);");
+
+            if(!flag)
+            {
+                qDebug()<<"3. "<<qr->lastError().text()<<qr->lastQuery();
+                //записываем ошибку в error.log
+            }
+
+            qr->clear();
+            QString queries("INSERT INTO categories (title,parent) VALUES ('#downloads',0);\r\n"
+                            "INSERT INTO categories (title,parent) VALUES ('#archives', (SELECT id FROM categories WHERE title='#downloads'));\r\n"
+                            "INSERT INTO categories (title,parent) VALUES ('#apps',(SELECT id FROM categories WHERE title='#downloads'));\r\n"
+                            "INSERT INTO categories (title,parent) VALUES ('#audio',(SELECT id FROM categories WHERE title='#downloads'))\r\n;"
+                            "INSERT INTO categories (title,parent) VALUES ('#video',(SELECT id FROM categories WHERE title='#downloads'));\r\n"
+                            "INSERT INTO categories (title,parent) VALUES ('#other',(SELECT id FROM categories WHERE title='#downloads'));");
+            QStringList querstr = queries.split("\r\n");
+            for(int i=0; i<querstr.size(); i++)
+            {
+                flag = qr->exec(querstr.value(i));
+                if(!flag)break;
+            }
+
+            if(!flag)
+            {
+                qDebug()<<"4. "<<qr->lastError().text()<<qr->lastQuery()<<querstr;
                 //записываем ошибку в error.log
             }
 
