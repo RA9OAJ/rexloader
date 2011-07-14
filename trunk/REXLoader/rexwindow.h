@@ -53,22 +53,23 @@ private:
     void createInterface(); //настраивает элемкнты графического интерфейса
 
     Ui::REXWindow *ui;
-    QSystemTrayIcon *trayicon;
+    QSystemTrayIcon *trayicon; //объект системного лотка
 
     QStringList pluginDirs; //список с директориями, в которых могут быть плагины
     QHash<int,QStringList> *mesqueue; //очередь сообщений
     QList<int> *tasklist; //список дескрипторов активных заданий
     QString apphomedir; //путь к рабочему каталогу приложения, где хранятся все его файлы конфигураций
-    QString dbconnect;
+    QString dbconnect; //имя подклюения к БД
     bool sched_flag; //признак разрешения работы планировщика
 
     QHash<int,QString> plugfiles; //хэш путей к файлам плагинов
     QHash<int,LoaderInterface*> pluglist; //хэш ссылок на плагины
     QHash<QString,int> plugproto; //хэш дескрипторов плагинов с соответствующими протоколами
-    TItemModel *model;
-    QSortFilterProxyModel *sfmodel;
+    TItemModel *model; //модель для работы с данными БД задач
+    QSortFilterProxyModel *sfmodel; //прокси-модель для сортировки
 
-    QToolButton *spdbtn;
+    QToolButton *spdbtn; //кнопка выбора скорости загрузки
+    QString downDir; //директория для загрузки файлов по умолчанию
 };
 
 #endif // REXWINDOW_H

@@ -17,6 +17,9 @@ class AddTaskDialog : public QDialog
 public:
     explicit AddTaskDialog(QWidget *parent = 0);
     explicit AddTaskDialog(QSqlDatabase &db_, QWidget *parent = 0);
+
+    void setDefaultDir(const QString &dir);
+
     ~AddTaskDialog();
 
 signals:
