@@ -3,6 +3,8 @@
 
 #include <QDialog>
 #include <QtSql/QtSql>
+#include <QClipboard>
+#include <QMimeData>
 
 namespace Ui {
     class AddTaskDialog;
@@ -23,6 +25,7 @@ signals:
 protected:
     void changeEvent(QEvent *e);
     void loadDatabaseData();
+    void scanClipboard();
 
 private:
     Ui::AddTaskDialog *ui;
