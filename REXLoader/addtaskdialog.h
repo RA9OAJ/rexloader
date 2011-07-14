@@ -17,6 +17,7 @@ class AddTaskDialog : public QDialog
 public:
     explicit AddTaskDialog(const QString &dir, QWidget *parent = 0);
     explicit AddTaskDialog(const QString &dir, QSqlDatabase &db_, QWidget *parent = 0);
+    void setValidProtocols(const QHash<QString,int> &schemes);
 
     ~AddTaskDialog();
 
@@ -31,6 +32,7 @@ protected:
 
 protected slots:
     void updateLocation(int index);
+    void urlValidator();
 
 private:
     Ui::AddTaskDialog *ui;
@@ -38,6 +40,7 @@ private:
     QSqlDatabase *mydb;
     QString downDir;
     QMap<int, QString> dirs;
+    QList<QString> protocols;
 };
 
 #endif // ADDTASKDIALOG_H
