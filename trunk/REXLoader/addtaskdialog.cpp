@@ -9,6 +9,8 @@ AddTaskDialog::AddTaskDialog(QWidget *parent) :
 
     mydb = &QSqlDatabase::database();
     loadDatabaseData();
+    setAttribute(Qt::WA_AlwaysShowToolTips);
+    scanClipboard();
 }
 
 AddTaskDialog::AddTaskDialog(QSqlDatabase &db_, QWidget *parent) :
@@ -19,6 +21,7 @@ AddTaskDialog::AddTaskDialog(QSqlDatabase &db_, QWidget *parent) :
 
     mydb = &db_;
     loadDatabaseData();
+    scanClipboard();
 }
 
 AddTaskDialog::~AddTaskDialog()
@@ -31,11 +34,18 @@ void AddTaskDialog::loadDatabaseData()
     QSqlQuery qr(*mydb);
     qr.prepare("SELECT id,url FROM tasks ORDER BY id ASC LIMIT 5");
     qr.exec();
-    qDebug()<<qr.lastError().text();
+
     while(qr.next())
         ui->urlBox->addItem(qr.value(1).toString());
 
     ui->urlBox->setCurrentIndex(-1);
+}
+
+void AddTaskDialog::scanClipboard()
+{
+    const QClipboard *clipbrd = QApplication::clipboard();
+
+        ui->urlBox->setEditText(clipbrd->text());
 }
 
 void AddTaskDialog::changeEvent(QEvent *e)
