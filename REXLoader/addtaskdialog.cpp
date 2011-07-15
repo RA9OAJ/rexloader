@@ -56,7 +56,7 @@ void AddTaskDialog::urlValidator()
     QString errorStr;
 
     if(!url.isValid())errorStr = tr("URL is not correct. Enter another URL or adjust it.");
-    else if(!protocols.contains(url.scheme().toLower()))errorStr = tr("This protocol is not supported. Check whether there is a protocol\r\nfor working with this protocol and whether it is activated.");
+    else if(!protocols.contains(url.scheme().toLower()))errorStr = tr("This protocol is not supported. Check whether there is a plugin to work with the protocol and whether it is enabled.");
 
     if(errorStr.isEmpty())
     {
