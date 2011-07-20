@@ -31,6 +31,7 @@ AddTaskDialog::AddTaskDialog(const QString &dir, QSqlDatabase &db_, QWidget *par
 
 void AddTaskDialog::construct()
 {
+    setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle("REXLoader - "+tr("New task"));
 
     loadDatabaseData();
