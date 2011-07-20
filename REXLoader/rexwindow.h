@@ -42,6 +42,7 @@ public slots:
 protected:
     void closeEvent(QCloseEvent *event);
     void changeEvent(QEvent *e);
+    bool event(QEvent *event);
     void openDataBase(); //создает/открывает существующую базу данных закачек
     void saveSettings(); //сохраняет свойства приложения
     void loadSettings(); //загружает свйоства приложения

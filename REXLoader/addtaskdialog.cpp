@@ -3,13 +3,13 @@
 
 AddTaskDialog::AddTaskDialog(const QString &dir, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::AddTaskDialog)
+    gui(new Ui::AddTaskDialog)
 {
-    ui->setupUi(this);
+    gui->setupUi(this);
 
     mydb = &QSqlDatabase::database();
 
-    ui->locationEdit->setText(dir);
+    gui->locationEdit->setText(dir);
     downDir = dir;
 
     construct();
@@ -17,13 +17,13 @@ AddTaskDialog::AddTaskDialog(const QString &dir, QWidget *parent) :
 
 AddTaskDialog::AddTaskDialog(const QString &dir, QSqlDatabase &db_, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::AddTaskDialog)
+    gui(new Ui::AddTaskDialog)
 {
-    ui->setupUi(this);
+    gui->setupUi(this);
 
     mydb = &db_;
 
-    ui->locationEdit->setText(dir);
+    gui->locationEdit->setText(dir);
     downDir = dir;
 
     construct();
@@ -34,19 +34,19 @@ void AddTaskDialog::construct()
     setWindowTitle("REXLoader - "+tr("New task"));
 
     loadDatabaseData();
-    connect(ui->categoryBox,SIGNAL(currentIndexChanged(int)),this,SLOT(updateLocation(int)));
-    connect(ui->urlBox,SIGNAL(editTextChanged(QString)),this,SLOT(urlValidator()));
-    connect(ui->browseButton,SIGNAL(released()),this,SLOT(openDirDialog()));
+    connect(gui->categoryBox,SIGNAL(currentIndexChanged(int)),this,SLOT(updateLocation(int)));
+    connect(gui->urlBox,SIGNAL(editTextChanged(QString)),this,SLOT(urlValidator()));
+    connect(gui->browseButton,SIGNAL(released()),this,SLOT(openDirDialog()));
 
     setAttribute(Qt::WA_AlwaysShowToolTips);
-    ui->errorFrame->setHidden(true);
+    gui->errorFrame->setHidden(true);
 
     scanClipboard();
 }
 
 void AddTaskDialog::setNewUrl(const QString &url)
 {
-    ui->urlBox->setEditText(url);
+    gui->urlBox->setEditText(url);
     urlValidator();
 }
 
@@ -63,18 +63,18 @@ void AddTaskDialog::openDirDialog()
     if(!QDir().exists(downDir))
         QDir().mkpath(downDir);
 
-    if(QDir().exists(ui->locationEdit->text()))dir = ui->locationEdit->text();
+    if(QDir().exists(gui->locationEdit->text()))dir = gui->locationEdit->text();
 
     dir = QFileDialog::getExistingDirectory(this,tr("Folder select"),dir);
 
-    if(!dir.isEmpty())ui->locationEdit->setText(dir);
+    if(!dir.isEmpty())gui->locationEdit->setText(dir);
 }
 
 void AddTaskDialog::urlValidator()
 {
     if(protocols.isEmpty())return;
 
-    QUrl url(ui->urlBox->currentText());
+    QUrl url(gui->urlBox->currentText());
     QString errorStr;
 
     if(!url.isValid())errorStr = tr("URL is not correct. Enter another URL or adjust it.");
@@ -82,20 +82,20 @@ void AddTaskDialog::urlValidator()
 
     if(errorStr.isEmpty())
     {
-        ui->errorFrame->setHidden(true);
-        ui->buttonBox->button(QDialogButtonBox::Ok)->setDisabled(false);
+        gui->errorFrame->setHidden(true);
+        gui->buttonBox->button(QDialogButtonBox::Ok)->setDisabled(false);
     }
     else
     {
-        ui->errorLabel->setText(errorStr);
-        ui->errorFrame->setHidden(false);
-        ui->buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
+        gui->errorLabel->setText(errorStr);
+        gui->errorFrame->setHidden(false);
+        gui->buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
     }
 }
 
 AddTaskDialog::~AddTaskDialog()
 {
-    delete ui;
+    delete gui;
 }
 
 void AddTaskDialog::loadDatabaseData()
@@ -104,8 +104,8 @@ void AddTaskDialog::loadDatabaseData()
     qr.exec("SELECT id,url FROM tasks ORDER BY id ASC LIMIT 5");
 
     while(qr.next())
-        ui->urlBox->addItem(qr.value(1).toString());
-    ui->urlBox->setCurrentIndex(-1);
+        gui->urlBox->addItem(qr.value(1).toString());
+    gui->urlBox->setCurrentIndex(-1);
 
     qr.clear();
     qr.exec("SELECT * FROM categories");
@@ -122,17 +122,17 @@ void AddTaskDialog::loadDatabaseData()
         else if(qr.value(1).toString() == "#other"){cattitle = tr("All Downloads"); otherId = qr.value(0).toInt();dirs.insert(qr.value(0).toInt(),downDir);}
         else {cattitle = qr.value(1).toString(); dirs.insert(qr.value(0).toInt(),qr.value(2).toString());}
 
-        ui->categoryBox->addItem(cattitle, qr.value(0).toInt());
+        gui->categoryBox->addItem(cattitle, qr.value(0).toInt());
     }
-    ui->categoryBox->setCurrentIndex(ui->categoryBox->findData(QVariant(otherId)));
+    gui->categoryBox->setCurrentIndex(gui->categoryBox->findData(QVariant(otherId)));
 
 }
 
 void AddTaskDialog::updateLocation(int index)
 {
-    int catId = ui->categoryBox->itemData(index).toInt();
+    int catId = gui->categoryBox->itemData(index).toInt();
     if(!dirs.contains(catId))dirs.insert(catId,downDir);
-    ui->locationEdit->setText(dirs.value(catId));
+    gui->locationEdit->setText(dirs.value(catId));
 }
 
 void AddTaskDialog::scanClipboard()
@@ -142,7 +142,7 @@ void AddTaskDialog::scanClipboard()
     QUrl url(clipbrd->text());
 
     if(url.isValid() && protocols.contains(url.scheme().toLower()))
-        ui->urlBox->setEditText(clipbrd->text());
+        gui->urlBox->setEditText(clipbrd->text());
 }
 
 void AddTaskDialog::changeEvent(QEvent *e)
@@ -150,7 +150,7 @@ void AddTaskDialog::changeEvent(QEvent *e)
     QDialog::changeEvent(e);
     switch (e->type()) {
     case QEvent::LanguageChange:
-        ui->retranslateUi(this);
+        gui->retranslateUi(this);
         break;
     default:
         break;

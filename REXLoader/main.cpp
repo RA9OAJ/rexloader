@@ -192,6 +192,7 @@ int main(int argc, char *argv[])
     checkDatabase();
 
     QApplication a(argc, argv);
+    QApplication::setQuitOnLastWindowClosed(false);
     addURL(a.arguments());
     if(firstProcess())
     {

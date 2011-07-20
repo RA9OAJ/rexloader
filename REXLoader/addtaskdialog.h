@@ -38,7 +38,7 @@ protected slots:
     void openDirDialog();
 
 private:
-    Ui::AddTaskDialog *ui;
+    Ui::AddTaskDialog *gui;
 
     QSqlDatabase *mydb;
     QString downDir;
