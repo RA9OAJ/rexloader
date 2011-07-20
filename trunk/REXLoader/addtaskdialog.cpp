@@ -36,6 +36,7 @@ void AddTaskDialog::construct()
     loadDatabaseData();
     connect(ui->categoryBox,SIGNAL(currentIndexChanged(int)),this,SLOT(updateLocation(int)));
     connect(ui->urlBox,SIGNAL(editTextChanged(QString)),this,SLOT(urlValidator()));
+    connect(ui->browseButton,SIGNAL(released()),this,SLOT(openDirDialog()));
 
     setAttribute(Qt::WA_AlwaysShowToolTips);
     ui->errorFrame->setHidden(true);
@@ -43,10 +44,30 @@ void AddTaskDialog::construct()
     scanClipboard();
 }
 
+void AddTaskDialog::setNewUrl(const QString &url)
+{
+    ui->urlBox->setEditText(url);
+    urlValidator();
+}
+
 void AddTaskDialog::setValidProtocols(const QHash<QString, int> &schemes)
 {
     protocols = schemes.keys();
     scanClipboard();
+}
+
+void AddTaskDialog::openDirDialog()
+{
+    QString dir = downDir;
+
+    if(!QDir().exists(downDir))
+        QDir().mkpath(downDir);
+
+    if(QDir().exists(ui->locationEdit->text()))dir = ui->locationEdit->text();
+
+    dir = QFileDialog::getExistingDirectory(this,tr("Folder select"),dir);
+
+    if(!dir.isEmpty())ui->locationEdit->setText(dir);
 }
 
 void AddTaskDialog::urlValidator()

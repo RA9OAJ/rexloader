@@ -5,6 +5,7 @@
 #include <QtSql/QtSql>
 #include <QClipboard>
 #include <QMimeData>
+#include <QFileDialog>
 
 namespace Ui {
     class AddTaskDialog;
@@ -18,6 +19,7 @@ public:
     explicit AddTaskDialog(const QString &dir, QWidget *parent = 0);
     explicit AddTaskDialog(const QString &dir, QSqlDatabase &db_, QWidget *parent = 0);
     void setValidProtocols(const QHash<QString,int> &schemes);
+    void setNewUrl(const QString &url);
 
     ~AddTaskDialog();
 
@@ -33,6 +35,7 @@ protected:
 protected slots:
     void updateLocation(int index);
     void urlValidator();
+    void openDirDialog();
 
 private:
     Ui::AddTaskDialog *ui;
