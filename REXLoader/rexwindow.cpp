@@ -8,6 +8,7 @@ REXWindow::REXWindow(QWidget *parent) :
     ui->setupUi(this);
 
     sched_flag = true;
+    clip_autoscan = true;
     QList<int> sz;
     QList<int> sz1;
     QDir libdir(QApplication::applicationDirPath());
@@ -41,8 +42,9 @@ REXWindow::REXWindow(QWidget *parent) :
 
     createInterface();
 
-    scheuler();
-    updateTaskSheet();  
+    QTimer::singleShot(250,this,SLOT(scheuler()));
+    updateTaskSheet();
+
 }
 
 void REXWindow::createInterface()
@@ -97,6 +99,19 @@ void REXWindow::createInterface()
     else if(ui->actionWeryLow->isChecked())spdbtn->setIcon(ui->actionWeryLow->icon());
     ui->mainToolBar->addWidget(spdbtn);
 
+    //настроиваем значок в трее
+    QMenu *traymenu = new QMenu(this);
+    traymenu->setObjectName("traymenu");
+    QAction *trayact = new QAction(this);
+    trayact->setObjectName("exitAct");
+    trayact->setText(tr("Exit"));
+    connect(trayact,SIGNAL(triggered()),this,SLOT(close()));
+    traymenu->addAction(trayact);
+
+    trayicon->setContextMenu(traymenu);
+    connect(trayicon,SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this,SLOT(showHideSlot(QSystemTrayIcon::ActivationReason)));
+
+
 }
 
 void REXWindow::showNotice(const QString &title, const QString &text, int type)
@@ -110,6 +125,30 @@ void REXWindow::saveSettings()
 }
 
 void REXWindow::loadSettings()
+{
+
+}
+
+void REXWindow::scanClipboard()
+{
+    if(!clip_autoscan)return;
+
+    const QClipboard *clipbrd = QApplication::clipboard();
+
+    QUrl url(clipbrd->text());
+
+    if(url.isValid() && plugproto.contains(url.scheme().toLower()) && clipbrd->text() != clip_last)
+    {
+        clip_last = clipbrd->text();
+        AddTaskDialog *dlg = new AddTaskDialog(downDir, 0);
+        dlg->setValidProtocols(plugproto);
+        dlg->setNewUrl(clipbrd->text());
+        dlg->show();
+        dlg->setFocus();
+    }
+}
+
+void REXWindow::scanTaskQueue()
 {
 
 }
@@ -129,11 +168,55 @@ void REXWindow::openDataBase()
     }
 
     /*Для отладки*/
-    QSqlQuery qr;
-    qr.exec("INSERT INTO tasks (url,datecreate,filename,currentsize,totalsize,downtime,lasterror,mime,tstatus,categoryid,note) VALUES ('url_','2011-06-23T13:00:00','noname.html','100','1000','120','error','mime','5','1','note');");
+    //QSqlQuery qr;
+    //qr.exec("INSERT INTO tasks (url,datecreate,filename,currentsize,totalsize,downtime,lasterror,mime,tstatus,categoryid,note) VALUES ('url_','2011-06-23T13:00:00','noname.html','100','1000','120','error','mime','5','1','note');");
     /*----------*/
 
     dbconnect = db.connectionName();
+}
+
+void REXWindow::scanNewTaskQueue()
+{
+    QSqlQuery qr;
+    if(!qr.exec("SELECT * FROM newtasks;"))
+    {
+        // запись в журнал ошибок
+        qDebug()<<"Error: void REXWindow::scanNewTaskQueue(): "<<qr.lastError().text();
+        return;
+    }
+
+    AddTaskDialog *dlg;
+    while(qr.next())
+    {
+
+        if(qr.value(1).toString() != "")
+        {
+            QUrl url(qr.value(1).toString());
+            if((url.scheme().toLower() == "file" || url.scheme().isEmpty()) && QFile::exists(qr.value(1).toString()))
+            {
+                //тут считываем данные о загрузке из недокачанного файла
+            }
+            else if(plugproto.contains(url.scheme().toLower()))
+            {
+                dlg = new AddTaskDialog(downDir, this);
+                dlg->setValidProtocols(plugproto);
+                dlg->setNewUrl(qr.value(1).toString());
+                dlg->show();
+            }
+        }
+
+        QSqlQuery qr1;
+        qr1.prepare("DELETE FROM newtasks WHERE id=:id");
+        qr1.bindValue("id",qr.value(0));
+
+        if(!qr1.exec())
+        {
+            //запись в журнал ошибок
+            qDebug()<<"Error: void REXWindow::scanNewTaskQueue(): "<<qr.lastError().text();
+            return;
+        }
+
+    }
 }
 
 int REXWindow::loadPlugins()
@@ -180,6 +263,9 @@ void REXWindow::scheuler()
     if(!sched_flag)return;
     lockProcess(true);
 
+    scanNewTaskQueue();
+    scanClipboard();
+
     QTimer::singleShot(1000,this,SLOT(scheuler()));
 }
 
@@ -211,6 +297,15 @@ void REXWindow::showAddTaskDialog()
     dlg->show();
 }
 
+void REXWindow::showHideSlot(QSystemTrayIcon::ActivationReason type)
+{
+    if(type == QSystemTrayIcon::DoubleClick)
+    {
+        if(isVisible())setHidden(true);
+        else setHidden(false);
+    }
+}
+
 REXWindow::~REXWindow()
 {
     delete ui;
@@ -218,6 +313,15 @@ REXWindow::~REXWindow()
 
     lockProcess(false);
 }
+
+void REXWindow::closeEvent(QCloseEvent *event)
+ {
+    if(!isHidden() && sender() != this->findChild<QAction*>("exitAct")){
+        hide();
+        event->ignore();
+    }
+    else event->accept();
+ }
 
 void REXWindow::changeEvent(QEvent *e)
 {

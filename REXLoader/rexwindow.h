@@ -35,18 +35,23 @@ public slots:
     void updateTaskSheet(); //обновляет содержимое таблицы списка заданий
     void startTrayIconAnimaion();
     void stopTrayIconAnimation();
+    void scanTaskQueue(); //сканирует очередь заданий и при обнаружении нового доступного, начинает скачивание
+    void scanNewTaskQueue(); //сканирует очередь url для добавления в очередь заданий
+    void scanClipboard(); //сканирует буфер обмена на наличие доступного для скачивания URL
 
 protected:
+    void closeEvent(QCloseEvent *event);
     void changeEvent(QEvent *e);
     void openDataBase(); //создает/открывает существующую базу данных закачек
     void saveSettings(); //сохраняет свойства приложения
     void loadSettings(); //загружает свйоства приложения
-    int loadPlugins(); //сканирует директории в поисках доступных плагинов, возвращает количество найденных и загруженных плагинов.
+    int loadPlugins(); //сканирует директории в поисках доступных плагинов, возвращает количество найденных и загруженных плагинов
 
 protected slots:
     void scheuler(); //внутренний планировщик с интервалом в 1 секунду
     void updateTrayIcon();
     void showAddTaskDialog();
+    void showHideSlot(QSystemTrayIcon::ActivationReason type);
 
 private:
     void lockProcess(bool flag=true); //позволяет создать/удалить файл блокировки процесса
@@ -70,6 +75,11 @@ private:
 
     QToolButton *spdbtn; //кнопка выбора скорости загрузки
     QString downDir; //директория для загрузки файлов по умолчанию
+
+    QString clip_last; //последняя строка в бюфере обьмена, на которую была реакция
+
+    int max_tasks; //максимальное количество одновременных закачек
+    bool clip_autoscan; //признак разрешения автоматического сканирования буфера обмена на доступные ссылки
 };
 
 #endif // REXWINDOW_H
