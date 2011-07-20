@@ -46,6 +46,7 @@ void AddTaskDialog::construct()
 void AddTaskDialog::setValidProtocols(const QHash<QString, int> &schemes)
 {
     protocols = schemes.keys();
+    scanClipboard();
 }
 
 void AddTaskDialog::urlValidator()
@@ -88,7 +89,7 @@ void AddTaskDialog::loadDatabaseData()
     qr.clear();
     qr.exec("SELECT * FROM categories");
     int otherId = 0;
-    qDebug()<<downDir;
+
     while(qr.next())
     {
         QString cattitle;
@@ -99,7 +100,7 @@ void AddTaskDialog::loadDatabaseData()
         else if(qr.value(1).toString() == "#video"){cattitle = tr("Video"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
         else if(qr.value(1).toString() == "#other"){cattitle = tr("All Downloads"); otherId = qr.value(0).toInt();dirs.insert(qr.value(0).toInt(),downDir);}
         else {cattitle = qr.value(1).toString(); dirs.insert(qr.value(0).toInt(),qr.value(2).toString());}
-        qDebug()<<qr.value(1).toString();
+
         ui->categoryBox->addItem(cattitle, qr.value(0).toInt());
     }
     ui->categoryBox->setCurrentIndex(ui->categoryBox->findData(QVariant(otherId)));
@@ -109,6 +110,7 @@ void AddTaskDialog::loadDatabaseData()
 void AddTaskDialog::updateLocation(int index)
 {
     int catId = ui->categoryBox->itemData(index).toInt();
+    if(!dirs.contains(catId))dirs.insert(catId,downDir);
     ui->locationEdit->setText(dirs.value(catId));
 }
 
@@ -117,7 +119,8 @@ void AddTaskDialog::scanClipboard()
     const QClipboard *clipbrd = QApplication::clipboard();
 
     QUrl url(clipbrd->text());
-    if(url.isValid() && url.scheme() != "")
+
+    if(url.isValid() && protocols.contains(url.scheme().toLower()))
         ui->urlBox->setEditText(clipbrd->text());
 }
 
