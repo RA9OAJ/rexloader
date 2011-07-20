@@ -65,6 +65,7 @@ void REXWindow::createInterface()
     ui->tableView->hideColumn(7);
     ui->tableView->hideColumn(8);
     ui->tableView->hideColumn(10);
+    ui->tableView->hideColumn(13);
 
     //настраиваем панель инструментов
     ui->mainToolBar->addAction(ui->actionAdd_URL);

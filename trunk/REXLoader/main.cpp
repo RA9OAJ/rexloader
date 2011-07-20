@@ -47,7 +47,8 @@ void checkDatabase()
                 "tstatus INTEGER DEFAULT 0,"
                 "categoryid TEXT,"
                 "speed_avg TEXT,"
-                "note TEXT);");
+                "note TEXT,"
+                "priority INTEGER);");
 
             if(!flag)
             {
