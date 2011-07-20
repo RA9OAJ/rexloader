@@ -198,7 +198,7 @@ void REXWindow::scanNewTaskQueue()
             }
             else if(plugproto.contains(url.scheme().toLower()))
             {
-                dlg = new AddTaskDialog(downDir, this);
+                dlg = new AddTaskDialog(downDir, 0);
                 dlg->setValidProtocols(plugproto);
                 dlg->setNewUrl(qr.value(1).toString());
                 dlg->show();
@@ -314,13 +314,23 @@ REXWindow::~REXWindow()
     lockProcess(false);
 }
 
+bool REXWindow::event(QEvent *event)
+{
+    //qDebug()<<event->type();
+    return QMainWindow::event(event);
+}
+
 void REXWindow::closeEvent(QCloseEvent *event)
  {
     if(!isHidden() && sender() != this->findChild<QAction*>("exitAct")){
         hide();
         event->ignore();
     }
-    else event->accept();
+    else
+    {
+        event->accept();
+        qApp->quit();
+    }
  }
 
 void REXWindow::changeEvent(QEvent *e)
