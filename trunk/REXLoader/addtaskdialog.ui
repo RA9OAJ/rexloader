@@ -263,9 +263,16 @@ background: #ffffff;</string>
       </spacer>
      </item>
      <item>
-      <widget class="QDialogButtonBox" name="buttonBox">
-       <property name="standardButtons">
-        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <widget class="QPushButton" name="startNowBtn">
+       <property name="text">
+        <string>Start Now</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="startLaterBtn">
+       <property name="text">
+        <string>Start Later</string>
        </property>
       </widget>
      </item>
@@ -279,7 +286,6 @@ background: #ffffff;</string>
   <tabstop>browseButton</tabstop>
   <tabstop>locationEdit</tabstop>
   <tabstop>textEdit</tabstop>
-  <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>
  <connections/>

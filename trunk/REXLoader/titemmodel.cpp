@@ -75,7 +75,9 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
             case LInterface::SEND_QUERY:
             case LInterface::REDIRECT:
             case LInterface::STOPPING:
-            case LInterface::ON_LOAD: return QString::number(qr->value(4).toInt()*100/qr->value(5).toInt())+QString("%");
+            case LInterface::ON_LOAD:
+                if(qr->value(5).toInt()) return QString::number(qr->value(4).toInt()*100/qr->value(5).toInt())+QString("%");
+                else return QString("0%");
             case LInterface::FINISHED: return QString(tr("Completed"));
 
             default: return QVariant();
@@ -128,8 +130,12 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         QString totalszStr;
         QString cursz;
         QString spd;
-        QString percent = QString::number(qr->value(4).toInt()*100/qr->value(5).toInt());
+        QString percent;
         qint64 totalsz = qr->value(5).toInt();
+
+        if(!qr->value(4).toInt() || !qr->value(5).toInt())
+            percent = "0";
+        else percent = QString::number(qr->value(4).toInt()*100/qr->value(5).toInt());
 
         QStringList _tmp = sizeForHumans(totalsz);
         totalszStr = _tmp.value(0)+_tmp.value(1);

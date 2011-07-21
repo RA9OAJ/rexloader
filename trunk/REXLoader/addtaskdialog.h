@@ -6,6 +6,7 @@
 #include <QClipboard>
 #include <QMimeData>
 #include <QFileDialog>
+#include <QMessageBox>
 
 namespace Ui {
     class AddTaskDialog;
@@ -31,19 +32,23 @@ protected:
     void construct();
     void loadDatabaseData();
     void scanClipboard();
+    void addTask();
 
 protected slots:
     void updateLocation(int index);
     void urlValidator();
     void openDirDialog();
+    void startNow();
+    void startLater();
 
 private:
     Ui::AddTaskDialog *gui;
 
-    QSqlDatabase *mydb;
+    QSqlDatabase mydb;
     QString downDir;
     QMap<int, QString> dirs;
     QList<QString> protocols;
+    int priority;
 };
 
 #endif // ADDTASKDIALOG_H
