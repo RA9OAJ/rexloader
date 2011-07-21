@@ -201,6 +201,7 @@ void AddTaskDialog::addTask()
 
     int catId = 0;
     QVariant udata = gui->categoryBox->itemData(gui->categoryBox->currentIndex()).toInt();
+    qDebug()<<udata;
     if(udata == QVariant())
     {
         qr.clear();
@@ -231,6 +232,7 @@ void AddTaskDialog::addTask()
         qr.next();
         catId = qr.value(0).toInt();
     }
+    else catId = gui->categoryBox->itemData(gui->categoryBox->currentIndex()).toInt();
 
     QDateTime dtime(QDateTime::currentDateTime());
     QFileInfo flinfo(gui->urlBox->currentText());
