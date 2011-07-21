@@ -141,6 +141,7 @@ void REXWindow::scanClipboard()
     {
         clip_last = clipbrd->text();
         AddTaskDialog *dlg = new AddTaskDialog(downDir, 0);
+        connect(dlg,SIGNAL(addedNewTask()),this,SLOT(updateTaskSheet()));
         dlg->setValidProtocols(plugproto);
         dlg->setNewUrl(clipbrd->text());
         dlg->show();
@@ -199,6 +200,7 @@ void REXWindow::scanNewTaskQueue()
             else if(plugproto.contains(url.scheme().toLower()))
             {
                 dlg = new AddTaskDialog(downDir, 0);
+                connect(dlg,SIGNAL(addedNewTask()),this,SLOT(updateTaskSheet()));
                 dlg->setValidProtocols(plugproto);
                 dlg->setNewUrl(qr.value(1).toString());
                 dlg->show();
@@ -293,6 +295,7 @@ void REXWindow::updateTrayIcon()
 void REXWindow::showAddTaskDialog()
 {
     AddTaskDialog *dlg = new AddTaskDialog(downDir, this);
+    connect(dlg,SIGNAL(addedNewTask()),this,SLOT(updateTaskSheet()));
     dlg->setValidProtocols(plugproto);
     dlg->show();
 }

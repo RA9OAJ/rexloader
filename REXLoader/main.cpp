@@ -72,7 +72,8 @@ void checkDatabase()
             flag = qr->exec("CREATE TABLE categories ("
                             "id INTEGER PRIMARY KEY,"
                             "title TEXT,"
-                            "dir TEXT);");
+                            "dir TEXT,"
+                            "extlist TEXT);");
 
             if(!flag)
             {

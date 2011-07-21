@@ -7,7 +7,7 @@ AddTaskDialog::AddTaskDialog(const QString &dir, QWidget *parent) :
 {
     gui->setupUi(this);
 
-    mydb = &QSqlDatabase::database();
+    mydb = QSqlDatabase::database();
 
     gui->locationEdit->setText(dir);
     downDir = dir;
@@ -21,7 +21,7 @@ AddTaskDialog::AddTaskDialog(const QString &dir, QSqlDatabase &db_, QWidget *par
 {
     gui->setupUi(this);
 
-    mydb = &db_;
+    mydb = db_;
 
     gui->locationEdit->setText(dir);
     downDir = dir;
@@ -33,11 +33,14 @@ void AddTaskDialog::construct()
 {
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle("REXLoader - "+tr("New task"));
+    priority = 2; //нормальный приоритет
 
     loadDatabaseData();
     connect(gui->categoryBox,SIGNAL(currentIndexChanged(int)),this,SLOT(updateLocation(int)));
     connect(gui->urlBox,SIGNAL(editTextChanged(QString)),this,SLOT(urlValidator()));
     connect(gui->browseButton,SIGNAL(released()),this,SLOT(openDirDialog()));
+    connect(gui->startNowBtn,SIGNAL(released()),this,SLOT(startNow()));
+    connect(gui->startLaterBtn,SIGNAL(released()),this,SLOT(startLater()));
 
     setAttribute(Qt::WA_AlwaysShowToolTips);
     gui->errorFrame->setHidden(true);
@@ -84,13 +87,15 @@ void AddTaskDialog::urlValidator()
     if(errorStr.isEmpty())
     {
         gui->errorFrame->setHidden(true);
-        gui->buttonBox->button(QDialogButtonBox::Ok)->setDisabled(false);
+        gui->startNowBtn->setEnabled(true);
+        gui->startLaterBtn->setEnabled(true);
     }
     else
     {
         gui->errorLabel->setText(errorStr);
         gui->errorFrame->setHidden(false);
-        gui->buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
+        gui->startNowBtn->setEnabled(false);
+        gui->startLaterBtn->setEnabled(false);
     }
 }
 
@@ -101,7 +106,7 @@ AddTaskDialog::~AddTaskDialog()
 
 void AddTaskDialog::loadDatabaseData()
 {
-    QSqlQuery qr(*mydb);
+    QSqlQuery qr(mydb);
     qr.exec("SELECT id,url FROM tasks ORDER BY id ASC LIMIT 5");
 
     while(qr.next())
@@ -144,6 +149,113 @@ void AddTaskDialog::scanClipboard()
 
     if(url.isValid() && protocols.contains(url.scheme().toLower()))
         gui->urlBox->setEditText(clipbrd->text());
+}
+
+void AddTaskDialog::startNow()
+{
+    priority = 4;
+    addTask();
+}
+
+void AddTaskDialog::startLater()
+{
+    priority = 1;
+    addTask();
+}
+
+void AddTaskDialog::addTask()
+{
+    QSqlQuery qr(mydb);
+
+    qr.prepare("SELECT count(*) FROM tasks WHERE url=:url;");
+    qr.bindValue("url", gui->urlBox->currentText());
+    if(!qr.exec())
+    {
+        //тут запись в журнал ошибок
+        qDebug()<<"void AddTaskDialog::addTask(1):"<<qr.executedQuery()<<" Error: "<<qr.lastError().text();
+        close();
+        return;
+    }
+    qr.next();
+
+    if(qr.value(0).toInt() > 0)
+    {
+        int ans = QMessageBox::question(this,QString(),tr("This URL is already in jobs. Click <b>\"Add back\"</b> to add a task or <b>\"Cancel\"</b> to cancel this action."),QMessageBox::Ok,QMessageBox::Cancel);
+        if(ans == QMessageBox::Cancel)
+        {
+            close();
+            return;
+        }
+        qr.clear();
+        qr.prepare("DELETE FROM tasks WHERE url=:url;");
+        qr.bindValue("url",gui->urlBox->currentText());
+
+        if(!qr.exec())
+        {
+            //тут запись в журнал ошибок
+            qDebug()<<"void AddTaskDialog::addTask(2): Error: "<<qr.lastError().text();
+            close();
+            return;
+        }
+    }
+
+    int catId = 0;
+    QVariant udata = gui->categoryBox->itemData(gui->categoryBox->currentIndex()).toInt();
+    if(udata == QVariant())
+    {
+        qr.clear();
+        qr.prepare("INSERT INTO categories(title,dir,extlist) VALUES(:title,:dir,'');");
+        qr.bindValue("title",gui->categoryBox->currentText());
+        qr.bindValue("dir",gui->locationEdit->text());
+
+        if(!qr.exec())
+        {
+            //тут запись в журнал ошибок
+            qDebug()<<"void AddTaskDialog::addTask(3): Error: "<<qr.lastError().text();
+            close();
+            return;
+        }
+
+        qr.clear();
+        qr.prepare("SELECT id FROM categories WHERE title=:title AND dir=:dir;");
+        qr.bindValue("title",gui->categoryBox->currentText());
+        qr.bindValue("dir",gui->locationEdit->text());
+
+        if(!qr.exec())
+        {
+            //тут запись в журнал ошибок
+            qDebug()<<"void AddTaskDialog::addTask(4): Error: "<<qr.lastError().text();
+            close();
+            return;
+        }
+        qr.next();
+        catId = qr.value(0).toInt();
+    }
+
+    QDateTime dtime(QDateTime::currentDateTime());
+    QFileInfo flinfo(gui->urlBox->currentText());
+    QString flname = (flinfo.fileName() != QString() ? flinfo.fileName() : "noname.html");
+    flname = gui->locationEdit->text() + "/" + flname + "." + dtime.toString("yyyyMMddhhmmss") + ".rldr";
+
+    qr.clear();
+    qr.prepare("INSERT INTO tasks(url,filename,datecreate,tstatus,categoryid,priority,note) VALUES(:url,:filename,:datecreate,-100,:categoryid,:priority,:note);");
+    qr.bindValue("url", gui->urlBox->currentText());
+    qr.bindValue("filename",flname);
+    qr.bindValue("datecreate",dtime.toString("yyyy-MM-ddThh:mm:ss"));
+    qr.bindValue("categoryid",catId);
+    qr.bindValue("priority",priority);
+    qr.bindValue("note",gui->textEdit->document()->toPlainText());
+
+    if(!qr.exec())
+    {
+        //тут запись в журнал ошибок
+        qDebug()<<"void AddTaskDialog::addTask(5): Error: "<<qr.lastError().text();
+        close();
+        return;
+    }
+
+    emit addedNewTask();
+    close();
 }
 
 void AddTaskDialog::changeEvent(QEvent *e)
