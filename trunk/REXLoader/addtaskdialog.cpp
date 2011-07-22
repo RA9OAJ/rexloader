@@ -1,3 +1,21 @@
+/*
+Project: REXLoader (Downloader), Source file: AddTaskDialog.cpp
+Copyright (C) 2011  Sarvaritdinov R.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "addtaskdialog.h"
 #include "ui_addtaskdialog.h"
 
@@ -180,7 +198,15 @@ void AddTaskDialog::addTask()
 
     if(qr.value(0).toInt() > 0)
     {
-        int ans = QMessageBox::question(this,QString(),tr("This URL is already in jobs. Click <b>\"Add back\"</b> to add a task or <b>\"Cancel\"</b> to cancel this action."),QMessageBox::Ok,QMessageBox::Cancel);
+        EMessageBox question(this);
+        question.setIcon(QMessageBox::Question);
+        question.addButton(tr("Redownload"), QMessageBox::YesRole);
+        question.addButton(QMessageBox::Cancel);
+        question.setDefaultButton(QMessageBox::Cancel);
+        question.setText(tr("This URL is already in jobs."));
+        question.setInformativeText(tr("Click <b>\"Redownload\"</b> to add a task or <b>\"Cancel\"</b> to cancel this action."));
+
+        int ans = question.exec();
         if(ans == QMessageBox::Cancel)
         {
             close();

@@ -14,11 +14,13 @@ DESTDIR = ./bin
 SOURCES += main.cpp\
         rexwindow.cpp \
     titemmodel.cpp \
-    addtaskdialog.cpp
+    addtaskdialog.cpp \
+    emessagebox.cpp
 
 HEADERS  += rexwindow.h \
     titemmodel.h \
-    addtaskdialog.h
+    addtaskdialog.h \
+    emessagebox.h
 
 FORMS    += rexwindow.ui \
     addtaskdialog.ui
