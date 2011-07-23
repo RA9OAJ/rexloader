@@ -72,6 +72,11 @@ protected slots:
     void updateTrayIcon();
     void showAddTaskDialog();
     void showHideSlot(QSystemTrayIcon::ActivationReason type);
+    void deleteTask(); //удаляет выбранные задания из списка задач
+    void startTask(); //запускает выбранные задания на выполнение
+    void startAllTasks(); //запускает все доступные для запуска задачи
+    void stopTask(); //останавливает выполнение выбранной задачи
+    void stopAllTasks(); //останавливает все выполняемые задачи
 
 private:
     void lockProcess(bool flag=true); //позволяет создать/удалить файл блокировки процесса
