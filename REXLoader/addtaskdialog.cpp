@@ -260,6 +260,7 @@ void AddTaskDialog::addTask()
     }
     else catId = gui->categoryBox->itemData(gui->categoryBox->currentIndex()).toInt();
 
+    QDir().mkpath(gui->locationEdit->text());
     QDateTime dtime(QDateTime::currentDateTime());
     QFileInfo flinfo(gui->urlBox->currentText());
     QString flname = (flinfo.fileName() != QString() ? flinfo.fileName() : "noname.html");
