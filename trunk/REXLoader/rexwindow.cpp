@@ -100,6 +100,7 @@ void REXWindow::createInterface()
 
     //соединяем сигналы и слоты
     connect(ui->actionAdd_URL,SIGNAL(triggered()),this,SLOT(showAddTaskDialog()));
+    connect(ui->actionDelURL,SIGNAL(triggered()),this,SLOT(deleteTask()));
 
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);
@@ -186,10 +187,15 @@ void REXWindow::openDataBase()
         if(quit_ok == QMessageBox::Ok)QTimer::singleShot(0,this,SLOT(close()));
     }
 
-    /*Для отладки*/
-    //QSqlQuery qr;
-    //qr.exec("INSERT INTO tasks (url,datecreate,filename,currentsize,totalsize,downtime,lasterror,mime,tstatus,categoryid,note) VALUES ('url_','2011-06-23T13:00:00','noname.html','100','1000','120','error','mime','5','1','note');");
-    /*----------*/
+    QSqlQuery qr(db);
+    qr.prepare("UPDATE tasks SET tstatus=:newstatus WHERE tstatus=:tstatus;");
+    qr.bindValue("newstatus",LInterface::ON_PAUSE);
+    qr.bindValue("tstatus",LInterface::ON_LOAD);
+
+    if(!qr.exec())
+    {
+        //записываем ошибку в журнал
+    }
 
     dbconnect = db.connectionName();
 }
@@ -325,6 +331,68 @@ void REXWindow::showHideSlot(QSystemTrayIcon::ActivationReason type)
         if(isVisible())setHidden(true);
         else setHidden(false);
     }
+}
+
+void REXWindow::deleteTask()
+{
+    QItemSelectionModel *select = ui->tableView->selectionModel();
+    if(!select->hasSelection())return; //если ничего невыделено, то выходим
+
+    if(select->selectedRows().length() > 1) //если выделено более 1 строки
+    {
+        EMessageBox dlg(this);
+        dlg.setIcon(EMessageBox::Warning);
+        dlg.setText(tr("Select more than one task."));
+        dlg.setInformativeText("To delete an entire group of selected tasks, click <b>\"Ok\"</b> or <b>\"Cancel\"</b> to cancel.");
+        dlg.setStandardButtons(EMessageBox::Ok | EMessageBox::Cancel);
+        dlg.setDefaultButton(EMessageBox::Cancel);
+
+        int result = dlg.exec();
+        if(result == EMessageBox::Cancel)return;
+    }
+
+    stopTask(); //останавливаем задания, попавшие в выделение
+
+    QSqlQuery qr(QSqlDatabase::database());
+
+    QString where;
+    for(int i=0; i < select->selectedRows().length(); i++)
+    {
+        if(!i)
+            where += QString(" id=%1").arg(select->selectedRows().value(i).data(Qt::DisplayRole).toString());
+        else
+            where += QString(" OR id=%1").arg(select->selectedRows().value(i).data(Qt::DisplayRole).toString());
+    }
+
+    qr.prepare("DELETE FROM tasks WHERE"+where);
+
+    if(!qr.exec())
+    {
+        //запись в журнал ошибок
+        qDebug()<<"void REXWindow::deleteTask(): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
+    }
+
+    updateTaskSheet(); //обновляем таблицу задач
+}
+
+void REXWindow::startTask()
+{
+
+}
+
+void REXWindow::startAllTasks()
+{
+
+}
+
+void REXWindow::stopTask()
+{
+
+}
+
+void REXWindow::stopAllTasks()
+{
+
 }
 
 REXWindow::~REXWindow()
