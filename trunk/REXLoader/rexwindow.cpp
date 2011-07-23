@@ -163,6 +163,7 @@ void REXWindow::scanClipboard()
         connect(dlg,SIGNAL(addedNewTask()),this,SLOT(updateTaskSheet()));
         dlg->setValidProtocols(plugproto);
         dlg->setNewUrl(clipbrd->text());
+        dlg->setWindowFlags(Qt::WindowStaysOnTopHint);
         dlg->show();
         dlg->setFocus();
     }
@@ -227,6 +228,7 @@ void REXWindow::scanNewTaskQueue()
                 connect(dlg,SIGNAL(addedNewTask()),this,SLOT(updateTaskSheet()));
                 dlg->setValidProtocols(plugproto);
                 dlg->setNewUrl(qr.value(1).toString());
+                dlg->setWindowFlags(Qt::WindowStaysOnTopHint);
                 dlg->show();
             }
         }
