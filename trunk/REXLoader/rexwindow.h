@@ -69,6 +69,7 @@ protected:
 
 protected slots:
     void scheuler(); //внутренний планировщик с интервалом в 1 секунду
+    void trans_scheduler(); //планировщик для плагинов
     void updateTrayIcon();
     void showAddTaskDialog();
     void showHideSlot(QSystemTrayIcon::ActivationReason type);
@@ -77,6 +78,9 @@ protected slots:
     void startAllTasks(); //запускает все доступные для запуска задачи
     void stopTask(); //останавливает выполнение выбранной задачи
     void stopAllTasks(); //останавливает все выполняемые задачи
+
+signals:
+    void transAct();
 
 private:
     void lockProcess(bool flag=true); //позволяет создать/удалить файл блокировки процесса
@@ -87,7 +91,7 @@ private:
 
     QStringList pluginDirs; //список с директориями, в которых могут быть плагины
     QHash<int,QStringList> *mesqueue; //очередь сообщений
-    QList<int> *tasklist; //список дескрипторов активных заданий
+    QHash<int,int> *tasklist; //список дескрипторов активных заданий (id_in_table, id_task)
     QString apphomedir; //путь к рабочему каталогу приложения, где хранятся все его файлы конфигураций
     QString dbconnect; //имя подклюения к БД
     bool sched_flag; //признак разрешения работы планировщика

@@ -101,6 +101,8 @@ void REXWindow::createInterface()
     //соединяем сигналы и слоты
     connect(ui->actionAdd_URL,SIGNAL(triggered()),this,SLOT(showAddTaskDialog()));
     connect(ui->actionDelURL,SIGNAL(triggered()),this,SLOT(deleteTask()));
+    connect(ui->actionStart,SIGNAL(triggered()),this,SLOT(startTask()));
+    connect(ui->actionStop,SIGNAL(triggered()),this,SLOT(stopTask()));
 
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);
@@ -267,6 +269,10 @@ int REXWindow::loadPlugins()
             {
                 if(plugproto.value(protocols.value(x)))continue;
                 plugproto.insert(protocols.value(x),pluglist.size());
+                //----Эксперимент---------------
+                ldr->setMaxSectionsOnTask(3);
+                ldr->setDownSpeed(1024*10000/8);
+                //------------------------------
             }
         }
     }
@@ -295,6 +301,12 @@ void REXWindow::scheuler()
     scanClipboard();
 
     QTimer::singleShot(1000,this,SLOT(scheuler()));
+}
+
+void REXWindow::trans_scheduler()
+{
+    emit transAct();
+    QTimer::singleShot(50,this,SLOT(trans_scheduler()));
 }
 
 void REXWindow::updateTaskSheet()
@@ -379,7 +391,62 @@ void REXWindow::deleteTask()
 
 void REXWindow::startTask()
 {
+    QItemSelectionModel *select = ui->tableView->selectionModel();
+    if(!select->hasSelection())return; //если ничего невыделено, то выходим
 
+    for(int i=0; i < select->selectedRows().length(); i++)
+    {
+        QString filepath = select->selectedRows(3).value(i).data(100).toString(); //путь к локальному файлу закачки
+        QFileInfo flinfo(filepath);
+        QUrl _url(select->selectedRows(1).value(i).data(100).toString()); //URL закачки
+        int id_row = select->selectedRows(0).value(i).data(100).toInt(); // id записи в базе данных
+        int tstatus = select->selectedRows(9).value(i).data(100).toInt(); //статус в базе данных
+
+        switch(tstatus)
+        {
+        case LInterface::ON_PAUSE:
+        case -100: break;
+        default: continue;
+        }
+
+        if(select->selectedRows(4).value(i).data(100).toInt() > 0) //если файл на докачке, а не новый
+        {
+
+
+            if(QFile::exists(filepath) && plugproto.contains(_url.scheme().toLower())) //если локальный файл существует
+            {
+                int id_proto = plugproto.value(_url.scheme().toLower()); // id плагина с соответствующим протоколом
+                int id_task = pluglist.value(id_proto)->loadTaskFile(_url.toString()); // id задачи
+
+                if(id_task) //если плагин удачно прочитал метаданные и добавил задачу
+                {
+                    tasklist->insert(id_row, id_task);
+                    pluglist.value(id_proto)->setTaskFilePath(id_task,flinfo.absolutePath());
+                    pluglist.value(id_proto)->startDownload(id_task);
+                    continue;
+                }
+                else
+                {
+                    //тут запись в журнал ошибок или запро на счет того, желает ли пользователь снова закачать файл с самогог начала
+
+                }
+                continue;
+            }
+        }
+
+        //дальше идет код, который добавляет новую закачку на основе URL в очередь плагина
+        int id_proto = plugproto.value(_url.scheme().toLower()); // id плагина с соответствующим протоколом
+        int id_task = pluglist.value(id_proto)->addTask(_url.toString());
+
+        if(!id_task)
+        {
+            //тут запись в журнал ошибок
+            continue;
+        }
+
+        pluglist.value(id_proto)->setTaskFilePath(id_task,flinfo.absolutePath());
+        pluglist.value(id_proto)->startDownload(id_task);
+    }
 }
 
 void REXWindow::startAllTasks()
@@ -389,7 +456,28 @@ void REXWindow::startAllTasks()
 
 void REXWindow::stopTask()
 {
+    QItemSelectionModel *select = ui->tableView->selectionModel();
+    if(!select->hasSelection())return; //если ничего невыделено, то выходим
 
+    for(int i=0; i < select->selectedRows().length(); i++)
+    {
+        QString filepath = select->selectedRows(3).value(i).data(100).toString(); //путь к локальному файлу закачки
+        QUrl _url(select->selectedRows(1).value(i).data(100).toString()); //URL закачки
+        int id_row = select->selectedRows(0).value(i).data(100).toInt(); // id записи в базе данных
+        int tstatus = select->selectedRows(9).value(i).data(100).toInt(); //статус в базе данных
+
+        switch(tstatus)
+        {
+        case LInterface::ON_LOAD:
+        case LInterface::SEND_QUERY:
+        case LInterface::ACCEPT_QUERY: break;
+        default: continue;
+        }
+
+        int id_proto = plugproto.value(_url.scheme().toLower()); // id плагина с соответствующим протоколом
+        int id_task = tasklist->value(id_row); // id задачи
+        pluglist.value(id_proto)->startDownload(id_task);
+    }
 }
 
 void REXWindow::stopAllTasks()
