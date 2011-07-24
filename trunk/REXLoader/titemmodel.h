@@ -34,20 +34,23 @@ public:
     virtual int rowCount(const QModelIndex &parent) const;
     virtual int columnCount(const QModelIndex &parent) const;
     bool setMetaData(int key, const QString &name, const QVariant &value);
-    /*virtual QMap<int,QVariant> itemData(const QModelIndex &index) const;*/
-    virtual QModelIndex index(int row, int column, const QModelIndex &parent) const;
+    void updateRow(int row);
+    void addToCache(int row, int col, const QVariant &value);
+    virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
     virtual QModelIndex parent(const QModelIndex &child) const;
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     static QStringList sizeForHumans(qint64 sz);
-    static QStringList speedForHumans(qint64 sp, bool in_bytes = false);
+    static QStringList speedForHumans(qint64 sp, bool in_bytes = true, bool out_bytes = false);
 
 public slots:
     bool updateModel(const QSqlDatabase &db = QSqlDatabase());
+    void clearCache(int row = -1);
 
 protected:
     QSqlQuery *qr;
     int grow,gcolumn;
     QHash<int,qint64>curspeed;
+    QHash<int,QHash<int,QVariant>*>cache;
 };
 
 #endif // TITEMMODEL_H

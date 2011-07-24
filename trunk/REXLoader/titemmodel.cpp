@@ -59,8 +59,43 @@ int TItemModel::columnCount(const QModelIndex &parent) const
     return gcolumn+1;
 }
 
+void TItemModel::updateRow(int row)
+{
+    for(int i=0; i< columnCount(QModelIndex())-1; i++)
+    {
+        QModelIndex ModelIndex = index(row, i, QModelIndex());
+        emit dataChanged(ModelIndex, ModelIndex);
+    }
+}
+
+void TItemModel::addToCache(int row, int col, const QVariant &value)
+{
+    if(!cache.contains(row))
+        cache.insert(row,new QHash<int,QVariant>);
+
+    cache.value(row)->insert(col,value);
+}
+
+void TItemModel::clearCache(int row)
+{
+    if(row < 0)
+    {
+        for(int i = 0; i < cache.size(); i++)
+        {
+            cache.value(i)->clear();
+            delete(cache.value(i));
+            cache.remove(i);
+        }
+        return;
+    }
+    cache.value(row)->clear();
+    delete(cache.value(row));
+    cache.remove(row);
+}
+
 QVariant TItemModel::data(const QModelIndex &index, int role) const
 {
+
     if(index.row() > grow || index.column() > gcolumn)return QVariant();
     qr->seek(index.row());
 
@@ -88,8 +123,14 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         if(index.column() == 3)
         {
             QString filename = QFileInfo(qr->value(3).toString()).fileName();
-            filename = filename.left(filename.size()-20);
+            if(filename.left(5) == ".rldr")filename = filename.left(filename.size()-20);
             return filename;
+        }
+
+        if(index.column() == 5)
+        {
+            QStringList sz = sizeForHumans(qr->value(5).toLongLong());
+            return sz.value(0)+sz.value(1);
         }
 
         if(index.column() == 9)
@@ -159,7 +200,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         QString cursz;
         QString spd;
         QString percent;
-        qint64 totalsz = qr->value(5).toInt();
+        qint64 totalsz = qr->value(5).toLongLong();
 
         if(!qr->value(4).toInt() || !qr->value(5).toInt())
             percent = "0";
@@ -176,7 +217,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         _tmp.clear();
         if(qr->value(9).toInt() == LInterface::ON_LOAD)
         {
-            _tmp = speedForHumans(curspeed.value(qr->value(0).toInt()));
+            _tmp = speedForHumans(curspeed.value(qr->value(0).toLongLong()));
             spd = _tmp.value(0)+_tmp.value(1);
         }
         else spd = "---";
@@ -232,22 +273,22 @@ QModelIndex TItemModel::index(int row, int column, const QModelIndex &parent) co
 QStringList TItemModel::sizeForHumans(qint64 sz)
 {
     QStringList outstrings;
-    if(sz >= 1073741824)outstrings << QString::number(sz/1073741824) << tr(" GB");
-    else if(sz >= 1048576)outstrings << QString::number(sz/1048576) << tr(" MB");
-    else if(sz >= 1024)outstrings << QString::number(sz/1024) << tr(" kB");
+    if(sz >= 1073741824)outstrings << QString::number((qint64)sz/1073741824.0,'f',1) << tr(" GB");
+    else if(sz >= 1048576)outstrings << QString::number((qint64)sz/1048576.0,'f',1) << tr(" MB");
+    else if(sz >= 1024)outstrings << QString::number((qint64)sz/1024.0,'f',1) << tr(" kB");
     else outstrings << QString::number(sz) << tr(" Bytes");
 
     return outstrings;
 }
 
-QStringList TItemModel::speedForHumans(qint64 sp, bool in_bytes)
+QStringList TItemModel::speedForHumans(qint64 sp, bool in_bytes, bool out_bytes)
 {
     QStringList outstrings;
-    if(in_bytes)sp = sp/8; // в случае, если скорость в байт/с
-    if(sp >= 1073741824)outstrings << QString::number(sp/1073741824) << (in_bytes ? tr(" GB/s"):tr(" Gbps"));
-    else if(sp >= 1048576)outstrings << QString::number(sp/1048576) << (in_bytes ? tr(" MB/s"):tr(" Mbps"));
-    else if(sp >= 1024)outstrings << QString::number(sp/1024) << (in_bytes ? tr(" kB/s"):tr(" Kbps"));
-    else outstrings << QString::number(sp) << (in_bytes ? tr(" B/s"):tr(" bps"));;
+    if(!in_bytes)sp = sp/8; // в случае, если скорость в бит/с
+    if(sp >= 1073741824)outstrings << (out_bytes ? QString::number((qint64)sp/1073741824.0,'f',1):QString::number((qint64)sp*8.0/1073741824.0,'f',1)) << (out_bytes ? tr(" GB/s"):tr(" Gbps"));
+    else if(sp >= 1048576)outstrings << (out_bytes ? QString::number((qint64)sp/1048576.0,'f',1):QString::number((qint64)sp*8.0/1048576.0,'f',1)) << (out_bytes ? tr(" MB/s"):tr(" Mbps"));
+    else if(sp >= 1024)outstrings << (out_bytes ? QString::number((qint64)sp/1024.0,'f',1):QString::number((qint64)sp*8.0/1024.0,'f',1)) << (out_bytes ? tr(" kB/s"):tr(" Kbps"));
+    else outstrings << (out_bytes ? QString::number(sp):QString::number(sp*8)) << (out_bytes ? tr(" B/s"):tr(" bps"));;
 
     return outstrings;
 }

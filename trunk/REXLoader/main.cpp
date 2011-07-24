@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <QtGui/QApplication>
+#include <QTextCodec>
 #include "rexwindow.h"
 #include <QDebug>
 
@@ -209,6 +210,10 @@ bool firstProcess()
 int main(int argc, char *argv[])
 {
     checkDatabase();
+
+    QTextCodec::setCodecForLocale(QTextCodec::codecForLocale());
+    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
+    QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
 
     QApplication a(argc, argv);
     QApplication::setQuitOnLastWindowClosed(false);
