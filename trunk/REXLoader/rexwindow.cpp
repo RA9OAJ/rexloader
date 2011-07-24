@@ -513,6 +513,15 @@ void REXWindow::syncTaskData()
         qint64 speed = ldr->downSpeed(id_task);
         model->setMetaData(id_row,"speed",speed);
 
+        QSortFilterProxyModel *mdl = new QSortFilterProxyModel(); //определяем внутренний номер строки для обновления
+        mdl->setSourceModel(model);
+        mdl->setFilterKeyColumn(0);
+        mdl->setFilterRole(100);
+        mdl->setFilterRegExp(QString::number(id_row));
+        QModelIndex index = mdl->index(0,0);
+        index = mdl->mapToSource(index);
+        delete(mdl);
+
         qr.clear();
 
         if(tstatus == LInterface::ERROR_TASK)
@@ -533,6 +542,12 @@ void REXWindow::syncTaskData()
                 //запись в журнал ошибок
                 qDebug()<<"void REXWindow::syncTaskData(1): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
             }
+            model->addToCache(index.row(),5,totalsize);
+            model->addToCache(index.row(),4,totalload);
+            model->addToCache(index.row(),3,filepath);
+            model->addToCache(index.row(),9,tstatus);
+            model->addToCache(index.row(),7,QString("%1 (%2)").arg(errStr,QString::number(errno)));
+
             ldr->deleteTask(id_task);
             tasklist.remove(id_row);
         }
@@ -545,13 +560,15 @@ void REXWindow::syncTaskData()
             qr.bindValue("tstatus",tstatus);
             qr.bindValue("id",id_row);
 
-            model->setData(model->index(1,4),QString::number(totalload));
-
             if(!qr.exec())
             {
                 //запись в журнал ошибок
                 qDebug()<<"void REXWindow::syncTaskData(2): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
             }
+            model->addToCache(index.row(),5,totalsize);
+            model->addToCache(index.row(),4,totalload);
+            model->addToCache(index.row(),3,filepath);
+            model->addToCache(index.row(),9,tstatus);
         }
 
         if(tstatus == LInterface::ON_PAUSE || tstatus == LInterface::FINISHED)
@@ -559,15 +576,8 @@ void REXWindow::syncTaskData()
             ldr->deleteTask(id_task);
             tasklist.remove(id_row);
         }
-        QSortFilterProxyModel *mdl = new QSortFilterProxyModel();
-        mdl->setSourceModel(model);
-        mdl->setFilterKeyColumn(0);
-        mdl->setFilterRole(100);
-        mdl->setFilterRegExp(QString::number(id_row));
-        QModelIndex index = mdl->index(0,0);
-        index = mdl->mapToSource(index);
-        delete(mdl);
-        qDebug()<<model->data(index,100);
+
+        //qDebug()<<model->data(index,100);
         model->updateRow(index.row());
     }
 
