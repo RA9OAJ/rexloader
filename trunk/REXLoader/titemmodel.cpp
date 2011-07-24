@@ -82,6 +82,9 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
             }
         }
 
+        if(index.column() == 2)
+            return QDateTime::fromString(qr->value(2).toString(),"yyyy-MM-ddThh:mm:ss");
+
         if(index.column() == 9)
         {
             switch(qr->value(9).toInt())
@@ -173,8 +176,13 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
     }
 
     if(role == 100) //для сортировки
-        return qr->value(index.column());
-
+    {
+        switch(index.column())
+        {
+        case 2: return QDateTime::fromString(qr->value(2).toString(),"yyyy-MM-ddThh:mm:ss");
+        default: return qr->value(index.column());
+        }
+    }
     return QVariant();
 }
 

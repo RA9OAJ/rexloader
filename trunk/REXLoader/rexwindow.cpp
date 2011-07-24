@@ -27,6 +27,9 @@ REXWindow::REXWindow(QWidget *parent) :
 
     sched_flag = true;
     clip_autoscan = true;
+    max_tasks = 9;
+    max_threads = 3;
+    down_speed = 2048; // 2Mbps
     QList<int> sz;
     QList<int> sz1;
     QDir libdir(QApplication::applicationDirPath());
@@ -269,10 +272,8 @@ int REXWindow::loadPlugins()
             {
                 if(plugproto.value(protocols.value(x)))continue;
                 plugproto.insert(protocols.value(x),pluglist.size());
-                //----Эксперимент---------------
-                ldr->setMaxSectionsOnTask(3);
-                ldr->setDownSpeed(1024*10000/8);
-                //------------------------------
+                ldr->setMaxSectionsOnTask(max_threads);
+                ldr->setDownSpeed(down_speed*1024/8);
             }
         }
     }
@@ -427,7 +428,7 @@ void REXWindow::startTask()
                 }
                 else
                 {
-                    //тут запись в журнал ошибок или запро на счет того, желает ли пользователь снова закачать файл с самогог начала
+                    //тут запись в журнал ошибок или запрос на счет того, желает ли пользователь снова закачать файл с самогог начала
 
                 }
                 continue;
@@ -444,6 +445,7 @@ void REXWindow::startTask()
             continue;
         }
 
+        tasklist->insert(id_row, id_task);
         pluglist.value(id_proto)->setTaskFilePath(id_task,flinfo.absolutePath());
         pluglist.value(id_proto)->startDownload(id_task);
     }
@@ -476,7 +478,9 @@ void REXWindow::stopTask()
 
         int id_proto = plugproto.value(_url.scheme().toLower()); // id плагина с соответствующим протоколом
         int id_task = tasklist->value(id_row); // id задачи
-        pluglist.value(id_proto)->startDownload(id_task);
+        pluglist.value(id_proto)->stopDownload(id_task);
+        pluglist.value(id_proto)->deleteTask(id_task);
+        tasklist->remove(id_row);
     }
 }
 
