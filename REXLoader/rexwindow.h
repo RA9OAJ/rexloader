@@ -78,6 +78,7 @@ protected slots:
     void startAllTasks(); //запускает все доступные для запуска задачи
     void stopTask(); //останавливает выполнение выбранной задачи
     void stopAllTasks(); //останавливает все выполняемые задачи
+    void syncTaskData(); //синхронизирует состояние задач с БД
 
 signals:
     void transAct();
@@ -91,7 +92,7 @@ private:
 
     QStringList pluginDirs; //список с директориями, в которых могут быть плагины
     QHash<int,QStringList> *mesqueue; //очередь сообщений
-    QHash<int,int> *tasklist; //список дескрипторов активных заданий (id_in_table, id_task)
+    QHash<int,int> tasklist; //список дескрипторов активных заданий (id_in_table, id_task)
     QString apphomedir; //путь к рабочему каталогу приложения, где хранятся все его файлы конфигураций
     QString dbconnect; //имя подклюения к БД
     bool sched_flag; //признак разрешения работы планировщика

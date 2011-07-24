@@ -8,7 +8,7 @@ Dialog::Dialog(QWidget *parent) :
     ui(new Ui::Dialog)
 {
     ui->setupUi(this);
-    QString plug = QApplication::applicationDirPath()+"/lib/rexloader/plugins/libHttpLoader.so";
+    QString plug = QApplication::applicationDirPath()+"/libHttpLoader.so";
     qDebug()<<QApplication::applicationDirPath();
     QFile ft(plug);
     if(ft.exists())qDebug()<<"YES";
@@ -164,7 +164,7 @@ void Dialog::startDownload()
 
     //loader->setDownSpeed(15*1024*1024);
     loader->setTaskFilePath(task_id, path);
-    loader->setProxy(task_id, QUrl("proxy://109.230.216.23:1080/"),LInterface::PROXY_SOCKS5,"");
+    //loader->setProxy(task_id, QUrl("proxy://109.230.216.23:1080/"),LInterface::PROXY_SOCKS5,"");
     loader->startDownload(task_id);
 
     ui->Stop->setEnabled(true);

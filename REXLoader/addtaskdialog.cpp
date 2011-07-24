@@ -227,7 +227,7 @@ void AddTaskDialog::addTask()
 
     int catId = 0;
     QVariant udata = gui->categoryBox->itemData(gui->categoryBox->currentIndex()).toInt();
-    qDebug()<<udata;
+
     if(!udata.toInt() || gui->categoryBox->findText(gui->categoryBox->currentText()) < 0)
     {
         qr.clear();

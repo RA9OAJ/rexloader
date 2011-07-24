@@ -29,7 +29,8 @@ REXWindow::REXWindow(QWidget *parent) :
     clip_autoscan = true;
     max_tasks = 9;
     max_threads = 3;
-    down_speed = 2048; // 2Mbps
+    down_speed = 2048*8; // 2Mbps
+
     QList<int> sz;
     QList<int> sz1;
     QDir libdir(QApplication::applicationDirPath());
@@ -65,7 +66,6 @@ REXWindow::REXWindow(QWidget *parent) :
 
     QTimer::singleShot(250,this,SLOT(scheuler()));
     updateTaskSheet();
-
 }
 
 void REXWindow::createInterface()
@@ -201,6 +201,7 @@ void REXWindow::openDataBase()
     if(!qr.exec())
     {
         //записываем ошибку в журнал
+        qDebug()<<"void REXWindow::openDataBase(1)" + qr.executedQuery() + " Error:" + qr.lastError().text();
     }
 
     dbconnect = db.connectionName();
@@ -300,6 +301,7 @@ void REXWindow::scheuler()
 
     scanNewTaskQueue();
     scanClipboard();
+    syncTaskData();
 
     QTimer::singleShot(1000,this,SLOT(scheuler()));
 }
@@ -421,7 +423,7 @@ void REXWindow::startTask()
 
                 if(id_task) //если плагин удачно прочитал метаданные и добавил задачу
                 {
-                    tasklist->insert(id_row, id_task);
+                    tasklist.insert(id_row, id_task + id_proto*100);
                     pluglist.value(id_proto)->setTaskFilePath(id_task,flinfo.absolutePath());
                     pluglist.value(id_proto)->startDownload(id_task);
                     continue;
@@ -445,7 +447,7 @@ void REXWindow::startTask()
             continue;
         }
 
-        tasklist->insert(id_row, id_task);
+        tasklist.insert(id_row, id_task + id_proto*100);
         pluglist.value(id_proto)->setTaskFilePath(id_task,flinfo.absolutePath());
         pluglist.value(id_proto)->startDownload(id_task);
     }
@@ -477,16 +479,90 @@ void REXWindow::stopTask()
         }
 
         int id_proto = plugproto.value(_url.scheme().toLower()); // id плагина с соответствующим протоколом
-        int id_task = tasklist->value(id_row); // id задачи
+        int id_task = tasklist.value(id_row)%100; // id задачи
+
         pluglist.value(id_proto)->stopDownload(id_task);
-        pluglist.value(id_proto)->deleteTask(id_task);
-        tasklist->remove(id_row);
+        //pluglist.value(id_proto)->deleteTask(id_task);
+        //tasklist.remove(id_row);
     }
 }
 
 void REXWindow::stopAllTasks()
 {
 
+}
+
+void REXWindow::syncTaskData()
+{
+    if(tasklist.isEmpty())return;
+
+    QList<int> keys = tasklist.keys();
+    QSqlQuery qr(QSqlDatabase::database());
+
+    for(int i = 0; i < keys.length(); i++)
+    {
+        int id_row = keys.value(i);
+        int id_task = (tasklist.value(id_row))%100;
+        int id_proto = (tasklist.value(id_row))/100;
+
+        LoaderInterface *ldr = pluglist.value(id_proto);
+        qint64 totalsize = ldr->totalSize(id_task);
+        qint64 totalload = ldr->totalLoadedOnTask(id_task);
+        QString filepath = ldr->taskFilePath(id_task);
+        int tstatus = ldr->taskStatus(id_task);
+        qint64 speed = ldr->downSpeed(id_task);
+        model->setMetaData(id_row,"speed",speed);
+
+        qr.clear();
+
+        if(tstatus == LInterface::ERROR_TASK)
+        {
+            int errno = ldr->errorNo(id_task);
+            QString errStr = ldr->errorString(errno);
+
+            qr.prepare("UPDATE tasks SET totalsize=:totalsize, currentsize=:currentsize, filename=:filename, tstatus=:tstatus, lasterror=:lasterror WHERE id=:id");
+            qr.bindValue("totalsize",QString::number(totalsize));
+            qr.bindValue("currentsize",QString::number(totalload));
+            qr.bindValue("filename",filepath);
+            qr.bindValue("tstatus",tstatus);
+            qr.bindValue("lasterror",QString("%1 (%2)").arg(errStr,QString::number(errno)));
+            qr.bindValue("id",id_row);
+
+            if(!qr.exec())
+            {
+                //запись в журнал ошибок
+                qDebug()<<"void REXWindow::syncTaskData(1): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
+            }
+            ldr->deleteTask(id_task);
+            tasklist.remove(id_row);
+        }
+        else
+        {
+            qr.prepare("UPDATE tasks SET totalsize=:totalsize, currentsize=:currentsize, filename=:filename, tstatus=:tstatus WHERE id=:id");
+            qr.bindValue("totalsize",QString::number(totalsize));
+            qr.bindValue("currentsize",QString::number(totalload));
+            qr.bindValue("filename",filepath);
+            qr.bindValue("tstatus",tstatus);
+            qr.bindValue("id",id_row);
+
+            if(!qr.exec())
+            {
+                //запись в журнал ошибок
+                qDebug()<<"void REXWindow::syncTaskData(2): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
+            }
+        }
+
+        if(tstatus == LInterface::ON_PAUSE || tstatus == LInterface::FINISHED)
+        {
+            ldr->deleteTask(id_task);
+            tasklist.remove(id_row);
+        }
+    }
+
+    QList<QModelIndex> selected = ui->tableView->selectionModel()->selectedRows();
+    updateTaskSheet();
+    for(int i = 0; i < selected.length(); i++)
+        ui->tableView->selectRow(selected.value(i).row());
 }
 
 REXWindow::~REXWindow()
@@ -499,7 +575,6 @@ REXWindow::~REXWindow()
 
 bool REXWindow::event(QEvent *event)
 {
-    //qDebug()<<event->type();
     return QMainWindow::event(event);
 }
 
