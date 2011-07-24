@@ -93,7 +93,7 @@ void TItemModel::clearCache(int row)
     cache.remove(row);
 }
 
-QVariant TItemModel::myData(int row, int col)
+QVariant TItemModel::myData(int row, int col) const
 {
     qr->seek(row);
 
@@ -111,13 +111,15 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
 
     if(index.row() > grow || index.column() > gcolumn)return QVariant();
     qr->seek(index.row());
+    int row = index.row();
+    int col = index.column();
 
 //##############################################################################################################
     if(role == Qt::DisplayRole)
     {
         if(index.column() == gcolumn) //добавление виртуальной колонки скорости скачивания
         {
-            switch(qr->value(9).toInt())
+            switch(myData(row,9).toInt())
             {
             case LInterface::ON_PAUSE:
             case LInterface::ERROR_TASK:
@@ -125,31 +127,31 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
             case LInterface::FINISHED: return QVariant();
 
             default:
-                QStringList _tmp = speedForHumans(curspeed.value(qr->value(0).toInt()));
+                QStringList _tmp = speedForHumans(curspeed.value(myData(row,0).toInt()));
                 QString curspd_ = _tmp.value(0)+_tmp.value(1);
                 return curspd_;
             }
         }
 
         if(index.column() == 2)
-            return QDateTime::fromString(qr->value(2).toString(),"yyyy-MM-ddThh:mm:ss");
+            return QDateTime::fromString(myData(row,2).toString(),"yyyy-MM-ddThh:mm:ss");
 
         if(index.column() == 3)
         {
-            QString filename = QFileInfo(qr->value(3).toString()).fileName();
+            QString filename = QFileInfo(myData(row,3).toString()).fileName();
             if(filename.left(5) == ".rldr")filename = filename.left(filename.size()-20);
             return filename;
         }
 
         if(index.column() == 5)
         {
-            QStringList sz = sizeForHumans(qr->value(5).toLongLong());
+            QStringList sz = sizeForHumans(myData(row,5).toLongLong());
             return sz.value(0)+sz.value(1);
         }
 
         if(index.column() == 9)
         {
-            switch(qr->value(9).toInt())
+            switch(myData(row,9).toInt())
             {
             case LInterface::ON_PAUSE: return QString(tr("Suspended"));
             case LInterface::ERROR_TASK: return QString(tr("Error"));
@@ -159,7 +161,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
             case LInterface::REDIRECT:
             case LInterface::STOPPING:
             case LInterface::ON_LOAD:
-                if(qr->value(5).toLongLong()) return QString::number(qr->value(4).toLongLong()*100/qr->value(5).toLongLong())+QString("%");
+                if(myData(row,5).toLongLong()) return QString::number(myData(row,4).toLongLong()*100/myData(row,5).toLongLong())+QString("%");
                 else return QString("0%");
             case LInterface::FINISHED: return QString(tr("Completed"));
 
@@ -167,12 +169,12 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
             }
         }
 
-        return qr->value(index.column());
+        return myData(row,col);
     }
 
     if(role == Qt::BackgroundColorRole)
     {
-        switch(qr->value(9).toInt())
+        switch(myData(row,9).toInt())
         {
         case LInterface::ON_PAUSE: return QColor("#fff3a4");
         case LInterface::ERROR_TASK: return QColor("#ff5757");
@@ -190,7 +192,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
 
     if(role == Qt::DecorationRole && index.column() == 9)
     {
-        switch(qr->value(9).toInt())
+        switch(myData(row,9).toInt())
         {
         case LInterface::ON_PAUSE: return QIcon(":/appimages/pause_24x24.png");
         case LInterface::ERROR_TASK: return QIcon(":/appimages/error_24x24.png");
@@ -214,29 +216,29 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         QString cursz;
         QString spd;
         QString percent;
-        qint64 totalsz = qr->value(5).toLongLong();
+        qint64 totalsz = myData(row,5).toLongLong();
 
-        if(!qr->value(4).toInt() || !qr->value(5).toInt())
+        if(!myData(row,4).toLongLong() || !myData(row,5).toLongLong())
             percent = "0";
-        else percent = QString::number(qr->value(4).toLongLong()*100/qr->value(5).toLongLong());
+        else percent = QString::number(myData(row,4).toLongLong()*100/myData(row,5).toLongLong());
 
-        QString filename = QFileInfo(qr->value(3).toString()).fileName();
+        QString filename = QFileInfo(myData(row,3).toString()).fileName();
         filename = filename.left(filename.size()-20);
 
         QStringList _tmp = sizeForHumans(totalsz);
         totalszStr = _tmp.value(0)+_tmp.value(1);
         _tmp.clear();
-        _tmp = sizeForHumans(qr->value(4).toInt());
+        _tmp = sizeForHumans(myData(row,4).toInt());
         cursz = _tmp.value(0)+_tmp.value(1);
         _tmp.clear();
-        if(qr->value(9).toInt() == LInterface::ON_LOAD)
+        if(myData(row,9).toInt() == LInterface::ON_LOAD)
         {
-            _tmp = speedForHumans(curspeed.value(qr->value(0).toLongLong()));
+            _tmp = speedForHumans(curspeed.value(myData(row,0).toLongLong()));
             spd = _tmp.value(0)+_tmp.value(1);
         }
         else spd = "---";
 
-        tooltip = QString(tr("URL: %1\r\nFilename: %2\r\nTotal size: %3\r\nLeft: %4 (%5%)\r\nDown. speed: %6")).arg(qr->value(1).toString(),filename,totalszStr,cursz,percent,spd);
+        tooltip = QString(tr("URL: %1\r\nFilename: %2\r\nTotal size: %3\r\nLeft: %4 (%5%)\r\nDown. speed: %6")).arg(myData(row,1).toString(),filename,totalszStr,cursz,percent,spd);
         return tooltip;
     }
 
@@ -244,8 +246,8 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
     {
         switch(index.column())
         {
-        case 2: return QDateTime::fromString(qr->value(2).toString(),"yyyy-MM-ddThh:mm:ss");
-        default: return qr->value(index.column());
+        case 2: return QDateTime::fromString(myData(row,2).toString(),"yyyy-MM-ddThh:mm:ss");
+        default: return myData(row,col);
         }
     }
     return QVariant();
