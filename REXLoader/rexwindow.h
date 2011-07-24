@@ -91,7 +91,7 @@ private:
     QSystemTrayIcon *trayicon; //объект системного лотка
 
     QStringList pluginDirs; //список с директориями, в которых могут быть плагины
-    QHash<int,QStringList> *mesqueue; //очередь сообщений
+    QHash<int,QStringList> mesqueue; //очередь сообщений
     QHash<int,int> tasklist; //список дескрипторов активных заданий (id_in_table, id_task)
     QString apphomedir; //путь к рабочему каталогу приложения, где хранятся все его файлы конфигураций
     QString dbconnect; //имя подклюения к БД

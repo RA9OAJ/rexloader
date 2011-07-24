@@ -72,6 +72,7 @@ void REXWindow::createInterface()
 {
     //настраиваем таблицу
     model = new TItemModel(this);
+    //model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     model->updateModel();
     sfmodel = new QSortFilterProxyModel(this);
     sfmodel->setSortRole(100);
@@ -415,7 +416,6 @@ void REXWindow::startTask()
         if(select->selectedRows(4).value(i).data(100).toInt() > 0) //если файл на докачке, а не новый
         {
 
-
             if(QFile::exists(filepath) && plugproto.contains(_url.scheme().toLower())) //если локальный файл существует
             {
                 int id_proto = plugproto.value(_url.scheme().toLower()); // id плагина с соответствующим протоколом
@@ -433,7 +433,6 @@ void REXWindow::startTask()
                     //тут запись в журнал ошибок или запрос на счет того, желает ли пользователь снова закачать файл с самогог начала
 
                 }
-                continue;
             }
         }
 
@@ -509,6 +508,7 @@ void REXWindow::syncTaskData()
         qint64 totalsize = ldr->totalSize(id_task);
         qint64 totalload = ldr->totalLoadedOnTask(id_task);
         QString filepath = ldr->taskFilePath(id_task);
+        if(!QFile::exists(filepath) && QDir().exists(filepath))filepath +="/noname.html";
         int tstatus = ldr->taskStatus(id_task);
         qint64 speed = ldr->downSpeed(id_task);
         model->setMetaData(id_row,"speed",speed);
@@ -545,6 +545,8 @@ void REXWindow::syncTaskData()
             qr.bindValue("tstatus",tstatus);
             qr.bindValue("id",id_row);
 
+            model->setData(model->index(1,4),QString::number(totalload));
+
             if(!qr.exec())
             {
                 //запись в журнал ошибок
@@ -557,12 +559,25 @@ void REXWindow::syncTaskData()
             ldr->deleteTask(id_task);
             tasklist.remove(id_row);
         }
+        QSortFilterProxyModel *mdl = new QSortFilterProxyModel();
+        mdl->setSourceModel(model);
+        mdl->setFilterKeyColumn(0);
+        mdl->setFilterRole(100);
+        mdl->setFilterRegExp(QString::number(id_row));
+        QModelIndex index = mdl->index(0,0);
+        index = mdl->mapToSource(index);
+        delete(mdl);
+        qDebug()<<model->data(index,100);
+        model->updateRow(index.row());
     }
 
-    QList<QModelIndex> selected = ui->tableView->selectionModel()->selectedRows();
+    /*QList<QModelIndex> selected = ui->tableView->selectionModel()->selectedRows();
     updateTaskSheet();
+    QAbstractItemView::SelectionMode mode = ui->tableView->selectionMode();
+    ui->tableView->setSelectionMode(QAbstractItemView::MultiSelection);
     for(int i = 0; i < selected.length(); i++)
         ui->tableView->selectRow(selected.value(i).row());
+    ui->tableView->setSelectionMode(mode);*/
 }
 
 REXWindow::~REXWindow()
