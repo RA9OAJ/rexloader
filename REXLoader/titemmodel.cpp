@@ -95,7 +95,7 @@ void TItemModel::clearCache(int row)
 
 QVariant TItemModel::myData(int row, int col)
 {
-    qr->seel(row);
+    qr->seek(row);
 
     if(cache.contains(row))
     {
