@@ -223,12 +223,12 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         else percent = QString::number(myData(row,4).toLongLong()*100/myData(row,5).toLongLong());
 
         QString filename = QFileInfo(myData(row,3).toString()).fileName();
-        filename = filename.left(filename.size()-20);
+        if(filename.left(5) == ".rldr")filename = filename.left(filename.size()-20);
 
         QStringList _tmp = sizeForHumans(totalsz);
         totalszStr = _tmp.value(0)+_tmp.value(1);
         _tmp.clear();
-        _tmp = sizeForHumans(myData(row,4).toInt());
+        _tmp = sizeForHumans(myData(row,4).toLongLong());
         cursz = _tmp.value(0)+_tmp.value(1);
         _tmp.clear();
         if(myData(row,9).toInt() == LInterface::ON_LOAD)
