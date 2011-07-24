@@ -33,8 +33,8 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
     virtual int rowCount(const QModelIndex &parent) const;
     virtual int columnCount(const QModelIndex &parent) const;
-    /*virtual bool setData(const QModelIndex &index, const QVariant &value, int role);
-    virtual QMap<int,QVariant> itemData(const QModelIndex &index) const;*/
+    bool setMetaData(int key, const QString &name, const QVariant &value);
+    /*virtual QMap<int,QVariant> itemData(const QModelIndex &index) const;*/
     virtual QModelIndex index(int row, int column, const QModelIndex &parent) const;
     virtual QModelIndex parent(const QModelIndex &child) const;
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;

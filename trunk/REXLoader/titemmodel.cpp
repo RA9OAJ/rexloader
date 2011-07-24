@@ -85,6 +85,13 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         if(index.column() == 2)
             return QDateTime::fromString(qr->value(2).toString(),"yyyy-MM-ddThh:mm:ss");
 
+        if(index.column() == 3)
+        {
+            QString filename = QFileInfo(qr->value(3).toString()).fileName();
+            filename = filename.left(filename.size()-20);
+            return filename;
+        }
+
         if(index.column() == 9)
         {
             switch(qr->value(9).toInt())
@@ -97,7 +104,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
             case LInterface::REDIRECT:
             case LInterface::STOPPING:
             case LInterface::ON_LOAD:
-                if(qr->value(5).toInt()) return QString::number(qr->value(4).toInt()*100/qr->value(5).toInt())+QString("%");
+                if(qr->value(5).toLongLong()) return QString::number(qr->value(4).toLongLong()*100/qr->value(5).toLongLong())+QString("%");
                 else return QString("0%");
             case LInterface::FINISHED: return QString(tr("Completed"));
 
@@ -156,7 +163,10 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
 
         if(!qr->value(4).toInt() || !qr->value(5).toInt())
             percent = "0";
-        else percent = QString::number(qr->value(4).toInt()*100/qr->value(5).toInt());
+        else percent = QString::number(qr->value(4).toLongLong()*100/qr->value(5).toLongLong());
+
+        QString filename = QFileInfo(qr->value(3).toString()).fileName();
+        filename = filename.left(filename.size()-20);
 
         QStringList _tmp = sizeForHumans(totalsz);
         totalszStr = _tmp.value(0)+_tmp.value(1);
@@ -171,7 +181,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         }
         else spd = "---";
 
-        tooltip = QString(tr("URL: %1\r\nFilename: %2\r\nTotal size: %3\r\nLeft: %4 (%5%)\r\nDown. speed: %6")).arg(qr->value(1).toString(),qr->value(3).toString(),totalszStr,cursz,percent,spd);
+        tooltip = QString(tr("URL: %1\r\nFilename: %2\r\nTotal size: %3\r\nLeft: %4 (%5%)\r\nDown. speed: %6")).arg(qr->value(1).toString(),filename,totalszStr,cursz,percent,spd);
         return tooltip;
     }
 
@@ -240,6 +250,22 @@ QStringList TItemModel::speedForHumans(qint64 sp, bool in_bytes)
     else outstrings << QString::number(sp) << (in_bytes ? tr(" B/s"):tr(" bps"));;
 
     return outstrings;
+}
+
+bool TItemModel::setMetaData(int key, const QString &name,const QVariant &value)
+{
+    if(name == "speed")
+    {
+        if(value.toLongLong() != 0)
+            curspeed.insert(key, value.toLongLong());
+        else
+            curspeed.remove(key);
+
+        return true;
+    }
+
+    return false;
+
 }
 
 TItemModel::~TItemModel()
