@@ -93,12 +93,26 @@ void TItemModel::clearCache(int row)
     cache.remove(row);
 }
 
+QVariant TItemModel::myData(int row, int col)
+{
+    qr->seel(row);
+
+    if(cache.contains(row))
+    {
+        if(cache.value(row)->contains(col))
+            return cache.value(row)->value(col);
+    }
+
+    return qr->value(col);
+}
+
 QVariant TItemModel::data(const QModelIndex &index, int role) const
 {
 
     if(index.row() > grow || index.column() > gcolumn)return QVariant();
     qr->seek(index.row());
 
+//##############################################################################################################
     if(role == Qt::DisplayRole)
     {
         if(index.column() == gcolumn) //добавление виртуальной колонки скорости скачивания

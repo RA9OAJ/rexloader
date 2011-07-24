@@ -47,6 +47,8 @@ public slots:
     void clearCache(int row = -1);
 
 protected:
+    QVariant myData(int row, int col);
+
     QSqlQuery *qr;
     int grow,gcolumn;
     QHash<int,qint64>curspeed;
