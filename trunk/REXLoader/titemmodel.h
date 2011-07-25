@@ -41,6 +41,7 @@ public:
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     static QStringList sizeForHumans(qint64 sz);
     static QStringList speedForHumans(qint64 sp, bool in_bytes = true, bool out_bytes = false);
+    static QString secForHumans(int sec);
 
 public slots:
     bool updateModel(const QSqlDatabase &db = QSqlDatabase());

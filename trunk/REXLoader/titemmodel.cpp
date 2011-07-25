@@ -80,11 +80,12 @@ void TItemModel::clearCache(int row)
 {
     if(row < 0)
     {
-        for(int i = 0; i < cache.size(); i++)
+        QList<int> keys = cache.keys();
+        for(int i = 0; i < keys.size(); i++)
         {
-            cache.value(i)->clear();
-            delete(cache.value(i));
-            cache.remove(i);
+            cache.value(keys.value(i))->clear();
+            delete(cache.value(keys.value(i)));
+            cache.remove(keys.value(i));
         }
         return;
     }
@@ -139,7 +140,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         if(index.column() == 3)
         {
             QString filename = QFileInfo(myData(row,3).toString()).fileName();
-            if(filename.left(5) == ".rldr")filename = filename.left(filename.size()-20);
+            if(filename.right(5) == ".rldr")filename = filename.left(filename.size()-20);
             return filename;
         }
 
@@ -147,6 +148,20 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         {
             QStringList sz = sizeForHumans(myData(row,5).toLongLong());
             return sz.value(0)+sz.value(1);
+        }
+
+        if(index.column() == 6)
+        {
+            switch(myData(row,9).toInt())
+            {
+            case LInterface::ACCEPT_QUERY:
+            case LInterface::SEND_QUERY:
+            case LInterface::REDIRECT:
+            case LInterface::STOPPING:
+            case LInterface::ON_LOAD: return secForHumans(myData(row,col).toInt());
+
+            default: return QVariant();
+            }
         }
 
         if(index.column() == 9)
@@ -223,7 +238,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         else percent = QString::number(myData(row,4).toLongLong()*100/myData(row,5).toLongLong());
 
         QString filename = QFileInfo(myData(row,3).toString()).fileName();
-        if(filename.left(5) == ".rldr")filename = filename.left(filename.size()-20);
+        if(filename.right(5) == ".rldr")filename = filename.left(filename.size()-20);
 
         QStringList _tmp = sizeForHumans(totalsz);
         totalszStr = _tmp.value(0)+_tmp.value(1);
@@ -289,7 +304,7 @@ QModelIndex TItemModel::index(int row, int column, const QModelIndex &parent) co
 QStringList TItemModel::sizeForHumans(qint64 sz)
 {
     QStringList outstrings;
-    if(sz >= 1073741824)outstrings << QString::number((qint64)sz/1073741824.0,'f',1) << tr(" GB");
+    if(sz >= 1073741824)outstrings << QString::number((qint64)sz/1073741824.0,'f',2) << tr(" GB");
     else if(sz >= 1048576)outstrings << QString::number((qint64)sz/1048576.0,'f',1) << tr(" MB");
     else if(sz >= 1024)outstrings << QString::number((qint64)sz/1024.0,'f',1) << tr(" kB");
     else outstrings << QString::number(sz) << tr(" Bytes");
@@ -307,6 +322,31 @@ QStringList TItemModel::speedForHumans(qint64 sp, bool in_bytes, bool out_bytes)
     else outstrings << (out_bytes ? QString::number(sp):QString::number(sp*8)) << (out_bytes ? tr(" B/s"):tr(" bps"));;
 
     return outstrings;
+}
+
+QString TItemModel::secForHumans(int sec)
+{
+    int days,hours,minuts;
+    days = hours = minuts = 0;
+    QString out;
+
+    days = sec / 86400;
+    sec %= 86400;
+    hours = sec/3600;
+    sec %= 3600;
+    minuts = sec/60;
+    sec %= 60;
+
+    if(days)
+        out = tr("%1d %2h:%3m:%4s").arg(QString::number(days), QString::number(hours), QString::number(minuts,'g',2), QString::number(sec,'g',2));
+    else if(hours)
+        out = tr("%1h:%2m:%3s").arg(QString::number(hours), QString::number(minuts,'g',2), QString::number(sec,'g',2));
+    else if(minuts)
+        out = tr("%1:%2").arg(QString::number(minuts), QString::number(sec,'g',2));
+    else
+        out = tr("%1s").arg(QString::number(sec));
+
+    return out;
 }
 
 bool TItemModel::setMetaData(int key, const QString &name,const QVariant &value)

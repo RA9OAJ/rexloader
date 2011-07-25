@@ -390,6 +390,7 @@ void REXWindow::deleteTask()
         qDebug()<<"void REXWindow::deleteTask(): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
     }
 
+    model->clearCache();
     updateTaskSheet(); //обновляем таблицу задач
 }
 
@@ -519,7 +520,16 @@ void REXWindow::syncTaskData()
         mdl->setFilterRole(100);
         mdl->setFilterRegExp(QString::number(id_row));
         QModelIndex index = mdl->index(0,0);
+        QModelIndex downtimeId = mdl->index(0,6);
+        QModelIndex speedAvgId = mdl->index(0,11);
+
         index = mdl->mapToSource(index);
+        downtimeId = mdl->mapToSource(downtimeId);
+        speedAvgId = mdl->mapToSource(speedAvgId);
+        int downtime = model->data(downtimeId,100).toInt();
+        int speedAvg = downtime ? (model->data(speedAvgId,100).toLongLong()*(qint64)downtime + speed)/(qint64)downtime : 0;
+        ++downtime;
+
         delete(mdl);
 
         qr.clear();
@@ -529,11 +539,13 @@ void REXWindow::syncTaskData()
             int errno = ldr->errorNo(id_task);
             QString errStr = ldr->errorString(errno);
 
-            qr.prepare("UPDATE tasks SET totalsize=:totalsize, currentsize=:currentsize, filename=:filename, tstatus=:tstatus, lasterror=:lasterror WHERE id=:id");
+            qr.prepare("UPDATE tasks SET totalsize=:totalsize, currentsize=:currentsize, filename=:filename, downtime=:downtime, tstatus=:tstatus, speed_avg=:speedavg,lasterror=:lasterror WHERE id=:id");
             qr.bindValue("totalsize",QString::number(totalsize));
             qr.bindValue("currentsize",QString::number(totalload));
             qr.bindValue("filename",filepath);
+            qr.bindValue("downtime",downtime);
             qr.bindValue("tstatus",tstatus);
+            qr.bindValue("speedavg",QString::number(speedAvg));
             qr.bindValue("lasterror",QString("%1 (%2)").arg(errStr,QString::number(errno)));
             qr.bindValue("id",id_row);
 
@@ -543,9 +555,11 @@ void REXWindow::syncTaskData()
                 qDebug()<<"void REXWindow::syncTaskData(1): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
             }
             model->addToCache(index.row(),5,totalsize);
+            model->addToCache(index.row(),6,downtime);
             model->addToCache(index.row(),4,totalload);
             model->addToCache(index.row(),3,filepath);
             model->addToCache(index.row(),9,tstatus);
+            model->addToCache(index.row(),11,speedAvg);
             model->addToCache(index.row(),7,QString("%1 (%2)").arg(errStr,QString::number(errno)));
 
             ldr->deleteTask(id_task);
@@ -553,11 +567,13 @@ void REXWindow::syncTaskData()
         }
         else
         {
-            qr.prepare("UPDATE tasks SET totalsize=:totalsize, currentsize=:currentsize, filename=:filename, tstatus=:tstatus WHERE id=:id");
+            qr.prepare("UPDATE tasks SET totalsize=:totalsize, currentsize=:currentsize, filename=:filename, downtime=:downtime, tstatus=:tstatus, speed_avg=:speedavg WHERE id=:id");
             qr.bindValue("totalsize",QString::number(totalsize));
             qr.bindValue("currentsize",QString::number(totalload));
             qr.bindValue("filename",filepath);
+            qr.bindValue("downtime",downtime);
             qr.bindValue("tstatus",tstatus);
+            qr.bindValue("speedavg",QString::number(speedAvg));
             qr.bindValue("id",id_row);
 
             if(!qr.exec())
@@ -566,28 +582,20 @@ void REXWindow::syncTaskData()
                 qDebug()<<"void REXWindow::syncTaskData(2): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
             }
             model->addToCache(index.row(),5,totalsize);
+            model->addToCache(index.row(),6,downtime);
             model->addToCache(index.row(),4,totalload);
             model->addToCache(index.row(),3,filepath);
             model->addToCache(index.row(),9,tstatus);
+            model->addToCache(index.row(),11,speedAvg);
         }
-
+        qDebug()<<tstatus;
         if(tstatus == LInterface::ON_PAUSE || tstatus == LInterface::FINISHED)
         {
             ldr->deleteTask(id_task);
             tasklist.remove(id_row);
         }
-
-        //qDebug()<<model->data(index,100);
         model->updateRow(index.row());
     }
-
-    /*QList<QModelIndex> selected = ui->tableView->selectionModel()->selectedRows();
-    updateTaskSheet();
-    QAbstractItemView::SelectionMode mode = ui->tableView->selectionMode();
-    ui->tableView->setSelectionMode(QAbstractItemView::MultiSelection);
-    for(int i = 0; i < selected.length(); i++)
-        ui->tableView->selectRow(selected.value(i).row());
-    ui->tableView->setSelectionMode(mode);*/
 }
 
 REXWindow::~REXWindow()

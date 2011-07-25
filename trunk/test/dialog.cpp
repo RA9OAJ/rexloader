@@ -145,7 +145,7 @@ void Dialog::startDownload()
         ui->url->setStyleSheet("border-color: red;");
         return;
     }
-    loader->setMaxSectionsOnTask(1);
+    loader->setMaxSectionsOnTask(3);
     task_id = /*loader->loadTaskFile("/home/rav/1.mp4");*/loader->addTask(myurl);
     if(!task_id)return;
     QFileInfo info(ui->url->text());
