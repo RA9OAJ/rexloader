@@ -1,5 +1,5 @@
-#define P_VERSION "0.1a.2"
-#define P_BUILD_DATE "2011-05-26"
+#define P_VERSION "0.1a.3"
+#define P_BUILD_DATE "2011-07-27"
 
 #include "httploader.h"
 
@@ -453,7 +453,6 @@ void HttpLoader::sectionCompleted()
 
     if(sect->totalLoadOnSection() == _total && _total > 0) //если закачка прошла успешно
     {
-
         t_mutex->lock();
         //if(!sect->isFinished())sect->stopDownloading();
         //while(!sect->isFinished());
@@ -586,8 +585,10 @@ void HttpLoader::addSection(int id_task)
     }
 
     int cur_sect_id = 0;
+
     for(int i = 1; i < 7; i++) //находим недокачанную и не запущенную секцию
     {
+        if(i != 1 && _task->map[2*i-2] == 0)continue; //25.07.2011
         qint64 cur_sect = _task->map[2*i-2] + _task->map[2*i-1];
         qint64 end_sect = _task->map[2*i] != 0 ? _task->map[2*i]:_task->map[12];
         if((cur_sect < end_sect || !end_sect) && !_task->sections.contains(i)){cur_sect_id = i;break;}
@@ -946,6 +947,7 @@ void HttpLoader::acceptRang()
     //while(!sect->wait(1000)){qDebug()<<"HttpLoader While 4"; /*sect->terminate();*/}
     qint64 sect_size = tsk->size / tsk->_maxSections;
     qint64 load_section = tsk->map[2*sect_id-1];
+
     for(int i = 1; i < tsk->_maxSections; ++i)
     {
         tsk->map[2*i]=sect_size*i;
@@ -956,7 +958,6 @@ void HttpLoader::acceptRang()
                 tsk->map[2*i+1] = load_section - sect_size;
         }
     }
-
     t_mutex->unlock();
 
     sect->setSection(tsk->map[0], tsk->map[2]-1);
