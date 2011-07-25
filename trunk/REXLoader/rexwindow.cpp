@@ -527,7 +527,7 @@ void REXWindow::syncTaskData()
         downtimeId = mdl->mapToSource(downtimeId);
         speedAvgId = mdl->mapToSource(speedAvgId);
         int downtime = model->data(downtimeId,100).toInt();
-        int speedAvg = downtime ? (model->data(speedAvgId,100).toLongLong()*(qint64)downtime + speed)/(qint64)downtime : 0;
+        int speedAvg = downtime ? (model->data(speedAvgId,100).toLongLong()*downtime + speed)/(downtime+1) : 0;
         ++downtime;
 
         delete(mdl);
@@ -588,7 +588,7 @@ void REXWindow::syncTaskData()
             model->addToCache(index.row(),9,tstatus);
             model->addToCache(index.row(),11,speedAvg);
         }
-        qDebug()<<tstatus;
+
         if(tstatus == LInterface::ON_PAUSE || tstatus == LInterface::FINISHED)
         {
             ldr->deleteTask(id_task);

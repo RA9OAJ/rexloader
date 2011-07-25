@@ -56,12 +56,12 @@ int TItemModel::rowCount(const QModelIndex &parent) const
 int TItemModel::columnCount(const QModelIndex &parent) const
 {
     if(!qr)return 0;
-    return gcolumn+1;
+    return gcolumn+2;
 }
 
 void TItemModel::updateRow(int row)
 {
-    for(int i=0; i< columnCount(QModelIndex())-1; i++)
+    for(int i=0; i <= columnCount(QModelIndex())+1; i++)
     {
         QModelIndex ModelIndex = index(row, i, QModelIndex());
         emit dataChanged(ModelIndex, ModelIndex);
@@ -110,7 +110,7 @@ QVariant TItemModel::myData(int row, int col) const
 QVariant TItemModel::data(const QModelIndex &index, int role) const
 {
 
-    if(index.row() > grow || index.column() > gcolumn)return QVariant();
+    if(index.row() > grow || index.column() > gcolumn+1)return QVariant();
     qr->seek(index.row());
     int row = index.row();
     int col = index.column();
@@ -134,6 +134,22 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
             }
         }
 
+        if(index.column() == gcolumn+1) //добавление виртуальной колонки оставшегося времени
+        {
+            switch(myData(row,9).toInt())
+            {
+            case LInterface::ON_PAUSE:
+            case LInterface::ERROR_TASK:
+            case -100:
+            case LInterface::FINISHED: return QVariant();
+
+            default:
+                if(myData(row,11).toLongLong() == 0 || myData(row,5).toLongLong() == 0)return QVariant();
+                int secToLeft = (myData(row,5).toLongLong()-myData(row,4).toLongLong())/myData(row,11).toLongLong();
+                return secForHumans(secToLeft);
+            }
+        }
+
         if(index.column() == 2)
             return QDateTime::fromString(myData(row,2).toString(),"yyyy-MM-ddThh:mm:ss");
 
@@ -152,16 +168,8 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
 
         if(index.column() == 6)
         {
-            switch(myData(row,9).toInt())
-            {
-            case LInterface::ACCEPT_QUERY:
-            case LInterface::SEND_QUERY:
-            case LInterface::REDIRECT:
-            case LInterface::STOPPING:
-            case LInterface::ON_LOAD: return secForHumans(myData(row,col).toInt());
-
-            default: return QVariant();
-            }
+            if(myData(row,col).toInt())return secForHumans(myData(row,col).toInt());
+            return QVariant();
         }
 
         if(index.column() == 9)
@@ -181,6 +189,22 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
             case LInterface::FINISHED: return QString(tr("Completed"));
 
             default: return QVariant();
+            }
+        }
+
+        if(index.column() == 11) //добавление виртуальной колонки скорости скачивания
+        {
+            switch(myData(row,9).toInt())
+            {
+            case LInterface::ON_PAUSE:
+            case LInterface::ERROR_TASK:
+            case -100:
+            case LInterface::FINISHED: return QVariant();
+
+            default:
+                QStringList _tmp = speedForHumans(myData(row,col).toLongLong());
+                QString curspd_ = _tmp.value(0)+_tmp.value(1);
+                return curspd_;
             }
         }
 
@@ -275,7 +299,10 @@ QVariant TItemModel::headerData(int section, Qt::Orientation orientation, int ro
     if(!qr || gcolumn == 0)return QVariant();
 
     if(section == gcolumn && orientation == Qt::Horizontal) //добавление виртуальной колонки скорости скачивания
-        return QString("Down. speed");
+        return QString(tr("Down. speed"));
+
+    if(section == gcolumn+1 && orientation == Qt::Horizontal) //добавление виртуальной колонки
+        return QString(tr("Time left"));
 
     if(orientation == Qt::Horizontal)
         return qr->record().field(section).name();
@@ -289,13 +316,21 @@ QModelIndex TItemModel::parent(const QModelIndex &child) const
 
 QModelIndex TItemModel::index(int row, int column, const QModelIndex &parent) const
 {
-    if(row > grow || column > gcolumn || !qr) return QModelIndex();
+    if(row > grow || column > gcolumn+1 || !qr) return QModelIndex();
     qr->seek(row);
 
     if(column == gcolumn)
     {
         qint64 _spd = curspeed.value(qr->value(0).toInt());
         return createIndex(row,column,&_spd); //добавление виртуальной колонки скорости скачивания
+    }
+
+    if(column == gcolumn + 1)
+    {
+
+        int sec = 0;
+        if(myData(row,11).toLongLong() != 0)sec = (myData(row,5).toLongLong()-myData(row,4).toLongLong())/myData(row,11).toLongLong();;
+        return createIndex(row,column,&sec); //добавление виртуальной колонки
     }
 
     return createIndex(row,column,&qr->record().field(column));
@@ -338,11 +373,11 @@ QString TItemModel::secForHumans(int sec)
     sec %= 60;
 
     if(days)
-        out = tr("%1d %2h:%3m:%4s").arg(QString::number(days), QString::number(hours), QString::number(minuts,'g',2), QString::number(sec,'g',2));
+        out = tr("%1d %2h %3m %4s").arg(QString::number(days), QString::number(hours), QString::number(minuts), QString::number(sec));
     else if(hours)
-        out = tr("%1h:%2m:%3s").arg(QString::number(hours), QString::number(minuts,'g',2), QString::number(sec,'g',2));
+        out = tr("%1h %2m %3s").arg(QString::number(hours), QString::number(minuts), QString::number(sec));
     else if(minuts)
-        out = tr("%1:%2").arg(QString::number(minuts), QString::number(sec,'g',2));
+        out = tr("%1m %2s").arg(QString::number(minuts), QString::number(sec));
     else
         out = tr("%1s").arg(QString::number(sec));
 
@@ -362,7 +397,6 @@ bool TItemModel::setMetaData(int key, const QString &name,const QVariant &value)
     }
 
     return false;
-
 }
 
 TItemModel::~TItemModel()
