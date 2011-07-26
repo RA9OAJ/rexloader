@@ -79,6 +79,7 @@ protected slots:
     void stopTask(); //останавливает выполнение выбранной задачи
     void stopAllTasks(); //останавливает все выполняемые задачи
     void syncTaskData(); //синхронизирует состояние задач с БД
+    void manageTaskQueue(); //сканирует
 
 signals:
     void transAct();

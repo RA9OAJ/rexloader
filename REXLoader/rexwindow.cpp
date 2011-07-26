@@ -303,6 +303,7 @@ void REXWindow::scheuler()
     scanNewTaskQueue();
     scanClipboard();
     syncTaskData();
+    manageTaskQueue();
 
     QTimer::singleShot(1000,this,SLOT(scheuler()));
 }
@@ -392,6 +393,7 @@ void REXWindow::deleteTask()
 
     model->clearCache();
     updateTaskSheet(); //обновляем таблицу задач
+    manageTaskQueue();
 }
 
 void REXWindow::startTask()
@@ -451,6 +453,8 @@ void REXWindow::startTask()
         pluglist.value(id_proto)->setTaskFilePath(id_task,flinfo.absolutePath());
         pluglist.value(id_proto)->startDownload(id_task);
     }
+
+    manageTaskQueue();
 }
 
 void REXWindow::startAllTasks()
@@ -482,9 +486,8 @@ void REXWindow::stopTask()
         int id_task = tasklist.value(id_row)%100; // id задачи
 
         pluglist.value(id_proto)->stopDownload(id_task);
-        //pluglist.value(id_proto)->deleteTask(id_task);
-        //tasklist.remove(id_row);
     }
+    manageTaskQueue();
 }
 
 void REXWindow::stopAllTasks()
@@ -506,11 +509,29 @@ void REXWindow::syncTaskData()
         int id_proto = (tasklist.value(id_row))/100;
 
         LoaderInterface *ldr = pluglist.value(id_proto);
+        int tstatus = ldr->taskStatus(id_task);
+        qr.clear();
+
+        if(tstatus == LInterface::NO_TASK)
+        {
+            qr.prepare("UPDATE tasks SET tstatus=:tstatus WHERE id=:id");
+            qr.bindValue("tstatus",-100);
+            qr.bindValue("id",id_row);
+
+            if(!qr.exec())
+            {
+                //запись в журнал ошибок
+                qDebug()<<"void REXWindow::syncTaskData(3): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
+            }
+            else tasklist.remove(id_row);
+
+            continue;
+        }
+
         qint64 totalsize = ldr->totalSize(id_task);
         qint64 totalload = ldr->totalLoadedOnTask(id_task);
         QString filepath = ldr->taskFilePath(id_task);
         if(!QFile::exists(filepath) && QDir().exists(filepath))filepath +="/noname.html";
-        int tstatus = ldr->taskStatus(id_task);
         qint64 speed = ldr->downSpeed(id_task);
         model->setMetaData(id_row,"speed",speed);
 
@@ -529,10 +550,7 @@ void REXWindow::syncTaskData()
         int downtime = model->data(downtimeId,100).toInt();
         int speedAvg = downtime ? (model->data(speedAvgId,100).toLongLong()*downtime + speed)/(downtime+1) : 0;
         ++downtime;
-
         delete(mdl);
-
-        qr.clear();
 
         if(tstatus == LInterface::ERROR_TASK)
         {
@@ -595,6 +613,123 @@ void REXWindow::syncTaskData()
             tasklist.remove(id_row);
         }
         model->updateRow(index.row());
+    }
+}
+
+void REXWindow::manageTaskQueue()
+{
+    QSqlQuery qr(QSqlDatabase::database());
+    qr.prepare("SELECT * FROM tasks WHERE tstatus=-100 ORDER BY priority DESC"); //список задач в очереди
+    if(!qr.exec())
+    {
+        //запись в журнал ошибок
+        qDebug()<<"void REXWindow::manageTaskQueue(1): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
+    }
+
+    while(tasklist.size() < max_tasks && qr.next()) //если запущено меньше задач, чем разрешено
+    {
+        QUrl _url(qr.value(1).toString());
+        if(!plugproto.contains(_url.scheme().toLower()))
+        {
+            QSqlQuery qr1(QSqlDatabase::database());
+            qr1.prepare("UPDATE tasks SET tstatus=:status, lasterror=:error WHERE id=:id");
+            qr1.bindValue("status",LInterface::ERROR_TASK);
+            qr1.bindValue("error",tr("This protocol is not supported. Check whether there is a plugin to work with the protocol and whether it is enabled."));
+            qr1.bindValue("id",qr.value(0).toInt());
+            if(!qr1.exec())
+            {
+                //запись в журнал ошибок
+                qDebug()<<"void REXWindow::manageTaskQueue(2): SQL:" + qr1.executedQuery() + " Error: " + qr1.lastError().text();
+            }
+            continue;
+        }
+
+        int id_row = qr.value(0).toInt();
+        int id_proto = plugproto.value(_url.scheme().toLower());
+        LoaderInterface *ldr = pluglist.value(id_proto);
+        int id_task = ldr->addTask(_url);
+
+        if(!id_task)
+        {
+            //запись в журнал ошибок
+        }
+
+        QFileInfo flinfo(qr.value(3).toString());
+        tasklist.insert(id_row,id_task + id_proto*100);
+        ldr->setTaskFilePath(id_task,flinfo.absolutePath());
+        ldr->startDownload(id_task);
+    }
+
+    if(!qr.next())return;
+
+    QSqlQuery qr1(QSqlDatabase::database());
+    qr1.prepare("SELECT id,priority FROM tasks WHERE tstatus BETWEEN 1 AND 4 ORDER BY priority DESC"); //список выполняемых задач
+    if(!qr1.exec())
+    {
+        //запись в журнал ошибок
+        qDebug()<<"void REXWindow::manageTaskQueue(3): SQL:" + qr1.executedQuery() + " Error: " + qr1.lastError().text();
+        return;
+    }
+
+    qr1.last();
+    if(qr.value(13).toInt() <= qr1.value(13).toInt())return; //если самый высокий приоритет стоящего в очереди меньше или равен самому маленькому приоритету выполняющегося, то выходим
+    qr1.first();
+
+    int start_pos = 0;
+    while(qr.next())
+    {
+        bool success = false;
+        while(qr1.seek(start_pos))
+        {
+            ++start_pos;
+            if(qr.value(13).toInt() > qr1.value(13).toInt())
+            {
+                int id_row = qr1.value(0).toInt();
+                int id_task = tasklist.value(id_row)%100;
+                int id_proto = tasklist.value(id_row)/100;
+
+                LoaderInterface *ldr = pluglist.value(id_proto);
+
+                 //останавливаем найденную задачу, удаляем её из менеджера закачек
+                ldr->stopDownload(id_task);
+                ldr->deleteTask(id_task);
+
+                //запускаем новую задачу
+                QUrl _url(qr.value(1).toString());
+                id_row = qr.value(0).toInt();
+
+                if(!plugproto.contains(_url.scheme().toLower())) //если протокол не поддерживается, то пропускаем эту задачу в очереди, поменяв её статус на ошибку
+                {
+                    QSqlQuery qr1(QSqlDatabase::database());
+                    qr1.prepare("UPDATE tasks SET status=:status, lasterror=:error WHERE id=:id");
+                    qr1.bindValue("status",LInterface::ERROR_TASK);
+                    qr1.bindValue("error",tr("This protocol is not supported. Check whether there is a plugin to work with the protocol and whether it is enabled."));
+                    qr1.bindValue("id",qr.value(0).toInt());
+                    if(!qr1.exec())
+                    {
+                        //запись в журнал ошибок
+                        qDebug()<<"void REXWindow::manageTaskQueue(2): SQL:" + qr1.executedQuery() + " Error: " + qr1.lastError().text();
+                    }
+                    success = true;
+                    break;
+                }
+
+                id_proto = plugproto.value(_url.scheme().toLower());
+                ldr = pluglist.value(id_proto);
+                id_task = ldr->addTask(_url);
+
+                if(!id_task)
+                {
+                    //записываем ошибку в журнал
+                }
+
+                ldr->startDownload(id_task);
+
+                success = true;
+                break;
+            }
+        }
+        if(!success)return; //если не нашли меньших по приоритету задач то выходим
     }
 }
 
