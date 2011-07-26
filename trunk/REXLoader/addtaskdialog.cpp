@@ -171,13 +171,13 @@ void AddTaskDialog::scanClipboard()
 
 void AddTaskDialog::startNow()
 {
-    priority = 4;
+    priority = 2;
     addTask();
 }
 
 void AddTaskDialog::startLater()
 {
-    priority = 1;
+    priority = -1;
     addTask();
 }
 
@@ -267,12 +267,14 @@ void AddTaskDialog::addTask()
     flname = gui->locationEdit->text() + "/" + flname + "." + dtime.toString("yyyyMMddhhmmss") + ".rldr";
 
     qr.clear();
-    qr.prepare("INSERT INTO tasks(url,filename,datecreate,tstatus,categoryid,priority,note) VALUES(:url,:filename,:datecreate,-100,:categoryid,:priority,:note);");
+    qr.prepare("INSERT INTO tasks(url,filename,datecreate,tstatus,categoryid,priority,note) VALUES(:url,:filename,:datecreate,:tstatus,:categoryid,:priority,:note);");
     qr.bindValue("url", gui->urlBox->currentText());
     qr.bindValue("filename",flname);
     qr.bindValue("datecreate",dtime.toString("yyyy-MM-ddThh:mm:ss"));
+    if(priority < 0)qr.bindValue("tstatus",0);
+    else qr.bindValue("tstatus",-100);
     qr.bindValue("categoryid",catId);
-    qr.bindValue("priority",priority);
+    qr.bindValue("priority",2);
     qr.bindValue("note",gui->textEdit->document()->toPlainText());
 
     if(!qr.exec())
