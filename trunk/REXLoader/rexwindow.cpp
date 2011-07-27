@@ -456,7 +456,7 @@ void REXWindow::startTask()
         }
 
         QSqlQuery qr(QSqlDatabase::database());
-        qr.prepare("UPDATE tasks SET tstatus=-100 WHERE id=:id");
+        qr.prepare("UPDATE tasks SET tstatus=-100, lasterror='', downtime='' WHERE id=:id");
         qr.bindValue("id",id_row);
 
         if(!qr.exec())
@@ -471,13 +471,14 @@ void REXWindow::startTask()
 void REXWindow::startAllTasks()
 {
     QSqlQuery qr(QSqlDatabase::database());
-    qr.prepare("UPDATE tasks SET tstatus=-100 WHERE tstatus IN(-2,0)");
+    qr.prepare("UPDATE tasks SET tstatus=-100, lasterror='', downtime='' WHERE tstatus IN (-2, 0)");
     if(!qr.exec())
     {
         //запись в журнал ошибок
         qDebug()<<"void REXWindow::startAllTasks(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
         return;
     }
+    updateTaskSheet();
     manageTaskQueue();
     syncTaskData();
 }
@@ -532,6 +533,7 @@ void REXWindow::stopAllTasks()
         LoaderInterface *ldr = pluglist.value(id_proto);
         ldr->stopDownload(id_task);
     }
+    updateTaskSheet();
     manageTaskQueue();
     syncTaskData();
 }
@@ -572,7 +574,7 @@ void REXWindow::syncTaskData()
         qint64 totalsize = ldr->totalSize(id_task);
         qint64 totalload = ldr->totalLoadedOnTask(id_task);
         QString filepath = ldr->taskFilePath(id_task);
-        if(!QFile::exists(filepath) && QDir().exists(filepath))filepath +="/noname.html";
+        //if(!QFile::exists(filepath) && QDir().exists(filepath))filepath +="/noname.html";
         qint64 speed = ldr->downSpeed(id_task);
         model->setMetaData(id_row,"speed",speed);
 
