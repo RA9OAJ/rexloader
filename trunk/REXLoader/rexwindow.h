@@ -54,7 +54,6 @@ public slots:
     void updateTaskSheet(); //обновляет содержимое таблицы списка заданий
     void startTrayIconAnimaion();
     void stopTrayIconAnimation();
-    void scanTaskQueue(); //сканирует очередь заданий и при обнаружении нового доступного, начинает скачивание
     void scanNewTaskQueue(); //сканирует очередь url для добавления в очередь заданий
     void scanClipboard(); //сканирует буфер обмена на наличие доступного для скачивания URL
 
@@ -80,6 +79,7 @@ protected slots:
     void stopAllTasks(); //останавливает все выполняемые задачи
     void syncTaskData(); //синхронизирует состояние задач с БД
     void manageTaskQueue(); //сканирует
+    void startTaskNumber(int id_row, const QUrl &url, const QString &filename = QString(), qint64 totalload = 0);
 
 signals:
     void transAct();
