@@ -98,6 +98,8 @@ public:
     virtual void setUserAgent(const QString &_uagent); //устанавливает идентификационные данные пользовательского агента (например: Opera)
     virtual void setReferer(int id_task,const QString &uref); //устанавливает реферера для id_task
     virtual void setAttemptInterval(const int sec); //устанавливает интервал между повторными попытками скачать секцию/задание
+    virtual void setMaxErrorsOnTask(const int max); //устанавливает максимальное количество ошибок при выполнении задания
+    virtual void setRetryCriticalError(const bool flag = false); //указывает, повторять ли попытки закачать при критических ошибках
     virtual long long int totalSize(int id_task) const; //возвращает общий размер задания id_task
     virtual long long int sizeOnSection(int id_task, int _sect_num) const; //возвращает общий размер секции _sect_num для задания id_task
     virtual long long int totalLoadedOnTask(int id_task) const; //возвращает объем закачанного для задания целиком
@@ -136,6 +138,7 @@ protected slots:
     void syncFileMap(Task* _task); //записывает данные о задании в файл
     void acceptQuery();
     void acceptRang();
+    void addRetSection();
 
     Task* getTaskSender(QObject* _sender) const;
 
@@ -143,6 +146,7 @@ private:
     QHash<int, Task*> *task_list; //хэш заданий по ключам
     QHash<HttpSection*, int> *sections; //хэш ключей заданий по ссылкам на секции
     QList<int> *squeue;
+    QList<int> *dqueue;
     QList<HttpSection*> *del_queue;
     int maxTaskNum; //хранится максимальный номер существующего задания
     int maxErrors;
@@ -156,6 +160,7 @@ private:
 
     bool shedule_flag;
     bool fullsize_res; //признак выделения/не выделения места под весь файл
+    bool ignore_critical;
 
     QTranslator *translator;
 };

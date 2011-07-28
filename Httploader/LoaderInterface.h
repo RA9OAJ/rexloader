@@ -68,6 +68,8 @@ public:
     virtual void setUserAgent(const QString &_uagent)=0; //устанавливает идентификационные данные пользовательского агента (например: Opera)
     virtual void setReferer(int id_task,const QString &uref)=0; //устанавливает реферера для id_task
     virtual void setAttemptInterval(const int sec)=0; //устанавливает интервал между повторными попытками скачать секцию/задание
+    virtual void setMaxErrorsOnTask(const int max)=0; //устанавливает максимальное количество ошибок при выполнении задания
+    virtual void setRetryCriticalError(const bool flag)=0; //указывает, повторять ли попытки закачать при критических ошибках
     virtual long long int totalSize(int id_task) const = 0; //возвращает общий размер задания id_task
     virtual long long int sizeOnSection(int id_task, int _sect_num) const = 0; //возвращает общий размер секции _sect_num для задания id_task
     virtual long long int totalLoadedOnTask(int id_task) const = 0; //возвращает объем закачанного для задания целиком

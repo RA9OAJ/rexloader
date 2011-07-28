@@ -350,11 +350,12 @@ QStringList TItemModel::sizeForHumans(qint64 sz)
 QStringList TItemModel::speedForHumans(qint64 sp, bool in_bytes, bool out_bytes)
 {
     QStringList outstrings;
-    if(!in_bytes)sp = sp/8; // в случае, если скорость в бит/с
-    if(sp >= 1073741824)outstrings << (out_bytes ? QString::number((qint64)sp/1073741824.0,'f',1):QString::number((qint64)sp*8.0/1073741824.0,'f',1)) << (out_bytes ? tr(" GB/s"):tr(" Gbps"));
-    else if(sp >= 1048576)outstrings << (out_bytes ? QString::number((qint64)sp/1048576.0,'f',1):QString::number((qint64)sp*8.0/1048576.0,'f',1)) << (out_bytes ? tr(" MB/s"):tr(" Mbps"));
-    else if(sp >= 1024)outstrings << (out_bytes ? QString::number((qint64)sp/1024.0,'f',1):QString::number((qint64)sp*8.0/1024.0,'f',1)) << (out_bytes ? tr(" kB/s"):tr(" Kbps"));
-    else outstrings << (out_bytes ? QString::number(sp):QString::number(sp*8)) << (out_bytes ? tr(" B/s"):tr(" bps"));;
+    if(in_bytes && !out_bytes)sp = sp*8;
+    if(!in_bytes && out_bytes)sp = sp/8;
+    if(sp >= 1073741824)outstrings << QString::number((qint64)sp/1073741824.0,'f',1) << (out_bytes ? tr(" GB/s"):tr(" Gbps"));
+    else if(sp >= 1048576)outstrings << QString::number((qint64)sp/1048576.0,'f',1) << (out_bytes ? tr(" MB/s"):tr(" Mbps"));
+    else if(sp >= 1024)outstrings << QString::number((qint64)sp/1024.0,'f',1) << (out_bytes ? tr(" kB/s"):tr(" Kbps"));
+    else outstrings << QString::number(sp) << (out_bytes ? tr(" B/s"):tr(" bps"));;
 
     return outstrings;
 }

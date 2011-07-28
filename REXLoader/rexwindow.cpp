@@ -191,7 +191,7 @@ void REXWindow::openDataBase()
         if(quit_ok == QMessageBox::Ok)QTimer::singleShot(0,this,SLOT(close()));
     }
 
-    QSqlQuery qr(db);
+    QSqlQuery qr;
     qr.prepare("UPDATE tasks SET tstatus=:newstatus WHERE tstatus=:tstatus;");
     qr.bindValue("newstatus",LInterface::ON_PAUSE);
     qr.bindValue("tstatus",LInterface::ON_LOAD);
@@ -369,6 +369,8 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
                 tasklist.insert(id_row, id_task + id_proto*100);
                 pluglist.value(id_proto)->setTaskFilePath(id_task,flinfo.absolutePath());
                 pluglist.value(id_proto)->startDownload(id_task);
+                model->clearCache();
+                model->updateModel();
                 return;
             }
             else
@@ -388,9 +390,20 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
         return;
     }
 
+    QSqlQuery qr(QSqlDatabase::database());
+    qr.prepare("UPDATE tasks SET downtime='', lasterror='', speed_avg='' WHERE id=:id");
+    qr.bindValue("id",id_row);
+    if(!qr.exec())
+    {
+        //запись в журнал ошибок
+        qDebug()<<"void REXWindow::startTaskNumber(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
+    }
+
     tasklist.insert(id_row, id_task + id_proto*100);
     pluglist.value(id_proto)->setTaskFilePath(id_task,flinfo.absolutePath());
     pluglist.value(id_proto)->startDownload(id_task);
+    model->clearCache();
+    model->updateModel();
 }
 
 void REXWindow::deleteTask()
@@ -456,7 +469,7 @@ void REXWindow::startTask()
         }
 
         QSqlQuery qr(QSqlDatabase::database());
-        qr.prepare("UPDATE tasks SET tstatus=-100, lasterror='', downtime='' WHERE id=:id");
+        qr.prepare("UPDATE tasks SET tstatus=-100, lasterror='' WHERE id=:id");
         qr.bindValue("id",id_row);
 
         if(!qr.exec())
@@ -465,20 +478,24 @@ void REXWindow::startTask()
             qDebug()<<"void REXWindow::startTask(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
         }
     }
+    model->clearCache();
+    updateTaskSheet(); //обновляем таблицу задач
     manageTaskQueue();
+    syncTaskData();
 }
 
 void REXWindow::startAllTasks()
 {
     QSqlQuery qr(QSqlDatabase::database());
-    qr.prepare("UPDATE tasks SET tstatus=-100, lasterror='', downtime='' WHERE tstatus IN (-2, 0)");
+    qr.prepare("UPDATE tasks SET tstatus=-100, lasterror='' WHERE tstatus IN (-2, 0)");
     if(!qr.exec())
     {
         //запись в журнал ошибок
         qDebug()<<"void REXWindow::startAllTasks(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
         return;
     }
-    updateTaskSheet();
+    model->clearCache();
+    updateTaskSheet(); //обновляем таблицу задач
     manageTaskQueue();
     syncTaskData();
 }
@@ -508,6 +525,8 @@ void REXWindow::stopTask()
 
         pluglist.value(id_proto)->stopDownload(id_task);
     }
+    model->clearCache();
+    updateTaskSheet(); //обновляем таблицу задач
     manageTaskQueue();
     syncTaskData();
 }
@@ -574,7 +593,8 @@ void REXWindow::syncTaskData()
         qint64 totalsize = ldr->totalSize(id_task);
         qint64 totalload = ldr->totalLoadedOnTask(id_task);
         QString filepath = ldr->taskFilePath(id_task);
-        //if(!QFile::exists(filepath) && QDir().exists(filepath))filepath +="/noname.html";
+        QFileInfo flinfo(filepath);
+        if(flinfo.isDir()){filepath.right(1) == "/" ? filepath +="noname.html" : filepath +="/noname.html";}
         qint64 speed = ldr->downSpeed(id_task);
         model->setMetaData(id_row,"speed",speed);
 
@@ -688,7 +708,7 @@ void REXWindow::manageTaskQueue()
         }
 
         int id_row = qr.value(0).toInt();
-        int id_proto = plugproto.value(_url.scheme().toLower());
+        /*int id_proto = plugproto.value(_url.scheme().toLower());
         LoaderInterface *ldr = pluglist.value(id_proto);
         int id_task = ldr->addTask(_url);
 
@@ -700,7 +720,8 @@ void REXWindow::manageTaskQueue()
         QFileInfo flinfo(qr.value(3).toString());
         tasklist.insert(id_row,id_task + id_proto*100);
         ldr->setTaskFilePath(id_task,flinfo.absolutePath());
-        ldr->startDownload(id_task);
+        ldr->startDownload(id_task);*/
+        startTaskNumber(id_row,_url,qr.value(3).toString(),qr.value(4).toLongLong());
     }
 
     if(!qr.next())return;

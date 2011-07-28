@@ -8,12 +8,15 @@ HttpLoader::HttpLoader(QObject *parent) : QObject(parent)
     task_list = new QHash<int, Task*>;
     sections = new QHash<HttpSection*, int>;
     squeue = new QList<int>;
+    dqueue = new QList<int>;
     t_mutex = new QMutex();
     q_mutex = new QMutex();
     del_queue = new QList<HttpSection*>;
     maxTaskNum = 0;
     shedule_flag = false;
     fullsize_res = false; //резервировать место под файл целиком
+    ignore_critical = 0;
+    maxErrors = 5;
     attempt_interval = 3000;
 
     translator = new QTranslator(this);
@@ -34,6 +37,7 @@ HttpLoader::~HttpLoader()
     delete(sections);
     delete(squeue);
     delete(t_mutex);
+    delete(dqueue);
     delete(q_mutex);
     delete(del_queue);
 }
@@ -645,6 +649,32 @@ void HttpLoader::addSection(int id_task)
 
 }
 
+void HttpLoader::setMaxErrorsOnTask(const int max)
+{
+    if(max < 0)
+        maxErrors = 0;
+    else
+        maxErrors = max;
+}
+
+void HttpLoader::setRetryCriticalError(const bool flag)
+{
+    ignore_critical = flag;
+}
+
+void HttpLoader::addRetSection()
+{
+    q_mutex->lock();
+    if(dqueue->isEmpty()){q_mutex->unlock(); return;}
+    int id_task = dqueue->takeFirst();
+    if(!task_list->contains(id_task)){q_mutex->unlock(); return;}
+    Task* tsk = task_list->value(id_task);
+    if(!tsk){q_mutex->unlock(); return;}
+    q_mutex->unlock();
+
+    addSection(id_task);
+}
+
 void HttpLoader::sectError(int _errno)
 {
     Task* tsk = getTaskSender(sender());
@@ -688,9 +718,13 @@ void HttpLoader::sectError(int _errno)
     case QAbstractSocket::ProxyAuthenticationRequiredError:
     case QAbstractSocket::ProxyProtocolError:
     case 404:
-        tsk->status = LInterface::ERROR_TASK; //в случае критичных ошибок
-        stopDownload(id_task);
-        break;
+        if(!ignore_critical && tsk->sections_cnt < 2)
+        {
+            tsk->status = LInterface::ERROR_TASK; //в случае критичных ошибок
+            tsk->error_number = _errno;
+            stopDownload(id_task);
+            break;
+        }
     case HttpSection::SERV_CONNECT_ERROR:
     case QAbstractSocket::ConnectionRefusedError:
     case QAbstractSocket::SocketTimeoutError:
@@ -699,21 +733,21 @@ void HttpLoader::sectError(int _errno)
     case QAbstractSocket::ProxyConnectionTimeoutError:
     case 403:
     case 503:
-        t_mutex->lock();
-        if(tsk->sections_cnt < 2) //если этот сигнал получен от единственной секции
+        //t_mutex->lock();
+        /*if(tsk->sections_cnt < 2) //если этот сигнал получен от единственной секции
         {
             tsk->status = LInterface::ERROR_TASK; //в случае критичных ошибок
             tsk->error_number = er;
-            t_mutex->unlock();
+            //t_mutex->unlock();
             stopDownload(id_task);
             mathSpeed();
             break;
-        }
+        }*/
 
-        ++tsk->errors_cnt;
-        if(tsk->errors_cnt == maxErrors)
+        if(tsk->sections_cnt < 2)++tsk->errors_cnt;
+        if(tsk->errors_cnt >= maxErrors)
         {
-            tsk->error_number = LInterface::ERROR_TASK;
+            tsk->status = LInterface::ERROR_TASK;
             tsk->error_number = LInterface::ERRORS_MAX_COUNT;
             stopDownload(id_task);
         }
@@ -725,8 +759,11 @@ void HttpLoader::sectError(int _errno)
             --tsk->sections_cnt;
             if(tsk->status == LInterface::SEND_QUERY)tsk->status = LInterface::ON_LOAD;
             sect = 0;
+
+            dqueue->append(id_task);
+            QTimer::singleShot(attempt_interval,this,SLOT(addRetSection()));
         }
-        t_mutex->unlock();
+        //t_mutex->unlock();
         mathSpeed();
         break;
 
