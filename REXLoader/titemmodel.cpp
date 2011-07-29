@@ -47,6 +47,34 @@ bool TItemModel::updateModel(const QSqlDatabase &db)
     return true;
 }
 
+bool TItemModel::silentUpdateModel(const QSqlDatabase &db)
+{
+    int lastgrow =grow;
+    grow=gcolumn=0;
+    if(qr)delete(qr);
+    qr = 0;
+
+    qr = new QSqlQuery("SELECT * FROM tasks;",db);
+    if(!qr->exec())
+    {
+        reset();
+        return false;
+    }
+
+    if(!qr->isSelect() || qr->size() < 0)
+        while(qr->next())++grow;
+    else grow = qr->size();
+
+    if(grow > lastgrow)
+        beginInsertRows(QModelIndex(),lastgrow,grow-1);
+
+    gcolumn = qr->record().count();
+
+    if(grow > lastgrow)
+        endInsertRows();
+    return true;
+}
+
 int TItemModel::rowCount(const QModelIndex &parent) const
 {
     if(!qr)return 0;
