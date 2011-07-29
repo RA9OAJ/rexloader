@@ -313,8 +313,8 @@ void REXWindow::trans_scheduler()
 
 void REXWindow::updateTaskSheet()
 {
-    model->updateModel();
-    ui->tableView->update();
+    model->silentUpdateModel();
+    model->clearCache();
 }
 
 void REXWindow::startTrayIconAnimaion()
@@ -369,8 +369,7 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
                 tasklist.insert(id_row, id_task + id_proto*100);
                 pluglist.value(id_proto)->setTaskFilePath(id_task,flinfo.absolutePath());
                 pluglist.value(id_proto)->startDownload(id_task);
-                model->clearCache();
-                model->updateModel();
+                updateTaskSheet();
                 return;
             }
             else
@@ -402,8 +401,7 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
     tasklist.insert(id_row, id_task + id_proto*100);
     pluglist.value(id_proto)->setTaskFilePath(id_task,flinfo.absolutePath());
     pluglist.value(id_proto)->startDownload(id_task);
-    model->clearCache();
-    model->updateModel();
+    updateTaskSheet();
 }
 
 void REXWindow::deleteTask()
@@ -445,8 +443,8 @@ void REXWindow::deleteTask()
         qDebug()<<"void REXWindow::deleteTask(): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
     }
 
+    model->updateModel(); //обновляем таблицу задач
     model->clearCache();
-    updateTaskSheet(); //обновляем таблицу задач
     manageTaskQueue();
 }
 
@@ -478,8 +476,7 @@ void REXWindow::startTask()
             qDebug()<<"void REXWindow::startTask(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
         }
     }
-    model->clearCache();
-    updateTaskSheet(); //обновляем таблицу задач
+    updateTaskSheet();
     manageTaskQueue();
     syncTaskData();
 }
@@ -487,15 +484,14 @@ void REXWindow::startTask()
 void REXWindow::startAllTasks()
 {
     QSqlQuery qr(QSqlDatabase::database());
-    qr.prepare("UPDATE tasks SET tstatus=-100, lasterror='' WHERE tstatus IN (-2, 0)");
+    qr.prepare("UPDATE tasks SET tstatus=-100, lasterror='' WHERE tstatus=0");
     if(!qr.exec())
     {
         //запись в журнал ошибок
         qDebug()<<"void REXWindow::startAllTasks(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
         return;
     }
-    model->clearCache();
-    updateTaskSheet(); //обновляем таблицу задач
+    updateTaskSheet();
     manageTaskQueue();
     syncTaskData();
 }
@@ -503,7 +499,7 @@ void REXWindow::startAllTasks()
 void REXWindow::stopTask()
 {
     QItemSelectionModel *select = ui->tableView->selectionModel();
-    if(!select->hasSelection())return; //если ничего невыделено, то выходим
+    if(!select->hasSelection())return; //если ничего не выделено, то выходим
 
     for(int i=0; i < select->selectedRows().length(); i++)
     {
@@ -525,8 +521,7 @@ void REXWindow::stopTask()
 
         pluglist.value(id_proto)->stopDownload(id_task);
     }
-    model->clearCache();
-    updateTaskSheet(); //обновляем таблицу задач
+    updateTaskSheet();
     manageTaskQueue();
     syncTaskData();
 }
@@ -708,19 +703,6 @@ void REXWindow::manageTaskQueue()
         }
 
         int id_row = qr.value(0).toInt();
-        /*int id_proto = plugproto.value(_url.scheme().toLower());
-        LoaderInterface *ldr = pluglist.value(id_proto);
-        int id_task = ldr->addTask(_url);
-
-        if(!id_task)
-        {
-            //запись в журнал ошибок
-        }
-
-        QFileInfo flinfo(qr.value(3).toString());
-        tasklist.insert(id_row,id_task + id_proto*100);
-        ldr->setTaskFilePath(id_task,flinfo.absolutePath());
-        ldr->startDownload(id_task);*/
         startTaskNumber(id_row,_url,qr.value(3).toString(),qr.value(4).toLongLong());
     }
 

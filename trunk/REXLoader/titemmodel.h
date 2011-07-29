@@ -45,6 +45,7 @@ public:
 
 public slots:
     bool updateModel(const QSqlDatabase &db = QSqlDatabase());
+    bool silentUpdateModel(const QSqlDatabase &db = QSqlDatabase());
     void clearCache(int row = -1);
 
 protected:
