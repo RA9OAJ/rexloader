@@ -102,6 +102,65 @@ void REXWindow::createInterface()
     ui->mainToolBar->addAction(ui->actionStopAll);
     ui->mainToolBar->addSeparator();
 
+    //настраиваем статусбар
+    QWidget *widget = new QWidget(ui->statusBar);
+    widget->setObjectName("widget");
+    QHBoxLayout *lay = new QHBoxLayout(widget);
+    QLabel *urllbl = new QLabel(widget);
+    urllbl->setObjectName("urllbl");
+    urllbl->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    urllbl->setMaximumWidth(500);
+    urllbl->setMinimumWidth(150);
+    urllbl->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
+    QLabel *speed = new QLabel(widget);
+    speed->setObjectName("speed");
+    speed->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    speed->setMaximumWidth(75);
+    QProgressBar *prgBar = new QProgressBar(widget);
+    prgBar->setObjectName("prgBar");
+    QLabel *timeleft = new QLabel(widget);
+    timeleft->setObjectName("timeleft");
+    timeleft->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    timeleft->setMaximumWidth(300);
+    QLabel *lasterror = new QLabel(widget);
+    lasterror->setObjectName("lasterror");
+    lasterror->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    lasterror->setMaximumWidth(300);
+    lasterror->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
+    QSpacerItem *spacer = new QSpacerItem(100,10,QSizePolicy::Expanding);
+    QLabel *onplayIcon = new QLabel(ui->statusBar);
+    onplayIcon->setPixmap(QPixmap(":/appimages/start_16x16.png"));
+    QLabel *onplay = new QLabel(ui->statusBar);
+    onplay->setObjectName("onplay");
+    QLabel *onpauseIcon = new QLabel(ui->statusBar);
+    onpauseIcon->setPixmap(QPixmap(":/appimages/pause_16x16.png"));
+    QLabel *onpause = new QLabel(ui->statusBar);
+    onpause->setObjectName("onpause");
+    QLabel *onqueueIcon = new QLabel(ui->statusBar);
+    onqueueIcon->setPixmap(QPixmap(":/appimages/queue_16x16.png"));
+    QLabel *onqueue = new QLabel(ui->statusBar);
+    onqueue->setObjectName("onqueue");
+    QLabel *onerrorIcon = new QLabel(ui->statusBar);
+    onerrorIcon->setPixmap(QPixmap(":/appimages/error_16x16.png"));
+    QLabel *onerror = new QLabel(ui->statusBar);
+    onerror->setObjectName("onerror");
+
+    lay->addWidget(urllbl);
+    lay->addWidget(speed);
+    lay->addWidget(prgBar);
+    lay->addWidget(timeleft);
+    lay->addWidget(lasterror);
+    lay->addSpacerItem(spacer);
+    ui->statusBar->addWidget(widget);
+    ui->statusBar->addPermanentWidget(onplayIcon);
+    ui->statusBar->addPermanentWidget(onplay);
+    ui->statusBar->addPermanentWidget(onpauseIcon);
+    ui->statusBar->addPermanentWidget(onpause);
+    ui->statusBar->addPermanentWidget(onqueueIcon);
+    ui->statusBar->addPermanentWidget(onqueue);
+    ui->statusBar->addPermanentWidget(onerrorIcon);
+    ui->statusBar->addPermanentWidget(onerror);
+
     //соединяем сигналы и слоты
     connect(ui->actionAdd_URL,SIGNAL(triggered()),this,SLOT(showAddTaskDialog()));
     connect(ui->actionDelURL,SIGNAL(triggered()),this,SLOT(deleteTask()));
