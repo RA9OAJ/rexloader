@@ -80,6 +80,7 @@ protected slots:
     void syncTaskData(); //синхронизирует состояние задач с БД
     void manageTaskQueue(); //сканирует
     void startTaskNumber(int id_row, const QUrl &url, const QString &filename = QString(), qint64 totalload = 0);
+    void updateStatusBar();
 
 signals:
     void transAct();

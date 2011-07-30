@@ -106,12 +106,16 @@ void REXWindow::createInterface()
     QWidget *widget = new QWidget(ui->statusBar);
     widget->setObjectName("widget");
     QHBoxLayout *lay = new QHBoxLayout(widget);
+    QLabel *statusIcon = new QLabel(widget);
+    statusIcon->setObjectName("statusIcon");
+    QLabel *priorityIcon = new QLabel(widget);
+    priorityIcon->setObjectName("priorityIcon");
     QLabel *urllbl = new QLabel(widget);
     urllbl->setObjectName("urllbl");
     urllbl->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
-    urllbl->setMaximumWidth(500);
-    urllbl->setMinimumWidth(150);
+    urllbl->setMinimumWidth(75);
     urllbl->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
+    urllbl->setScaledContents(true);
     QLabel *speed = new QLabel(widget);
     speed->setObjectName("speed");
     speed->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
@@ -144,7 +148,10 @@ void REXWindow::createInterface()
     onerrorIcon->setPixmap(QPixmap(":/appimages/error_16x16.png"));
     QLabel *onerror = new QLabel(ui->statusBar);
     onerror->setObjectName("onerror");
+    onerror->setMinimumWidth(20);
 
+    lay->addWidget(statusIcon);
+    lay->addWidget(priorityIcon);
     lay->addWidget(urllbl);
     lay->addWidget(speed);
     lay->addWidget(prgBar);
@@ -168,6 +175,7 @@ void REXWindow::createInterface()
     connect(ui->actionStop,SIGNAL(triggered()),this,SLOT(stopTask()));
     connect(ui->actionStartAll,SIGNAL(triggered()),this,SLOT(startAllTasks()));
     connect(ui->actionStopAll,SIGNAL(triggered()),this,SLOT(stopAllTasks()));
+    connect(ui->tableView,SIGNAL(clicked(QModelIndex)),this,SLOT(updateStatusBar()));
 
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);
@@ -647,8 +655,8 @@ void REXWindow::syncTaskData()
         qint64 totalsize = ldr->totalSize(id_task);
         qint64 totalload = ldr->totalLoadedOnTask(id_task);
         QString filepath = ldr->taskFilePath(id_task);
-        QFileInfo flinfo(filepath);
-        if(flinfo.isDir()){filepath.right(1) == "/" ? filepath +="noname.html" : filepath +="/noname.html";}
+        //QFileInfo flinfo(filepath);
+        //if(flinfo.isDir()){filepath.right(1) == "/" ? filepath +="noname.html" : filepath +="/noname.html";}
         qint64 speed = ldr->downSpeed(id_task);
         model->setMetaData(id_row,"speed",speed);
 
@@ -765,7 +773,7 @@ void REXWindow::manageTaskQueue()
         startTaskNumber(id_row,_url,qr.value(3).toString(),qr.value(4).toLongLong());
     }
 
-    if(!qr.next())return;
+    if(!qr.next()){updateStatusBar(); return;}
 
     QSqlQuery qr1(QSqlDatabase::database());
     qr1.prepare("SELECT id,priority FROM tasks WHERE tstatus BETWEEN 1 AND 4 ORDER BY priority DESC"); //список выполняемых задач
@@ -827,6 +835,90 @@ void REXWindow::manageTaskQueue()
         }
         if(!success)return; //если не нашли меньших по приоритету задач то выходим
     }
+    updateStatusBar();
+}
+
+void REXWindow::updateStatusBar()
+{
+    QItemSelectionModel *selection = ui->tableView->selectionModel();
+    QLabel *urllbl, *speed, *lefttime, *lasterror, *priority, *status;
+    QProgressBar *progress;
+    QLabel *onplay, *onpause, *onqueue, *onerror;
+
+    status = findChild<QLabel*>("statusIcon");
+    priority = findChild<QLabel*>("priorityIcon");
+    urllbl = findChild<QLabel*>("urllbl");
+    speed = findChild<QLabel*>("speed");
+    lefttime = findChild<QLabel*>("timeleft");
+    lasterror = findChild<QLabel*>("lasterror");
+    onplay = findChild<QLabel*>("onplay");
+    onpause = findChild<QLabel*>("onpause");
+    onqueue = findChild<QLabel*>("onqueue");
+    onerror = findChild<QLabel*>("onerror");
+    progress = findChild<QProgressBar*>("prgBar");
+
+    if(!selection->hasSelection())
+    {
+        status->hide();
+        priority->hide();
+        urllbl->hide();
+        progress->setValue(0);
+        lasterror->hide();
+    }
+    else
+    {
+        QModelIndex curIndex = selection->currentIndex();
+        int row_id = sfmodel->mapToSource(curIndex).row();
+
+        switch(model->index(row_id,9).data(100).toInt())
+        {
+        case LInterface::SEND_QUERY:
+        case LInterface::ACCEPT_QUERY:
+        case LInterface::REDIRECT:
+        case LInterface::ON_LOAD: status->setPixmap(QPixmap(":/appimages/start_16x16.png")); break;
+        case LInterface::STOPPING:
+        case LInterface::ON_PAUSE: status->setPixmap(QPixmap(":/appimages/pause_16x16.png")); break;
+        case -100: status->setPixmap(QPixmap(":/appimages/queue_16x16.png")); break;
+        default:
+            status->setPixmap(QPixmap(":/appimages/error_16x16.png"));
+            break;
+        }
+        status->setVisible(true);
+
+        switch(model->index(row_id,13).data(100).toInt())
+        {
+        case 0: priority->setPixmap(QPixmap(":/appimages/start_16x16.png")); break;
+        case 1: priority->setPixmap(QPixmap(":/appimages/pause_16x16.png")); break;
+        case 2: priority->setPixmap(QPixmap(":/appimages/queue_16x16.png")); break;
+        case 3: priority->setPixmap(QPixmap(":/appimages/queue_16x16.png")); break;
+        default:
+            priority->setPixmap(QPixmap(":/appimages/error_16x16.png"));
+            break;
+        }
+        priority->setVisible(true);
+        urllbl->setText(QString("<a href='%1'>%1</a>").arg(model->index(row_id,1).data(Qt::DisplayRole).toString()));
+        urllbl->setVisible(true);
+        progress->setMaximum(100);
+        int curVal = model->index(row_id,5).data(100).toLongLong() > 0 ? ((qint64)100*model->index(row_id,4).data(100).toLongLong()/model->index(row_id,5).data(100).toLongLong()) : 0;
+        progress->setValue(curVal);
+        lefttime->setText(model->index(row_id,15).data(Qt::DisplayRole).toString());
+        lefttime->setVisible(true);
+        lasterror->setText(model->index(row_id,7).data(100).toString());
+        lasterror->setVisible(true);
+    }
+
+    QSortFilterProxyModel filter;
+    filter.setSourceModel(model);
+    filter.setFilterRole(100);
+    filter.setFilterKeyColumn(9);
+    filter.setFilterRegExp(QString("%1").arg(QString::number(LInterface::ON_LOAD)));
+    onplay->setText(QString::number(filter.rowCount()));
+    filter.setFilterRegExp(QString("%1").arg(QString::number(LInterface::ON_PAUSE)));
+    onpause->setText(QString::number(filter.rowCount()));
+    filter.setFilterRegExp(QString("%1").arg(QString::number(-100)));
+    onqueue->setText(QString::number(filter.rowCount()));
+    filter.setFilterRegExp(QString("%1").arg(QString::number(LInterface::ERROR_TASK)));
+    onerror->setText(QString::number(filter.rowCount()));
 }
 
 REXWindow::~REXWindow()
