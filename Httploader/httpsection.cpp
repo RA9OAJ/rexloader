@@ -233,7 +233,7 @@ void HttpSection::sendHeader()
 
     _header += QString("Referer: http://%1/\r\n").arg(referer == "" ? url.host():referer);
     _header += QString("Connection: close\r\n\r\n");
-
+    qDebug()<<_header;
     soc->write(_header.toAscii().data());
 }
 
@@ -259,7 +259,7 @@ void HttpSection::dataAnalising()
         if(header["Connection"] != "close" && _errno == QAbstractSocket::RemoteHostClosedError && mode == 1){_errno = HttpSection::SERV_CONNECT_ERROR;emit errorSignal(_errno); stopDownloading(); return;}
     }
     if(mode == 1)
-    {
+    {   qDebug()<<header;
         int reqid = header["HTTP"].toInt();
         _errno = reqid;
 
@@ -275,7 +275,7 @@ void HttpSection::dataAnalising()
                 _tmpname = flinfo.fileName();
             }
 
-            flname += _tmpname;
+            flname += _tmpname + QString(".%1.rldr").arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmss"));
         }
 
         //---------------------------
@@ -309,7 +309,8 @@ void HttpSection::dataAnalising()
             totalsize = header["Content-Range"].split("/").value(1).toLongLong();
             emit totalSize(totalsize);
             emit fileType(header["Content-Type"]);
-            if(header.contains("Accept-Ranges")) emit acceptRanges();
+            if(header.contains("Accept-Ranges") || header.contains("Content-Range")) emit acceptRanges();
+
             if(lastmodified.isNull() && header.contains("Last-Modified"))
             {
                 QLocale locale(QLocale::C);

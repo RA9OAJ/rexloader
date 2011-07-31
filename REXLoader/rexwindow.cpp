@@ -426,15 +426,14 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
 
     if(totalload > 0) //если файл на докачке, а не новый
     {
-
-        if(QFile::exists(filename)) //если локальный файл существует
+        if(QFile::exists(filename) && flinfo.isFile()) //если локальный файл существует
         {
-            id_task = pluglist.value(id_proto)->loadTaskFile(url.toString()); // id задачи
+            id_task = pluglist.value(id_proto)->loadTaskFile(filename); // id задачи
 
             if(id_task) //если плагин удачно прочитал метаданные и добавил задачу
             {
                 tasklist.insert(id_row, id_task + id_proto*100);
-                pluglist.value(id_proto)->setTaskFilePath(id_task,flinfo.absolutePath());
+                //pluglist.value(id_proto)->setTaskFilePath(id_task,flinfo.absolutePath());
                 pluglist.value(id_proto)->startDownload(id_task);
                 updateTaskSheet();
                 return;
@@ -464,11 +463,11 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
         //запись в журнал ошибок
         qDebug()<<"void REXWindow::startTaskNumber(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
     }
+    updateTaskSheet();
 
     tasklist.insert(id_row, id_task + id_proto*100);
     pluglist.value(id_proto)->setTaskFilePath(id_task,flinfo.absolutePath());
     pluglist.value(id_proto)->startDownload(id_task);
-    updateTaskSheet();
 }
 
 void REXWindow::deleteTask()
@@ -710,6 +709,15 @@ void REXWindow::syncTaskData()
         }
         else
         {
+            if(tstatus == LInterface::FINISHED)
+            {
+                QString newFilename = filepath.right(5) == ".rldr" ? filepath.left(20) : filepath;
+                if(filepath != newFilename)
+                {
+                    QFile fl(filepath);
+                    fl.rename(newFilename);
+                }
+            }
             qr.prepare("UPDATE tasks SET totalsize=:totalsize, currentsize=:currentsize, filename=:filename, downtime=:downtime, tstatus=:tstatus, speed_avg=:speedavg WHERE id=:id");
             qr.bindValue("totalsize",QString::number(totalsize));
             qr.bindValue("currentsize",QString::number(totalload));
@@ -878,6 +886,7 @@ void REXWindow::updateStatusBar()
         case LInterface::ON_LOAD: status->setPixmap(QPixmap(":/appimages/start_16x16.png")); break;
         case LInterface::STOPPING:
         case LInterface::ON_PAUSE: status->setPixmap(QPixmap(":/appimages/pause_16x16.png")); break;
+        case LInterface::FINISHED: status->setPixmap(QPixmap(":/appimages/finish_16x16.png")); break;
         case -100: status->setPixmap(QPixmap(":/appimages/queue_16x16.png")); break;
         default:
             status->setPixmap(QPixmap(":/appimages/error_16x16.png"));
