@@ -91,6 +91,7 @@ private:
 
     Ui::REXWindow *ui;
     QSystemTrayIcon *trayicon; //объект системного лотка
+    QMovie *movie; //мувик для реализауии анимации в трее
 
     QStringList pluginDirs; //список с директориями, в которых могут быть плагины
     QHash<int,QStringList> mesqueue; //очередь сообщений

@@ -49,6 +49,9 @@ REXWindow::REXWindow(QWidget *parent) :
     trayicon = new QSystemTrayIcon(this);
     trayicon->setIcon(QIcon(":/appimages/trayicon.png"));
     trayicon->show();
+    movie = new QMovie(this);
+    movie->setFileName(":/appimages/onload.gif");
+    connect(movie,SIGNAL(updated(QRect)),this,SLOT(updateTrayIcon()));
 
     apphomedir = QDir::homePath()+"/.rexloader";
 
@@ -66,6 +69,7 @@ REXWindow::REXWindow(QWidget *parent) :
 
     QTimer::singleShot(250,this,SLOT(scheuler()));
     updateTaskSheet();
+    startTrayIconAnimaion();
 }
 
 void REXWindow::createInterface()
@@ -386,17 +390,19 @@ void REXWindow::updateTaskSheet()
 
 void REXWindow::startTrayIconAnimaion()
 {
-
+    movie->setSpeed(100);
+    movie->start();
 }
 
 void REXWindow::stopTrayIconAnimation()
 {
-
+    movie->stop();
+    trayicon->setIcon(QIcon(":/appimages/trayicon.png"));
 }
 
 void REXWindow::updateTrayIcon()
 {
-
+    trayicon->setIcon(QIcon(movie->currentPixmap()));
 }
 
 void REXWindow::showAddTaskDialog()
