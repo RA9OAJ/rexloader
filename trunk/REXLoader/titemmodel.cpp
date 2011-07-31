@@ -93,6 +93,7 @@ void TItemModel::updateRow(int row)
     {
         QModelIndex ModelIndex = index(row, i, QModelIndex());
         emit dataChanged(ModelIndex, ModelIndex);
+        qApp->processEvents();
     }
 }
 

@@ -9,7 +9,7 @@ QT       += core gui sql
 TARGET = REXLoader
 TEMPLATE = app
 
-DESTDIR = ./bin
+DESTDIR = ../usr/bin
 
 SOURCES += main.cpp\
         rexwindow.cpp \
