@@ -21,5 +21,6 @@
         <file alias="finish_16x16.png">images/finish_16x16.png</file>
         <file alias="queue_16x16.png">images/queue_16x16.png</file>
         <file alias="error_16x16.png">images/error_16x16.png</file>
+        <file alias="onload.gif">images/onload.gif</file>
     </qresource>
 </RCC>
