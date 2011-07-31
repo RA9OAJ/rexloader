@@ -233,6 +233,7 @@ void HttpSection::sendHeader()
 
     _header += QString("Referer: http://%1/\r\n").arg(referer == "" ? url.host():referer);
     _header += QString("Connection: close\r\n\r\n");
+    //qDebug()<<_header;
     soc->write(_header.toAscii().data());
 }
 
@@ -252,10 +253,10 @@ void HttpSection::dataAnalising()
             if(cur_str.indexOf("\r\n") == 0) {mode = 1; break;}
 
             QStringList _tmp = cur_str.split(": ");
-            header[_tmp.value(0)] = _tmp.value(1);
+            header[_tmp.value(0).toLower()] = _tmp.value(1);
             header[_tmp.value(0)].chop(2);
         }
-        if(header["Connection"] != "close" && _errno == QAbstractSocket::RemoteHostClosedError && mode == 1){_errno = HttpSection::SERV_CONNECT_ERROR;emit errorSignal(_errno); stopDownloading(); return;}
+        if(header["connection"] != "close" && _errno == QAbstractSocket::RemoteHostClosedError && mode == 1){_errno = HttpSection::SERV_CONNECT_ERROR;emit errorSignal(_errno); stopDownloading(); return;}
     }
     if(mode == 1)
     {
@@ -267,7 +268,7 @@ void HttpSection::dataAnalising()
         if(flinfo.isDir())
         {
             if(flname[flname.size()-1]!='/')flname += "/";
-            QString _tmpname = attachedFileName(header["Content-Disposition"]);
+            QString _tmpname = attachedFileName(header["content-disposition"]);
             if(_tmpname.isEmpty())
             {
                 flinfo.setFile(url.toString());
@@ -284,20 +285,20 @@ void HttpSection::dataAnalising()
         case 200:
             emit acceptQuery();
 
-            totalsize = header["Content-Length"].toLongLong();
+            totalsize = header["content-length"].toLongLong();
             emit totalSize(totalsize);
-            emit fileType(header["Content-Type"]);
-            if(header.contains("Accept-Ranges")) emit acceptRanges();
-            if(lastmodified.isNull() && header.contains("Last-Modified"))
+            emit fileType(header["content-type"]);
+            if(header.contains("accept-ranges")) emit acceptRanges();
+            if(lastmodified.isNull() && header.contains("last-modified"))
             {
                 QLocale locale(QLocale::C);
-                lastmodified = locale.toDateTime(header["Last-Modified"], "ddd, dd MMM yyyy hh:mm:ss 'GMT'");
+                lastmodified = locale.toDateTime(header["last-modified"], "ddd, dd MMM yyyy hh:mm:ss 'GMT'");
             }
             break;
         case 206:
             emit acceptQuery();
 
-            if(totalsize != 0 && totalsize != header["Content-Range"].split("/").value(1).toLongLong())
+            if(totalsize != 0 && totalsize != header["content-range"].split("/").value(1).toLongLong())
             {
                _errno = -2; //несоответствие размеров
                 emit errorSignal(_errno);
@@ -305,20 +306,20 @@ void HttpSection::dataAnalising()
                 stopDownloading();
                 return;
             }
-            totalsize = header["Content-Range"].split("/").value(1).toLongLong();
+            totalsize = header["content-range"].split("/").value(1).toLongLong();
             emit totalSize(totalsize);
-            emit fileType(header["Content-Type"]);
-            if(header.contains("Accept-Ranges") || header.contains("Content-Range")) emit acceptRanges();
+            emit fileType(header["content-type"]);
+            if(header.contains("accept-ranges") || header.contains("content-range")) emit acceptRanges();
 
-            if(lastmodified.isNull() && header.contains("Last-Modified"))
+            if(lastmodified.isNull() && header.contains("last-modified"))
             {
                 QLocale locale(QLocale::C);
-                lastmodified = locale.toDateTime(header["Last-Modified"], "ddd, dd MMM yyyy hh:mm:ss 'GMT'");
+                lastmodified = locale.toDateTime(header["last-modified"], "ddd, dd MMM yyyy hh:mm:ss 'GMT'");
             }
-            if(!lastmodified.isNull() && header.contains("Last-Modified"))
+            if(!lastmodified.isNull() && header.contains("last-modified"))
             {
                 QLocale locale(QLocale::C);
-                QDateTime _dtime = locale.toDateTime(header["Last-Modified"], "ddd, dd MMM yyyy hh:mm:ss 'GMT'");
+                QDateTime _dtime = locale.toDateTime(header["last-modified"], "ddd, dd MMM yyyy hh:mm:ss 'GMT'");
                 if(lastmodified != _dtime)
                 {
                    _errno = -3; //несоответствие дат
@@ -333,7 +334,7 @@ void HttpSection::dataAnalising()
         case 303:
         case 307:
             stopDownloading();
-            if(header.contains("Location")) emit redirectToUrl(header["Location"]);
+            if(header.contains("location")) emit redirectToUrl(header["location"]);
             else emit unidentifiedServerRequest();
             return; break;
         case 401:
@@ -356,7 +357,7 @@ void HttpSection::dataAnalising()
             else fl->open(QFile::WriteOnly);
             fl->seek(offset_f+start_s+totalload);
         }
-
+        //qDebug()<<header;
         if(mode != 0) mode = 2;
         else return;
 
