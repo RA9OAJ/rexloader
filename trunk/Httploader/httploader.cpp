@@ -457,7 +457,7 @@ void HttpLoader::sectionCompleted()
 
     if(sect->totalLoadOnSection() == _total && _total > 0) //если закачка прошла успешно
     {
-        t_mutex->lock();
+        //t_mutex->lock();
         //if(!sect->isFinished())sect->stopDownloading();
         //while(!sect->isFinished());
         tsk->sections.remove(tsk->sections.key(sect));
@@ -474,11 +474,11 @@ void HttpLoader::sectionCompleted()
             QFile tmpfl(tsk->filepath);
             tmpfl.resize(tsk->size);
             tsk->status = LInterface::FINISHED;
-            t_mutex->unlock();
+            //t_mutex->unlock();
             mathSpeed();
             return;
         }
-        t_mutex->unlock();
+        //t_mutex->unlock();
         mathSpeed();
     }
     else if(sect->totalLoadOnSection() < _total || !_total) //если скачано меньше, чем нужно или сервер не передал общего размера файла
@@ -580,6 +580,7 @@ void HttpLoader::addSection(int id_task)
     if(!task_list->contains(id_task)){t_mutex->unlock(); return;}
     Task* _task = task_list->value(id_task);
     if(!_task){t_mutex->unlock(); return;}
+    if(_task->status == LInterface::FINISHED){t_mutex->unlock(); return;}
 
     if(_task->sections_cnt >= _task->_maxSections) //проверяем на лимит секций
     {
@@ -1003,14 +1004,6 @@ void HttpLoader::acceptRang()
     connect(sect, SIGNAL(acceptQuery()),this,SLOT(acceptQuery()));
     mathSpeed();
 
-    /*sections->remove(sect);
-    tsk->sections.remove(sect_id);
-    --tsk->sections_cnt;
-    addDeleteQueue(sect);
-    sect = 0;
-    int id_task = task_list->key(tsk);
-    addSection(id_task);*/
-    //connect(sect,SIGNAL(finished()), sect,SLOT(startDownloading()));
     sect->startDownloading();
 
 }
@@ -1028,9 +1021,6 @@ void HttpLoader::scanDelQueue()
     {
         if(!del_queue->value(i)->freedMemory())continue;
         disconnect(this,SIGNAL(sheduleImpulse()),del_queue->value(i),SLOT(transferActSlot()));
-        //disconnect(del_queue->value(i),SIGNAL(finished()),del_queue->value(i),SLOT(startDownloading()));
-        //connect(del_queue->value(i),SIGNAL(finished()),del_queue->value(i),SLOT(deleteLater()));
-        //del_queue->value(i)->quit();
         del_queue->value(i)->deleteLater();
         del_queue->removeOne(del_queue->value(i));
     }

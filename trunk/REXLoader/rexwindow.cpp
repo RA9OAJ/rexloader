@@ -652,7 +652,7 @@ void REXWindow::syncTaskData()
 
             continue;
         }
-
+        qDebug()<<ldr->countSectionTask(id_task)<<"Status"<<ldr->taskStatus(id_task);
         qint64 totalsize = ldr->totalSize(id_task);
         qint64 totalload = ldr->totalLoadedOnTask(id_task);
         QString filepath = ldr->taskFilePath(id_task);
