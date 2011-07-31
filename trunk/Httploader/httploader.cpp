@@ -889,7 +889,7 @@ int HttpLoader::loadTaskFile(const QString &_path)
     //if(header != "RExLoader\r\n")return 0;
     if(header.indexOf("RExLoader")!= 0)return 0;
     QString fversion = header.split(" ").value(1);
-    if(fversion != "0.1a\r\n")return 0;
+    if(fversion != "0.1a.1\r\n")return 0;
 
     int length = 0;
     fread(&length, sizeof(int), 1, fl);
@@ -919,7 +919,7 @@ int HttpLoader::loadTaskFile(const QString &_path)
 
     fread(&tsk->size, sizeof(qint64), 1, fl); //считываем общий размер задания
 
-    for(int i=0; i<14; ++i)
+    for(int i=0; i<13; ++i)
     {
         fread(&tsk->map[i], sizeof(qint64), 1, fl); //считывание карты секций
     }
