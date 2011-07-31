@@ -233,7 +233,6 @@ void HttpSection::sendHeader()
 
     _header += QString("Referer: http://%1/\r\n").arg(referer == "" ? url.host():referer);
     _header += QString("Connection: close\r\n\r\n");
-    qDebug()<<_header;
     soc->write(_header.toAscii().data());
 }
 
@@ -259,7 +258,7 @@ void HttpSection::dataAnalising()
         if(header["Connection"] != "close" && _errno == QAbstractSocket::RemoteHostClosedError && mode == 1){_errno = HttpSection::SERV_CONNECT_ERROR;emit errorSignal(_errno); stopDownloading(); return;}
     }
     if(mode == 1)
-    {   qDebug()<<header;
+    {
         int reqid = header["HTTP"].toInt();
         _errno = reqid;
 

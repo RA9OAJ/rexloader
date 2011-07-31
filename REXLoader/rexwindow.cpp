@@ -229,19 +229,20 @@ void REXWindow::loadSettings()
 
 void REXWindow::scanClipboard()
 {
-    if(!clip_autoscan)return;
+   /*if(!clip_autoscan)*/return;
 
     const QClipboard *clipbrd = QApplication::clipboard();
-
+    QTime tm1 = QTime::currentTime();
     QUrl url(clipbrd->text());
-
-    if(url.isValid() && plugproto.contains(url.scheme().toLower()) && clipbrd->text() != clip_last)
+    QTime tm2 = QTime::currentTime();
+    qDebug()<<tm1.msecsTo(tm2);
+    if(url.isValid() && plugproto.contains(url.scheme().toLower()) && url.toString() != clip_last)
     {
-        clip_last = clipbrd->text();
+        clip_last = url.toString();
         AddTaskDialog *dlg = new AddTaskDialog(downDir, 0);
         connect(dlg,SIGNAL(addedNewTask()),this,SLOT(updateTaskSheet()));
         dlg->setValidProtocols(plugproto);
-        dlg->setNewUrl(clipbrd->text());
+        dlg->setNewUrl(url.toString());
         dlg->setWindowFlags(Qt::WindowStaysOnTopHint);
         dlg->show();
         dlg->setFocus();
@@ -318,7 +319,6 @@ void REXWindow::scanNewTaskQueue()
             qDebug()<<"Error: void REXWindow::scanNewTaskQueue(): "<<qr.lastError().text();
             return;
         }
-
     }
 }
 
@@ -376,12 +376,6 @@ void REXWindow::scheuler()
     QTimer::singleShot(1000,this,SLOT(scheuler()));
 }
 
-void REXWindow::trans_scheduler()
-{
-    emit transAct();
-    QTimer::singleShot(50,this,SLOT(trans_scheduler()));
-}
-
 void REXWindow::updateTaskSheet()
 {
     model->silentUpdateModel();
@@ -390,12 +384,14 @@ void REXWindow::updateTaskSheet()
 
 void REXWindow::startTrayIconAnimaion()
 {
+    if(movie->state() == QMovie::Running)return;
     movie->setSpeed(100);
     movie->start();
 }
 
 void REXWindow::stopTrayIconAnimation()
 {
+    if(movie->state() == QMovie::NotRunning)return;
     movie->stop();
     trayicon->setIcon(QIcon(":/appimages/trayicon.png"));
 }
@@ -717,11 +713,12 @@ void REXWindow::syncTaskData()
         {
             if(tstatus == LInterface::FINISHED)
             {
-                QString newFilename = filepath.right(5) == ".rldr" ? filepath.left(20) : filepath;
+                QString newFilename = filepath.right(5) == ".rldr" ? filepath.left(filepath.size()-20) : filepath;
                 if(filepath != newFilename)
                 {
                     QFile fl(filepath);
                     fl.rename(newFilename);
+                    filepath = newFilename;
                 }
             }
             qr.prepare("UPDATE tasks SET totalsize=:totalsize, currentsize=:currentsize, filename=:filename, downtime=:downtime, tstatus=:tstatus, speed_avg=:speedavg WHERE id=:id");
@@ -753,6 +750,10 @@ void REXWindow::syncTaskData()
         }
         model->updateRow(index.row());
     }
+    qr.clear();
+    qr.exec("SELECT id FROM tasks WHERE tstatus=-100");
+    if(!tasklist.size() && !qr.next())
+        trayicon->showMessage(tr("REXLoader"),tr("All tasks completed."));
 }
 
 void REXWindow::manageTaskQueue()
@@ -928,6 +929,8 @@ void REXWindow::updateStatusBar()
     filter.setFilterKeyColumn(9);
     filter.setFilterRegExp(QString("%1").arg(QString::number(LInterface::ON_LOAD)));
     onplay->setText(QString::number(filter.rowCount()));
+    if(filter.rowCount() > 0)startTrayIconAnimaion();
+    else stopTrayIconAnimation();
     filter.setFilterRegExp(QString("%1").arg(QString::number(LInterface::ON_PAUSE)));
     onpause->setText(QString::number(filter.rowCount()));
     filter.setFilterRegExp(QString("%1").arg(QString::number(-100)));

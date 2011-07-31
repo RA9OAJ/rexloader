@@ -68,7 +68,6 @@ protected:
 
 protected slots:
     void scheuler(); //внутренний планировщик с интервалом в 1 секунду
-    void trans_scheduler(); //планировщик для плагинов
     void updateTrayIcon();
     void showAddTaskDialog();
     void showHideSlot(QSystemTrayIcon::ActivationReason type);
