@@ -374,7 +374,6 @@ void HttpSection::dataAnalising()
         }
         totalload += cur_bloc;
         emit transferCompleted(cur_bloc);
-        qDebug()<<soc->bytesAvailable()<<soc->bytesAvailableOnNetwork()<<soc->state();
         if((soc->state() != QTcpSocket::ConnectedState && soc->bytesAvailable() == 0 && soc->bytesAvailableOnNetwork() == 0) || totalload == totalsize)
         {
             fl->close();
