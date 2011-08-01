@@ -1003,9 +1003,7 @@ void HttpLoader::acceptRang()
     //connect(sect,SIGNAL(downloadingCompleted()),this,SLOT(sectionCompleted())/*, Qt::QueuedConnection*/);
     connect(sect, SIGNAL(acceptQuery()),this,SLOT(acceptQuery()));
     mathSpeed();
-
     sect->startDownloading();
-
 }
 
 void HttpLoader::addDeleteQueue(HttpSection *sect_)
