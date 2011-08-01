@@ -69,7 +69,6 @@ REXWindow::REXWindow(QWidget *parent) :
 
     QTimer::singleShot(250,this,SLOT(scheuler()));
     updateTaskSheet();
-    startTrayIconAnimaion();
 }
 
 void REXWindow::createInterface()
@@ -232,10 +231,7 @@ void REXWindow::scanClipboard()
    /*if(!clip_autoscan)*/return;
 
     const QClipboard *clipbrd = QApplication::clipboard();
-    QTime tm1 = QTime::currentTime();
     QUrl url(clipbrd->text());
-    QTime tm2 = QTime::currentTime();
-    qDebug()<<tm1.msecsTo(tm2);
     if(url.isValid() && plugproto.contains(url.scheme().toLower()) && url.toString() != clip_last)
     {
         clip_last = url.toString();
@@ -787,7 +783,13 @@ void REXWindow::manageTaskQueue()
         startTaskNumber(id_row,_url,qr.value(3).toString(),qr.value(4).toLongLong());
     }
 
-    if(!qr.next()){updateStatusBar(); return;}
+    if(!qr.next())
+    {
+        if(tasklist.size() > 0)startTrayIconAnimaion();
+        else stopTrayIconAnimation();
+        updateStatusBar();
+        return;
+    }
 
     QSqlQuery qr1(QSqlDatabase::database());
     qr1.prepare("SELECT id,priority FROM tasks WHERE tstatus BETWEEN 1 AND 4 ORDER BY priority DESC"); //список выполняемых задач
@@ -847,7 +849,13 @@ void REXWindow::manageTaskQueue()
                 break;
             }
         }
-        if(!success)return; //если не нашли меньших по приоритету задач то выходим
+        if(!success)
+        {
+            if(tasklist.size() > 0)startTrayIconAnimaion();
+            else stopTrayIconAnimation();
+            updateStatusBar();
+            return; //если не нашли меньших по приоритету задач то выходим
+        }
     }
     updateStatusBar();
 }
@@ -928,8 +936,8 @@ void REXWindow::updateStatusBar()
     filter.setFilterKeyColumn(9);
     filter.setFilterRegExp(QString("%1").arg(QString::number(LInterface::ON_LOAD)));
     onplay->setText(QString::number(filter.rowCount()));
-    if(filter.rowCount() > 0)startTrayIconAnimaion();
-    else stopTrayIconAnimation();
+    //if(filter.rowCount() > 0)startTrayIconAnimaion();
+    //else stopTrayIconAnimation();
     filter.setFilterRegExp(QString("%1").arg(QString::number(LInterface::ON_PAUSE)));
     onpause->setText(QString::number(filter.rowCount()));
     filter.setFilterRegExp(QString("%1").arg(QString::number(-100)));
