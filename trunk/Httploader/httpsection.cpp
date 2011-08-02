@@ -254,7 +254,7 @@ void HttpSection::dataAnalising()
 
             QStringList _tmp = cur_str.split(": ");
             header[_tmp.value(0).toLower()] = _tmp.value(1);
-            header[_tmp.value(0)].chop(2);
+            header[_tmp.value(0).toLower()].chop(2);
         }
         if(header["connection"] != "close" && _errno == QAbstractSocket::RemoteHostClosedError && mode == 1){_errno = HttpSection::SERV_CONNECT_ERROR;emit errorSignal(_errno); stopDownloading(); return;}
     }
@@ -265,10 +265,12 @@ void HttpSection::dataAnalising()
 
         //--Определяем имя файла---
         QFileInfo flinfo(flname);
+        qDebug()<<header;
         if(flinfo.isDir())
         {
             if(flname[flname.size()-1]!='/')flname += "/";
             QString _tmpname = attachedFileName(header["content-disposition"]);
+            qDebug()<<header["content-disposition"];
             if(_tmpname.isEmpty())
             {
                 flinfo.setFile(url.toString());
@@ -440,7 +442,7 @@ QString HttpSection::attachedFileName(const QString &cont_dispos) const
     {
         if(words.value(i).indexOf("filename")<0)continue;
         QString str = words.value(i).split("=\"").value(1);
-        str.chop(3);
+        str.chop(1);
         return str;
     }
     return QString();
