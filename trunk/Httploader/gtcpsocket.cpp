@@ -128,7 +128,6 @@ void GTcpSocket::transferAct()
         inbuf->resize(old_size + bytesToRead);
         QSslSocket::readData(inbuf->data() + old_size, bytesToRead);
     }
-
     QSslSocket::writeData(outbuf->data(), bytesToWrite);
     outbuf->remove(0, bytesToWrite);
     flush();

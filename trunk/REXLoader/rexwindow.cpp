@@ -462,9 +462,9 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
         qDebug()<<"void REXWindow::startTaskNumber(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
     }
     updateTaskSheet();
-
+    QString fldir = flinfo.isDir() ? flinfo.absoluteFilePath():flinfo.absolutePath();
     tasklist.insert(id_row, id_task + id_proto*100);
-    pluglist.value(id_proto)->setTaskFilePath(id_task,flinfo.absolutePath());
+    pluglist.value(id_proto)->setTaskFilePath(id_task,fldir);
     pluglist.value(id_proto)->startDownload(id_task);
 }
 
@@ -708,6 +708,7 @@ void REXWindow::syncTaskData()
         {
             if(tstatus == LInterface::FINISHED)
             {
+                qDebug()<<ldr->taskFilePath(id_task);
                 QString newFilename = filepath.right(5) == ".rldr" ? filepath.left(filepath.size()-20) : filepath;
                 if(filepath != newFilename)
                 {
