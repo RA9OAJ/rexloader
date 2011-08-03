@@ -454,7 +454,7 @@ void HttpLoader::sectionCompleted()
     int id_task = task_list->key(tsk);
 
     qint64 _total = (sect->finishByte() == 0 && sect->startByte() == 0) ? tsk->totalLoad() : (sect->finishByte() != 0 ? sect->finishByte()-sect->startByte()+1:sect->totalFileSize()-sect->startByte());
-
+    if(tsk->filepath != sect->fileName())tsk->filepath = sect->fileName();
     if(sect->totalLoadOnSection() == _total && _total > 0) //если закачка прошла успешно
     {
         //t_mutex->lock();
@@ -469,7 +469,7 @@ void HttpLoader::sectionCompleted()
         tsk->sections_cnt -= 1;
         if(tsk->status == LInterface::SEND_QUERY)tsk->status = LInterface::ON_LOAD;
 
-        if(tsk->totalLoad() == tsk->size)
+        if(tsk->totalLoad() == tsk->size || (!tsk->size && tsk->MIME.split("/").value(0).toLower() == "text"))
         {
             QFile tmpfl(tsk->filepath);
             tmpfl.resize(tsk->size);
@@ -482,7 +482,7 @@ void HttpLoader::sectionCompleted()
         mathSpeed();
     }
     else if(sect->totalLoadOnSection() < _total || !_total) //если скачано меньше, чем нужно или сервер не передал общего размера файла
-        {
+    {
             t_mutex->lock();
             //if(!sect->isFinished())sect->stopDownloading();
             //while(!sect->isFinished());
@@ -493,8 +493,7 @@ void HttpLoader::sectionCompleted()
             //sect->quit();
             sect = 0;
             tsk->sections_cnt -= 1;
-        }
-
+    }
     t_mutex->unlock();
     mathSpeed();
 
@@ -967,7 +966,7 @@ void HttpLoader::acceptRang()
     int sect_id = tsk->sections.key(sect);
     if(!sect_id){t_mutex->unlock(); return;}
     tsk->status = LInterface::ON_LOAD;
-    tsk->filepath = sect->fileName(); //задаем имя локального файла, пределенное при запросе к серверу
+    tsk->filepath = sect->fileName(); //задаем имя локального файла, определенное при запросе к серверу
     int id_task = task_list->key(tsk);
 
     //---Тут анализ и разбивка общего объема на секции---// + Должно быть дополнительное условие на проверку не распределения задания на секции

@@ -233,7 +233,6 @@ void HttpSection::sendHeader()
 
     _header += QString("Referer: http://%1/\r\n").arg(referer == "" ? url.host():referer);
     _header += QString("Connection: close\r\n\r\n");
-    //qDebug()<<_header;
     soc->write(_header.toAscii().data());
 }
 
@@ -265,18 +264,18 @@ void HttpSection::dataAnalising()
 
         //--Определяем имя файла---
         QFileInfo flinfo(flname);
-        qDebug()<<header;
         if(flinfo.isDir())
         {
             if(flname[flname.size()-1]!='/')flname += "/";
             QString _tmpname = attachedFileName(header["content-disposition"]);
-            qDebug()<<header["content-disposition"];
+
             if(_tmpname.isEmpty())
             {
                 flinfo.setFile(url.toString());
                 _tmpname = flinfo.fileName();
             }
 
+            if(_tmpname.isEmpty())_tmpname = "noname.html";
             flname += _tmpname + QString(".%1.rldr").arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmss"));
         }
 
@@ -359,7 +358,6 @@ void HttpSection::dataAnalising()
             else fl->open(QFile::WriteOnly);
             fl->seek(offset_f+start_s+totalload);
         }
-        //qDebug()<<header;
         if(mode != 0) mode = 2;
         else return;
 
