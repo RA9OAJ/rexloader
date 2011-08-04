@@ -203,7 +203,12 @@ void REXWindow::createInterface()
     trayact->setObjectName("exitAct");
     trayact->setText(tr("Exit"));
     connect(trayact,SIGNAL(triggered()),this,SLOT(close()));
+    traymenu->addAction(ui->actionStartAll);
+    traymenu->addAction(ui->actionStopAll);
+    traymenu->addSeparator();
     traymenu->addAction(trayact);
+    ui->menu_4->addSeparator();
+    ui->menu_4->addAction(trayact);
 
     trayicon->setContextMenu(traymenu);
     connect(trayicon,SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this,SLOT(showHideSlot(QSystemTrayIcon::ActivationReason)));
@@ -962,7 +967,8 @@ bool REXWindow::event(QEvent *event)
 
 void REXWindow::closeEvent(QCloseEvent *event)
  {
-    if(!isHidden() && sender() != this->findChild<QAction*>("exitAct")){
+    if(!isHidden() && sender() != this->findChild<QAction*>("exitAct"))
+    {
         hide();
         event->ignore();
     }
