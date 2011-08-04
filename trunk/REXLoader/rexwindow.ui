@@ -125,7 +125,7 @@
    </widget>
    <widget class="QMenu" name="menu_4">
     <property name="title">
-     <string>Настройка</string>
+     <string>Приложение</string>
     </property>
     <addaction name="actionpluginsShow"/>
     <addaction name="separator"/>
