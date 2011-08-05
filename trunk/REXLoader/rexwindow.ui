@@ -109,7 +109,7 @@
      <addaction name="actionPLow"/>
      <addaction name="actionPNormal"/>
      <addaction name="actionPHight"/>
-     <addaction name="actionVeryHight"/>
+     <addaction name="actionPVeryHight"/>
     </widget>
     <addaction name="actionStart"/>
     <addaction name="actionStop"/>
@@ -351,7 +351,7 @@
     <string>Высокий</string>
    </property>
   </action>
-  <action name="actionVeryHight">
+  <action name="actionPVeryHight">
    <property name="checkable">
     <bool>true</bool>
    </property>
