@@ -293,6 +293,7 @@ void REXWindow::setEnabledTaskMenu(bool stat)
         ui->actionOpenDir->setEnabled(false);
         ui->actionOpenTask->setEnabled(false);
         ui->actionTaskPropert->setEnabled(false);
+        ui->actionRedownload->setEnabled(false);
         return;
     }
 
@@ -300,6 +301,10 @@ void REXWindow::setEnabledTaskMenu(bool stat)
         ui->menu_7->setEnabled(false);
     else
         ui->menu_7->setEnabled(true);
+    if(ui->tableView->selectionModel()->selectedRows().size() < 2 && model->index(ui->tableView->currentIndex().row(),9).data(100) != LInterface::FINISHED)
+        ui->actionRedownload->setEnabled(false);
+    else
+        ui->actionRedownload->setEnabled(true);
     ui->actionOpenDir->setEnabled(true);
     ui->actionOpenTask->setEnabled(true);
     ui->actionTaskPropert->setEnabled(true);
