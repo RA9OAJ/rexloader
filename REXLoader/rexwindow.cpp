@@ -222,6 +222,8 @@ void REXWindow::createInterface()
     tblMenu->setObjectName("tblMenu");
     tblMenu->addAction(ui->actionOpenTask);
     tblMenu->addAction(ui->actionOpenDir);
+    tblMenu->addSeparator();
+    tblMenu->addMenu(ui->menu_7);
 }
 
 void REXWindow::showTableContextMenu(const QPoint &pos)
