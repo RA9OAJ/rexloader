@@ -710,7 +710,7 @@ void REXWindow::startTask()
 void REXWindow::startAllTasks()
 {
     QSqlQuery qr(QSqlDatabase::database());
-    qr.prepare("UPDATE tasks SET tstatus=-100, lasterror='' WHERE tstatus=0");
+    qr.prepare("UPDATE tasks SET tstatus=-100, lasterror='' WHERE tstatus IN (-100,0)");
     if(!qr.exec())
     {
         //запись в журнал ошибок
@@ -870,14 +870,30 @@ void REXWindow::syncTaskData()
         {
             if(tstatus == LInterface::FINISHED)
             {
-                qDebug()<<ldr->taskFilePath(id_task);
                 QString newFilename = filepath.right(5) == ".rldr" ? filepath.left(filepath.size()-20) : filepath;
-                if(filepath != newFilename)
+                QFile fl(filepath);
+                if(fl.exists(newFilename))
                 {
-                    QFile fl(filepath);
-                    fl.rename(newFilename);
-                    filepath = newFilename;
+                    EMessageBox question(this);
+                    QPushButton *btn1, *btn2;
+                    question.setIcon(EMessageBox::Question);
+                    btn1 = question.addButton(tr("Replace"),EMessageBox::ApplyRole);
+                    btn2 = question.addButton(tr("Rename"),EMessageBox::RejectRole);
+                    question.setDefaultButton(btn2);
+                    question.setText(tr("A file with that name already exists."));
+                    question.setInformativeText(tr("To replace the file with the same name, click \"Replace\". To rename, click \"Rename.\""));
+
+                    question.exec();
+                    if(question.clickedButton() == btn1) QFile::remove(newFilename);
+                    else
+                    {
+                        int index = newFilename.indexOf(".");
+                        index < 1 ? newFilename += QDateTime::currentDateTime().toString("_dd-MM-yyyy_hh:mm:ss.z"):newFilename.insert(index,QDateTime::currentDateTime().toString("_dd-MM-yyyy_hh:mm:ss.z"));
+                    }
                 }
+                fl.rename(newFilename);
+                filepath = newFilename;
+
             }
             qr.prepare("UPDATE tasks SET totalsize=:totalsize, currentsize=:currentsize, filename=:filename, downtime=:downtime, tstatus=:tstatus, speed_avg=:speedavg WHERE id=:id");
             qr.bindValue("totalsize",QString::number(totalsize));
