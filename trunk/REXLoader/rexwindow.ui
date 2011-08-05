@@ -101,12 +101,27 @@
      <addaction name="actionNormal"/>
      <addaction name="actionHigh"/>
     </widget>
+    <widget class="QMenu" name="menu_7">
+     <property name="title">
+      <string>Установить приоритет</string>
+     </property>
+     <addaction name="actionPVeryLow"/>
+     <addaction name="actionPLow"/>
+     <addaction name="actionPNormal"/>
+     <addaction name="actionPHight"/>
+     <addaction name="actionVeryHight"/>
+    </widget>
     <addaction name="actionStart"/>
     <addaction name="actionStop"/>
     <addaction name="actionStartAll"/>
     <addaction name="actionStopAll"/>
     <addaction name="separator"/>
     <addaction name="menu_6"/>
+    <addaction name="separator"/>
+    <addaction name="menu_7"/>
+    <addaction name="separator"/>
+    <addaction name="actionOpenTask"/>
+    <addaction name="actionOpenDir"/>
     <addaction name="separator"/>
     <addaction name="actionTaskPropert"/>
    </widget>
@@ -302,6 +317,46 @@
    </property>
    <property name="toolTip">
     <string>Открывает или запускает скачанный файл средствами операционной системы</string>
+   </property>
+  </action>
+  <action name="actionPVeryLow">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Самый низкий</string>
+   </property>
+  </action>
+  <action name="actionPLow">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Низкий</string>
+   </property>
+  </action>
+  <action name="actionPNormal">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Средний</string>
+   </property>
+  </action>
+  <action name="actionPHight">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Высокий</string>
+   </property>
+  </action>
+  <action name="actionVeryHight">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Неоспаримый</string>
    </property>
   </action>
  </widget>
