@@ -288,6 +288,22 @@
     <string>Высокая</string>
    </property>
   </action>
+  <action name="actionOpenDir">
+   <property name="text">
+    <string>Открыть папку</string>
+   </property>
+   <property name="toolTip">
+    <string>Открывает папку, в которой сохранен данный объект</string>
+   </property>
+  </action>
+  <action name="actionOpenTask">
+   <property name="text">
+    <string>Открыть/Запустить</string>
+   </property>
+   <property name="toolTip">
+    <string>Открывает или запускает скачанный файл средствами операционной системы</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
