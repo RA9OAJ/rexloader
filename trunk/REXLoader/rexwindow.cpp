@@ -188,6 +188,7 @@ void REXWindow::createInterface()
     connect(ui->actionPNormal,SIGNAL(triggered()),this,SLOT(setTaskPriority()));
     connect(ui->actionPHight,SIGNAL(triggered()),this,SLOT(setTaskPriority()));
     connect(ui->actionPVeryHight,SIGNAL(triggered()),this,SLOT(setTaskPriority()));
+    connect(ui->actionRedownload,SIGNAL(triggered()),this,SLOT(redownloadTask()));
 
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);
@@ -230,6 +231,8 @@ void REXWindow::createInterface()
     tblMenu->addSeparator();
     tblMenu->addAction(ui->actionStart);
     tblMenu->addAction(ui->actionStop);
+    tblMenu->addSeparator();
+    tblMenu->addAction(ui->actionRedownload);
     tblMenu->addSeparator();
     tblMenu->addMenu(ui->menu_7);
     tblMenu->addSeparator();
@@ -720,6 +723,38 @@ void REXWindow::startAllTasks()
     updateTaskSheet();
     manageTaskQueue();
     syncTaskData();
+}
+
+void REXWindow::redownloadTask()
+{
+    QItemSelectionModel *select = ui->tableView->selectionModel();
+    if(!select->hasSelection())return; //если ничего не выделено, то выходим
+    QSqlQuery qr(QSqlDatabase::database());
+    QString where;
+
+    for(int i=0; i < select->selectedRows().length(); i++)
+    {
+        if(select->selectedRows(9).value(i).data(100).toInt() != LInterface::FINISHED)continue;
+        if(where.isEmpty())
+        {
+            where = QString("id=%1").arg(QString::number(select->selectedRows(0).value(i).data(100).toInt()));
+            continue;
+        }
+        where += QString(" OR id=%1").arg(QString::number(select->selectedRows(0).value(i).data(100).toInt()));
+    }
+    qr.prepare("UPDATE tasks SET tstatus=-100, currentsize=NULL, totalsize=NULL, speed_avg=NULL, downtime=NULL, datecreate=:datecreate WHERE "+where);
+    qr.bindValue("datecreate",QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:ss"));
+    if(!qr.exec())
+    {
+        //запись в журнал ошибок
+        qDebug()<<"void REXWindow::redownloadTask(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
+        return;
+    }
+
+    updateTaskSheet();
+    manageTaskQueue();
+    syncTaskData();
+
 }
 
 void REXWindow::stopTask()
