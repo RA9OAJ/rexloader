@@ -228,7 +228,12 @@ void REXWindow::createInterface()
     tblMenu->addAction(ui->actionOpenTask);
     tblMenu->addAction(ui->actionOpenDir);
     tblMenu->addSeparator();
+    tblMenu->addAction(ui->actionStart);
+    tblMenu->addAction(ui->actionStop);
+    tblMenu->addSeparator();
     tblMenu->addMenu(ui->menu_7);
+    tblMenu->addSeparator();
+    tblMenu->addAction(ui->actionTaskPropert);
 }
 
 void REXWindow::showTableContextMenu(const QPoint &pos)
@@ -284,11 +289,17 @@ void REXWindow::setEnabledTaskMenu(bool stat)
         ui->menu_7->setEnabled(false);
         ui->actionOpenDir->setEnabled(false);
         ui->actionOpenTask->setEnabled(false);
+        ui->actionTaskPropert->setEnabled(false);
         return;
     }
-    ui->menu_7->setEnabled(true);
+
+    if(ui->tableView->selectionModel()->selectedRows().size() < 2 && model->index(ui->tableView->currentIndex().row(),9).data(100) == LInterface::FINISHED)
+        ui->menu_7->setEnabled(false);
+    else
+        ui->menu_7->setEnabled(true);
     ui->actionOpenDir->setEnabled(true);
     ui->actionOpenTask->setEnabled(true);
+    ui->actionTaskPropert->setEnabled(true);
 }
 
 void REXWindow::setTaskPriority()
@@ -1063,14 +1074,21 @@ void REXWindow::updateStatusBar()
         }
         status->setVisible(true);
 
+        ui->actionPVeryLow->setChecked(false);
+        ui->actionPLow->setChecked(false);
+        ui->actionPNormal->setChecked(false);
+        ui->actionPHight->setChecked(false);
+        ui->actionPVeryHight->setChecked(false);
+
         switch(model->index(row_id,13).data(100).toInt())
         {
-        case 0: priority->setPixmap(QPixmap(":/appimages/start_16x16.png")); break;
-        case 1: priority->setPixmap(QPixmap(":/appimages/pause_16x16.png")); break;
-        case 2: priority->setPixmap(QPixmap(":/appimages/queue_16x16.png")); break;
-        case 3: priority->setPixmap(QPixmap(":/appimages/queue_16x16.png")); break;
+        case 0: priority->setPixmap(QPixmap(":/appimages/start_16x16.png")); ui->actionPVeryLow->setChecked(true); break;
+        case 1: priority->setPixmap(QPixmap(":/appimages/pause_16x16.png")); ui->actionPLow->setChecked(true); break;
+        case 2: priority->setPixmap(QPixmap(":/appimages/queue_16x16.png")); ui->actionPNormal->setChecked(true); break;
+        case 3: priority->setPixmap(QPixmap(":/appimages/queue_16x16.png")); ui->actionPHight->setChecked(true); break;
         default:
             priority->setPixmap(QPixmap(":/appimages/error_16x16.png"));
+            ui->actionPVeryHight->setChecked(true);
             break;
         }
         priority->setVisible(true);
