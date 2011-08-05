@@ -86,6 +86,7 @@ void REXWindow::createInterface()
     ui->tableView->setAutoScroll(true);
     ui->tableView->horizontalHeader()->setMovable(true);
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableView->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->tableView->hideColumn(0);
     ui->tableView->hideColumn(1);
     ui->tableView->hideColumn(4);
@@ -179,6 +180,9 @@ void REXWindow::createInterface()
     connect(ui->actionStartAll,SIGNAL(triggered()),this,SLOT(startAllTasks()));
     connect(ui->actionStopAll,SIGNAL(triggered()),this,SLOT(stopAllTasks()));
     connect(ui->tableView,SIGNAL(clicked(QModelIndex)),this,SLOT(updateStatusBar()));
+    connect(ui->tableView,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(showTableContextMenu(QPoint)));
+    connect(ui->actionOpenDir,SIGNAL(triggered()),this,SLOT(openTaskDir()));
+    connect(ui->actionOpenTask,SIGNAL(triggered()),this,SLOT(openTask()));
 
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);
@@ -213,7 +217,51 @@ void REXWindow::createInterface()
     trayicon->setContextMenu(traymenu);
     connect(trayicon,SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this,SLOT(showHideSlot(QSystemTrayIcon::ActivationReason)));
 
+    //настраиваем меню для таблицы задач
+    QMenu *tblMenu = new QMenu(this);
+    tblMenu->setObjectName("tblMenu");
+    tblMenu->addAction(ui->actionOpenTask);
+    tblMenu->addAction(ui->actionOpenDir);
+}
 
+void REXWindow::showTableContextMenu(const QPoint &pos)
+{
+    QItemSelectionModel *selected = ui->tableView->selectionModel();
+    if(!selected->selectedRows().size())return; //если ничего не выделено
+    QMenu *mnu = findChild<QMenu*>("tblMenu");
+    if(mnu)mnu->popup(QCursor::pos());
+}
+
+void REXWindow::openTask()
+{
+    QItemSelectionModel *selected = ui->tableView->selectionModel();
+    if(!selected->selectedRows().size())return; //если ничего не выделено
+    QStringList pathlist;
+    QList<QModelIndex> rows = selected->selectedRows(3);
+    for(int i = 0; i < rows.size(); ++i)
+    {
+        QString path = rows.value(i).data(100).toString();
+        if(pathlist.contains(path))continue;
+        pathlist.append(path);
+        QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+    }
+}
+
+void REXWindow::openTaskDir()
+{
+    QItemSelectionModel *selected = ui->tableView->selectionModel();
+    if(!selected->selectedRows().size())return; //если ничего не выделено
+    QStringList pathlist;
+    QList<QModelIndex> rows = selected->selectedRows(3);
+    for(int i = 0; i < rows.size(); ++i)
+    {
+        QString path = rows.value(i).data(100).toString();
+        if(pathlist.contains(path))continue;
+        pathlist.append(path);
+        QFileInfo flinfo(path);
+        if(!flinfo.isDir())path = flinfo.absolutePath();
+        QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+    }
 }
 
 void REXWindow::showNotice(const QString &title, const QString &text, int type)

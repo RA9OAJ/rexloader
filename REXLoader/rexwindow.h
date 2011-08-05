@@ -68,9 +68,10 @@ protected:
 
 protected slots:
     void scheuler(); //внутренний планировщик с интервалом в 1 секунду
-    void updateTrayIcon();
-    void showAddTaskDialog();
-    void showHideSlot(QSystemTrayIcon::ActivationReason type);
+    void updateTrayIcon(); //обновляет иконку в трее при анимации
+    void updateStatusBar(); //обновляет данные, отображаемые в statusBar
+    void showAddTaskDialog(); //отображает окно добавления задачи
+    void showHideSlot(QSystemTrayIcon::ActivationReason type); //отображает/скрывает главное окно
     void deleteTask(); //удаляет выбранные задания из списка задач
     void startTask(); //запускает выбранные задания на выполнение
     void startAllTasks(); //запускает все доступные для запуска задачи
@@ -79,7 +80,9 @@ protected slots:
     void syncTaskData(); //синхронизирует состояние задач с БД
     void manageTaskQueue(); //сканирует
     void startTaskNumber(int id_row, const QUrl &url, const QString &filename = QString(), qint64 totalload = 0);
-    void updateStatusBar();
+    void showTableContextMenu(const QPoint &pos); //отображает контекстное меню в таблице
+    void openTask(); //отображает окно свойств задачи, если оно не закачано, или же пытается открыть файл стандартными программами
+    void openTaskDir(); //открывает в файловом менеджере папку куда сохраняется/сохранен целевой файл
 
 signals:
     void transAct();

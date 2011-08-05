@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     NoticeWindow w;
     //w.show();
-    w.showNotice("REXLoader","");
+    w.showNotice("REXLoader","",NoticeWindow::WT_Warning);
 
     return a.exec();
 }
