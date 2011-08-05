@@ -356,7 +356,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Неоспаримый</string>
+    <string>Очень высокий</string>
    </property>
   </action>
  </widget>
