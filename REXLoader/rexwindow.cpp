@@ -183,6 +183,11 @@ void REXWindow::createInterface()
     connect(ui->tableView,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(showTableContextMenu(QPoint)));
     connect(ui->actionOpenDir,SIGNAL(triggered()),this,SLOT(openTaskDir()));
     connect(ui->actionOpenTask,SIGNAL(triggered()),this,SLOT(openTask()));
+    connect(ui->actionPVeryLow,SIGNAL(triggered()),this,SLOT(setTaskPriority()));
+    connect(ui->actionPLow,SIGNAL(triggered()),this,SLOT(setTaskPriority()));
+    connect(ui->actionPNormal,SIGNAL(triggered()),this,SLOT(setTaskPriority()));
+    connect(ui->actionPHight,SIGNAL(triggered()),this,SLOT(setTaskPriority()));
+    connect(ui->actionPVeryHight,SIGNAL(triggered()),this,SLOT(setTaskPriority()));
 
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);
@@ -229,7 +234,13 @@ void REXWindow::createInterface()
 void REXWindow::showTableContextMenu(const QPoint &pos)
 {
     QItemSelectionModel *selected = ui->tableView->selectionModel();
-    if(!selected->selectedRows().size())return; //если ничего не выделено
+    if(!selected->selectedRows().size())
+    {
+        setEnabledTaskMenu(false);
+        return; //если ничего не выделено
+    }
+    setEnabledTaskMenu(true);
+
     QMenu *mnu = findChild<QMenu*>("tblMenu");
     if(mnu)mnu->popup(QCursor::pos());
 }
@@ -263,6 +274,91 @@ void REXWindow::openTaskDir()
         QFileInfo flinfo(path);
         if(!flinfo.isDir())path = flinfo.absolutePath();
         QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+    }
+}
+
+void REXWindow::setEnabledTaskMenu(bool stat)
+{
+    if(!stat)
+    {
+        ui->menu_7->setEnabled(false);
+        ui->actionOpenDir->setEnabled(false);
+        ui->actionOpenTask->setEnabled(false);
+        return;
+    }
+    ui->menu_7->setEnabled(true);
+    ui->actionOpenDir->setEnabled(true);
+    ui->actionOpenTask->setEnabled(true);
+}
+
+void REXWindow::setTaskPriority()
+{
+    QItemSelectionModel *selected = ui->tableView->selectionModel();
+    if(!selected->selectedRows().size())return; //если ничего не выделено
+    QAction *act = qobject_cast<QAction*>(sender());
+    if(!act)return;
+    if(!act->isChecked())act->setChecked(true);
+    QList<QModelIndex> rows = selected->selectedRows(0);
+    QString where;
+    int newprior = 0;
+
+    if(act == ui->actionPLow)
+    {
+        newprior = 1;
+        ui->actionPVeryLow->setChecked(false);
+        ui->actionPNormal->setChecked(false);
+        ui->actionPHight->setChecked(false);
+        ui->actionPVeryHight->setChecked(false);
+    }
+    else if(act == ui->actionPNormal)
+    {
+        newprior = 2;
+        ui->actionPVeryLow->setChecked(false);
+        ui->actionPLow->setChecked(false);
+        ui->actionPHight->setChecked(false);
+        ui->actionPVeryHight->setChecked(false);
+    }
+    else if(act == ui->actionPHight)
+    {
+        newprior = 3;
+        ui->actionPVeryLow->setChecked(false);
+        ui->actionPLow->setChecked(false);
+        ui->actionPNormal->setChecked(false);
+        ui->actionPVeryHight->setChecked(false);
+    }
+    else if(act == ui->actionPVeryHight)
+    {
+        newprior = 4;
+        ui->actionPVeryLow->setChecked(false);
+        ui->actionPLow->setChecked(false);
+        ui->actionPNormal->setChecked(false);
+        ui->actionPHight->setChecked(false);
+    }
+    else
+    {
+        ui->actionPLow->setChecked(false);
+        ui->actionPNormal->setChecked(false);
+        ui->actionPHight->setChecked(false);
+        ui->actionPVeryHight->setChecked(false);
+    }
+
+
+    for(int i = 0; i < rows.size(); ++i)
+    {
+        if(!i)
+        {
+            where = QString("id=%1").arg(QString::number(rows.value(i).data(100).toInt()));
+            continue;
+        }
+        where += QString(" OR id=%1").arg(QString::number(rows.value(i).data(100).toInt()));
+    }
+    QSqlQuery qr(QSqlDatabase::database());
+    qr.prepare("UPDATE tasks SET priority=:priority WHERE "+where);
+    qr.bindValue("priority",newprior);
+    if(!qr.exec())
+    {
+        //записываем ошибку в журнал
+        qDebug()<<"void REXWindow::setTaskPriority(1)" + qr.executedQuery() + " Error:" + qr.lastError().text();
     }
 }
 
@@ -942,9 +1038,12 @@ void REXWindow::updateStatusBar()
         urllbl->hide();
         progress->setValue(0);
         lasterror->hide();
+        setEnabledTaskMenu(false);
     }
     else
     {
+        setEnabledTaskMenu(true);
+
         QModelIndex curIndex = selection->currentIndex();
         int row_id = sfmodel->mapToSource(curIndex).row();
 

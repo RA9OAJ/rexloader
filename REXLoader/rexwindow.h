@@ -83,6 +83,7 @@ protected slots:
     void showTableContextMenu(const QPoint &pos); //отображает контекстное меню в таблице
     void openTask(); //отображает окно свойств задачи, если оно не закачано, или же пытается открыть файл стандартными программами
     void openTaskDir(); //открывает в файловом менеджере папку куда сохраняется/сохранен целевой файл
+    void setTaskPriority(); //устанавливает выбранный приоритет всем выделенным задачам
 
 signals:
     void transAct();
@@ -90,6 +91,7 @@ signals:
 private:
     void lockProcess(bool flag=true); //позволяет создать/удалить файл блокировки процесса
     void createInterface(); //настраивает элемкнты графического интерфейса
+    void setEnabledTaskMenu(bool stat=false); //активирует/деактивирует меню для выделенныз задач
 
     Ui::REXWindow *ui;
     QSystemTrayIcon *trayicon; //объект системного лотка
