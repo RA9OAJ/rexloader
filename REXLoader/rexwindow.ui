@@ -115,6 +115,7 @@
     <addaction name="actionStop"/>
     <addaction name="actionStartAll"/>
     <addaction name="actionStopAll"/>
+    <addaction name="actionRedownload"/>
     <addaction name="separator"/>
     <addaction name="menu_6"/>
     <addaction name="separator"/>
@@ -357,6 +358,11 @@
    </property>
    <property name="text">
     <string>Очень высокий</string>
+   </property>
+  </action>
+  <action name="actionRedownload">
+   <property name="text">
+    <string>Перезакачать</string>
    </property>
   </action>
  </widget>

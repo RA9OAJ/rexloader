@@ -77,6 +77,7 @@ protected slots:
     void startAllTasks(); //запускает все доступные для запуска задачи
     void stopTask(); //останавливает выполнение выбранной задачи
     void stopAllTasks(); //останавливает все выполняемые задачи
+    void redownloadTask(); //сбрасывает признаки скачивания файла и ставит его снова на закачку
     void syncTaskData(); //синхронизирует состояние задач с БД
     void manageTaskQueue(); //сканирует
     void startTaskNumber(int id_row, const QUrl &url, const QString &filename = QString(), qint64 totalload = 0);
