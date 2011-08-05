@@ -472,7 +472,7 @@ void HttpLoader::sectionCompleted()
         if(tsk->totalLoad() == tsk->size || (!tsk->size && tsk->MIME.split("/").value(0).toLower() == "text"))
         {
             QFile tmpfl(tsk->filepath);
-            tsk->size = _total;
+            if(!tsk->size)tsk->size = _total;
             tmpfl.resize(tsk->size);
             tsk->status = LInterface::FINISHED;
             //t_mutex->unlock();
