@@ -15,12 +15,14 @@ SOURCES += main.cpp\
         rexwindow.cpp \
     titemmodel.cpp \
     addtaskdialog.cpp \
-    emessagebox.cpp
+    emessagebox.cpp \
+    treeitemmodel.cpp
 
 HEADERS  += rexwindow.h \
     titemmodel.h \
     addtaskdialog.h \
-    emessagebox.h
+    emessagebox.h \
+    treeitemmodel.h
 
 FORMS    += rexwindow.ui \
     addtaskdialog.ui
