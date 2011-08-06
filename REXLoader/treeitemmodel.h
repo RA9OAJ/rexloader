@@ -48,6 +48,7 @@ protected:
 
     QHash<int,QModelIndex> hosts; //хэш всех узлов дерева
     QHash<QModelIndex,int> link; //связи узлов между собой
+    QHash<int,int> hst; //связь БД с молелью дерева
 
 };
 
