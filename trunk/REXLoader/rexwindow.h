@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "titemmodel.h"
 #include "addtaskdialog.h"
 #include "emessagebox.h"
+#include "treeitemmodel.h"
 
 #include "../Httploader/LoaderInterface.h"
 
@@ -109,6 +110,7 @@ private:
     QHash<int,LoaderInterface*> pluglist; //хэш ссылок на плагины
     QHash<QString,int> plugproto; //хэш дескрипторов плагинов с соответствующими протоколами
     TItemModel *model; //модель для работы с данными БД задач
+    TreeItemModel *treemodel; //модель информационного дерева
     QSortFilterProxyModel *sfmodel; //прокси-модель для сортировки
 
     QToolButton *spdbtn; //кнопка выбора скорости загрузки
