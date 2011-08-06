@@ -33,28 +33,15 @@ TreeItemModel::~TreeItemModel()
 
 QVariant TreeItemModel::data(const QModelIndex &index, int role) const
 {
-    if(index == hosts.value(1))
-    {
-        switch(role)
-        {
-        case Qt::DisplayRole: return tr("All Downloads");
-        default: return QVariant();
-        }
-    }
-    if(index.parent() == hosts.value(1))
-    {
-        switch(role)
-        {
-        case Qt::DisplayRole: qr->seek(index.row()); return qr->value(1).toString();
-        default: return QVariant();
-        }
-    }
+    int id_node = hosts.key(index);
+    qr->seek(id_node-1);
+    if(role == Qt::DisplayRole) return qr->value(1).toString();
     return QVariant();
 }
 
 int TreeItemModel::rowCount(const QModelIndex &parent) const
 {
-    if(parent == QModelIndex())return 1;
+    //if(parent == QModelIndex())return 1;
     if(hosts.key(parent, -1) < 0)return 0;
     int id_hosts = hosts.key(parent);
     return link.keys(id_hosts).size();
@@ -85,7 +72,7 @@ bool TreeItemModel::updateModel(const QSqlDatabase &db)
     if(qr)delete(qr);
     qr = 0;
 
-    qr = new QSqlQuery("SELECT * FROM categories",db);
+    qr = new QSqlQuery("SELECT * FROM categories ORDER BY parent_id ASC",db);
     if(!qr->exec())
     {
         reset();
@@ -93,12 +80,26 @@ bool TreeItemModel::updateModel(const QSqlDatabase &db)
         return false;
     }
 
-    hosts.insert(1,createIndex(0,0,1));
-    link.insert(hosts.value(1),0);
+    hosts.clear();
+    link.clear();
+    hst.clear();
+    hosts.insert(0,QModelIndex());
+    QHash<int,int> children_cnt;
     while(qr->next())
     {
-        hosts.insert(hosts.size(),createIndex(grow,0,grow));
-        link.insert(hosts.value(hosts.size()-1),1);
+        hst.insert(qr->value(0).toInt(),hosts.size());
+        if(qr->value(4).toInt()==0)
+        {
+            hosts.insert(hosts.size(),createIndex(rowCount(hosts.value(0)),0,hosts.size()));
+            link.insert(hosts.value(hosts.size()-1),0);
+            children_cnt.insert(qr->value(0).toInt(),0);
+        }
+        else
+        {
+            hosts.insert(hosts.size(),createIndex(children_cnt.value(qr->value(4).toInt()),0,hosts.size()));
+            link.insert(hosts.value(hosts.size()-1),hst.value(qr->value(4).toInt()));
+            children_cnt[qr->value(4).toInt()]++;
+        }
         ++grow;
     }
     reset();

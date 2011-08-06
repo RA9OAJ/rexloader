@@ -102,7 +102,7 @@ void checkDatabase()
             }
 
             qr->clear();
-            QString queries("INSERT INTO categories (title,dir) VALUES ('#downloads','');\r\n"
+            QString queries("INSERT INTO categories (title,dir,parent_id) VALUES ('#downloads','',0);\r\n"
                             "INSERT INTO categories (title,dir,parent_id) VALUES ('#archives','',(SELECT id FROM categories WHERE title='#downloads'));\r\n"
                             "INSERT INTO categories (title,dir,parent_id) VALUES ('#apps','',(SELECT id FROM categories WHERE title='#downloads'));\r\n"
                             "INSERT INTO categories (title,dir,parent_id) VALUES ('#audio','',(SELECT id FROM categories WHERE title='#downloads'))\r\n;"
