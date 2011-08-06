@@ -123,7 +123,7 @@ void REXWindow::createInterface()
     QLabel *speed = new QLabel(widget);
     speed->setObjectName("speed");
     speed->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
-    speed->setMaximumWidth(75);
+    speed->setMaximumWidth(110);
     QProgressBar *prgBar = new QProgressBar(widget);
     prgBar->setObjectName("prgBar");
     QLabel *timeleft = new QLabel(widget);
@@ -914,7 +914,7 @@ void REXWindow::syncTaskData()
                 QFile fl(filepath);
                 if(fl.exists(newFilename))
                 {
-                    EMessageBox question(this);
+                    EMessageBox question;
                     QPushButton *btn1, *btn2;
                     question.setIcon(EMessageBox::Question);
                     btn1 = question.addButton(tr("Replace"),EMessageBox::ApplyRole);
@@ -933,7 +933,6 @@ void REXWindow::syncTaskData()
                 }
                 fl.rename(newFilename);
                 filepath = newFilename;
-
             }
             qr.prepare("UPDATE tasks SET totalsize=:totalsize, currentsize=:currentsize, filename=:filename, downtime=:downtime, tstatus=:tstatus, speed_avg=:speedavg WHERE id=:id");
             qr.bindValue("totalsize",QString::number(totalsize));
@@ -1105,6 +1104,7 @@ void REXWindow::updateStatusBar()
         urllbl->hide();
         progress->setValue(0);
         lasterror->hide();
+        speed->hide();
         setEnabledTaskMenu(false);
     }
     else
@@ -1119,7 +1119,7 @@ void REXWindow::updateStatusBar()
         case LInterface::SEND_QUERY:
         case LInterface::ACCEPT_QUERY:
         case LInterface::REDIRECT:
-        case LInterface::ON_LOAD: status->setPixmap(QPixmap(":/appimages/start_16x16.png")); break;
+        case LInterface::ON_LOAD: status->setPixmap(QPixmap(":/appimages/start_16x16.png")); speed->setVisible(true); break;
         case LInterface::STOPPING:
         case LInterface::ON_PAUSE: status->setPixmap(QPixmap(":/appimages/pause_16x16.png")); break;
         case LInterface::FINISHED: status->setPixmap(QPixmap(":/appimages/finish_16x16.png")); break;
@@ -1157,6 +1157,8 @@ void REXWindow::updateStatusBar()
         lefttime->setVisible(true);
         lasterror->setText(model->index(row_id,7).data(100).toString());
         lasterror->setVisible(true);
+        if(!model->index(row_id,14).data().toString().isEmpty()) speed->setText(tr("Spd: %1").arg(model->index(row_id,14).data().toString()));
+        else speed->hide();
     }
 
     QSortFilterProxyModel filter;
