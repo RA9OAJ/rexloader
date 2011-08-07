@@ -48,6 +48,8 @@ QVariant TreeItemModel::data(const QModelIndex &index, int role) const
         }
         return nodes.value(index);
 
+    case 100: return nodes.value(index);
+
     default: return QVariant();
     }
 }

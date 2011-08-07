@@ -198,6 +198,7 @@ void REXWindow::createInterface()
     connect(ui->actionPHight,SIGNAL(triggered()),this,SLOT(setTaskPriority()));
     connect(ui->actionPVeryHight,SIGNAL(triggered()),this,SLOT(setTaskPriority()));
     connect(ui->actionRedownload,SIGNAL(triggered()),this,SLOT(redownloadTask()));
+    connect(ui->treeView,SIGNAL(clicked(QModelIndex)),this,SLOT(setTaskFilter(QModelIndex)));
 
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);
@@ -260,6 +261,19 @@ void REXWindow::showTableContextMenu(const QPoint &pos)
 
     QMenu *mnu = findChild<QMenu*>("tblMenu");
     if(mnu)mnu->popup(QCursor::pos());
+}
+
+void REXWindow::setTaskFilter(const QModelIndex &index)
+{
+    QModelIndex mindex = treemodel->index(index.row(),1,index.parent());
+    int id_cat = treemodel->data(mindex,100).toInt();
+    if(id_cat == 1)
+    {
+        sfmodel->setFilterFixedString("");
+        return;
+    }
+    sfmodel->setFilterKeyColumn(10);
+    sfmodel->setFilterFixedString(QString::number(id_cat));
 }
 
 void REXWindow::openTask()
@@ -407,7 +421,7 @@ void REXWindow::loadSettings()
 
 void REXWindow::scanClipboard()
 {
-   /*if(!clip_autoscan)*/return;
+    /*if(!clip_autoscan)*/return;
 
     const QClipboard *clipbrd = QApplication::clipboard();
     QUrl url(clipbrd->text());
@@ -1046,7 +1060,7 @@ void REXWindow::manageTaskQueue()
 
                 LoaderInterface *ldr = pluglist.value(id_proto);
 
-                 //останавливаем найденную задачу, удаляем её из менеджера закачек
+                //останавливаем найденную задачу, удаляем её из менеджера закачек
                 ldr->stopDownload(id_task);
                 ldr->deleteTask(id_task);
 
@@ -1200,7 +1214,7 @@ bool REXWindow::event(QEvent *event)
 }
 
 void REXWindow::closeEvent(QCloseEvent *event)
- {
+{
     if(!isHidden() && sender() != this->findChild<QAction*>("exitAct"))
     {
         hide();
@@ -1211,7 +1225,7 @@ void REXWindow::closeEvent(QCloseEvent *event)
         event->accept();
         qApp->quit();
     }
- }
+}
 
 void REXWindow::changeEvent(QEvent *e)
 {
