@@ -44,12 +44,10 @@ public slots:
 
 protected:
     QSqlQuery *qr;
-    int grow;
+    int gcol;
 
-    QHash<int,QModelIndex> hosts; //хэш всех узлов дерева
-    QHash<QModelIndex,int> link; //связи узлов между собой
-    QHash<int,int> hst; //связь БД с молелью дерева
-
+    QHash<QModelIndex,QVariant> nodes; //хэш всех узлов дерева
+    QHash<QModelIndex,QModelIndex> link; //связи узлов между собой
 };
 
 #endif // TREEITEMMODEL_H

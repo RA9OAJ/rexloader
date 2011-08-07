@@ -99,6 +99,10 @@ void REXWindow::createInterface()
     treemodel = new TreeItemModel(this);
     treemodel->updateModel();
     ui->treeView->setModel(treemodel);
+    ui->treeView->hideColumn(1);
+    ui->treeView->hideColumn(2);
+    ui->treeView->hideColumn(3);
+    ui->treeView->hideColumn(4);
 
     //настраиваем панель инструментов
     ui->mainToolBar->addAction(ui->actionAdd_URL);

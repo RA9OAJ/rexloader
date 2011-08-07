@@ -21,9 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 TreeItemModel::TreeItemModel(QObject *parent) :
     QAbstractItemModel(parent)
 {
-    grow = 0;
+    gcol = 0;
     qr = 0;
-    hosts.insert(0,QModelIndex());
+    nodes.insert(QModelIndex(),QVariant());
 }
 
 TreeItemModel::~TreeItemModel()
@@ -33,46 +33,68 @@ TreeItemModel::~TreeItemModel()
 
 QVariant TreeItemModel::data(const QModelIndex &index, int role) const
 {
-    int id_node = hosts.key(index);
-    qr->seek(id_node-1);
-    if(role == Qt::DisplayRole) return qr->value(1).toString();
-    return QVariant();
+    switch(role)
+    {
+    case Qt::DisplayRole:
+        if(!index.column())
+        {
+            if(nodes.value(index).toString() == "#downloads")return tr("All Downloads");
+            else if(nodes.value(index).toString() == "#archives")return tr("Archives");
+            else if(nodes.value(index).toString() == "#apps") return tr("Applications");
+            else if(nodes.value(index).toString() == "#audio") return tr("Music");
+            else if(nodes.value(index).toString() == "#video") return tr("Video");
+            else if(nodes.value(index).toString() == "#other") return tr("Other");
+            return nodes.value(index).toString();
+        }
+        return nodes.value(index);
+
+    default: return QVariant();
+    }
 }
 
 int TreeItemModel::rowCount(const QModelIndex &parent) const
 {
-    //if(parent == QModelIndex())return 1;
-    if(hosts.key(parent, -1) < 0)return 0;
-    int id_hosts = hosts.key(parent);
-    return link.keys(id_hosts).size();
+    QList<QModelIndex> cur_nodes = link.keys(parent);
+    if(!cur_nodes.size())return 0;
+    int col_row = 0;
+    for(int i = 0; i < cur_nodes.size(); ++i)
+        if(!cur_nodes.value(i).column())col_row++;
+    return col_row;
 }
 
 int TreeItemModel::columnCount(const QModelIndex &parent) const
 {
-    if(parent == QModelIndex())return 1;
-    return 1;
+    //if(QModelIndex() == parent)return 1;
+    QList<QModelIndex> children = link.keys(parent);
+    if(!children.size()) return 0;
+    int max_col = 0;
+    for(int i = 0; i < children.size(); ++i)
+        max_col = qMax(children.value(i).column(), max_col);
+    return max_col+1;
 }
 
 QModelIndex TreeItemModel::index(int row, int column, const QModelIndex &parent) const
 {
-    if(column > columnCount(parent) || row > rowCount(parent) || hosts.key(parent, -1) < 0)return QModelIndex();
-    int id_parent = hosts.key(parent);
-    return link.keys(id_parent).value(row);
+    if(column > columnCount(parent) || row > rowCount(parent) /*|| link.key(parent, QModelIndex()) == QModelIndex()*/)return QModelIndex();
+    QList<QModelIndex> cur_nodes = link.keys(parent);
+    if(!cur_nodes.size()) return QModelIndex();
+    QModelIndex cur = QModelIndex();
+    for(int i = 0; i < cur_nodes.size(); ++i)
+        if(cur_nodes.value(i).row() == row && cur_nodes.value(i).column() == column) cur = cur_nodes.value(i);
+    return cur;
 }
 
 QModelIndex TreeItemModel::parent(const QModelIndex &child) const
 {
     if(!link.contains(child)) return QModelIndex();
-    int id_parent = link.value(child);
-    return hosts.value(id_parent);
+    return link.value(child);
 }
 
 bool TreeItemModel::updateModel(const QSqlDatabase &db)
 {
     if(qr)delete(qr);
     qr = 0;
-
-    qr = new QSqlQuery("SELECT * FROM categories ORDER BY parent_id ASC",db);
+    qr = new QSqlQuery("SELECT title, id, dir, extlist, parent_id FROM categories ORDER BY parent_id ASC",db);
     if(!qr->exec())
     {
         reset();
@@ -80,37 +102,39 @@ bool TreeItemModel::updateModel(const QSqlDatabase &db)
         return false;
     }
 
-    hosts.clear();
+    nodes.clear();
     link.clear();
-    hst.clear();
-    hosts.insert(0,QModelIndex());
-    QHash<int,int> children_cnt;
+    nodes.insert(QModelIndex(),QVariant());
+    QHash<int,QModelIndex> key_nodes;
+    QHash<QModelIndex,int> row_cnt;
+    row_cnt.insert(QModelIndex(),0);
     while(qr->next())
     {
-        hst.insert(qr->value(0).toInt(),hosts.size());
-        if(qr->value(4).toInt()==0)
+        gcol = qr->record().count();
+        QModelIndex parent;
+        if(!qr->value(4).toInt()) parent = QModelIndex();
+        else parent = key_nodes.value(qr->value(4).toInt());
+        for(int i = 0; i < qr->record().count(); ++i)
         {
-            hosts.insert(hosts.size(),createIndex(rowCount(hosts.value(0)),0,hosts.size()));
-            link.insert(hosts.value(hosts.size()-1),0);
-            children_cnt.insert(qr->value(0).toInt(),0);
+            QModelIndex cur = createIndex(row_cnt.value(parent),i,nodes.size());
+            nodes.insert(cur,qr->value(i));
+            link.insert(cur,parent);
+            if(!i)
+            {
+                key_nodes.insert(qr->value(1).toInt(),cur);
+            }
         }
-        else
-        {
-            hosts.insert(hosts.size(),createIndex(children_cnt.value(qr->value(4).toInt()),0,hosts.size()));
-            link.insert(hosts.value(hosts.size()-1),hst.value(qr->value(4).toInt()));
-            children_cnt[qr->value(4).toInt()]++;
-        }
-        ++grow;
+        row_cnt[parent]++;
     }
     reset();
+    delete(qr);
+    qr = 0;
     return true;
 }
 
 bool TreeItemModel::hasChildren(const QModelIndex &parent) const
 {
-    int id_host = hosts.key(parent, -1);
-    if(id_host < 0)return false;
-    if(link.keys(id_host).size() > 0)return true;
+    if(link.keys(parent).size())return true;
     return false;
 }
 
