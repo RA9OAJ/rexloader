@@ -244,6 +244,9 @@ void REXWindow::createInterface()
     tblMenu->addSeparator();
     tblMenu->addAction(ui->actionRedownload);
     tblMenu->addSeparator();
+    tblMenu->addAction(ui->actionDelURL);
+    tblMenu->addAction(ui->actionDelURLFiles);
+    tblMenu->addSeparator();
     tblMenu->addMenu(ui->menu_7);
     tblMenu->addSeparator();
     tblMenu->addAction(ui->actionTaskPropert);
@@ -269,11 +272,22 @@ void REXWindow::setTaskFilter(const QModelIndex &index)
     int id_cat = treemodel->data(mindex,100).toInt();
     if(id_cat == 1)
     {
-        sfmodel->setFilterFixedString("");
+        sfmodel->setFilterRegExp("");
         return;
     }
+    int subcat_cnt = treemodel->rowCount(index);
+    QString filter = QString("(^%1$)").arg(QString::number(id_cat));
+    if(subcat_cnt)
+    {
+        QModelIndex child;
+        for(int i = 0; i < subcat_cnt; ++i)
+        {
+            child = treemodel->index(i,1,index);
+            filter += QString("|(^%1$)").arg(QString::number(treemodel->data(child,100).toInt()));
+        }
+    }
     sfmodel->setFilterKeyColumn(10);
-    sfmodel->setFilterFixedString(QString::number(id_cat));
+    sfmodel->setFilterRegExp(filter);
 }
 
 void REXWindow::openTask()
