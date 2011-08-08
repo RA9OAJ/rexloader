@@ -245,17 +245,19 @@ void HttpSection::dataAnalising()
     {
         while(soc->canReadLine())
         {
-
             QString cur_str = soc->readLine(1024);
 
             if(cur_str.indexOf("HTTP/") == 0) {header["HTTP"] = cur_str.split(" ").value(1); continue;}
-            if(cur_str.indexOf("\r\n") == 0) {mode = 1; break;}
+            if(cur_str.indexOf("\r\n") == 0 || cur_str.indexOf(0x0A) == 0) {mode = 1; break;}
 
             QStringList _tmp = cur_str.split(": ");
             header[_tmp.value(0).toLower()] = _tmp.value(1);
-            header[_tmp.value(0).toLower()].chop(2);
+
+            if(cur_str.at(cur_str.size()-2) != 0x0D) header[_tmp.value(0).toLower()].chop(1);
+            else header[_tmp.value(0).toLower()].chop(2);
         }
-        if(header["connection"] != "close" && _errno == QAbstractSocket::RemoteHostClosedError && mode == 1){_errno = HttpSection::SERV_CONNECT_ERROR;emit errorSignal(_errno); stopDownloading(); return;}
+        if(_errno == QAbstractSocket::RemoteHostClosedError && mode != 1){_errno = HttpSection::SERV_CONNECT_ERROR;emit errorSignal(_errno); stopDownloading(); return;}
+
     }
     if(mode == 1)
     {
@@ -280,7 +282,6 @@ void HttpSection::dataAnalising()
         }
 
         //---------------------------
-
         switch(reqid)
         {
         case 200:
