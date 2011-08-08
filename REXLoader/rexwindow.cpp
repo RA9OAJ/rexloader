@@ -199,6 +199,7 @@ void REXWindow::createInterface()
     connect(ui->actionPVeryHight,SIGNAL(triggered()),this,SLOT(setTaskPriority()));
     connect(ui->actionRedownload,SIGNAL(triggered()),this,SLOT(redownloadTask()));
     connect(ui->treeView,SIGNAL(clicked(QModelIndex)),this,SLOT(setTaskFilter(QModelIndex)));
+    connect(ui->actionDelURLFiles,SIGNAL(triggered()),this,SLOT(deleteTask()));
 
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);
@@ -679,6 +680,8 @@ void REXWindow::deleteTask()
 {
     QItemSelectionModel *select = ui->tableView->selectionModel();
     if(!select->hasSelection())return; //если ничего невыделено, то выходим
+    bool del_file = false; //удалять ли результаты скачивания на локальном диске
+    if(qobject_cast<QAction*>(sender()) == ui->actionDelURLFiles) del_file = true;
 
     if(select->selectedRows().length() > 1) //если выделено более 1 строки
     {
@@ -704,6 +707,13 @@ void REXWindow::deleteTask()
             where += QString(" id=%1").arg(select->selectedRows().value(i).data(Qt::DisplayRole).toString());
         else
             where += QString(" OR id=%1").arg(select->selectedRows().value(i).data(Qt::DisplayRole).toString());
+
+        if(del_file)
+        {
+            QFileInfo fl(select->selectedRows(3).value(i).data(100).toString());
+            if(!fl.isFile())continue;
+            QFile::remove(select->selectedRows(3).value(i).data(100).toString());
+        }
     }
 
     qr.prepare("DELETE FROM tasks WHERE"+where);
