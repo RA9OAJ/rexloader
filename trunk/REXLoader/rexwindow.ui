@@ -173,6 +173,10 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionAdd_URL">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/appimages/add_48x48.png</normaloff>:/appimages/add_48x48.png</iconset>
+   </property>
    <property name="text">
     <string>Добавить URL</string>
    </property>
@@ -181,6 +185,10 @@
    </property>
   </action>
   <action name="actionDelURL">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/appimages/delete_48x48.png</normaloff>:/appimages/delete_48x48.png</iconset>
+   </property>
    <property name="text">
     <string>Удалить URL</string>
    </property>

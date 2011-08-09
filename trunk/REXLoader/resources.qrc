@@ -27,5 +27,7 @@
         <file alias="pnormal_16x16.png">images/pnormal_16x16.png</file>
         <file alias="pveryhight_16x16.png">images/pveryhight_16x16.png</file>
         <file alias="pverylow_16x16.png">images/pverylow_16x16.png</file>
+        <file alias="add_48x48.png">images/add_48x48.png</file>
+        <file alias="delete_48x48.png">images/delete_48x48.png</file>
     </qresource>
 </RCC>
