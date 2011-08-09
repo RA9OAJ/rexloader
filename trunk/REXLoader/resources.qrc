@@ -22,5 +22,10 @@
         <file alias="queue_16x16.png">images/queue_16x16.png</file>
         <file alias="error_16x16.png">images/error_16x16.png</file>
         <file alias="onload.gif">images/onload.gif</file>
+        <file alias="phight_16x16.png">images/phight_16x16.png</file>
+        <file alias="plow_16x16.png">images/plow_16x16.png</file>
+        <file alias="pnormal_16x16.png">images/pnormal_16x16.png</file>
+        <file alias="pveryhight_16x16.png">images/pveryhight_16x16.png</file>
+        <file alias="pverylow_16x16.png">images/pverylow_16x16.png</file>
     </qresource>
 </RCC>

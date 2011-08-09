@@ -417,6 +417,7 @@ void REXWindow::setTaskPriority()
         //записываем ошибку в журнал
         qDebug()<<"void REXWindow::setTaskPriority(1)" + qr.executedQuery() + " Error:" + qr.lastError().text();
     }
+    updateTaskSheet();
 }
 
 void REXWindow::showNotice(const QString &title, const QString &text, int type)
@@ -1185,12 +1186,12 @@ void REXWindow::updateStatusBar()
 
         switch(model->index(row_id,13).data(100).toInt())
         {
-        case 0: priority->setPixmap(QPixmap(":/appimages/start_16x16.png")); ui->actionPVeryLow->setChecked(true); break;
-        case 1: priority->setPixmap(QPixmap(":/appimages/pause_16x16.png")); ui->actionPLow->setChecked(true); break;
-        case 2: priority->setPixmap(QPixmap(":/appimages/queue_16x16.png")); ui->actionPNormal->setChecked(true); break;
-        case 3: priority->setPixmap(QPixmap(":/appimages/queue_16x16.png")); ui->actionPHight->setChecked(true); break;
+        case 0: priority->setPixmap(QPixmap(":/appimages/pverylow_16x16.png")); ui->actionPVeryLow->setChecked(true); break;
+        case 1: priority->setPixmap(QPixmap(":/appimages/plow_16x16.png")); ui->actionPLow->setChecked(true); break;
+        case 2: priority->setPixmap(QPixmap(":/appimages/pnormal_16x16.png")); ui->actionPNormal->setChecked(true); break;
+        case 3: priority->setPixmap(QPixmap(":/appimages/phight_16x16.png")); ui->actionPHight->setChecked(true); break;
         default:
-            priority->setPixmap(QPixmap(":/appimages/error_16x16.png"));
+            priority->setPixmap(QPixmap(":/appimages/pveryhight_16x16.png"));
             ui->actionPVeryHight->setChecked(true);
             break;
         }
