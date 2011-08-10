@@ -42,7 +42,9 @@ signals:
 public slots:
     bool updateModel(const QSqlDatabase &db = QSqlDatabase());
 
-protected:
+private:
+    void addFiltersSubtree();
+
     QSqlQuery *qr;
     int gcol;
 

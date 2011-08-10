@@ -48,7 +48,7 @@ public slots:
     bool silentUpdateModel(const QSqlDatabase &db = QSqlDatabase());
     void clearCache(int row = -1);
 
-protected:
+private:
     QVariant myData(int row, int col) const;
 
     QSqlQuery *qr;

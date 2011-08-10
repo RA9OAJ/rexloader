@@ -100,7 +100,7 @@ bool TreeItemModel::updateModel(const QSqlDatabase &db)
     if(!qr->exec())
     {
         reset();
-        qDebug()<<"FUCK!";
+        addFiltersSubtree();
         return false;
     }
 
@@ -131,6 +131,7 @@ bool TreeItemModel::updateModel(const QSqlDatabase &db)
     reset();
     delete(qr);
     qr = 0;
+    addFiltersSubtree();
     return true;
 }
 
@@ -142,5 +143,45 @@ bool TreeItemModel::hasChildren(const QModelIndex &parent) const
 
 bool TreeItemModel::hasIndex(int row, int column, const QModelIndex &parent) const
 {
+    if(!nodes.contains(parent))return false;
+    if(row > link.keys(parent).size() || column > columnCount(parent)) return false;
     return true;
+}
+
+void TreeItemModel::addFiltersSubtree()
+{
+    QList<QVariant> filters;
+    filters << tr("Filters")<< -1 << 0 << 0;
+    filters << tr("Downloading")<< -2 << -1 << 3;
+    filters << tr("Waiting") << -3 << -1 << -100;
+    filters << tr("Stopped") << -4 << -1 << 0;
+    filters << tr("Completed") << -5 << -1 << 5;
+    filters << tr("With an error") << -6 << -1 << -2;
+
+    QModelIndex parent = QModelIndex();
+    QHash<QModelIndex, int> cur_nodes;
+    for(int i = 0; i < filters.size()/4; ++i)
+    {
+        if(!i)parent = QModelIndex();
+        else parent = cur_nodes.key(filters.value(i*4+2).toInt());
+
+        int row_cnt = i;
+        if(!i)row_cnt = rowCount(parent);
+        QModelIndex cur = createIndex(row_cnt,0,nodes.size());
+        nodes.insert(cur,filters.value(i*4));
+        link.insert(cur,parent);
+        cur_nodes.insert(cur,filters.value(i*4+1).toInt());
+
+        cur = createIndex(row_cnt,1,nodes.size());
+        nodes.insert(cur,filters.value(i*4+1));
+        link.insert(cur,parent);
+
+        cur = createIndex(row_cnt,2,nodes.size());
+        nodes.insert(cur,filters.value(i*4+2));
+        link.insert(cur,parent);
+
+        cur = createIndex(row_cnt,3,nodes.size());
+        nodes.insert(cur,filters.value(i*4+3));
+        link.insert(cur,parent);
+    }
 }

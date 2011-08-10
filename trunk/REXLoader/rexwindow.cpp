@@ -99,6 +99,7 @@ void REXWindow::createInterface()
     treemodel = new TreeItemModel(this);
     treemodel->updateModel();
     ui->treeView->setModel(treemodel);
+    ui->treeView->header()->hide();
     ui->treeView->hideColumn(1);
     ui->treeView->hideColumn(2);
     ui->treeView->hideColumn(3);
@@ -271,23 +272,36 @@ void REXWindow::setTaskFilter(const QModelIndex &index)
 {
     QModelIndex mindex = treemodel->index(index.row(),1,index.parent());
     int id_cat = treemodel->data(mindex,100).toInt();
-    if(id_cat == 1)
+    if(id_cat == 1 || id_cat == -1)
     {
         sfmodel->setFilterRegExp("");
         return;
     }
+
+    int key_column = 10;
+    int model_column = 1;
     int subcat_cnt = treemodel->rowCount(index);
-    QString filter = QString("(^%1$)").arg(QString::number(id_cat));
+    QString filter = "";
+
+    if(id_cat < 0)
+    {
+        key_column = 9;
+        model_column = 3;
+        mindex = treemodel->index(index.row(),3,index.parent());
+        filter = QString("(^%1$)").arg(QString::number(treemodel->data(mindex,100).toInt()));
+    }
+    else filter = QString("(^%1$)").arg(QString::number(id_cat));
     if(subcat_cnt)
     {
         QModelIndex child;
         for(int i = 0; i < subcat_cnt; ++i)
         {
-            child = treemodel->index(i,1,index);
+            child = treemodel->index(i,model_column,index);
             filter += QString("|(^%1$)").arg(QString::number(treemodel->data(child,100).toInt()));
         }
     }
-    sfmodel->setFilterKeyColumn(10);
+    sfmodel->setFilterRole(100);
+    sfmodel->setFilterKeyColumn(key_column);
     sfmodel->setFilterRegExp(filter);
 }
 
