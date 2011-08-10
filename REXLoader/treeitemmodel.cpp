@@ -165,7 +165,7 @@ void TreeItemModel::addFiltersSubtree()
         if(!i)parent = QModelIndex();
         else parent = cur_nodes.key(filters.value(i*4+2).toInt());
 
-        int row_cnt = i;
+        int row_cnt = i-1;
         if(!i)row_cnt = rowCount(parent);
         QModelIndex cur = createIndex(row_cnt,0,nodes.size());
         nodes.insert(cur,filters.value(i*4));
