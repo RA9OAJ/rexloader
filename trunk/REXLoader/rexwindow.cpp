@@ -27,7 +27,7 @@ REXWindow::REXWindow(QWidget *parent) :
 
     sched_flag = true;
     clip_autoscan = true;
-    max_tasks = 9;
+    max_tasks = 1;
     max_threads = 3;
     down_speed = 2048*8; // 2Mbps
 
@@ -484,7 +484,7 @@ void REXWindow::openDataBase()
 
     QSqlQuery qr;
     qr.prepare("UPDATE tasks SET tstatus=:newstatus WHERE tstatus=:tstatus;");
-    qr.bindValue("newstatus",LInterface::ON_PAUSE);
+    qr.bindValue("newstatus",-100);
     qr.bindValue("tstatus",LInterface::ON_LOAD);
 
     if(!qr.exec())
@@ -1072,7 +1072,7 @@ void REXWindow::manageTaskQueue()
     }
 
     QSqlQuery qr1(QSqlDatabase::database());
-    qr1.prepare("SELECT id,priority FROM tasks WHERE tstatus BETWEEN 1 AND 4 ORDER BY priority DESC"); //список выполняемых задач
+    qr1.prepare("SELECT id,priority FROM tasks WHERE tstatus BETWEEN 1 AND 4 ORDER BY priority ASC"); //список выполняемых задач
     if(!qr1.exec())
     {
         //запись в журнал ошибок
@@ -1080,18 +1080,13 @@ void REXWindow::manageTaskQueue()
         return;
     }
 
-    qr1.last();
-    if(qr.value(13).toInt() <= qr1.value(13).toInt())return; //если самый высокий приоритет стоящего в очереди меньше или равен самому маленькому приоритету выполняющегося, то выходим
-    qr1.first();
+    if(!qr1.next())return;
 
-    int start_pos = 0;
-    while(qr.next())
-    {
+    do{
+        if(qr.value(13).toInt() <= qr1.value(13).toInt()){updateStatusBar(); return;} //если самый высокий приоритет стоящего в очереди меньше или равен самому маленькому приоритету выполняющегося, то выходим
         bool success = false;
-        while(qr1.seek(start_pos))
-        {
-            ++start_pos;
-            if(qr.value(13).toInt() > qr1.value(13).toInt())
+        do{
+            if(qr.value(13).toInt() > qr1.value(1).toInt())
             {
                 int id_row = qr1.value(0).toInt();
                 int id_task = tasklist.value(id_row)%100;
@@ -1101,7 +1096,18 @@ void REXWindow::manageTaskQueue()
 
                 //останавливаем найденную задачу, удаляем её из менеджера закачек
                 ldr->stopDownload(id_task);
+                qr1.clear();
+                qr1.prepare("UPDATE tasks SET tstatus=-100 WHERE id=:id");
+                qr1.bindValue("id",id_row);
+                if(!qr1.exec())
+                {
+                    //запись в журнал ошибок
+                    qDebug()<<"void REXWindow::manageTaskQueue(2): SQL:" + qr1.executedQuery() + " Error: " + qr1.lastError().text();
+                    return;
+                }
+                model->addToCache(id_row,9,-100);
                 ldr->deleteTask(id_task);
+                tasklist.remove(id_row);
 
                 //запускаем новую задачу
 
@@ -1128,7 +1134,7 @@ void REXWindow::manageTaskQueue()
                 success = true;
                 break;
             }
-        }
+        }while(qr1.next());
         if(!success)
         {
             if(tasklist.size() > 0)startTrayIconAnimaion();
@@ -1136,7 +1142,7 @@ void REXWindow::manageTaskQueue()
             updateStatusBar();
             return; //если не нашли меньших по приоритету задач то выходим
         }
-    }
+    }while(qr.next());
     updateStatusBar();
 }
 
