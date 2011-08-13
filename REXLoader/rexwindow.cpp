@@ -787,7 +787,19 @@ void REXWindow::startAllTasks()
         qDebug()<<"void REXWindow::startAllTasks(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
         return;
     }
+
     updateTaskSheet();
+    QSortFilterProxyModel fltr;
+    fltr.setSourceModel(model);
+    fltr.setFilterRole(100);
+    fltr.setFilterKeyColumn(9);
+    fltr.setFilterFixedString("0");
+    for(int i = 0; i < fltr.rowCount(); ++i)
+    {
+        int id = fltr.data(fltr.index(i,0),100).toInt();
+        model->updateRow(id);
+    }
+
     manageTaskQueue();
     syncTaskData();
 }
@@ -875,7 +887,29 @@ void REXWindow::stopAllTasks()
         LoaderInterface *ldr = pluglist.value(id_proto);
         ldr->stopDownload(id_task);
     }
+
+    qr.clear();
+    qr.prepare("UPDATE tasks SET tstatus=0 WHERE tstatus=-100");
+    if(!qr.exec())
+    {
+        //запись в журнал ошибок
+        qDebug()<<"void REXWindow::startAllTasks(2): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
+        return;
+    }
+
     updateTaskSheet();
+    QSortFilterProxyModel fltr;
+    fltr.setSourceModel(model);
+    fltr.setFilterRole(100);
+    fltr.setFilterKeyColumn(9);
+    fltr.setFilterFixedString("-100");
+    for(int i = 0; i < fltr.rowCount(); ++i)
+    {
+        int id = fltr.data(fltr.index(i,0),100).toInt();
+        model->updateRow(id);
+        qDebug()<<id;
+    }
+
     manageTaskQueue();
     syncTaskData();
 }
@@ -1083,66 +1117,58 @@ void REXWindow::manageTaskQueue()
     if(!qr1.next())return;
 
     do{
-        if(qr.value(13).toInt() <= qr1.value(13).toInt()){updateStatusBar(); return;} //если самый высокий приоритет стоящего в очереди меньше или равен самому маленькому приоритету выполняющегося, то выходим
-        bool success = false;
-        do{
-            if(qr.value(13).toInt() > qr1.value(1).toInt())
+        if(qr.value(13).toInt() <= qr1.value(13).toInt()) break; //если самый высокий приоритет стоящего в очереди меньше или равен самому маленькому приоритету выполняющегося, то выходим
+        if(qr.value(13).toInt() > qr1.value(1).toInt())
+        {
+            int id_row = qr1.value(0).toInt();
+            int id_task = tasklist.value(id_row)%100;
+            int id_proto = tasklist.value(id_row)/100;
+
+            LoaderInterface *ldr = pluglist.value(id_proto);
+
+            //останавливаем найденную задачу, удаляем её из менеджера закачек
+            ldr->stopDownload(id_task);
+            qr1.clear();
+            qr1.prepare("UPDATE tasks SET tstatus=-100 WHERE id=:id");
+            qr1.bindValue("id",id_row);
+            if(!qr1.exec())
             {
-                int id_row = qr1.value(0).toInt();
-                int id_task = tasklist.value(id_row)%100;
-                int id_proto = tasklist.value(id_row)/100;
+                //запись в журнал ошибок
+                qDebug()<<"void REXWindow::manageTaskQueue(2): SQL:" + qr1.executedQuery() + " Error: " + qr1.lastError().text();
+                break;
+            }
+            model->addToCache(id_row,9,-100);
+            ldr->deleteTask(id_task);
+            tasklist.remove(id_row);
+            model->updateRow(id_row);
 
-                LoaderInterface *ldr = pluglist.value(id_proto);
+            //запускаем новую задачу
 
-                //останавливаем найденную задачу, удаляем её из менеджера закачек
-                ldr->stopDownload(id_task);
-                qr1.clear();
-                qr1.prepare("UPDATE tasks SET tstatus=-100 WHERE id=:id");
-                qr1.bindValue("id",id_row);
+            QUrl _url(qr.value(1).toString());
+            id_row = qr.value(0).toInt();
+
+            if(!plugproto.contains(_url.scheme().toLower())) //если протокол не поддерживается, то пропускаем эту задачу в очереди, поменяв её статус на ошибку
+            {
+                QSqlQuery qr1(QSqlDatabase::database());
+                qr1.prepare("UPDATE tasks SET status=:status, lasterror=:error WHERE id=:id");
+                qr1.bindValue("status",LInterface::ERROR_TASK);
+                qr1.bindValue("error",tr("This protocol is not supported. Check whether there is a plugin to work with the protocol and whether it is enabled."));
+                qr1.bindValue("id",qr.value(0).toInt());
                 if(!qr1.exec())
                 {
                     //запись в журнал ошибок
                     qDebug()<<"void REXWindow::manageTaskQueue(2): SQL:" + qr1.executedQuery() + " Error: " + qr1.lastError().text();
-                    return;
                 }
-                model->addToCache(id_row,9,-100);
-                ldr->deleteTask(id_task);
-                tasklist.remove(id_row);
-
-                //запускаем новую задачу
-
-                QUrl _url(qr.value(1).toString());
-                id_row = qr.value(0).toInt();
-
-                if(!plugproto.contains(_url.scheme().toLower())) //если протокол не поддерживается, то пропускаем эту задачу в очереди, поменяв её статус на ошибку
-                {
-                    QSqlQuery qr1(QSqlDatabase::database());
-                    qr1.prepare("UPDATE tasks SET status=:status, lasterror=:error WHERE id=:id");
-                    qr1.bindValue("status",LInterface::ERROR_TASK);
-                    qr1.bindValue("error",tr("This protocol is not supported. Check whether there is a plugin to work with the protocol and whether it is enabled."));
-                    qr1.bindValue("id",qr.value(0).toInt());
-                    if(!qr1.exec())
-                    {
-                        //запись в журнал ошибок
-                        qDebug()<<"void REXWindow::manageTaskQueue(2): SQL:" + qr1.executedQuery() + " Error: " + qr1.lastError().text();
-                    }
-                    success = true;
-                    break;
-                }
-
-                startTaskNumber(id_row,_url,qr.value(3).toString(),qr.value(4).toLongLong());
-                success = true;
-                break;
+                continue;
             }
-        }while(qr1.next());
-        if(!success)
-        {
-            if(tasklist.size() > 0)startTrayIconAnimaion();
-            else stopTrayIconAnimation();
-            updateStatusBar();
-            return; //если не нашли меньших по приоритету задач то выходим
+
+            startTaskNumber(id_row,_url,qr.value(3).toString(),qr.value(4).toLongLong());
+            if(!qr1.next())break;
         }
     }while(qr.next());
+
+    if(tasklist.size() > 0)startTrayIconAnimaion();
+    else stopTrayIconAnimation();
     updateStatusBar();
 }
 
