@@ -257,7 +257,7 @@ void NoticeWindow::showNotice(const QString &title, const QString &message, Wind
     {
     case WT_Info:
         textbrowser->setStyleSheet("QTextBrowser {border: none; font: 12px; background: url(images/info.png) center no-repeat;}");
-        toolbar->setStyleSheet("QToolBar {background: #55cc55;"
+        toolbar->setStyleSheet("QToolBar {background: #068c22;"
                                "border-left: 1px solid black;"
                                "border-right: 1px solid black;"
                                "border-top: 1px solid black;}");
@@ -265,7 +265,7 @@ void NoticeWindow::showNotice(const QString &title, const QString &message, Wind
 
     case WT_Warning:
         textbrowser->setStyleSheet("QTextBrowser {border: none; font: 12px; background: url(images/warning.png) center no-repeat;}");
-        toolbar->setStyleSheet("QToolBar {background: #eddb63;"
+        toolbar->setStyleSheet("QToolBar {background: #d2a800;"
                                "border-left: 1px solid black;"
                                "border-right: 1px solid black;"
                                "border-top: 1px solid black;}");
@@ -283,7 +283,7 @@ void NoticeWindow::showNotice(const QString &title, const QString &message, Wind
 
     default:
         textbrowser->setStyleSheet("QTextBrowser {border: none; font: 12px;}");
-        toolbar->setStyleSheet("QToolBar {background: #55cc55;"
+        toolbar->setStyleSheet("QToolBar {background: #068c22;"
                                "border-left: 1px solid black;"
                                "border-right: 1px solid black;"
                                "border-top: 1px solid black;}");
