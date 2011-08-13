@@ -215,11 +215,19 @@
    </property>
   </action>
   <action name="actionStartAll">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/appimages/start_all_48x48.png</normaloff>:/appimages/start_all_48x48.png</iconset>
+   </property>
    <property name="text">
     <string>Запустить все</string>
    </property>
   </action>
   <action name="actionStopAll">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/appimages/pause_all_48x8.png</normaloff>:/appimages/pause_all_48x8.png</iconset>
+   </property>
    <property name="text">
     <string>Приостановить все</string>
    </property>

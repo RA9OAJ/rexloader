@@ -29,5 +29,7 @@
         <file alias="pverylow_16x16.png">images/pverylow_16x16.png</file>
         <file alias="add_48x48.png">images/add_48x48.png</file>
         <file alias="delete_48x48.png">images/delete_48x48.png</file>
+        <file alias="start_all_48x48.png">images/start_all_48x48.png</file>
+        <file alias="pause_all_48x8.png">images/pause_all_48x48.png</file>
     </qresource>
 </RCC>
