@@ -661,6 +661,7 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
             }
             else
             {
+                QFile::remove(filename);
                 //тут запись в журнал ошибок или запрос на счет того, желает ли пользователь снова закачать файл с самогог начала
 
             }
@@ -796,8 +797,8 @@ void REXWindow::startAllTasks()
     fltr.setFilterFixedString("0");
     for(int i = 0; i < fltr.rowCount(); ++i)
     {
-        int id = fltr.data(fltr.index(i,0),100).toInt();
-        model->updateRow(id);
+        QModelIndex index = fltr.mapToSource(fltr.index(i,0));
+        model->updateRow(index.row());
     }
 
     manageTaskQueue();
@@ -896,18 +897,16 @@ void REXWindow::stopAllTasks()
         qDebug()<<"void REXWindow::startAllTasks(2): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
         return;
     }
-
     updateTaskSheet();
     QSortFilterProxyModel fltr;
     fltr.setSourceModel(model);
     fltr.setFilterRole(100);
     fltr.setFilterKeyColumn(9);
-    fltr.setFilterFixedString("-100");
+    fltr.setFilterFixedString("0");
     for(int i = 0; i < fltr.rowCount(); ++i)
     {
-        int id = fltr.data(fltr.index(i,0),100).toInt();
-        model->updateRow(id);
-        qDebug()<<id;
+        QModelIndex index = fltr.mapToSource(fltr.index(i,0));
+        model->updateRow(index.row());
     }
 
     manageTaskQueue();
