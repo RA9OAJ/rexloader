@@ -257,7 +257,6 @@ void HttpSection::dataAnalising()
             else header[_tmp.value(0).toLower()].chop(2);
         }
         if(_errno == QAbstractSocket::RemoteHostClosedError && mode != 1){_errno = HttpSection::SERV_CONNECT_ERROR;emit errorSignal(_errno); stopDownloading(); return;}
-
     }
     if(mode == 1)
     {
