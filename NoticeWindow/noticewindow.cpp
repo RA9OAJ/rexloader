@@ -65,6 +65,10 @@ void NoticeWindow::createWidgets()
     pExec = new QPushButton(this);
     pExec->setMaximumWidth(30);
     pExec->setMaximumHeight(20);
+    pExec->setStyleSheet("QPushButton {border: none; image: url(:/noticewindow/run_27x20.png);}"
+                            "QPushButton::hover {image: url(:/noticewindow/run1_27x20.png);}"
+                            "QPushButton::pressed {image: url(:/noticewindow/run2_27x20.png);}"
+                            "QPushButton::disabled {image: url(:/noticewindow/run3_27x20.png);}");
     pOpenDir = new QPushButton(this);
     pOpenDir->setMaximumWidth(30);
     pOpenDir->setMaximumHeight(20);

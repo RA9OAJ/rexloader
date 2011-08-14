@@ -14,5 +14,9 @@
         <file alias="folder1_27x20.png">images/folder1_27x20.png</file>
         <file alias="folder2_27x20.png">images/folder2_27x20.png</file>
         <file alias="folder3_27x20.png">images/folder3_27x20.png</file>
+        <file alias="run1_27x20.png">images/run1_27x20.png</file>
+        <file alias="run2_27x20.png">images/run2_27x20.png</file>
+        <file alias="run3_27x20.png">images/run3_27x20.png</file>
+        <file alias="run_27x20.png">images/run_27x20.png</file>
     </qresource>
 </RCC>
