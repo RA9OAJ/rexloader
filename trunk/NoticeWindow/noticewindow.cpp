@@ -353,10 +353,11 @@ void NoticeWindow::showEffect()
 void NoticeWindow::closeEffect()
 {
     if(size().height() <= 1){close();return;}
+    QPoint last = QPoint(pos().x()+width(),pos().y()+height());
     if(!ptop)
     {
         resize(size().width(), size().height()-diff);
-        move(pos().x(), base.topLeft().y()+base.height()-size().height()-dy-ddy);
+        move(pos().x(), last.y()-size().height()/*base.topLeft().y()+base.height()-size().height()-dy-ddy*/);
     }
     else resize(size().width(), size().height()-diff);
 
