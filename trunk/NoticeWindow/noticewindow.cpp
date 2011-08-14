@@ -3,7 +3,7 @@
 NoticeWindow::NoticeWindow(QWidget *parent)
     : QDialog(parent)
 {
-    setWindowFlags(Qt::Tool | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
+    setWindowFlags(Qt::ToolTip | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
     setAttribute(Qt::WA_QuitOnClose);
     setWindowTitle("NoticeWindow");
     setMaximumHeight(120);
@@ -11,6 +11,7 @@ NoticeWindow::NoticeWindow(QWidget *parent)
     resize(maximumWidth(),1);
 
     dx = dy = 3;
+    ddx = ddy = 0;
     disp_time = 3000;
     show_effect = SE_PopUp;
     close_effect = SE_PopUp;
@@ -25,7 +26,7 @@ NoticeWindow::NoticeWindow(QWidget *parent)
 
     QDesktopWidget ds;
     base = ds.availableGeometry();
-    move(base.topLeft().x()+base.width()-size().width()-dx, base.topLeft().y()+base.height()-dy);
+    move(base.topLeft().x()+base.width()-size().width()-dx-ddx, base.topLeft().y()+base.height()-dy-ddy);
 
     createWidgets();
     createSettingsWidgets();
@@ -278,6 +279,8 @@ void NoticeWindow::showNotice(const QString &title, const QString &message, Wind
                                "border-left: 1px solid black;"
                                "border-right: 1px solid black;"
                                "border-top: 1px solid black;}");
+        pOpenDir->setVisible(true);
+        pExec->setVisible(true);
         break;
 
     case WT_Warning:
@@ -286,6 +289,8 @@ void NoticeWindow::showNotice(const QString &title, const QString &message, Wind
                                "border-left: 1px solid black;"
                                "border-right: 1px solid black;"
                                "border-top: 1px solid black;}");
+        pOpenDir->setVisible(false);
+        pExec->setVisible(false);
         break;
 
     case WT_Critical:
@@ -294,6 +299,8 @@ void NoticeWindow::showNotice(const QString &title, const QString &message, Wind
                                "border-left: 1px solid black;"
                                "border-right: 1px solid black;"
                                "border-top: 1px solid black;}");
+        pOpenDir->setVisible(false);
+        pExec->setVisible(false);
         break;
 
     case WT_Manual:
@@ -339,7 +346,7 @@ void NoticeWindow::showEffect()
     if(size().height() >= maximumHeight()){QTimer::singleShot(disp_time,this,SLOT(closeNotice()));ts = QTime::currentTime();return;}
     if(windowOpacity() != 1.0)setWindowOpacity(1.0);
     resize(size().width(), size().height()+diff);
-    move(pos().x(), base.topLeft().y()+base.height()-size().height()-dy);
+    move(pos().x(), base.topLeft().y()+base.height()-size().height()-dy-ddy);
     QTimer::singleShot(15,this,SLOT(showEffect()));
 }
 
@@ -349,7 +356,7 @@ void NoticeWindow::closeEffect()
     if(!ptop)
     {
         resize(size().width(), size().height()-diff);
-        move(pos().x(), base.topLeft().y()+base.height()-size().height()-dy);
+        move(pos().x(), base.topLeft().y()+base.height()-size().height()-dy-ddy);
     }
     else resize(size().width(), size().height()-diff);
 
@@ -361,7 +368,7 @@ void NoticeWindow::appearanceShowEffect()
     if(windowOpacity() >= 1.0){QTimer::singleShot(disp_time,this,SLOT(closeNotice()));return;}
     if(size().height()<=1)
     {
-        move(base.topLeft().x()+base.width()-size().width()-dx, base.topLeft().y()+base.height()-maximumHeight()-dy);
+        move(base.topLeft().x()+base.width()-size().width()-dx-ddx, base.topLeft().y()+base.height()-maximumHeight()-dy-ddy);
         resize(size().width(),maximumHeight());
     }
 
@@ -388,5 +395,27 @@ void NoticeWindow::approximationCloseEffect()
 
 NoticeWindow::~NoticeWindow()
 {
+    delete(lay1);
+    delete(lay2);
+    delete(lay3);
+    delete(lay4);
+    delete(lay5);
+}
 
+void NoticeWindow::setOffsetPos(int x, int y)
+{
+    dx=x;
+    dy=y;
+    QDesktopWidget ds;
+    base = ds.availableGeometry();
+    move(base.topLeft().x()+base.width()-size().width()-dx-ddx, base.topLeft().y()+base.height()-dy-ddy);
+}
+
+void NoticeWindow::setDOffsetPos(int x, int y)
+{
+    ddx = x;
+    ddy = y;
+    QDesktopWidget ds;
+    base = ds.availableGeometry();
+    move(base.topLeft().x()+base.width()-size().width()-dx-ddx, base.topLeft().y()+base.height()-dy-ddy);
 }

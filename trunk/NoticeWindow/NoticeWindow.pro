@@ -11,9 +11,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        noticewindow.cpp
+        noticewindow.cpp \
+    noticemanager.cpp
 
-HEADERS  += noticewindow.h
+HEADERS  += noticewindow.h \
+    noticemanager.h
 
 RESOURCES += \
     resources.qrc
