@@ -54,6 +54,8 @@ public slots:
     void setCloseEffect(ShowEffectType etype = SE_PopUp);
     void setSpeedOfEffects(int speed = 5); //Скорость от 0...10
     void closeNotice();
+    void setOffsetPos(int x, int y);
+    void setDOffsetPos(int x, int y);
 
 private slots:
     void showEffect();
@@ -114,6 +116,8 @@ private:
     int effects_speed;
     int dx;
     int dy;
+    int ddx;
+    int ddy;
     int diff;
     double diff_opac;
     bool desktopflag;
