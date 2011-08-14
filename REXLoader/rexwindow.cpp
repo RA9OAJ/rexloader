@@ -93,7 +93,12 @@ void REXWindow::createInterface()
     ui->tableView->hideColumn(7);
     ui->tableView->hideColumn(8);
     ui->tableView->hideColumn(10);
+    ui->tableView->hideColumn(11);
     ui->tableView->hideColumn(13);
+    ui->tableView->horizontalHeader()->moveSection(2,3);
+    ui->tableView->horizontalHeader()->moveSection(14,11);
+    ui->tableView->horizontalHeader()->moveSection(15,12);
+    //ui->tableView->horizontalHeader()->moveSection(12,15);
 
     //настраиваем информационную модель
     treemodel = new TreeItemModel(this);

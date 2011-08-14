@@ -14,3 +14,6 @@ SOURCES += main.cpp\
         noticewindow.cpp
 
 HEADERS  += noticewindow.h
+
+RESOURCES += \
+    resources.qrc

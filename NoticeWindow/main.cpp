@@ -10,7 +10,8 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     NoticeWindow w;
     //w.show();
-    w.showNotice("REXLoader","",NoticeWindow::WT_Warning);
+    w.setDisplayTime(10000);
+    w.showNotice("REXLoader","Файл SETUP.EXE успечно закачан.",NoticeWindow::WT_Warning);
 
     return a.exec();
 }
