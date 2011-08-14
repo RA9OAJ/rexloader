@@ -62,6 +62,17 @@ void NoticeWindow::createWidgets()
     btn2 = new QPushButton(this);
     ltitle = new QLabel(this);
     textbrowser = new QTextBrowser(this);
+    pExec = new QPushButton(this);
+    pExec->setMaximumWidth(30);
+    pExec->setMaximumHeight(20);
+    pOpenDir = new QPushButton(this);
+    pOpenDir->setMaximumWidth(30);
+    pOpenDir->setMaximumHeight(20);
+    pOpenDir->setStyleSheet("QPushButton {border: none; image: url(:/noticewindow/folder_27x20.png);}"
+                            "QPushButton::hover {image: url(:/noticewindow/folder1_27x20.png);}"
+                            "QPushButton::pressed {image: url(:/noticewindow/folder2_27x20.png);}"
+                            "QPushButton::disabled {image: url(:/noticewindow/folder3_27x20.png);}");
+
     connect(btn1,SIGNAL(released()),this,SLOT(closeNotice()));
     connect(btn2,SIGNAL(released()),this,SLOT(switchDiaplay()));
 
@@ -73,17 +84,17 @@ void NoticeWindow::createWidgets()
     toolbar->addWidget(btn2);
     toolbar->addWidget(ltitle);
 
-    btn1->setStyleSheet("QPushButton {border: none; image: url(images/close1.png);}"
-                        "QPushButton::hover {image: url(images/close2.png);}"
-                        "QPushButton::pressed {image: url(images/close3.png);}");
-    btn1->setMask(QBitmap("images/btnpixmap.png"));
-    btn1->setMaximumSize(QBitmap("images/btnpixmap.png").size());
+    btn1->setStyleSheet("QPushButton {border: none; image: url(:/noticewindow/close1.png);}"
+                        "QPushButton::hover {image: url(:/noticewindow/close2.png);}"
+                        "QPushButton::pressed {image: url(:/noticewindow/close3.png);}");
+    btn1->setMask(QBitmap(":/noticewindow/btnpixmap.png"));
+    btn1->setMaximumSize(QBitmap(":/noticewindow/btnpixmap.png").size());
 
-    btn2->setStyleSheet("QPushButton {border: none; image: url(images/settings1.png);}"
-                        "QPushButton::hover {image: url(images/settings2.png);}"
-                        "QPushButton::pressed {image: url(images/settings3.png);}");
-    btn2->setMask(QBitmap("images/btnpixmap.png"));
-    btn2->setMaximumSize(QBitmap("images/btnpixmap.png").size());
+    btn2->setStyleSheet("QPushButton {border: none; image: url(:/noticewindow/settings1.png);}"
+                        "QPushButton::hover {image: url(:/noticewindow/settings2.png);}"
+                        "QPushButton::pressed {image: url(:/noticewindow/settings3.png);}");
+    btn2->setMask(QBitmap(":/noticewindow/btnpixmap.png"));
+    btn2->setMaximumSize(QBitmap(":/noticewindow/btnpixmap.png").size());
 
     ltitle->setText(windowTitle());
     ltitle->setStyleSheet("font: 12 bold; color: #ffffff;");
@@ -98,7 +109,9 @@ void NoticeWindow::createWidgets()
     textbrowser->setMaximumWidth(size().width()-2);
     textbrowser->setMaximumHeight(maximumHeight()-toolbar->size().height()-2);
     textbrowser->resize(textbrowser->maximumSize());
-    textbrowser->setStyleSheet("QTextBrowser {border: none; font: 12px; background: url(images/info.png) center no-repeat;}");
+    textbrowser->setStyleSheet("QTextBrowser {border: none; font: 12px; background: url(:/noticewindow/info.png) center no-repeat;}");
+    pOpenDir->move(width()-pOpenDir->width()-2,textbrowser->height());
+    pExec->move(width()-pOpenDir->width()-pExec->width()-2,textbrowser->height());
 }
 
 void NoticeWindow::createSettingsWidgets()
@@ -256,7 +269,7 @@ void NoticeWindow::showNotice(const QString &title, const QString &message, Wind
     switch(wtype)
     {
     case WT_Info:
-        textbrowser->setStyleSheet("QTextBrowser {border: none; font: 12px; background: url(images/info.png) center no-repeat;}");
+        textbrowser->setStyleSheet("QTextBrowser {border: none; font: 12px; background: url(:/noticewindow/info.png) center no-repeat;}");
         toolbar->setStyleSheet("QToolBar {background: #068c22;"
                                "border-left: 1px solid black;"
                                "border-right: 1px solid black;"
@@ -264,7 +277,7 @@ void NoticeWindow::showNotice(const QString &title, const QString &message, Wind
         break;
 
     case WT_Warning:
-        textbrowser->setStyleSheet("QTextBrowser {border: none; font: 12px; background: url(images/warning.png) center no-repeat;}");
+        textbrowser->setStyleSheet("QTextBrowser {border: none; font: 12px; background: url(:/noticewindow/warning.png) center no-repeat;}");
         toolbar->setStyleSheet("QToolBar {background: #d2a800;"
                                "border-left: 1px solid black;"
                                "border-right: 1px solid black;"
@@ -272,7 +285,7 @@ void NoticeWindow::showNotice(const QString &title, const QString &message, Wind
         break;
 
     case WT_Critical:
-        textbrowser->setStyleSheet("QTextBrowser {border: none; font: 12px; background: url(images/error.png) center no-repeat;}");
+        textbrowser->setStyleSheet("QTextBrowser {border: none; font: 12px; background: url(:/noticewindow/error.png) center no-repeat;}");
         toolbar->setStyleSheet("QToolBar {background: #c20000;"
                                "border-left: 1px solid black;"
                                "border-right: 1px solid black;"

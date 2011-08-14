@@ -47,8 +47,6 @@ public:
     NoticeWindow(QWidget *parent = 0);
     virtual ~NoticeWindow();
 
-
-
 public slots:
     void showNotice(const QString &title, const QString &message, WindowType wtype = WT_Info);
     void setDisplayTime(const int sec);
@@ -77,6 +75,8 @@ private:
     QPushButton *btn2;
     QLabel *ltitle;
     QTextBrowser *textbrowser;
+    QPushButton *pExec;
+    QPushButton *pOpenDir;
 
     QGroupBox *grp1;
     QGroupBox *grp2;
@@ -106,7 +106,6 @@ private:
 
     QPushButton *btnOK;
     QPushButton *btnCancel;
-
 
     QRect base;
     int disp_time;
