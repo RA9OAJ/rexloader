@@ -185,3 +185,8 @@ void TreeItemModel::addFiltersSubtree()
         link.insert(cur,parent);
     }
 }
+
+Qt::ItemFlags TreeItemModel::flags(const QModelIndex &index) const
+{
+    return QAbstractItemModel::flags(index) | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
+}

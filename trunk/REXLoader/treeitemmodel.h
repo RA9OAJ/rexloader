@@ -36,6 +36,7 @@ public:
     virtual QModelIndex parent(const QModelIndex &child) const;
     virtual bool hasChildren(const QModelIndex &parent) const;
     virtual bool hasIndex(int row, int column, const QModelIndex &parent) const;
+    virtual Qt::ItemFlags flags(const QModelIndex & index) const;
 
 signals:
 
