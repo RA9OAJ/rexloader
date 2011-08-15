@@ -231,7 +231,7 @@ void AddTaskDialog::addTask()
     if(!udata.toInt() || gui->categoryBox->findText(gui->categoryBox->currentText()) < 0)
     {
         qr.clear();
-        qr.prepare("INSERT INTO categories(title,dir,extlist) VALUES(:title,:dir,'');");
+        qr.prepare("INSERT INTO categories(title,dir,extlist,parent_id) VALUES(:title,:dir,'',1);");
         qr.bindValue("title",gui->categoryBox->currentText());
         qr.bindValue("dir",gui->locationEdit->text());
 

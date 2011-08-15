@@ -30,7 +30,23 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QTreeView" name="treeView"/>
+      <widget class="QTreeView" name="treeView">
+       <property name="acceptDrops">
+        <bool>true</bool>
+       </property>
+       <property name="dragEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="dragDropOverwriteMode">
+        <bool>true</bool>
+       </property>
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::DragDrop</enum>
+       </property>
+       <property name="defaultDropAction">
+        <enum>Qt::MoveAction</enum>
+       </property>
+      </widget>
       <widget class="QSplitter" name="splitter">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
