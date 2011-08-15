@@ -125,6 +125,7 @@ void REXWindow::createInterface()
     QWidget *widget = new QWidget(ui->statusBar);
     widget->setObjectName("widget");
     QHBoxLayout *lay = new QHBoxLayout(widget);
+    lay->setContentsMargins(1,1,1,1);
     QLabel *statusIcon = new QLabel(widget);
     statusIcon->setObjectName("statusIcon");
     QLabel *priorityIcon = new QLabel(widget);
@@ -206,6 +207,7 @@ void REXWindow::createInterface()
     connect(ui->actionRedownload,SIGNAL(triggered()),this,SLOT(redownloadTask()));
     connect(ui->treeView,SIGNAL(clicked(QModelIndex)),this,SLOT(setTaskFilter(QModelIndex)));
     connect(ui->actionDelURLFiles,SIGNAL(triggered()),this,SLOT(deleteTask()));
+    connect(ui->tableView,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(openTask()));
 
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);

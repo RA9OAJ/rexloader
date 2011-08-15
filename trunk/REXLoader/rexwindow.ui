@@ -171,7 +171,14 @@
     <bool>false</bool>
    </attribute>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QStatusBar" name="statusBar">
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>26</height>
+    </size>
+   </property>
+  </widget>
   <action name="actionAdd_URL">
    <property name="icon">
     <iconset resource="resources.qrc">
