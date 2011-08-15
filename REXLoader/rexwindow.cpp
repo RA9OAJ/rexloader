@@ -977,8 +977,8 @@ void REXWindow::syncTaskData()
 
         if(tstatus == LInterface::ERROR_TASK)
         {
-            int errno = ldr->errorNo(id_task);
-            QString errStr = ldr->errorString(errno);
+            int errno_ = ldr->errorNo(id_task);
+            QString errStr = ldr->errorString(errno_);
 
             qr.prepare("UPDATE tasks SET totalsize=:totalsize, currentsize=:currentsize, filename=:filename, downtime=:downtime, tstatus=:tstatus, speed_avg=:speedavg,lasterror=:lasterror WHERE id=:id");
             qr.bindValue("totalsize",QString::number(totalsize));
@@ -987,7 +987,7 @@ void REXWindow::syncTaskData()
             qr.bindValue("downtime",downtime);
             qr.bindValue("tstatus",tstatus);
             qr.bindValue("speedavg",QString::number(speedAvg));
-            qr.bindValue("lasterror",QString("%1 (%2)").arg(errStr,QString::number(errno)));
+            qr.bindValue("lasterror",QString("%1 (%2)").arg(errStr,QString::number(errno_)));
             qr.bindValue("id",id_row);
 
             if(!qr.exec())
@@ -1001,7 +1001,7 @@ void REXWindow::syncTaskData()
             model->addToCache(index.row(),3,filepath);
             model->addToCache(index.row(),9,tstatus);
             model->addToCache(index.row(),11,speedAvg);
-            model->addToCache(index.row(),7,QString("%1 (%2)").arg(errStr,QString::number(errno)));
+            model->addToCache(index.row(),7,QString("%1 (%2)").arg(errStr,QString::number(errno_)));
 
             ldr->deleteTask(id_task);
             tasklist.remove(id_row);
