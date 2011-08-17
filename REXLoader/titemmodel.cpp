@@ -334,7 +334,17 @@ QVariant TItemModel::headerData(int section, Qt::Orientation orientation, int ro
         return QString(tr("Time left"));
 
     if(orientation == Qt::Horizontal)
-        return qr->record().field(section).name();
+        switch(section)
+        {
+        case 2: return tr("Date create");
+        case 3: return tr("File");
+        case 5: return tr("File size");
+        case 6: return tr("Download time");
+        case 9: return tr("Status");
+        case 12: return tr("Note");
+
+        default: return qr->record().field(section).name();
+        }
     else return QVariant();
 }
 

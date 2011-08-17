@@ -26,7 +26,7 @@ NoticeManager::NoticeManager(QObject *parent) :
     notice_cnt = 0;
     maxnotices = 5;
     all_desktop = true;
-    notice_size = QSize(250,120);
+    notice_size = QSize(200,100);
     dif = QSize(3,3);
     effect = NoticeWindow::SE_PopUp;
 }
@@ -35,6 +35,7 @@ void NoticeManager::showNotice(const QString &title, const QString &message, Not
 {
     NoticeWindow *wnd = new NoticeWindow();
     wnd->setAttribute(Qt::WA_DeleteOnClose);
+    wnd->setMaximumSize(notice_size);
     list.append(wnd);
     wnd->setDisplayTime(10000);
     connect(wnd,SIGNAL(rejected()),this,SLOT(closeOneWindow()));
