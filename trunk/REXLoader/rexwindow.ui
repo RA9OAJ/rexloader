@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>REXWindow</string>
+   <string>REXLoader</string>
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
