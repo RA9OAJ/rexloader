@@ -69,6 +69,7 @@ REXWindow::REXWindow(QWidget *parent) :
 
     QTimer::singleShot(250,this,SLOT(scheuler()));
     updateTaskSheet();
+    loadSettings();
 }
 
 void REXWindow::createInterface()
@@ -448,12 +449,28 @@ void REXWindow::showNotice(const QString &title, const QString &text, int type)
 
 void REXWindow::saveSettings()
 {
-
+    QSettings settings(apphomedir+"/window.ini", QSettings::IniFormat,this);
+    settings.beginGroup("Main Window");
+    settings.setValue("WindowGeometry",saveGeometry());
+    settings.setValue("WindowState",saveState());
+    settings.setValue("WindowVisible",isVisible());
+    settings.endGroup();
+    settings.sync();
 }
 
 void REXWindow::loadSettings()
 {
-
+    QSettings settings(apphomedir+"/window.ini", QSettings::IniFormat,this);
+    settings.beginGroup("Main Window");
+    restoreGeometry(settings.value("WindowGeometry").toByteArray());
+    restoreState(settings.value("WindowState").toByteArray());
+    if(!settings.value("WindowVisible").toBool())
+    {
+        preStat = windowState();
+        setWindowState(Qt::WindowMinimized);
+        QTimer::singleShot(0,this,SLOT(close()));
+    }
+    settings.endGroup();
 }
 
 void REXWindow::scanClipboard()
@@ -639,8 +656,16 @@ void REXWindow::showHideSlot(QSystemTrayIcon::ActivationReason type)
 {
     if(type == QSystemTrayIcon::DoubleClick)
     {
-        if(isVisible())setHidden(true);
-        else setHidden(false);
+        if(isVisible())
+        {
+            setHidden(true);
+            preStat = windowState();
+        }
+        else
+        {
+            setHidden(false);
+            setWindowState(preStat);
+        }
     }
 }
 
@@ -1299,6 +1324,7 @@ void REXWindow::closeEvent(QCloseEvent *event)
     }
     else
     {
+        saveSettings();
         event->accept();
         qApp->quit();
     }

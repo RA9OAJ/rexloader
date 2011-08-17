@@ -210,6 +210,9 @@ bool firstProcess()
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication::setOrganizationName("Sarvaritdinov Ravil");
+    QCoreApplication::setApplicationName("REXLoader");
+
     checkDatabase();
 
     QTextCodec::setCodecForLocale(QTextCodec::codecForLocale());
