@@ -48,11 +48,13 @@ private:
 QByteArray *outbuf;
 QByteArray *inbuf;
 QTime *watcher;
+QTime *timeout;
 
 qint64 inspeed;
 qint64 outspeed;
 qint64 lastSize;
 int last_interval;
+int timeout_interval; //таймаут по неактивности сокета в секундах
 
 bool flag;
 bool mode;

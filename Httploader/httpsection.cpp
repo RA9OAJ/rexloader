@@ -387,7 +387,7 @@ void HttpSection::dataAnalising()
 }
 
 void HttpSection::socketErrorSlot(QAbstractSocket::SocketError _err)
-{
+{qDebug()<<_err;
     _errno = _err;
     if(_err == QAbstractSocket::RemoteHostClosedError)return;
     stopDownloading();
