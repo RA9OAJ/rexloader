@@ -34,6 +34,9 @@
        <property name="acceptDrops">
         <bool>true</bool>
        </property>
+       <property name="showDropIndicator" stdset="0">
+        <bool>true</bool>
+       </property>
        <property name="dragEnabled">
         <bool>true</bool>
        </property>
@@ -44,7 +47,7 @@
         <enum>QAbstractItemView::DragDrop</enum>
        </property>
        <property name="defaultDropAction">
-        <enum>Qt::MoveAction</enum>
+        <enum>Qt::LinkAction</enum>
        </property>
       </widget>
       <widget class="QSplitter" name="splitter">

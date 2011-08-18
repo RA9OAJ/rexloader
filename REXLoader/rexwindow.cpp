@@ -88,7 +88,7 @@ void REXWindow::createInterface()
     ui->tableView->horizontalHeader()->setMovable(true);
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableView->setContextMenuPolicy(Qt::CustomContextMenu);
-    ui->tableView->hideColumn(0);
+    //ui->tableView->hideColumn(0);
     ui->tableView->hideColumn(1);
     ui->tableView->hideColumn(4);
     ui->tableView->hideColumn(7);
@@ -786,6 +786,7 @@ void REXWindow::startTask()
     {
         int id_row = select->selectedRows(0).value(i).data(100).toInt(); // id записи в базе данных
         int tstatus = select->selectedRows(9).value(i).data(100).toInt(); //статус в базе данных
+        QModelIndex index = sfmodel->mapToSource(select->selectedRows(9).value(i));
 
         switch(tstatus)
         {
@@ -804,6 +805,14 @@ void REXWindow::startTask()
             //запись в журнал ошибок
             qDebug()<<"void REXWindow::startTask(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
         }
+        model->addToCache(index.row(),9,-100);
+    }
+
+    for(int i=0; i < select->selectedRows().length(); i++)
+    {
+        QModelIndex index = sfmodel->mapToSource(select->selectedRows(9).value(i));
+        int tstatus = select->selectedRows(9).value(i).data(100).toInt(); //статус в базе данных
+        model->updateRow(index.row());
     }
     updateTaskSheet();
     manageTaskQueue();
@@ -880,11 +889,13 @@ void REXWindow::stopTask()
         QUrl _url(select->selectedRows(1).value(i).data(100).toString()); //URL закачки
         int id_row = select->selectedRows(0).value(i).data(100).toInt(); // id записи в базе данных
         int tstatus = select->selectedRows(9).value(i).data(100).toInt(); //статус в базе данных
+        QModelIndex index = sfmodel->mapToSource(select->selectedRows(9).value(i));
 
         switch(tstatus)
         {
         case LInterface::ON_LOAD:
         case LInterface::SEND_QUERY:
+        case -100:
         case LInterface::ACCEPT_QUERY: break;
         default: continue;
         }
@@ -892,8 +903,27 @@ void REXWindow::stopTask()
         int id_proto = plugproto.value(_url.scheme().toLower()); // id плагина с соответствующим протоколом
         int id_task = tasklist.value(id_row)%100; // id задачи
 
-        pluglist.value(id_proto)->stopDownload(id_task);
+        if(pluglist.contains(id_proto)) pluglist.value(id_proto)->stopDownload(id_task);
+
+        QSqlQuery qr(QSqlDatabase::database());
+        qr.prepare("UPDATE tasks SET tstatus=0, lasterror='' WHERE id=:id");
+        qr.bindValue("id",id_row);
+
+        if(!qr.exec())
+        {
+            //запись в журнал ошибок
+            qDebug()<<"void REXWindow::stopTask(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
+        }
+        model->addToCache(index.row(),9,0);
     }
+
+    for(int i=0; i < select->selectedRows().length(); i++)
+    {
+        QModelIndex index = sfmodel->mapToSource(select->selectedRows(9).value(i));
+        int tstatus = select->selectedRows(9).value(i).data(100).toInt(); //статус в базе данных
+        model->updateRow(index.row());
+    }
+
     updateTaskSheet();
     manageTaskQueue();
     syncTaskData();
