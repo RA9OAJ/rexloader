@@ -88,7 +88,7 @@ void REXWindow::createInterface()
     ui->tableView->horizontalHeader()->setMovable(true);
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableView->setContextMenuPolicy(Qt::CustomContextMenu);
-    //ui->tableView->hideColumn(0);
+    ui->tableView->hideColumn(0);
     ui->tableView->hideColumn(1);
     ui->tableView->hideColumn(4);
     ui->tableView->hideColumn(7);
@@ -99,7 +99,6 @@ void REXWindow::createInterface()
     ui->tableView->horizontalHeader()->moveSection(2,3);
     ui->tableView->horizontalHeader()->moveSection(14,11);
     ui->tableView->horizontalHeader()->moveSection(15,12);
-    //ui->tableView->horizontalHeader()->moveSection(12,15);
 
     //настраиваем информационную модель
     treemodel = new TreeItemModel(this);
@@ -782,11 +781,11 @@ void REXWindow::startTask()
     QItemSelectionModel *select = ui->tableView->selectionModel();
     if(!select->hasSelection())return; //если ничего невыделено, то выходим
 
+    QString where;
     for(int i=0; i < select->selectedRows().length(); i++)
     {
         int id_row = select->selectedRows(0).value(i).data(100).toInt(); // id записи в базе данных
         int tstatus = select->selectedRows(9).value(i).data(100).toInt(); //статус в базе данных
-        QModelIndex index = sfmodel->mapToSource(select->selectedRows(9).value(i));
 
         switch(tstatus)
         {
@@ -795,18 +794,19 @@ void REXWindow::startTask()
         case -100:
         default: continue;
         }
-
-        QSqlQuery qr(QSqlDatabase::database());
-        qr.prepare("UPDATE tasks SET tstatus=-100, lasterror='' WHERE id=:id");
-        qr.bindValue("id",id_row);
-
-        if(!qr.exec())
-        {
-            //запись в журнал ошибок
-            qDebug()<<"void REXWindow::startTask(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
-        }
-        model->addToCache(index.row(),9,-100);
+        if(!i) where = QString("id=%1").arg(QString::number(id_row));
+        else where += QString(" OR id=%1").arg(QString::number(id_row));
     }
+
+    QSqlQuery qr(QSqlDatabase::database());
+    qr.prepare("UPDATE tasks SET tstatus=-100, lasterror='' WHERE " + where);
+
+    if(!qr.exec())
+    {
+        //запись в журнал ошибок
+        qDebug()<<"void REXWindow::startTask(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
+    }
+    updateTaskSheet();
 
     for(int i=0; i < select->selectedRows().length(); i++)
     {
@@ -814,7 +814,6 @@ void REXWindow::startTask()
         int tstatus = select->selectedRows(9).value(i).data(100).toInt(); //статус в базе данных
         model->updateRow(index.row());
     }
-    updateTaskSheet();
     manageTaskQueue();
     syncTaskData();
 }
@@ -883,13 +882,13 @@ void REXWindow::stopTask()
     QItemSelectionModel *select = ui->tableView->selectionModel();
     if(!select->hasSelection())return; //если ничего не выделено, то выходим
 
+    QString where;
     for(int i=0; i < select->selectedRows().length(); i++)
     {
-        QString filepath = select->selectedRows(3).value(i).data(100).toString(); //путь к локальному файлу закачки
+        //QString filepath = select->selectedRows(3).value(i).data(100).toString(); //путь к локальному файлу закачки
         QUrl _url(select->selectedRows(1).value(i).data(100).toString()); //URL закачки
         int id_row = select->selectedRows(0).value(i).data(100).toInt(); // id записи в базе данных
         int tstatus = select->selectedRows(9).value(i).data(100).toInt(); //статус в базе данных
-        QModelIndex index = sfmodel->mapToSource(select->selectedRows(9).value(i));
 
         switch(tstatus)
         {
@@ -904,27 +903,25 @@ void REXWindow::stopTask()
         int id_task = tasklist.value(id_row)%100; // id задачи
 
         if(pluglist.contains(id_proto)) pluglist.value(id_proto)->stopDownload(id_task);
-
-        QSqlQuery qr(QSqlDatabase::database());
-        qr.prepare("UPDATE tasks SET tstatus=0, lasterror='' WHERE id=:id");
-        qr.bindValue("id",id_row);
-
-        if(!qr.exec())
-        {
-            //запись в журнал ошибок
-            qDebug()<<"void REXWindow::stopTask(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
-        }
-        model->addToCache(index.row(),9,0);
+        if(!i)where = QString("id=%1").arg(QString::number(id_row));
+        else where += QString(" OR id=%1").arg(QString::number(id_row));
     }
 
-    for(int i=0; i < select->selectedRows().length(); i++)
+    QSqlQuery qr(QSqlDatabase::database());
+    qr.prepare("UPDATE tasks SET tstatus=0, lasterror='' WHERE " + where);
+
+    if(!qr.exec())
     {
-        QModelIndex index = sfmodel->mapToSource(select->selectedRows(9).value(i));
-        int tstatus = select->selectedRows(9).value(i).data(100).toInt(); //статус в базе данных
-        model->updateRow(index.row());
+        //запись в журнал ошибок
+        qDebug()<<"void REXWindow::stopTask(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
     }
 
     updateTaskSheet();
+    for(int i=0; i < select->selectedRows().length(); i++)
+    {
+        QModelIndex index = sfmodel->mapToSource(select->selectedRows(9).value(i));
+        model->updateRow(index.row());
+    }
     manageTaskQueue();
     syncTaskData();
 }
@@ -1320,15 +1317,15 @@ void REXWindow::updateStatusBar()
     filter.setSourceModel(model);
     filter.setFilterRole(100);
     filter.setFilterKeyColumn(9);
-    filter.setFilterRegExp(QString("%1").arg(QString::number(LInterface::ON_LOAD)));
+    filter.setFilterRegExp(QString("(^%1$)").arg(QString::number(LInterface::ON_LOAD)));
     onplay->setText(QString::number(filter.rowCount()));
     //if(filter.rowCount() > 0)startTrayIconAnimaion();
     //else stopTrayIconAnimation();
-    filter.setFilterRegExp(QString("%1").arg(QString::number(LInterface::ON_PAUSE)));
+    filter.setFilterRegExp(QString("(^%1$)").arg(QString::number(LInterface::ON_PAUSE)));
     onpause->setText(QString::number(filter.rowCount()));
-    filter.setFilterRegExp(QString("%1").arg(QString::number(-100)));
+    filter.setFilterRegExp(QString("(^%1$)").arg(QString::number(-100)));
     onqueue->setText(QString::number(filter.rowCount()));
-    filter.setFilterRegExp(QString("%1").arg(QString::number(LInterface::ERROR_TASK)));
+    filter.setFilterRegExp(QString("(^%1$)").arg(QString::number(LInterface::ERROR_TASK)));
     onerror->setText(QString::number(filter.rowCount()));
 }
 
