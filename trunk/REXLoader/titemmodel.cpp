@@ -372,7 +372,7 @@ QModelIndex TItemModel::index(int row, int column, const QModelIndex &parent) co
         return createIndex(row,column,&sec); //добавление виртуальной колонки
     }
 
-    return createIndex(row,column,&qr->record().field(column));
+    return createIndex(row,column,&qr->value(column));
 }
 
 QStringList TItemModel::sizeForHumans(qint64 sz)
