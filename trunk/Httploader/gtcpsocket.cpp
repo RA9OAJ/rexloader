@@ -13,10 +13,12 @@ GTcpSocket::GTcpSocket(QObject *parent) :
     outbuf->clear();
     inbuf->clear();
     watcher = new QTime();
+    timeout = new QTime();
 
     inspeed = 0;
     outspeed = 0;
     last_interval = 0;
+    timeout_interval = 30;
 
     connect(this, SIGNAL(connected()), this, SLOT(connectedAct()));
 
@@ -27,6 +29,7 @@ GTcpSocket::~GTcpSocket()
     delete(inbuf);
     delete(outbuf);
     delete(watcher);
+    delete(timeout);
 }
 
 void GTcpSocket::connectedAct()
@@ -85,7 +88,7 @@ void GTcpSocket::sheduler()
 void GTcpSocket::transferAct()
 {
     if(shedule_now)return; //если уже идет обмен с внешними буферами, то выходим
-    if(!t_flag) return; //если флаг паузы, то выходим - не периносим ничего и никуда
+    if(!t_flag) return; //если флаг паузы, то выходим - не переносим ничего и никуда
 
     shedule_now = true; //устанавливаем признак выполнения данного метода
     int interval = 1000; //начальный интервал для подсчета лимита байт на скачивания/передачи
@@ -112,7 +115,18 @@ void GTcpSocket::transferAct()
 
         if(bytesToRead > 2097152 /*2MB*/)bytesToRead = 2097152;
     }
-    else bytesToRead = qMin<qint64>(inLimit, QSslSocket::bytesAvailable());
+    else
+    {
+        bytesToRead = qMin<qint64>(inLimit, QSslSocket::bytesAvailable());
+        if(bytesToRead > 0) timeout->start();
+        else if(timeout->elapsed() > timeout_interval*1000 && !timeout->isNull())
+        {
+            emit error(QSslSocket::SocketTimeoutError);
+            close();
+            shedule_now = false;
+            return;
+        }
+    }
     qint64 bytesToWrite = qMin<qint64>(outLimit, outbuf->size());
 
     if(inspeed*2 < readBufferSize())
