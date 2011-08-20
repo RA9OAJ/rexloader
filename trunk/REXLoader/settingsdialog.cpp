@@ -35,6 +35,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     connect(ui->listWidget,SIGNAL(clicked(QModelIndex)),this,SLOT(selectSubSettings()));
 
     ui->networkBox->setVisible(false);
+    ui->downloadsBox->setVisible(false);
 }
 
 SettingsDialog::~SettingsDialog()
@@ -48,15 +49,22 @@ void SettingsDialog::selectSubSettings()
     QFont font = item->font();
     font.setBold(false);
     item->setFont(font);
-qDebug()<<ui->listWidget->currentRow();
+
     switch(ui->listWidget->currentRow())
     {
     case 0:
         ui->generalBox->setVisible(true);
         ui->networkBox->setVisible(false);
+        ui->downloadsBox->setVisible(false);
         break;
     case 1:
         ui->networkBox->setVisible(true);
+        ui->generalBox->setVisible(false);
+        ui->downloadsBox->setVisible(false);
+        break;
+    case 2:
+        ui->downloadsBox->setVisible(true);
+        ui->networkBox->setVisible(false);
         ui->generalBox->setVisible(false);
         break;
     default: ui->generalBox->setVisible(false); break;
