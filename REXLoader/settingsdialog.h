@@ -33,8 +33,12 @@ public:
     explicit SettingsDialog(QWidget *parent = 0);
     ~SettingsDialog();
 
+protected slots:
+    void selectSubSettings();
+
 private:
     Ui::SettingsDialog *ui;
+    int last_row;
 };
 
 #endif // SETTINGSDIALOG_H

@@ -24,9 +24,31 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui(new Ui::SettingsDialog)
 {
     ui->setupUi(this);
+
+    setWindowTitle(parent->windowTitle() + " - " + tr("Settings"));
+    QList<int> sz;
+    sz << 50 << 200;
+    ui->splitter->setSizes(sz);
+    last_row = 0;
+
+    connect(ui->listWidget,SIGNAL(clicked(QModelIndex)),this,SLOT(selectSubSettings()));
 }
 
 SettingsDialog::~SettingsDialog()
 {
     delete ui;
+}
+
+void SettingsDialog::selectSubSettings()
+{
+    QListWidgetItem *item = ui->listWidget->item(last_row);//ui->listWidget->item(ui->listWidget->currentRow());
+    QFont font = item->font();
+    font.setBold(false);
+    item->setFont(font);
+
+    item = ui->listWidget->item(ui->listWidget->currentRow());
+    font = item->font();
+    font.setBold(true);
+    item->setFont(font);
+    last_row = ui->listWidget->currentRow();
 }
