@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "addtaskdialog.h"
 #include "emessagebox.h"
 #include "treeitemmodel.h"
+#include "settingsdialog.h"
 
 #include "../Httploader/LoaderInterface.h"
 
@@ -99,6 +100,7 @@ private:
     Ui::REXWindow *ui;
     QSystemTrayIcon *trayicon; //объект системного лотка
     QMovie *movie; //мувик для реализауии анимации в трее
+    SettingsDialog *settDlg;
 
     QStringList pluginDirs; //список с директориями, в которых могут быть плагины
     QHash<int,QStringList> mesqueue; //очередь сообщений

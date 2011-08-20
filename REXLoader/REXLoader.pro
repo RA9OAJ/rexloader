@@ -16,16 +16,19 @@ SOURCES += main.cpp\
     titemmodel.cpp \
     addtaskdialog.cpp \
     emessagebox.cpp \
-    treeitemmodel.cpp
+    treeitemmodel.cpp \
+    settingsdialog.cpp
 
 HEADERS  += rexwindow.h \
     titemmodel.h \
     addtaskdialog.h \
     emessagebox.h \
-    treeitemmodel.h
+    treeitemmodel.h \
+    settingsdialog.h
 
 FORMS    += rexwindow.ui \
-    addtaskdialog.ui
+    addtaskdialog.ui \
+    settingsdialog.ui
 
 RESOURCES += \
     resources.qrc

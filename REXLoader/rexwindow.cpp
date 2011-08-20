@@ -52,6 +52,7 @@ REXWindow::REXWindow(QWidget *parent) :
     movie = new QMovie(this);
     movie->setFileName(":/appimages/onload.gif");
     connect(movie,SIGNAL(updated(QRect)),this,SLOT(updateTrayIcon()));
+    settDlg = new SettingsDialog(this);
 
     apphomedir = QDir::homePath()+"/.rexloader";
 
@@ -208,6 +209,7 @@ void REXWindow::createInterface()
     connect(ui->treeView,SIGNAL(clicked(QModelIndex)),this,SLOT(setTaskFilter(QModelIndex)));
     connect(ui->actionDelURLFiles,SIGNAL(triggered()),this,SLOT(deleteTask()));
     connect(ui->tableView,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(openTask()));
+    connect(ui->actionAppSettings,SIGNAL(triggered()),settDlg,SLOT(show()));
 
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);
