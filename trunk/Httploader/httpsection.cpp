@@ -27,7 +27,7 @@ void HttpSection::clear()
 
     down_speed = 0;//1310720; // 10Mbi/s
 
-    user_agent = "Mozilla/5.0";
+    user_agent = "Mozilla/5.0 (linux-gnu)";
     mode = 0;
     header.clear();
 
@@ -219,7 +219,8 @@ void HttpSection::pauseDownloading(bool pause)
 void HttpSection::sendHeader()
 {
     if(!soc)return;
-    QString _header = QString("GET %1 HTTP/1.1\r\nHost: %2\r\nAccept: */*\r\nUser-Agent: %3\r\n").arg(url.toString(),url.host(),user_agent);
+    QString target = (proxytype != QNetworkProxy::NoProxy) ? url.toEncoded() : url.encodedPath() + "?" + url.encodedQuery();
+    QString _header = QString("GET %1 HTTP/1.1\r\nHost: %2\r\nAccept: */*\r\nUser-Agent: %3\r\n").arg(target,url.host(),user_agent);
 
     if(start_s > finish_s && finish_s != 0){qint64 _tmp = finish_s; finish_s = start_s; start_s = _tmp;}
 
@@ -232,7 +233,7 @@ void HttpSection::sendHeader()
         _header += QString("Authorization: Basic %1\r\n").arg(authorization);
 
     _header += QString("Referer: http://%1/\r\n").arg(referer == "" ? url.host():referer);
-    _header += QString("Connection: close\r\n\r\n");
+    _header += QString("Connection: Keep-Alive\r\n\r\n");
     soc->write(_header.toAscii().data());
 }
 
@@ -374,7 +375,9 @@ void HttpSection::dataAnalising()
         }
         totalload += cur_bloc;
         emit transferCompleted(cur_bloc);
-        if((soc->state() != QTcpSocket::ConnectedState && soc->bytesAvailable() == 0 && soc->bytesAvailableOnNetwork() == 0) || totalload == totalsize)
+
+        qint64 targetsize = finish_s ? finish_s - start_s + 1 : totalsize - start_s;
+        if((soc->state() != QTcpSocket::ConnectedState && soc->bytesAvailable() == 0 && soc->bytesAvailableOnNetwork() == 0) || totalload == targetsize)
         {
             fl->close();
             stopDownloading();
