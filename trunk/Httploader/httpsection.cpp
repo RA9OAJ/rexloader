@@ -115,7 +115,7 @@ int HttpSection::errorNumber() const
 
 void HttpSection::setUrlToDownload(const QString &url_target)
 {
-    url.setUrl(url_target);
+    url = QUrl::fromEncoded(url_target.toAscii());
 }
 
 void HttpSection::setUserAgent(const QString &uagent)
@@ -219,7 +219,8 @@ void HttpSection::pauseDownloading(bool pause)
 void HttpSection::sendHeader()
 {
     if(!soc)return;
-    QString target = (proxytype != QNetworkProxy::NoProxy) ? url.toEncoded() : url.encodedPath() + "?" + url.encodedQuery();
+    QString target = (proxytype != QNetworkProxy::NoProxy) ? url.toEncoded() : url.encodedPath();
+    if(!url.encodedQuery().isEmpty()) target += "?" + url.encodedQuery();
     QString _header = QString("GET %1 HTTP/1.1\r\nHost: %2\r\nAccept: */*\r\nUser-Agent: %3\r\n").arg(target,url.host(),user_agent);
 
     if(start_s > finish_s && finish_s != 0){qint64 _tmp = finish_s; finish_s = start_s; start_s = _tmp;}
