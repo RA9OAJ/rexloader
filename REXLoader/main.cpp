@@ -159,11 +159,11 @@ void addURL(const QStringList &_argv)
         for(int i=1; i<_argv.size(); i++)
         {
             url.clear();
-            url.setUrl(_argv.value(i));
+            url = QUrl::fromEncoded(_argv.value(i).toAscii());
             if(url.isValid() && !url.scheme().isEmpty())
-            {qDebug()<<"YES";
+            {
                 qr.prepare("INSERT INTO newtasks (url) VALUES (:url)");
-                qr.bindValue(":url",url.toString());
+                qr.bindValue(":url",_argv.value(i));
                 if(!qr.exec())
                 {
                     //тут записываем сообщение об ошибке в error.log

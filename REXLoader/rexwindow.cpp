@@ -702,7 +702,7 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
     }
 
     //дальше идет код, который добавляет новую закачку на основе URL в очередь плагина
-    id_task = pluglist.value(id_proto)->addTask(url.toString());
+    id_task = pluglist.value(id_proto)->addTask(url);
 
     if(!id_task)
     {
@@ -1137,7 +1137,7 @@ void REXWindow::manageTaskQueue()
 
     while(tasklist.size() < max_tasks && qr.next()) //если запущено меньше задач, чем разрешено
     {
-        QUrl _url(qr.value(1).toString());
+        QUrl _url = QUrl::fromEncoded(qr.value(1).toByteArray());
         if(!plugproto.contains(_url.scheme().toLower()))
         {
             QSqlQuery qr1(QSqlDatabase::database());

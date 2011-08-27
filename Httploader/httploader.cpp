@@ -263,7 +263,7 @@ void HttpLoader::startDownload(int id_task)
     Task *tsk = task_list->value(id_task);
 
     HttpSection *sect = new HttpSection();
-    sect->setUrlToDownload(tsk->url.toString());
+    sect->setUrlToDownload(QString(tsk->url.toEncoded()));
     sect->setFileName(tsk->filepath);
     if(!tsk->authData.isEmpty())sect->setAuthorizationData(tsk->authData);
     sect->setUserAgent(uAgent);
@@ -541,7 +541,7 @@ void HttpLoader::syncFileMap(Task* _task)
     fwrite(outbuf.data(), 1, outbuf.size(), fl);
     int _lenght = _task->url.toString().toAscii().size();
     fwrite(&_lenght, 1, sizeof(int),fl); //длина строки с URL
-    fwrite(_task->url.toString().toAscii().data(), 1, _task->url.toString().toAscii().size(), fl); //строка с URL
+    fwrite(_task->url.toEncoded().data(), 1, _task->url.toString().toAscii().size(), fl); //строка с URL
     _lenght = _task->referer.toAscii().size();
     fwrite(&_lenght, 1, sizeof(int), fl); //длина строки реферера, если нет, то 0
     if(_lenght) fwrite(_task->referer.toAscii().data(), 1, _task->referer.toAscii().size(), fl);
@@ -901,7 +901,7 @@ int HttpLoader::loadTaskFile(const QString &_path)
     Task *tsk = 0;
     tsk = new Task();
     if(!tsk){t_mutex->unlock();return 0;}
-    tsk->url = QUrl(QString(buffer));
+    tsk->url = QUrl::fromEncoded(buffer);
     tsk->_fullsize_res = fullsize_res;
     tsk->_maxSections = this->maxSections;
     tsk->filepath = _path;
