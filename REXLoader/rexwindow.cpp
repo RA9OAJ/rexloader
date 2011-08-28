@@ -26,7 +26,7 @@ REXWindow::REXWindow(QWidget *parent) :
     ui->setupUi(this);
 
     sched_flag = true;
-    clip_autoscan = true;
+    clip_autoscan = false;
     max_tasks = 1;
     max_threads = 3;
     down_speed = 2048*8; // 2Mbps
@@ -476,7 +476,7 @@ void REXWindow::loadSettings()
 
 void REXWindow::scanClipboard()
 {
-    /*if(!clip_autoscan)*/return;
+    if(!clip_autoscan)return;
 
     const QClipboard *clipbrd = QApplication::clipboard();
     QUrl url(clipbrd->text());
@@ -813,7 +813,7 @@ void REXWindow::startTask()
     for(int i=0; i < select->selectedRows().length(); i++)
     {
         QModelIndex index = sfmodel->mapToSource(select->selectedRows(9).value(i));
-        int tstatus = select->selectedRows(9).value(i).data(100).toInt(); //статус в базе данных
+        //int tstatus = select->selectedRows(9).value(i).data(100).toInt(); //статус в базе данных
         model->updateRow(index.row());
     }
     manageTaskQueue();
@@ -1120,7 +1120,7 @@ void REXWindow::syncTaskData()
         model->updateRow(index.row());
     }
     qr.clear();
-    qr.exec("SELECT id FROM tasks WHERE tstatus=-100");
+    qr.exec("SELECT id FROM tasks WHERE tstatus IN (-100,-2,0)");
     if(!tasklist.size() && !qr.next())
         trayicon->showMessage(tr("REXLoader"),tr("All tasks completed."));
 }
@@ -1251,17 +1251,46 @@ void REXWindow::updateStatusBar()
     onerror = findChild<QLabel*>("onerror");
     progress = findChild<QProgressBar*>("prgBar");
 
-    if(!selection->hasSelection())
+    if(!selection->hasSelection()) // в случае, если ни одно определенное задание не выделено
     {
         status->hide();
         priority->hide();
         urllbl->hide();
-        progress->setValue(0);
         lasterror->hide();
         speed->hide();
         setEnabledTaskMenu(false);
+
+        QSortFilterProxyModel filter;
+        filter.setSourceModel(model);
+        filter.setFilterKeyColumn(9);
+        filter.setFilterRole(100);
+        filter.setFilterRegExp("(^[1-4]$)");
+
+        qint64 total_s, total_l, total_speed;
+        total_s = total_l = total_speed = 0;
+
+        QModelIndex cur_index;
+        for(int i = 0; i < filter.rowCount(); i++)
+        {
+            int row = filter.mapToSource(filter.index(i,0)).row();
+            cur_index = model->index(row,4);
+            total_l += model->data(cur_index,100).toLongLong();
+            cur_index = model->index(row,5);
+            total_s += model->data(cur_index,100).toLongLong();
+            cur_index = model->index(row,5);
+        }
+        QList<int>plug_keys = pluglist.keys();
+        for(int y = 0; y < plug_keys.size(); y++) //обходим список плагинов, суммируем общие скорости скачивания
+            total_speed += pluglist.value(plug_keys.value(y))->totalDownSpeed();
+
+        progress->setMaximum(100);
+        int cur_val = total_s ? 100*total_l/total_s : 0;
+        progress->setValue(cur_val);
+        int sec = total_speed ? (total_s-total_l)/total_speed : -1;
+        lefttime->setText(TItemModel::secForHumans(sec));
+        lefttime->setVisible(true);
     }
-    else
+    else // если выделено определенное задание, то выводим по нему информацию
     {
         setEnabledTaskMenu(true);
 

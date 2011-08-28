@@ -401,6 +401,7 @@ QStringList TItemModel::speedForHumans(qint64 sp, bool in_bytes, bool out_bytes)
 
 QString TItemModel::secForHumans(int sec)
 {
+    if(sec < 0) return tr("N/a");
     int days,hours,minuts;
     days = hours = minuts = 0;
     QString out;
