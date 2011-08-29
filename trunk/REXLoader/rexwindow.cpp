@@ -752,17 +752,24 @@ void REXWindow::deleteTask()
     QString where;
     for(int i=0; i < select->selectedRows().length(); i++)
     {
+        int row_id = select->selectedRows().value(i).data(Qt::DisplayRole).toInt();
+        QString flname = select->selectedRows(3).value(i).data(100).toString();
+        int task_id = tasklist.value(row_id)%100;
+        LoaderInterface *ldr = pluglist.value(tasklist.value(row_id)/100);
+
         if(!i)
-            where += QString(" id=%1").arg(select->selectedRows().value(i).data(Qt::DisplayRole).toString());
+            where += QString(" id=%1").arg(QString::number(row_id));
         else
-            where += QString(" OR id=%1").arg(select->selectedRows().value(i).data(Qt::DisplayRole).toString());
+            where += QString(" OR id=%1").arg(QString::number(row_id));
 
         if(del_file)
         {
-            QFileInfo fl(select->selectedRows(3).value(i).data(100).toString());
+            QFileInfo fl(flname);
             if(!fl.isFile())continue;
-            QFile::remove(select->selectedRows(3).value(i).data(100).toString());
+            QFile::remove(flname);
         }
+        if(ldr){ldr->deleteTask(task_id);qDebug()<<"YES!!!!";}
+        tasklist.remove(row_id);
     }
 
     qr.prepare("DELETE FROM tasks WHERE"+where);
@@ -796,7 +803,7 @@ void REXWindow::startTask()
         case -100:
         default: continue;
         }
-        if(!i) where = QString("id=%1").arg(QString::number(id_row));
+        if(!i || where.isEmpty()) where = QString("id=%1").arg(QString::number(id_row));
         else where += QString(" OR id=%1").arg(QString::number(id_row));
     }
 
@@ -905,7 +912,7 @@ void REXWindow::stopTask()
         int id_task = tasklist.value(id_row)%100; // id задачи
 
         if(pluglist.contains(id_proto)) pluglist.value(id_proto)->stopDownload(id_task);
-        if(!i)where = QString("id=%1").arg(QString::number(id_row));
+        if(!i || where.isEmpty())where = QString("id=%1").arg(QString::number(id_row));
         else where += QString(" OR id=%1").arg(QString::number(id_row));
     }
 
