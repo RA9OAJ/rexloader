@@ -423,7 +423,6 @@ void HttpLoader::mismatchOfDates(const QDateTime &_last, const QDateTime &_cur)
 
     tsk->err_modif = _cur;
     if(tsk->last_modif.isNull())tsk->last_modif = _last;
-
     tsk->error_number = LInterface::FILE_DATETIME_ERROR;
     stopDownload(id_task);
 

@@ -52,6 +52,7 @@ void AddTaskDialog::construct()
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle("REXLoader - "+tr("New task"));
     priority = 2; //нормальный приоритет
+    if(!parent())setWindowIcon(QIcon(":/appimages/trayicon.png"));
 
     loadDatabaseData();
     connect(gui->categoryBox,SIGNAL(currentIndexChanged(int)),this,SLOT(updateLocation(int)));

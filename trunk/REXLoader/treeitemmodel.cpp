@@ -188,5 +188,8 @@ void TreeItemModel::addFiltersSubtree()
 
 Qt::ItemFlags TreeItemModel::flags(const QModelIndex &index) const
 {
+    QModelIndex index_id = this->index(index.row(),1,index.parent());
+    int id = data(index_id,100).toInt();
+    if(id < 0 || id == 1) return QAbstractItemModel::flags(index);
     return QAbstractItemModel::flags(index) | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
 }
