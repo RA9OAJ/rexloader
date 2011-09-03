@@ -916,13 +916,16 @@ void REXWindow::stopTask()
         else where += QString(" OR id=%1").arg(QString::number(id_row));
     }
 
-    QSqlQuery qr(QSqlDatabase::database());
-    qr.prepare("UPDATE tasks SET tstatus=0, lasterror='' WHERE " + where);
-
-    if(!qr.exec())
+    if(!where.isEmpty())
     {
-        //запись в журнал ошибок
-        qDebug()<<"void REXWindow::stopTask(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
+        QSqlQuery qr(QSqlDatabase::database());
+        qr.prepare("UPDATE tasks SET tstatus=0, lasterror='' WHERE " + where);
+
+        if(!qr.exec())
+        {
+            //запись в журнал ошибок
+            qDebug()<<"void REXWindow::stopTask(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
+        }
     }
 
     updateTaskSheet();

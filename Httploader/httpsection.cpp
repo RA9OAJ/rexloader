@@ -337,9 +337,22 @@ void HttpSection::dataAnalising()
         case 303:
         case 307:
             stopDownloading();
-            if(header.contains("location")) emit redirectToUrl(header["location"]);
+            if(header.contains("location"))
+            {
+                QUrl toUrl(header.value("location"));
+                if(toUrl.scheme().isEmpty())
+                {
+                    if(header["location"].at(0)=='/')header["location"].remove(0,1);
+                    QString location = url.scheme()+"://"+url.host();
+                    if(url.port() != -1)location += ":" + url.port();
+                    location += "/" + header["location"];
+                    emit redirectToUrl(location);
+                    return;
+                }
+                emit redirectToUrl(header["location"]);
+            }
             else emit unidentifiedServerRequest();
-            return; break;
+            return;
         case 401:
         case 403:
         case 404:
