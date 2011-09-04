@@ -1,5 +1,5 @@
 /*
-Project: REXLoader (Downloader), Source file: settingsdialog.h
+Project: REXLoader (Downloader), Source file: importdialog.h
 Copyright (C) 2011  Sarvaritdinov R.
 
 This program is free software: you can redistribute it and/or modify
@@ -16,29 +16,33 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SETTINGSDIALOG_H
-#define SETTINGSDIALOG_H
+#ifndef IMPORTDIALOG_H
+#define IMPORTDIALOG_H
 
 #include <QDialog>
+#include <QtSql/QtSql>
 
 namespace Ui {
-    class SettingsDialog;
+    class ImportDialog;
 }
 
-class SettingsDialog : public QDialog
+class ImportDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit SettingsDialog(QWidget *parent = 0);
-    ~SettingsDialog();
+    explicit ImportDialog(const QString &dir, QWidget *parent = 0);
+    explicit ImportDialog(const QString &dir, QSqlDatabase &db_, QWidget *parent = 0);
+    ~ImportDialog();
 
-protected slots:
-    void selectSubSettings();
+protected:
+    void loadDatabaseData();
 
 private:
-    Ui::SettingsDialog *ui;
-    int last_row;
+    void initialize();
+
+    Ui::ImportDialog *ui;
+    QSqlDatabase mydb;
 };
 
-#endif // SETTINGSDIALOG_H
+#endif // IMPORTDIALOG_H
