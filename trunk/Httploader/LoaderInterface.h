@@ -80,6 +80,7 @@ public:
     virtual int errorNo(int id_task) const = 0; //возвращает код ошибки задания
     virtual int loadTaskFile(const QString &_path)=0; //загружает метаданные задания из указанного файла и возвращает идентификатор задания (иначе - 0)
     virtual int countSectionTask(int id_task) const =0; //возвращает количество активных секций в задании
+    virtual int countTask() const = 0; //возвращает количество назначенных заданий
     virtual bool acceptRanges(int id_task) const = 0; //возвращает true, если возможна докачка задания id_task, иначе false
     virtual QString taskFilePath(int id_task) const =0; //вохвращает полный путь к локальному файлу
     virtual QString errorString(int _err) const =0; //возвращает строку по заданному коду ошибки

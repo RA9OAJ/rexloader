@@ -79,6 +79,11 @@ int HttpLoader::addTask(const QUrl &_url)
     return task_num;
 }
 
+int HttpLoader::countTask() const
+{
+    return task_list->size();
+}
+
 void HttpLoader::deleteTask(int id_task)
 {
     t_mutex->lock();

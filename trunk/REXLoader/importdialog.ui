@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Import URL's</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -158,7 +158,7 @@ font: 10pt &quot;Ubuntu&quot; bold;
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="comboBox">
+      <widget class="QComboBox" name="categoryBox">
        <property name="minimumSize">
         <size>
          <width>150</width>
@@ -191,7 +191,7 @@ font: 10pt &quot;Ubuntu&quot; bold;
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit"/>
+      <widget class="QLineEdit" name="locationEdit"/>
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_4">
@@ -263,8 +263,8 @@ font: 10pt &quot;Ubuntu&quot; bold;
   <tabstop>selectAllButton</tabstop>
   <tabstop>deselectAllButton</tabstop>
   <tabstop>invertSelectionButton</tabstop>
-  <tabstop>comboBox</tabstop>
-  <tabstop>lineEdit</tabstop>
+  <tabstop>categoryBox</tabstop>
+  <tabstop>locationEdit</tabstop>
   <tabstop>pushButton_4</tabstop>
   <tabstop>pushButton</tabstop>
   <tabstop>pushButton_2</tabstop>

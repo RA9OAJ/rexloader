@@ -33,9 +33,11 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     last_row = 0;
 
     connect(ui->listWidget,SIGNAL(clicked(QModelIndex)),this,SLOT(selectSubSettings()));
+    connect(ui->proxyCheckBox,SIGNAL(toggled(bool)),ui->groupBox,SLOT(setEnabled(bool)));
 
     ui->networkBox->setVisible(false);
     ui->downloadsBox->setVisible(false);
+    resize(size().width(),220);
 }
 
 SettingsDialog::~SettingsDialog()

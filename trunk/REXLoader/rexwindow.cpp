@@ -211,6 +211,7 @@ void REXWindow::createInterface()
     connect(ui->tableView,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(openTask()));
     connect(ui->actionAppSettings,SIGNAL(triggered()),settDlg,SLOT(show()));
     connect(ui->actionImportURL,SIGNAL(triggered()),this,SLOT(showImportFileDialog()));
+    connect(ui->actionAboutQt,SIGNAL(triggered()),qApp,SLOT(aboutQt()));
 
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);
@@ -689,6 +690,7 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
             {
                 tasklist.insert(id_row, id_task + id_proto*100);
                 //pluglist.value(id_proto)->setTaskFilePath(id_task,flinfo.absolutePath());
+                calculateSpeed();
                 pluglist.value(id_proto)->startDownload(id_task);
                 updateTaskSheet();
                 return;
@@ -723,6 +725,7 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
     QString fldir = flinfo.isDir() ? flinfo.absoluteFilePath():flinfo.absolutePath();
     tasklist.insert(id_row, id_task + id_proto*100);
     pluglist.value(id_proto)->setTaskFilePath(id_task,fldir);
+    calculateSpeed();
     pluglist.value(id_proto)->startDownload(id_task);
 }
 
@@ -1072,6 +1075,7 @@ void REXWindow::syncTaskData()
 
             ldr->deleteTask(id_task);
             tasklist.remove(id_row);
+            calculateSpeed();
         }
         else
         {
@@ -1127,6 +1131,7 @@ void REXWindow::syncTaskData()
         {
             ldr->deleteTask(id_task);
             tasklist.remove(id_row);
+            calculateSpeed();
         }
         model->updateRow(index.row());
     }
@@ -1268,7 +1273,7 @@ void REXWindow::updateStatusBar()
         priority->hide();
         urllbl->hide();
         lasterror->hide();
-        speed->hide();
+        speed->setVisible(true);
         setEnabledTaskMenu(false);
 
         QSortFilterProxyModel filter;
@@ -1294,6 +1299,8 @@ void REXWindow::updateStatusBar()
         for(int y = 0; y < plug_keys.size(); y++) //обходим список плагинов, суммируем общие скорости скачивания
             total_speed += pluglist.value(plug_keys.value(y))->totalDownSpeed();
 
+        QStringList spd_ = TItemModel::speedForHumans(total_speed);
+        speed->setText(tr("Spd: %1").arg(spd_.value(0)+spd_.value(1)));
         progress->setMaximum(100);
         int cur_val = total_s ? 100*total_l/total_s : 0;
         progress->setValue(cur_val);
@@ -1379,14 +1386,10 @@ REXWindow::~REXWindow()
     lockProcess(false);
 }
 
-void REXWindow::importUrlFromFile(const QString &file)
-{
-
-}
-
 void REXWindow::importUrlFromFile(const QStringList &files)
 {
-
+    ImportDialog *dlg = new ImportDialog(downDir,this);
+    QTimer::singleShot(0,dlg,SLOT(show()));
 }
 
 void REXWindow::showImportFileDialog()
@@ -1398,16 +1401,30 @@ void REXWindow::showImportFileDialog()
     dlg->setFileMode(QFileDialog::ExistingFiles);
     dlg->setDirectory(QDir::home());
     dlg->setWindowTitle(tr("Open file for import"));
+    dlg->setOption(QFileDialog::DontUseNativeDialog);
 
-    connect(dlg,SIGNAL(fileSelected(QString)),this,SLOT(importUrlFromFile(QString)));
     connect(dlg,SIGNAL(filesSelected(QStringList)),this,SLOT(importUrlFromFile(QStringList)));
 
     dlg->show();
 }
 
+void REXWindow::calculateSpeed()
+{
+    int total = tasklist.size();
+    QList<int> keys = pluglist.keys();
+    LoaderInterface *ldr = 0;
+    for(int i = 0; i < keys.size() && total > 0; ++i)
+    {
+        ldr = pluglist.value(keys.value(i));
+        if(!ldr)continue;
+        qint64 new_spd = down_speed*1024*(qint64)ldr->countTask()/(qint64)total;
+        ldr->setDownSpeed(new_spd/8);
+    }
+}
+
 bool REXWindow::event(QEvent *event)
 {
-    return QMainWindow::event(event);
+   return QMainWindow::event(event);
 }
 
 void REXWindow::closeEvent(QCloseEvent *event)

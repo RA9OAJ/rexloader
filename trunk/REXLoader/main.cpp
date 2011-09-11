@@ -220,10 +220,15 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
 
     QApplication a(argc, argv);
+
     QApplication::setQuitOnLastWindowClosed(false);
     addURL(a.arguments());
     if(firstProcess())
     {
+        QTranslator qt_translator;
+        QString trans_file = "qt_"+QLocale::system().name().split("_").value(0)+".qm";
+        if(qt_translator.load(trans_file,QLibraryInfo::location(QLibraryInfo::TranslationsPath))) a.installTranslator(&qt_translator);
+
         REXWindow w;
 
         w.show();
