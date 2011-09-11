@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "emessagebox.h"
 #include "treeitemmodel.h"
 #include "settingsdialog.h"
+#include "importdialog.h"
 
 #include "../Httploader/LoaderInterface.h"
 
@@ -68,6 +69,7 @@ protected:
     void saveSettings(); //сохраняет свойства приложения
     void loadSettings(); //загружает свйоства приложения
     int loadPlugins(); //сканирует директории в поисках доступных плагинов, возвращает количество найденных и загруженных плагинов
+    void calculateSpeed();
 
 protected slots:
     void scheuler(); //внутренний планировщик с интервалом в 1 секунду
@@ -89,7 +91,6 @@ protected slots:
     void openTaskDir(); //открывает в файловом менеджере папку куда сохраняется/сохранен целевой файл
     void setTaskPriority(); //устанавливает выбранный приоритет всем выделенным задачам
     void setTaskFilter(const QModelIndex &index); //устанавливает фильтр на выводимые в таблице задачи в зависимости от выделенной категории
-    void importUrlFromFile(const QString &file);
     void importUrlFromFile(const QStringList &files);
 
 signals:

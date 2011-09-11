@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>659</width>
+    <width>477</width>
     <height>961</height>
    </rect>
   </property>
@@ -277,7 +277,7 @@
           <item>
            <widget class="QTabWidget" name="tabWidget">
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="connectionTab">
              <attribute name="title">
@@ -477,6 +477,9 @@
               </item>
               <item>
                <widget class="QGroupBox" name="groupBox">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="title">
                  <string>Proxy Settings</string>
                 </property>

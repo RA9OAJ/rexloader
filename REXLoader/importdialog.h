@@ -43,6 +43,9 @@ private:
 
     Ui::ImportDialog *ui;
     QSqlDatabase mydb;
+
+    QString downDir;
+    QMap<int, QString> dirs;
 };
 
 #endif // IMPORTDIALOG_H

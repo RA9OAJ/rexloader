@@ -48,9 +48,28 @@ ImportDialog::~ImportDialog()
 
 void ImportDialog::loadDatabaseData()
 {
+    QSqlQuery qr(mydb);
+    qr.exec("SELECT * FROM categories");
+    int otherId = 0;
+
+    while(qr.next())
+    {
+        QString cattitle;
+        if(qr.value(1).toString() == "#downloads")continue;
+        else if(qr.value(1).toString() == "#archives"){cattitle = tr("Archives"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
+        else if(qr.value(1).toString() == "#apps"){cattitle = tr("Applications"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
+        else if(qr.value(1).toString() == "#audio"){cattitle = tr("Audio"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
+        else if(qr.value(1).toString() == "#video"){cattitle = tr("Video"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
+        else if(qr.value(1).toString() == "#other"){cattitle = tr("All Downloads"); otherId = qr.value(0).toInt();dirs.insert(qr.value(0).toInt(),downDir);}
+        else {cattitle = qr.value(1).toString(); dirs.insert(qr.value(0).toInt(),qr.value(2).toString());}
+
+        ui->categoryBox->addItem(cattitle, qr.value(0).toInt());
+    }
+    ui->categoryBox->setCurrentIndex(ui->categoryBox->findData(QVariant(otherId)));
 }
 
 void ImportDialog::initialize()
 {
     if(!parent())setWindowIcon(QIcon(":/appimages/trayicon.png"));
+    setAttribute(Qt::WA_DeleteOnClose);
 }
