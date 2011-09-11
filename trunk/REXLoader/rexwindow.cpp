@@ -37,7 +37,7 @@ REXWindow::REXWindow(QWidget *parent) :
     libdir.cdUp();
     pluginDirs << libdir.absolutePath()+"/lib/rexloader/plugins" << QDir::homePath()+"/.rexloader/plugins";
 
-    downDir = QDir::homePath()+"/Downloads";
+    downDir = QDir::homePath()+tr("/Downloads");
     if(!QDir().exists(downDir))
         QDir().mkpath(downDir);
 
@@ -210,6 +210,7 @@ void REXWindow::createInterface()
     connect(ui->actionDelURLFiles,SIGNAL(triggered()),this,SLOT(deleteTask()));
     connect(ui->tableView,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(openTask()));
     connect(ui->actionAppSettings,SIGNAL(triggered()),settDlg,SLOT(show()));
+    connect(ui->actionImportURL,SIGNAL(triggered()),this,SLOT(showImportFileDialog()));
 
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);
@@ -1376,6 +1377,32 @@ REXWindow::~REXWindow()
     sched_flag = false;
 
     lockProcess(false);
+}
+
+void REXWindow::importUrlFromFile(const QString &file)
+{
+
+}
+
+void REXWindow::importUrlFromFile(const QStringList &files)
+{
+
+}
+
+void REXWindow::showImportFileDialog()
+{
+    QFileDialog *dlg = new QFileDialog(this);
+    dlg->setAttribute(Qt::WA_DeleteOnClose);
+    dlg->setModal(false);
+    dlg->setAcceptMode(QFileDialog::AcceptOpen);
+    dlg->setFileMode(QFileDialog::ExistingFiles);
+    dlg->setDirectory(QDir::home());
+    dlg->setWindowTitle(tr("Open file for import"));
+
+    connect(dlg,SIGNAL(fileSelected(QString)),this,SLOT(importUrlFromFile(QString)));
+    connect(dlg,SIGNAL(filesSelected(QStringList)),this,SLOT(importUrlFromFile(QStringList)));
+
+    dlg->show();
 }
 
 bool REXWindow::event(QEvent *event)
