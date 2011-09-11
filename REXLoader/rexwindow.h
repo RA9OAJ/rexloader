@@ -58,6 +58,7 @@ public slots:
     void stopTrayIconAnimation();
     void scanNewTaskQueue(); //сканирует очередь url для добавления в очередь заданий
     void scanClipboard(); //сканирует буфер обмена на наличие доступного для скачивания URL
+    void showImportFileDialog(); //отображает диалог для выбора файла импорта
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -88,6 +89,8 @@ protected slots:
     void openTaskDir(); //открывает в файловом менеджере папку куда сохраняется/сохранен целевой файл
     void setTaskPriority(); //устанавливает выбранный приоритет всем выделенным задачам
     void setTaskFilter(const QModelIndex &index); //устанавливает фильтр на выводимые в таблице задачи в зависимости от выделенной категории
+    void importUrlFromFile(const QString &file);
+    void importUrlFromFile(const QStringList &files);
 
 signals:
     void transAct();

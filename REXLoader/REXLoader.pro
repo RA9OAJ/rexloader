@@ -33,5 +33,7 @@ FORMS    += rexwindow.ui \
     settingsdialog.ui \
     importdialog.ui
 
+TRANSLATIONS += lang/ru_RU.ts
+
 RESOURCES += \
     resources.qrc
