@@ -234,14 +234,13 @@ long long int HttpLoader::downSpeed(int id_task) const
     if(!task_list->contains(id_task))return LInterface::NO_TASK;
     if(!task_list->value(id_task))return LInterface::NO_TASK;
     Task* tsk = task_list->value(id_task);
-    qint64 cur_size = tsk->totalLoad();
-    int elapsed_ = tsk->watcher.elapsed();
-    if(!elapsed_ ||elapsed_ < 50) return tsk->cur_speed;
-    qint64 spd = (cur_size - tsk->last_size) / (qint64)elapsed_ * 1000;
-    tsk->watcher.start();
-    tsk->last_size = cur_size;
-    if(spd < 0 )return 0;
-    tsk->cur_speed = spd;
+    qint64 spd = 0;
+    QList<HttpSection*> sect_lst = tsk->sections.values();
+    for(int i = 0; i < sect_lst.size(); ++i)
+    {
+        if(!sect_lst.value(i))continue;
+        spd += sect_lst.value(i)->realSpeed();
+    }
     return spd;
 }
 
@@ -249,14 +248,12 @@ long long int HttpLoader::totalDownSpeed() const
 {
     qint64 total_spd = 0;
 
-    QList<int> lst = task_list->keys();
-    for(int i = 0; i<lst.size(); ++i)
+    QList<HttpSection*> sectlist = sections->keys();
+    for(int i = 0; i < sectlist.size(); ++i)
     {
-        if(!task_list->value(lst.value(i)))continue;
-        total_spd += downSpeed(lst.value(i));
+        if(!sectlist.value(i))continue;
+        total_spd += sectlist.value(i)->realSpeed();
     }
-
-    if(total_spd < 0)return 0;
     return total_spd;
 }
 

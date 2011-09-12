@@ -242,12 +242,20 @@ void HttpSection::dataAnalising()
 {
     //if(stopFlag)return;
     if(!soc)return;
-    real_speed = soc->bytesAvailable()+soc->bytesAvailableOnNetwork()-last_buf_size/(watcher->elapsed() != 0 ? watcher->elapsed() : 1); //для анализа реальной скорости
+    if(watcher->elapsed() >= 1000)
+    {
+        real_speed = last_buf_size/watcher->elapsed()*1000; //для анализа реальной скорости
+        last_buf_size = 0;
+        watcher->start();
+    }
+    if(watcher->isNull())watcher->start();
+
     if(mode == 0)
     {
         while(soc->canReadLine())
         {
             QString cur_str = soc->readLine(1024);
+            last_buf_size += cur_str.toAscii().length();
 
             if(cur_str.indexOf("HTTP/") == 0) {header["HTTP"] = cur_str.split(" ").value(1); continue;}
             if(cur_str.indexOf("\r\n") == 0 || cur_str.indexOf(0x0A) == 0) {mode = 1; break;}
@@ -387,6 +395,7 @@ void HttpSection::dataAnalising()
             emit errorSignal(_errno);
             return;
         }
+        last_buf_size += cur_bloc;
         totalload += cur_bloc;
         emit transferCompleted(cur_bloc);
 
@@ -399,8 +408,6 @@ void HttpSection::dataAnalising()
             return;
         }
     }
-    last_buf_size = soc->bytesAvailable()+soc->bytesAvailableOnNetwork();
-    watcher->start();
 }
 
 void HttpSection::socketErrorSlot(QAbstractSocket::SocketError _err)
