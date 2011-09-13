@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QClipboard>
 #include <QMimeData>
 #include <QFileDialog>
+#include <QDesktopWidget>
 #include "emessagebox.h"
 
 namespace Ui {
@@ -67,6 +68,8 @@ private:
     QMap<int, QString> dirs;
     QList<QString> protocols;
     int priority;
+
+    static int obj_cnt;
 };
 
 #endif // ADDTASKDIALOG_H

@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "addtaskdialog.h"
 #include "ui_addtaskdialog.h"
 
+int AddTaskDialog::obj_cnt = 0; //счетчик объектов класса
+
 AddTaskDialog::AddTaskDialog(const QString &dir, QWidget *parent) :
     QDialog(parent),
     gui(new Ui::AddTaskDialog)
@@ -49,6 +51,7 @@ AddTaskDialog::AddTaskDialog(const QString &dir, QSqlDatabase &db_, QWidget *par
 
 void AddTaskDialog::construct()
 {
+    ++obj_cnt;
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle("REXLoader - "+tr("New task"));
     priority = 2; //нормальный приоритет
@@ -60,6 +63,11 @@ void AddTaskDialog::construct()
     connect(gui->browseButton,SIGNAL(released()),this,SLOT(openDirDialog()));
     connect(gui->startNowBtn,SIGNAL(released()),this,SLOT(startNow()));
     connect(gui->startLaterBtn,SIGNAL(released()),this,SLOT(startLater()));
+
+    QDesktopWidget ds;
+    QRect desktop = ds.availableGeometry();
+    QPoint top_left = QPoint((desktop.bottomRight().x()-size().width())/2+20*(obj_cnt-1),(desktop.bottomRight().y()-size().height())/2+20*(obj_cnt-1));
+    move(top_left);
 
     setAttribute(Qt::WA_AlwaysShowToolTips);
     gui->errorFrame->setHidden(true);
@@ -121,6 +129,7 @@ void AddTaskDialog::urlValidator()
 AddTaskDialog::~AddTaskDialog()
 {
     delete gui;
+    --obj_cnt;
 }
 
 void AddTaskDialog::loadDatabaseData()

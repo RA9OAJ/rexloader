@@ -236,6 +236,8 @@ void REXWindow::createInterface()
     trayact->setObjectName("exitAct");
     trayact->setText(tr("Exit"));
     connect(trayact,SIGNAL(triggered()),this,SLOT(close()));
+    traymenu->addAction(ui->actionAdd_URL);
+    traymenu->addSeparator();
     traymenu->addAction(ui->actionStartAll);
     traymenu->addAction(ui->actionStopAll);
     traymenu->addSeparator();
@@ -546,11 +548,11 @@ void REXWindow::scanNewTaskQueue()
             }
             else if(plugproto.contains(url.scheme().toLower()))
             {
-                dlg = new AddTaskDialog(downDir, 0);
+                dlg = new AddTaskDialog(downDir, this);
                 connect(dlg,SIGNAL(addedNewTask()),this,SLOT(updateTaskSheet()));
                 dlg->setValidProtocols(plugproto);
                 dlg->setNewUrl(qr.value(1).toString());
-                dlg->setWindowFlags(Qt::WindowStaysOnTopHint);
+                dlg->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
                 dlg->show();
             }
         }
@@ -652,6 +654,7 @@ void REXWindow::showAddTaskDialog()
     AddTaskDialog *dlg = new AddTaskDialog(downDir, this);
     connect(dlg,SIGNAL(addedNewTask()),this,SLOT(updateTaskSheet()));
     dlg->setValidProtocols(plugproto);
+    if(!isVisible()) dlg->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
     dlg->show();
 }
 
