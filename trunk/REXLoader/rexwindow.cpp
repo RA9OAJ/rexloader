@@ -1088,25 +1088,36 @@ void REXWindow::syncTaskData()
                 QFile fl(filepath);
                 if(fl.exists(newFilename))
                 {
-                    EMessageBox question;
+                    EMessageBox *question = new EMessageBox(this);
                     QPushButton *btn1, *btn2;
-                    question.setIcon(EMessageBox::Question);
-                    btn1 = question.addButton(tr("Replace"),EMessageBox::ApplyRole);
-                    btn2 = question.addButton(tr("Rename"),EMessageBox::RejectRole);
-                    question.setDefaultButton(btn2);
-                    question.setText(tr("A file with that name already exists."));
-                    question.setInformativeText(tr("To replace the file with the same name, click \"Replace\". To rename, click \"Rename.\""));
+                    question->setIcon(EMessageBox::Question);
+                    btn1 = question->addButton(tr("Replace"),EMessageBox::ApplyRole);
+                    btn2 = question->addButton(tr("Rename"),EMessageBox::RejectRole);
+                    question->setDefaultButton(btn2);
+                    question->setText(tr("A file with that name already exists."));
+                    question->setInformativeText(tr("To replace the file with the same name, click \"Replace\". To rename, click \"Rename.\""));
+                    question->setActionType(EMessageBox::AT_RENAME);
+                    connect(question,SIGNAL(buttonClicked(QAbstractButton*)),this,SLOT(acceptQAction(QAbstractButton*)));
 
-                    question.exec();
-                    if(question.clickedButton() == btn1) QFile::remove(newFilename);
+                    int index = newFilename.indexOf(".");
+                    QString reFilename;
+                    if(index < 1) reFilename = newFilename + QDateTime::currentDateTime().toString("_dd-MM-yyyy_hh:mm:ss.z");
                     else
                     {
-                        int index = newFilename.indexOf(".");
-                        index < 1 ? newFilename += QDateTime::currentDateTime().toString("_dd-MM-yyyy_hh:mm:ss.z"):newFilename.insert(index,QDateTime::currentDateTime().toString("_dd-MM-yyyy_hh:mm:ss.z"));
+                        reFilename = newFilename;
+                        reFilename = reFilename.insert(index,QDateTime::currentDateTime().toString("_dd-MM-yyyy_hh:mm:ss.z"));
                     }
+                    QString params = QString("curname:%1\r\nnewname:%2\r\nrename:%3\r\nid:%4").arg(filepath,newFilename,reFilename,QString::number(id_row));
+                    question->setParams(params);
+                    question->setModal(false);
+                    if(!isVisible())question->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
+                    question->show();
                 }
-                fl.rename(newFilename);
-                filepath = newFilename;
+                else
+                {
+                    fl.rename(newFilename);
+                    filepath = newFilename;
+                }
             }
             qr.prepare("UPDATE tasks SET totalsize=:totalsize, currentsize=:currentsize, filename=:filename, downtime=:downtime, tstatus=:tstatus, speed_avg=:speedavg WHERE id=:id");
             qr.bindValue("totalsize",QString::number(totalsize));
@@ -1427,7 +1438,7 @@ void REXWindow::calculateSpeed()
 
 bool REXWindow::event(QEvent *event)
 {
-   return QMainWindow::event(event);
+    return QMainWindow::event(event);
 }
 
 void REXWindow::closeEvent(QCloseEvent *event)
@@ -1454,5 +1465,51 @@ void REXWindow::changeEvent(QEvent *e)
         break;
     default:
         break;
+    }
+}
+
+void REXWindow::acceptQAction(QAbstractButton *btn)
+{
+    QPointer<EMessageBox> dlg = qobject_cast<EMessageBox*>(sender());
+    if(dlg.isNull())return;
+
+    QHash<QString, QString> params;
+    QStringList _tmp_ = dlg->myParams().split("\r\n");
+    if(!_tmp_.isEmpty())
+        for(int i = 0; i < _tmp_.size(); ++i)
+        {
+            int index = _tmp_.value(i).indexOf(":");
+            int cnt = _tmp_.value(i).size() - index-1;
+            QString val;
+            if(index >= 0) val = _tmp_.value(i).right(cnt);
+            params.insert(_tmp_.value(i).split(":").value(0),val);
+        }
+
+    switch(dlg->myTypes())
+    {
+    case EMessageBox::AT_RENAME:
+        {
+            QFile file(params.value("curname"));
+            if(dlg->buttonRole(qobject_cast<QPushButton*>(btn)) == EMessageBox::ApplyRole)
+            {
+                file.remove(params.value("newname"));
+                file.rename(params.value("newname"));
+            }
+            else file.rename(params.value("rename"));
+
+            QSqlQuery qr;
+            qr.prepare("UPDATE tasks SET filename=:filename WHERE id=:id");
+            qr.bindValue("filename",file.fileName());
+            qr.bindValue("id",params.value("id"));
+            if(!qr.exec())
+            {
+                ///запись в журнал ошибок
+                qDebug()<<"void REXWindow::acceptQAction(1): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
+            }
+            dlg->deleteLater();
+            return;
+        }
+    case EMessageBox::AT_NONE:
+    default: return;
     }
 }

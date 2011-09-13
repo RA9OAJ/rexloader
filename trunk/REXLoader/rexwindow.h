@@ -69,7 +69,7 @@ protected:
     void saveSettings(); //сохраняет свойства приложения
     void loadSettings(); //загружает свйоства приложения
     int loadPlugins(); //сканирует директории в поисках доступных плагинов, возвращает количество найденных и загруженных плагинов
-    void calculateSpeed();
+    void calculateSpeed(); //пересчитывает и перераспределяет скорость между плагинами
 
 protected slots:
     void scheuler(); //внутренний планировщик с интервалом в 1 секунду
@@ -92,6 +92,7 @@ protected slots:
     void setTaskPriority(); //устанавливает выбранный приоритет всем выделенным задачам
     void setTaskFilter(const QModelIndex &index); //устанавливает фильтр на выводимые в таблице задачи в зависимости от выделенной категории
     void importUrlFromFile(const QStringList &files);
+    void acceptQAction(QAbstractButton *btn);
 
 signals:
     void transAct();
