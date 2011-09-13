@@ -25,6 +25,7 @@ EMessageBox::EMessageBox(QWidget *parent) :
     timeout = 30; //30 секунд
     timer = new QTimer(this);
     connect(timer,SIGNAL(timeout()),this,SLOT(tickTimer()));
+    setWindowModality(Qt::WindowModal);
     timer->start(1000);
 }
 
