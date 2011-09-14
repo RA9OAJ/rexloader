@@ -24,11 +24,12 @@ TreeItemModel::TreeItemModel(QObject *parent) :
     gcol = 0;
     qr = 0;
     nodes.insert(QModelIndex(),QVariant());
+    font.setPointSize(10);
 }
 
 TreeItemModel::~TreeItemModel()
 {
-
+    if(qr)delete(qr);
 }
 
 QVariant TreeItemModel::data(const QModelIndex &index, int role) const
@@ -47,6 +48,10 @@ QVariant TreeItemModel::data(const QModelIndex &index, int role) const
             return nodes.value(index).toString();
         }
         return nodes.value(index);
+
+    case Qt::FontRole:
+        if(!index.column()) return font;
+        return QFont();
 
     case 100: return nodes.value(index);
 
@@ -190,6 +195,16 @@ Qt::ItemFlags TreeItemModel::flags(const QModelIndex &index) const
 {
     QModelIndex index_id = this->index(index.row(),1,index.parent());
     int id = data(index_id,100).toInt();
-    if(id < 0 || id == 1) return QAbstractItemModel::flags(index);
+    if(id < 2) return QAbstractItemModel::flags(index);
     return QAbstractItemModel::flags(index) | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
+}
+
+QFont TreeItemModel::getFont() const
+{
+    return font;
+}
+
+void TreeItemModel::setFont(const QFont &fnt)
+{
+    font = fnt;
 }

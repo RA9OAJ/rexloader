@@ -208,31 +208,18 @@ void AddTaskDialog::addTask()
 
     if(qr.value(0).toInt() > 0)
     {
-        EMessageBox question(this);
-        question.setIcon(QMessageBox::Question);
-        question.addButton(tr("Redownload"), QMessageBox::YesRole);
-        question.addButton(QMessageBox::Cancel);
-        question.setDefaultButton(QMessageBox::Cancel);
-        question.setText(tr("This URL is already in jobs."));
-        question.setInformativeText(tr("Click <b>\"Redownload\"</b> to add a task or <b>\"Cancel\"</b> to cancel this action."));
+        EMessageBox *question = new EMessageBox(this);
+        question->setIcon(QMessageBox::Question);
+        question->addButton(tr("Redownload"), EMessageBox::YesRole);
+        QPushButton *btn = question->addButton(tr("Cancel"),EMessageBox::RejectRole);
+        question->setDefaultButton(btn);
+        question->setText(tr("This URL <a href=\"%1\">%1</a> already exists.").arg(gui->urlBox->currentText()));
+        question->setInformativeText(tr("Click <b>\"Redownload\"</b> to add a task or <b>\"Cancel\"</b> to cancel this action."));
+        question->setActionType(EMessageBox::AT_REDOWNLOAD);
 
-        int ans = question.exec();
-        if(ans == QMessageBox::Cancel)
-        {
-            close();
-            return;
-        }
-        qr.clear();
-        qr.prepare("DELETE FROM tasks WHERE url=:url;");
-        qr.bindValue("url",gui->urlBox->currentText());
-
-        if(!qr.exec())
-        {
-            //тут запись в журнал ошибок
-            qDebug()<<"void AddTaskDialog::addTask(2): Error: "<<qr.lastError().text();
-            close();
-            return;
-        }
+        connect(question,SIGNAL(buttonClicked(QAbstractButton*)),this,SLOT(acceptQAction(QAbstractButton*)));
+        question->show();
+        return;
     }
 
     int catId = 0;
@@ -308,5 +295,36 @@ void AddTaskDialog::changeEvent(QEvent *e)
         break;
     default:
         break;
+    }
+}
+
+void AddTaskDialog::acceptQAction(QAbstractButton *btn)
+{
+    QPointer<EMessageBox> dlg = qobject_cast<EMessageBox*>(sender());
+    if(!dlg)return;
+
+    switch(dlg->myTypes())
+    {
+    case EMessageBox::AT_REDOWNLOAD:
+        {
+            if(dlg->buttonRole(btn) == EMessageBox::RejectRole) {close();return;}
+            else
+            {
+                QSqlQuery qr(mydb);
+                qr.prepare("DELETE FROM tasks WHERE url=:url;");
+                qr.bindValue("url",gui->urlBox->currentText());
+
+                if(!qr.exec())
+                {
+                    //тут запись в журнал ошибок
+                    qDebug()<<"void AddTaskDialog::acceptQAction(1): Error: "<<qr.lastError().text();
+                    close();
+                    return;
+                }
+            }
+            addTask();
+            return;
+        }
+    default: return;
     }
 }

@@ -34,6 +34,7 @@ public:
 
     enum ActionTypes{
         AT_RENAME,
+        AT_REDOWNLOAD,
         AT_NONE
     };
 

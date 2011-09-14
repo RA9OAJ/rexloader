@@ -55,8 +55,8 @@ public:
 
 public slots:
     void updateTaskSheet(); //обновляет содержимое таблицы списка заданий
-    void startTrayIconAnimaion();
-    void stopTrayIconAnimation();
+    void startTrayIconAnimaion(); //запускает анимацию значка в трее
+    void stopTrayIconAnimation(); //останавливает анимацию значка трее
     void scanNewTaskQueue(); //сканирует очередь url для добавления в очередь заданий
     void scanClipboard(); //сканирует буфер обмена на наличие доступного для скачивания URL
     void showImportFileDialog(); //отображает диалог для выбора файла импорта
@@ -91,8 +91,8 @@ protected slots:
     void openTaskDir(); //открывает в файловом менеджере папку куда сохраняется/сохранен целевой файл
     void setTaskPriority(); //устанавливает выбранный приоритет всем выделенным задачам
     void setTaskFilter(const QModelIndex &index); //устанавливает фильтр на выводимые в таблице задачи в зависимости от выделенной категории
-    void importUrlFromFile(const QStringList &files);
-    void acceptQAction(QAbstractButton *btn);
+    void importUrlFromFile(const QStringList &files); //импортирует URL из указанного файла
+    void acceptQAction(QAbstractButton *btn); //обработчик решений пользователя на задаваемые программой вопросы
 
 signals:
     void transAct();
