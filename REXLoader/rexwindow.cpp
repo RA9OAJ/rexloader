@@ -105,11 +105,14 @@ void REXWindow::createInterface()
     treemodel = new TreeItemModel(this);
     treemodel->updateModel();
     ui->treeView->setModel(treemodel);
+    ui->treeView->setAnimated(true);
     ui->treeView->header()->hide();
     ui->treeView->hideColumn(1);
     ui->treeView->hideColumn(2);
     ui->treeView->hideColumn(3);
     ui->treeView->hideColumn(4);
+    ui->treeView->setExpanded(treemodel->index(0,0),true);
+    ui->treeView->setExpanded(treemodel->index(1,0),true);
 
     //настраиваем панель инструментов
     ui->mainToolBar->addAction(ui->actionAdd_URL);
@@ -688,7 +691,6 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
         if(QFile::exists(filename) && flinfo.isFile()) //если локальный файл существует
         {
             id_task = pluglist.value(id_proto)->loadTaskFile(filename); // id задачи
-
             if(id_task) //если плагин удачно прочитал метаданные и добавил задачу
             {
                 tasklist.insert(id_row, id_task + id_proto*100);
@@ -1206,6 +1208,11 @@ void REXWindow::manageTaskQueue()
 
     if(!qr1.next())return;
 
+    QSortFilterProxyModel proxymdl;
+    proxymdl.setSourceModel(model);
+    proxymdl.setFilterRole(100);
+    proxymdl.setFilterKeyColumn(0);
+
     do{
         if(qr.value(13).toInt() <= qr1.value(13).toInt()) break; //если самый высокий приоритет стоящего в очереди меньше или равен самому маленькому приоритету выполняющегося, то выходим
         if(qr.value(13).toInt() > qr1.value(1).toInt())
@@ -1227,10 +1234,13 @@ void REXWindow::manageTaskQueue()
                 qDebug()<<"void REXWindow::manageTaskQueue(2): SQL:" + qr1.executedQuery() + " Error: " + qr1.lastError().text();
                 break;
             }
-            model->addToCache(id_row,9,-100);
+
+            proxymdl.setFilterFixedString(QString::number(id_row));
+            QModelIndex index = proxymdl.mapToSource(proxymdl.index(0,0));
+            model->addToCache(index.row(),9,-100);
             ldr->deleteTask(id_task);
             tasklist.remove(id_row);
-            model->updateRow(id_row);
+            model->updateRow(index.row());
 
             //запускаем новую задачу
 
@@ -1471,7 +1481,7 @@ void REXWindow::changeEvent(QEvent *e)
 void REXWindow::acceptQAction(QAbstractButton *btn)
 {
     QPointer<EMessageBox> dlg = qobject_cast<EMessageBox*>(sender());
-    if(dlg.isNull())return;
+    if(!dlg)return;
 
     QHash<QString, QString> params;
     QStringList _tmp_ = dlg->myParams().split("\r\n");
@@ -1506,10 +1516,12 @@ void REXWindow::acceptQAction(QAbstractButton *btn)
                 ///запись в журнал ошибок
                 qDebug()<<"void REXWindow::acceptQAction(1): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
             }
+            updateTaskSheet();
             dlg->deleteLater();
             return;
         }
     case EMessageBox::AT_NONE:
     default: return;
     }
+    dlg->deleteLater();
 }

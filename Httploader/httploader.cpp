@@ -974,13 +974,14 @@ void HttpLoader::acceptRang()
     //---Тут анализ и разбивка общего объема на секции---// + Должно быть дополнительное условие на проверку не распределения задания на секции
     if(!sect->totalFileSize() || tsk->map[2] != 0){tsk->status=LInterface::ON_LOAD;t_mutex->unlock(); addSection(id_task); return;}
     //if(!sect->totalFileSize()){t_mutex->unlock(); return;}
-    qint64 cur_spd = qMin(sect->realSpeed(), sect->downSpeed());
-    cur_spd = cur_spd != 0 ? cur_spd : 100*1024*1024;
+    qint64 cur_spd;
+    if(sect->realSpeed())cur_spd = sect->realSpeed();
+    else if(sect->downSpeed()) cur_spd = sect->downSpeed();
+    else cur_spd = 100*1024*1024;
 
    // disconnect(sect,SIGNAL(downloadingCompleted()),this,SLOT(sectionCompleted()));
     disconnect(sect,SIGNAL(acceptRanges()),this,SLOT(acceptRang()));
-
-    if(tsk->size / cur_spd <= 10){tsk->_maxSections = 1; t_mutex->unlock(); return;}
+    if(tsk->size / cur_spd <= 10 && (tsk->map[2]+tsk->map[4]+tsk->map[6]+tsk->map[8]+tsk->map[10]==0)){tsk->_maxSections = 1; t_mutex->unlock(); return;}
     sect->stopDownloading();
 
     //while(!sect->wait(1000)){qDebug()<<"HttpLoader While 4"; /*sect->terminate();*/}

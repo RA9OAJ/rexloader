@@ -37,11 +37,13 @@ public:
     virtual bool hasChildren(const QModelIndex &parent) const;
     virtual bool hasIndex(int row, int column, const QModelIndex &parent) const;
     virtual Qt::ItemFlags flags(const QModelIndex & index) const;
+    QFont getFont() const;
 
 signals:
 
 public slots:
     bool updateModel(const QSqlDatabase &db = QSqlDatabase());
+    void setFont(const QFont &fnt);
 
 private:
     void addFiltersSubtree();
@@ -51,6 +53,7 @@ private:
 
     QHash<QModelIndex,QVariant> nodes; //хэш всех узлов дерева
     QHash<QModelIndex,QModelIndex> link; //связи узлов между собой
+    QFont font;
 };
 
 #endif // TREEITEMMODEL_H

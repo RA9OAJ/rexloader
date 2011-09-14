@@ -59,6 +59,7 @@ protected slots:
     void openDirDialog();
     void startNow();
     void startLater();
+    void acceptQAction(QAbstractButton *btn); //обработчик решений пользователя на задаваемые программой вопросы
 
 private:
     Ui::AddTaskDialog *gui;
