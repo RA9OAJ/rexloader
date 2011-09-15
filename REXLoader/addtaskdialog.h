@@ -40,6 +40,7 @@ public:
     explicit AddTaskDialog(const QString &dir, QSqlDatabase &db_, QWidget *parent = 0);
     void setValidProtocols(const QHash<QString,int> &schemes);
     void setNewUrl(const QString &url);
+    void setAdditionalInfo(const QString &flnm, qint64 cursz, qint64 totalsz, const QString &mime);
 
     ~AddTaskDialog();
 
@@ -71,6 +72,11 @@ private:
     int priority;
 
     static int obj_cnt;
+    QString myfilename;
+    qint64 currentsize;
+    qint64 totalsize;
+    QString mymime;
+    bool additional_flag;
 };
 
 #endif // ADDTASKDIALOG_H

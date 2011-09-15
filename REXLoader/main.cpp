@@ -144,7 +144,6 @@ void addURL(const QStringList &_argv)
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
         db.setDatabaseName(homeapp.path()+"/tasks.db");
-        qDebug()<<db.databaseName();
 
         if(!db.open())
         {
@@ -160,10 +159,12 @@ void addURL(const QStringList &_argv)
         {
             url.clear();
             url = QUrl::fromEncoded(_argv.value(i).toAscii());
-            if(url.isValid() && !url.scheme().isEmpty())
+
+            if((url.isValid() && !url.scheme().isEmpty()) || QFile::exists(url.toString()))
             {
                 qr.prepare("INSERT INTO newtasks (url) VALUES (:url)");
-                qr.bindValue(":url",_argv.value(i));
+                if(url.scheme() == "file") qr.bindValue(":url",_argv.value(i).right(_argv.value(i).size()-7));
+                else qr.bindValue(":url",_argv.value(i));
                 if(!qr.exec())
                 {
                     //тут записываем сообщение об ошибке в error.log
@@ -197,7 +198,7 @@ bool firstProcess()
         QDateTime proc_time;
         QDateTime cur_time = QDateTime::currentDateTime();
         proc_time = QDateTime::fromString(string,"yyyy-MM-ddThh:mm:ss");
-        qDebug()<<proc_time;
+
         if(proc_time.secsTo(cur_time) > 5)
         {
             fl.remove();
