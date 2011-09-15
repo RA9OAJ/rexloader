@@ -541,13 +541,103 @@ void REXWindow::scanNewTaskQueue()
     AddTaskDialog *dlg;
     while(qr.next())
     {
-
         if(qr.value(1).toString() != "")
         {
             QUrl url(qr.value(1).toString());
             if((url.scheme().toLower() == "file" || url.scheme().isEmpty()) && QFile::exists(qr.value(1).toString()))
             {
                 //тут считываем данные о загрузке из недокачанного файла
+                QString _path = qr.value(1).toString();
+                QFileInfo flinfo(_path);
+                switch(1)
+                {
+                case 1:
+                {
+                    FILE *fl = fopen(_path.toAscii().data(), "rb");
+                    if(!fl) break;
+
+                    qint64 spos = 0;
+
+                    if(fseek(fl, flinfo.size()-8, SEEK_SET) != 0)break;
+                    fread(&spos, sizeof(qint64), 1, fl);
+                    if(fseek(fl, spos, SEEK_SET) != 0)break;
+
+                    QString header;
+                    QByteArray buffer;
+                    buffer.resize(1024);
+                    fgets(buffer.data(), 1024, fl);
+                    header.append(buffer);
+                    if(header != "\r\n")break;
+                    header.clear();
+                    fgets(buffer.data(), 1024, fl);
+                    header.append(buffer);
+                    if(header.indexOf("RExLoader")!= 0)break;
+                    QString fversion = header.split(" ").value(1);
+                    if(fversion != "0.1a.1\r\n")break;
+
+                    int length = 0;
+                    fread(&length, sizeof(int), 1, fl);
+                    buffer.resize(length);
+                    fread(buffer.data(),length, 1, fl); //считываем URL
+
+                    QUrl newurl = QUrl::fromEncoded(buffer);
+
+                    length = 0;
+                    fread(&length, sizeof(int), 1, fl);
+                    buffer.resize(length);
+                    fread(buffer.data(),length, 1, fl); //считываем реферера
+                    QString ref = buffer;
+
+                    length = 0;
+                    fread(&length, sizeof(int), 1, fl);
+                    buffer.resize(length);
+                    fread(buffer.data(),length, 1, fl); //считываем MIME
+                    QString mime = buffer;
+                    qint64 tsize = 0;
+                    fread(&tsize, sizeof(qint64), 1, fl); //считываем общий размер задания
+
+                    qint64 sum = 0;
+                    for(int i=1; i<12; i+=2)
+                    {
+                        qint64 tmp = 0;
+                        fread(&tmp, sizeof(qint64), 1, fl); //считывание карты секций
+                        sum += tmp;
+                    }
+
+                    length = 0;
+                    fread(&length, sizeof(int), 1, fl);
+                    buffer.resize(length);
+                    fread(buffer.data(),length, 1, fl); //считываем дату модификации
+                    /*QDateTime fldate = QDateTime::fromString(QString(buffer),"yyyy-MM-ddTHH:mm:ss");
+
+                    QSqlQuery qr1;
+                    qr1.prepare("INSERT INTO tasks(url,datecreate,filename,currentsize,totalsize,mime,tstatus,categoryid,priority) VALUES(:url,:datecreate,:filename,:currentsize,:totalsize,:mime,:tstatus,:categoryid,:priority)");
+                    qr1.bindValue("url",newurl);
+                    qr1.bindValue("datecreate",QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:ss"));
+                    qr1.bindValue("filename",_path);
+                    qr1.bindValue("currensize",sum);
+                    qr1.bindValue("totalsize",tsize);
+                    qr1.bindValue("mime",mime);
+                    qr1.bindValue("tstatus",-100);
+                    qr1.bindValue("categoryid",6);
+                    qr1.bindValue("priority",2);
+                    if(!qr1.exec())
+                    {
+                        //запись в журнал ошибок
+                        qDebug()<<"Error: void REXWindow::scanNewTaskQueue(): "<<qr.lastError().text();
+                        return;
+                    }*/
+
+                    dlg = new AddTaskDialog(downDir, this);
+                    connect(dlg,SIGNAL(addedNewTask()),this,SLOT(updateTaskSheet()));
+                    dlg->setValidProtocols(plugproto);
+                    dlg->setNewUrl(QString(newurl.toEncoded()));
+                    dlg->setAdditionalInfo(_path,sum,tsize,mime);
+                    dlg->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
+                    dlg->show();
+                }
+                default: break;
+                }
             }
             else if(plugproto.contains(url.scheme().toLower()))
             {

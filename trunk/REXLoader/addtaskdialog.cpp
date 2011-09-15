@@ -52,6 +52,7 @@ AddTaskDialog::AddTaskDialog(const QString &dir, QSqlDatabase &db_, QWidget *par
 void AddTaskDialog::construct()
 {
     ++obj_cnt;
+    additional_flag = false;
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle("REXLoader - "+tr("New task"));
     priority = 2; //нормальный приоритет
@@ -264,16 +265,33 @@ void AddTaskDialog::addTask()
     flname = gui->locationEdit->text() + "/" + flname + "." + dtime.toString("yyyyMMddhhmmss") + ".rldr";
 
     qr.clear();
-    qr.prepare("INSERT INTO tasks(url,filename,datecreate,tstatus,categoryid,priority,note) VALUES(:url,:filename,:datecreate,:tstatus,:categoryid,:priority,:note);");
-    qr.bindValue("url", gui->urlBox->currentText());
-    qr.bindValue("filename",flname);
-    qr.bindValue("datecreate",dtime.toString("yyyy-MM-ddThh:mm:ss"));
-    if(priority < 0)qr.bindValue("tstatus",0);
-    else qr.bindValue("tstatus",-100);
-    qr.bindValue("categoryid",catId);
-    qr.bindValue("priority",2);
-    qr.bindValue("note",gui->textEdit->document()->toPlainText());
-
+    if(!additional_flag)
+    {
+        qr.prepare("INSERT INTO tasks(url,filename,datecreate,tstatus,categoryid,priority,note) VALUES(:url,:filename,:datecreate,:tstatus,:categoryid,:priority,:note);");
+        qr.bindValue("url", gui->urlBox->currentText());
+        qr.bindValue("filename",flname);
+        qr.bindValue("datecreate",dtime.toString("yyyy-MM-ddThh:mm:ss"));
+        if(priority < 0)qr.bindValue("tstatus",0);
+        else qr.bindValue("tstatus",-100);
+        qr.bindValue("categoryid",catId);
+        qr.bindValue("priority",2);
+        qr.bindValue("note",gui->textEdit->document()->toPlainText());
+    }
+    else
+    {
+        qr.prepare("INSERT INTO tasks(url,datecreate,filename,currentsize,totalsize,mime,tstatus,categoryid,priority,note) VALUES(:url,:datecreate,:filename,:currentsize,:totalsize,:mime,:tstatus,:categoryid,:priority,:note)");
+        qr.bindValue("url", gui->urlBox->currentText());
+        qr.bindValue("datecreate",dtime.toString("yyyy-MM-ddThh:mm:ss"));
+        qr.bindValue("filename",myfilename);
+        qr.bindValue("currentsize",currentsize);
+        qr.bindValue("totalsize",totalsize);
+        qr.bindValue("mime",mymime);
+        if(priority < 0)qr.bindValue("tstatus",0);
+        else qr.bindValue("tstatus",-100);
+        qr.bindValue("categoryid",catId);
+        qr.bindValue("priority",2);
+        qr.bindValue("note",gui->textEdit->document()->toPlainText());
+    }
     if(!qr.exec())
     {
         //тут запись в журнал ошибок
@@ -327,4 +345,13 @@ void AddTaskDialog::acceptQAction(QAbstractButton *btn)
         }
     default: return;
     }
+}
+
+void AddTaskDialog::setAdditionalInfo(const QString &flnm, qint64 cursz, qint64 totalsz, const QString &mime)
+{
+    myfilename = flnm;
+    currentsize = cursz;
+    totalsize = totalsz;
+    mymime = mime;
+    additional_flag = true;
 }
