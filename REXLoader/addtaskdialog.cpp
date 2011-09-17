@@ -78,7 +78,9 @@ void AddTaskDialog::construct()
 
 void AddTaskDialog::setNewUrl(const QString &url)
 {
-    gui->urlBox->setEditText(url);
+    gui->urlBox->addItem(url);
+    gui->urlBox->setCurrentIndex(gui->urlBox->findText(url));
+    defUrl = url;
     urlValidator();
 }
 
@@ -265,19 +267,7 @@ void AddTaskDialog::addTask()
     flname = gui->locationEdit->text() + "/" + flname + "." + dtime.toString("yyyyMMddhhmmss") + ".rldr";
 
     qr.clear();
-    if(!additional_flag)
-    {
-        qr.prepare("INSERT INTO tasks(url,filename,datecreate,tstatus,categoryid,priority,note) VALUES(:url,:filename,:datecreate,:tstatus,:categoryid,:priority,:note);");
-        qr.bindValue("url", gui->urlBox->currentText());
-        qr.bindValue("filename",flname);
-        qr.bindValue("datecreate",dtime.toString("yyyy-MM-ddThh:mm:ss"));
-        if(priority < 0)qr.bindValue("tstatus",0);
-        else qr.bindValue("tstatus",-100);
-        qr.bindValue("categoryid",catId);
-        qr.bindValue("priority",2);
-        qr.bindValue("note",gui->textEdit->document()->toPlainText());
-    }
-    else
+    if(additional_flag && gui->urlBox->currentText() == defUrl)
     {
         qr.prepare("INSERT INTO tasks(url,datecreate,filename,currentsize,totalsize,mime,tstatus,categoryid,priority,note) VALUES(:url,:datecreate,:filename,:currentsize,:totalsize,:mime,:tstatus,:categoryid,:priority,:note)");
         qr.bindValue("url", gui->urlBox->currentText());
@@ -286,6 +276,19 @@ void AddTaskDialog::addTask()
         qr.bindValue("currentsize",currentsize);
         qr.bindValue("totalsize",totalsize);
         qr.bindValue("mime",mymime);
+        if(priority < 0)qr.bindValue("tstatus",0);
+        else qr.bindValue("tstatus",-100);
+        qr.bindValue("categoryid",catId);
+        qr.bindValue("priority",2);
+        qr.bindValue("note",gui->textEdit->document()->toPlainText());
+
+    }
+    else
+    {
+        qr.prepare("INSERT INTO tasks(url,filename,datecreate,tstatus,categoryid,priority,note) VALUES(:url,:filename,:datecreate,:tstatus,:categoryid,:priority,:note);");
+        qr.bindValue("url", gui->urlBox->currentText());
+        qr.bindValue("filename",flname);
+        qr.bindValue("datecreate",dtime.toString("yyyy-MM-ddThh:mm:ss"));
         if(priority < 0)qr.bindValue("tstatus",0);
         else qr.bindValue("tstatus",-100);
         qr.bindValue("categoryid",catId);

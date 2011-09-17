@@ -38,12 +38,14 @@ public:
     virtual bool hasIndex(int row, int column, const QModelIndex &parent) const;
     virtual Qt::ItemFlags flags(const QModelIndex & index) const;
     QFont getFont() const;
+    //void updateRow(int row, const QModelIndex &parent = QModelIndex);
 
 signals:
 
 public slots:
     bool updateModel(const QSqlDatabase &db = QSqlDatabase());
     void setFont(const QFont &fnt);
+    bool silentUpdate(const QSqlDatabase &db = QSqlDatabase());
 
 private:
     void addFiltersSubtree();
