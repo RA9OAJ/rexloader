@@ -27,6 +27,7 @@ REXWindow::REXWindow(QWidget *parent) :
 
     sched_flag = true;
     clip_autoscan = false;
+    stop_flag = false;
     max_tasks = 1;
     max_threads = 3;
     down_speed = 2048*8; // 2Mbps
@@ -71,6 +72,7 @@ REXWindow::REXWindow(QWidget *parent) :
     QTimer::singleShot(250,this,SLOT(scheuler()));
     updateTaskSheet();
     loadSettings();
+    scanTasksOnStart();
 }
 
 void REXWindow::createInterface()
@@ -243,6 +245,8 @@ void REXWindow::createInterface()
     traymenu->addSeparator();
     traymenu->addAction(ui->actionStartAll);
     traymenu->addAction(ui->actionStopAll);
+    traymenu->addSeparator();
+    traymenu->addMenu(ui->menu_6);
     traymenu->addSeparator();
     traymenu->addAction(trayact);
     ui->menu_4->addSeparator();
@@ -1059,27 +1063,40 @@ void REXWindow::stopAllTasks()
         ldr->stopDownload(id_task);
     }
 
-    qr.clear();
-    qr.prepare("UPDATE tasks SET tstatus=0 WHERE tstatus=-100");
-    if(!qr.exec())
+    if(!stop_flag) //если программа продолжает штатную работу
     {
-        //запись в журнал ошибок
-        qDebug()<<"void REXWindow::startAllTasks(2): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
-        return;
+        qr.clear();
+        qr.prepare("UPDATE tasks SET tstatus=0 WHERE tstatus=-100");
+        if(!qr.exec())
+        {
+            //запись в журнал ошибок
+            qDebug()<<"void REXWindow::startAllTasks(2): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
+            return;
+        }
+        updateTaskSheet();
+        QSortFilterProxyModel fltr;
+        fltr.setSourceModel(model);
+        fltr.setFilterRole(100);
+        fltr.setFilterKeyColumn(9);
+        fltr.setFilterFixedString("0");
+        for(int i = 0; i < fltr.rowCount(); ++i)
+        {
+            QModelIndex index = fltr.mapToSource(fltr.index(i,0));
+            model->updateRow(index.row());
+        }
+        manageTaskQueue();
     }
-    updateTaskSheet();
-    QSortFilterProxyModel fltr;
-    fltr.setSourceModel(model);
-    fltr.setFilterRole(100);
-    fltr.setFilterKeyColumn(9);
-    fltr.setFilterFixedString("0");
-    for(int i = 0; i < fltr.rowCount(); ++i)
+    else //если программа завершает свою работу
     {
-        QModelIndex index = fltr.mapToSource(fltr.index(i,0));
-        model->updateRow(index.row());
+        qr.clear();
+        qr.prepare("UPDATE tasks SET tstatus=-100 WHERE tstatus BETWEEN 1 AND 4");
+        if(!qr.exec())
+        {
+            //запись в журнал ошибок
+            qDebug()<<"void REXWindow::startAllTasks(3): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
+            return;
+        }
     }
-
-    manageTaskQueue();
     syncTaskData();
 }
 
@@ -1249,6 +1266,7 @@ void REXWindow::syncTaskData()
 
 void REXWindow::manageTaskQueue()
 {
+    if(stop_flag)return;
     QSqlQuery qr(QSqlDatabase::database());
     qr.prepare("SELECT * FROM tasks WHERE tstatus=-100 ORDER BY priority DESC"); //список задач в очереди
     if(!qr.exec())
@@ -1550,6 +1568,8 @@ void REXWindow::closeEvent(QCloseEvent *event)
     }
     else
     {
+        stop_flag = true;
+        stopAllTasks();
         saveSettings();
         event->accept();
         qApp->quit();
@@ -1610,8 +1630,38 @@ void REXWindow::acceptQAction(QAbstractButton *btn)
             dlg->deleteLater();
             return;
         }
+    case EMessageBox::AT_DOWNLOAD_ON_START:
+        {
+            if(dlg->buttonRole(qobject_cast<QPushButton*>(btn)) == EMessageBox::ApplyRole)
+                startAllTasks();
+            return;
+        }
     case EMessageBox::AT_NONE:
     default: return;
     }
     dlg->deleteLater();
+}
+
+void REXWindow::scanTasksOnStart()
+{
+    QSqlQuery qr("SELECT COUNT(*) FROM tasks WHERE tstatus=0");
+    if(!qr.exec())
+    {
+        ///запись в журнал ошибок
+        qDebug()<<"void REXWindow::scanTasksOnStart(1): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
+    }
+    qr.next();
+    if(qr.value(0).toInt() == 0)return;
+    EMessageBox *question = new EMessageBox(this);
+    question->setIcon(EMessageBox::Question);
+    QPushButton *btn1 = question->addButton(tr("Resume all"),EMessageBox::ApplyRole);
+    question->addButton(tr("Cancel"),EMessageBox::RejectRole);
+    question->setDefaultButton(btn1);
+    question->setText(tr("There are outstanding tasks."));
+    question->setInformativeText(tr("To complete all tasks, click \"Resume all\", to cancel - \"Cancel\""));
+    question->setActionType(EMessageBox::AT_DOWNLOAD_ON_START);
+    connect(question,SIGNAL(buttonClicked(QAbstractButton*)),this,SLOT(acceptQAction(QAbstractButton*)));
+    question->setModal(true);
+    if(!isVisible()) question->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
+    question->show();
 }

@@ -70,6 +70,7 @@ private:
     QMap<int, QString> dirs;
     QList<QString> protocols;
     int priority;
+    QString defUrl;
 
     static int obj_cnt;
     QString myfilename;

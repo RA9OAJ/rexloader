@@ -540,9 +540,9 @@ void HttpLoader::syncFileMap(Task* _task)
     fseek(fl, spos, SEEK_SET);
     QByteArray outbuf("\r\nRExLoader 0.1a.1\r\n");
     fwrite(outbuf.data(), 1, outbuf.size(), fl);
-    int _lenght = _task->url.toString().toAscii().size();
+    int _lenght = _task->url.toEncoded().size();
     fwrite(&_lenght, 1, sizeof(int),fl); //длина строки с URL
-    fwrite(_task->url.toEncoded().data(), 1, _task->url.toString().toAscii().size(), fl); //строка с URL
+    fwrite(_task->url.toEncoded().data(), 1, _task->url.toEncoded().size(), fl); //строка с URL
     _lenght = _task->referer.toAscii().size();
     fwrite(&_lenght, 1, sizeof(int), fl); //длина строки реферера, если нет, то 0
     if(_lenght) fwrite(_task->referer.toAscii().data(), 1, _task->referer.toAscii().size(), fl);

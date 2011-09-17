@@ -195,7 +195,8 @@ Qt::ItemFlags TreeItemModel::flags(const QModelIndex &index) const
 {
     QModelIndex index_id = this->index(index.row(),1,index.parent());
     int id = data(index_id,100).toInt();
-    if(id < 2) return QAbstractItemModel::flags(index);
+    if(id < 1) return QAbstractItemModel::flags(index);
+    else if(id == 1) return QAbstractItemModel::flags(index) | Qt::ItemIsDropEnabled;
     return QAbstractItemModel::flags(index) | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
 }
 
@@ -208,3 +209,50 @@ void TreeItemModel::setFont(const QFont &fnt)
 {
     font = fnt;
 }
+
+bool TreeItemModel::silentUpdate(const QSqlDatabase &db)
+{
+    if(qr)delete(qr);
+    qr = 0;
+    qr = new QSqlQuery("SELECT title, id, dir, extlist, parent_id FROM categories ORDER BY parent_id ASC",db);
+    if(!qr->exec())
+    {
+        reset();
+        addFiltersSubtree();
+        return false;
+    }
+
+    nodes.clear();
+    link.clear();
+    nodes.insert(QModelIndex(),QVariant());
+    QHash<int,QModelIndex> key_nodes;
+    QHash<QModelIndex,int> row_cnt;
+    row_cnt.insert(QModelIndex(),0);
+    while(qr->next())
+    {
+        gcol = qr->record().count();
+        QModelIndex parent;
+        if(!qr->value(4).toInt()) parent = QModelIndex();
+        else parent = key_nodes.value(qr->value(4).toInt());
+        for(int i = 0; i < qr->record().count(); ++i)
+        {
+            QModelIndex cur = createIndex(row_cnt.value(parent),i,nodes.size());
+            nodes.insert(cur,qr->value(i));
+            link.insert(cur,parent);
+            if(!i)
+            {
+                key_nodes.insert(qr->value(1).toInt(),cur);
+            }
+        }
+        row_cnt[parent]++;
+    }
+    delete(qr);
+    qr = 0;
+    addFiltersSubtree();
+    return true;
+}
+
+/*void TreeItemModel::updateRow(int row, const QModelIndex &parent)
+{
+
+}*/
