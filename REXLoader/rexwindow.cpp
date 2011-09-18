@@ -1481,7 +1481,8 @@ void REXWindow::updateStatusBar()
             break;
         }
         priority->setVisible(true);
-        urllbl->setText(QString("<a href='%1'>%1</a>").arg(model->index(row_id,1).data(Qt::DisplayRole).toString()));
+        QString encoded(model->index(row_id,1).data(Qt::DisplayRole).toUrl().toEncoded());
+        urllbl->setText(QString("<a href='%1'>%2</a>").arg(encoded,model->index(row_id,1).data(Qt::DisplayRole).toString()));
         urllbl->setVisible(true);
         progress->setMaximum(100);
         int curVal = model->index(row_id,5).data(100).toLongLong() > 0 ? ((qint64)100*model->index(row_id,4).data(100).toLongLong()/model->index(row_id,5).data(100).toLongLong()) : 0;

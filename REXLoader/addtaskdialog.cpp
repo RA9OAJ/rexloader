@@ -64,6 +64,7 @@ void AddTaskDialog::construct()
     connect(gui->browseButton,SIGNAL(released()),this,SLOT(openDirDialog()));
     connect(gui->startNowBtn,SIGNAL(released()),this,SLOT(startNow()));
     connect(gui->startLaterBtn,SIGNAL(released()),this,SLOT(startLater()));
+    connect(gui->urlBox,SIGNAL(activated(QString)),this,SLOT(getCategory(QString)));
 
     QDesktopWidget ds;
     QRect desktop = ds.availableGeometry();
@@ -127,6 +128,7 @@ void AddTaskDialog::urlValidator()
         gui->startNowBtn->setEnabled(false);
         gui->startLaterBtn->setEnabled(false);
     }
+    getCategory(gui->urlBox->currentText());
 }
 
 AddTaskDialog::~AddTaskDialog()
@@ -262,7 +264,8 @@ void AddTaskDialog::addTask()
 
     QDir().mkpath(gui->locationEdit->text());
     QDateTime dtime(QDateTime::currentDateTime());
-    QFileInfo flinfo(gui->urlBox->currentText());
+    QUrl curl = QUrl::fromEncoded(gui->urlBox->currentText().toAscii());
+    QFileInfo flinfo(curl.toString(QUrl::RemoveQuery | QUrl::RemoveFragment));
     QString flname = (flinfo.fileName() != QString() ? flinfo.fileName() : "noname.html");
     flname = gui->locationEdit->text() + "/" + flname + "." + dtime.toString("yyyyMMddhhmmss") + ".rldr";
 
@@ -327,25 +330,25 @@ void AddTaskDialog::acceptQAction(QAbstractButton *btn)
     switch(dlg->myTypes())
     {
     case EMessageBox::AT_REDOWNLOAD:
+    {
+        if(dlg->buttonRole(btn) == EMessageBox::RejectRole) {close();return;}
+        else
         {
-            if(dlg->buttonRole(btn) == EMessageBox::RejectRole) {close();return;}
-            else
-            {
-                QSqlQuery qr(mydb);
-                qr.prepare("DELETE FROM tasks WHERE url=:url;");
-                qr.bindValue("url",gui->urlBox->currentText());
+            QSqlQuery qr(mydb);
+            qr.prepare("DELETE FROM tasks WHERE url=:url;");
+            qr.bindValue("url",gui->urlBox->currentText());
 
-                if(!qr.exec())
-                {
-                    //тут запись в журнал ошибок
-                    qDebug()<<"void AddTaskDialog::acceptQAction(1): Error: "<<qr.lastError().text();
-                    close();
-                    return;
-                }
+            if(!qr.exec())
+            {
+                //тут запись в журнал ошибок
+                qDebug()<<"void AddTaskDialog::acceptQAction(1): Error: "<<qr.lastError().text();
+                close();
+                return;
             }
-            addTask();
-            return;
         }
+        addTask();
+        return;
+    }
     default: return;
     }
 }
@@ -357,4 +360,61 @@ void AddTaskDialog::setAdditionalInfo(const QString &flnm, qint64 cursz, qint64 
     totalsize = totalsz;
     mymime = mime;
     additional_flag = true;
+    getCategory(myfilename);
+}
+
+void AddTaskDialog::getCategory(const QString &file)
+{
+    QString fl;
+    if(additional_flag && gui->urlBox->currentText() == defUrl)fl = myfilename;
+    else fl = file;
+    QUrl nurl = QUrl::fromEncoded(fl.toAscii());
+    QFileInfo flinfo(nurl.toString(QUrl::RemoveFragment | QUrl::RemoveQuery));
+
+    QSqlQuery qr(mydb), qr1(mydb);
+    qr.prepare("SELECT id,extlist FROM categories WHERE extlist LIKE :ext1 OR extlist LIKE :ext2 OR extlist LIKE :ext3 OR extlist LIKE :ext4");
+    qr1.prepare("SELECT id,extlist FROM categories WHERE extlist LIKE '%\%U%' ESCAPE '\\' ");
+    QString ext_ = flinfo.suffix().toLower();
+    qr.bindValue("ext1", QString("% %1 %").arg(ext_));
+    qr.bindValue("ext2", QString("%1 %").arg(flinfo.suffix()));
+    qr.bindValue("ext3", QString("% %1").arg(flinfo.suffix()));
+    qr.bindValue("ext4", QString("%1").arg(flinfo.suffix()));
+    if(!qr.exec())
+    {
+        //тут запись в журнал ошибок
+        qDebug()<<"void AddTaskDialog::getCategory(1): Error: "<<qr.lastError().text();
+        close();
+        return;
+    }
+    if(!qr1.exec())
+    {
+        //тут запись в журнал ошибок
+        qDebug()<<"void AddTaskDialog::getCategory(2): Error: "<<qr1.lastError().text();
+        close();
+        return;
+    }
+
+    int catId = 6;
+    int chars_max_cnt = 0;
+    while(qr1.next())
+    {
+        QStringList extlst = qr1.value(1).toString().split(" "); //получаем список расширений и хостов
+        for(int i = 0; extlst.indexOf(QRegExp("%U[:./\\w+]+"),i) >= 0;)
+        {
+            int index = extlst.indexOf(QRegExp("%U[:./\\w+]+"),i);
+            int chars_cnt = extlst.value(index).size();
+            if(chars_cnt <= chars_max_cnt)continue;
+            QString curhost = extlst.value(index).right(chars_cnt-2);
+            if(fl.indexOf(curhost,0,Qt::CaseInsensitive) >= 0)
+            {
+                chars_max_cnt = chars_cnt;
+                catId = qr1.value(0).toInt();
+            }
+            i = index + 1;
+        }
+    }
+    if(catId == 6 && qr.next())
+        catId = qr.value(0).toInt();
+
+    gui->categoryBox->setCurrentIndex(gui->categoryBox->findData(catId));
 }
