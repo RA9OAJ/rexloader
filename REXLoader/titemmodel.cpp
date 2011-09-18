@@ -191,6 +191,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
 
         if(index.column() == 5)
         {
+            if(!myData(row,5).toLongLong())return tr("N/a");
             QStringList sz = sizeForHumans(myData(row,5).toLongLong());
             return sz.value(0)+sz.value(1);
         }
@@ -294,7 +295,8 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         if(filename.right(5) == ".rldr")filename = filename.left(filename.size()-20);
 
         QStringList _tmp = sizeForHumans(totalsz);
-        totalszStr = _tmp.value(0)+_tmp.value(1);
+        if(!totalsz) totalszStr = tr("N/a");
+        else totalszStr = _tmp.value(0)+_tmp.value(1);
         _tmp.clear();
         _tmp = sizeForHumans(myData(row,4).toLongLong());
         cursz = _tmp.value(0)+_tmp.value(1);
@@ -306,7 +308,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         }
         else spd = "---";
 
-        tooltip = QString(tr("URL: %1\r\nFilename: %2\r\nTotal size: %3\r\nLeft: %4 (%5%)\r\nDown. speed: %6")).arg(myData(row,1).toString(),filename,totalszStr,cursz,percent,spd);
+        tooltip = QString(tr("URL: %1<br>Filename: %2<br>Total size: %3<br>Left: %4 (%5%)<br><font color='#00bb00'>Down. speed: %6</font>")).arg(myData(row,1).toString(),filename,totalszStr,cursz,percent,spd);
         return tooltip;
     }
 

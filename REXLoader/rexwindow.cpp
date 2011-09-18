@@ -1135,8 +1135,16 @@ void REXWindow::syncTaskData()
         qint64 totalsize = ldr->totalSize(id_task);
         qint64 totalload = ldr->totalLoadedOnTask(id_task);
         QString filepath = ldr->taskFilePath(id_task);
-        //QFileInfo flinfo(filepath);
-        //if(flinfo.isDir()){filepath.right(1) == "/" ? filepath +="noname.html" : filepath +="/noname.html";}
+        QFileInfo flinfo(filepath);
+        if(flinfo.isDir())
+        {
+            QSortFilterProxyModel fmodel;
+            fmodel.setSourceModel(model);
+            fmodel.setFilterKeyColumn(0);
+            fmodel.setFilterRole(100);
+            fmodel.setFilterFixedString(QString::number(id_row));
+            filepath = fmodel.data(fmodel.index(0,3)).toString();
+        }
         qint64 speed = ldr->downSpeed(id_task);
         model->setMetaData(id_row,"speed",speed);
 
@@ -1160,7 +1168,30 @@ void REXWindow::syncTaskData()
         if(tstatus == LInterface::ERROR_TASK)
         {
             int errno_ = ldr->errorNo(id_task);
-            QString errStr = ldr->errorString(errno_);
+            QString errStr;
+
+            switch(errno_)
+            {
+            case LInterface::FILE_NOT_FOUND: errStr = tr("File not found.");break;
+            case LInterface::FILE_DATETIME_ERROR: errStr = tr("Date and time of file modification does not coincide with those.");break;
+            case LInterface::FILE_SIZE_ERROR: errStr = tr("File size does not match the expected.");break;
+            case LInterface::FILE_CREATE_ERROR: errStr = tr("Can not create a file on local disk.");break;
+            case LInterface::FILE_WRITE_ERROR: errStr = tr("Unable to write data to a local file.");break;
+            case LInterface::FILE_READ_ERROR:errStr = tr("Unable to read data to a local file.");break;
+            case LInterface::HOST_NOT_FOUND: errStr = tr("The remote host is not found.");break;
+            case LInterface::CONNECT_ERROR: errStr = tr("Error connecting to remote host.");break;
+            case LInterface::CONNECT_LOST: errStr = tr("Connecting to remote host was lost.");break;
+            case LInterface::SERVER_REJECT_QUERY: errStr = tr("Server rejected request.");break;
+            case LInterface::PROXY_NOT_FOUND: errStr = tr("Proxies can not be found.");break;
+            case LInterface::PROXY_AUTH_ERROR: errStr = tr("Unable to authenticate to the proxy server.");break;
+            case LInterface::PROXY_ERROR: errStr = tr("Proxy protocol error.");break;
+            case LInterface::PROXY_CONNECT_CLOSE: errStr = tr("The proxy server unexpectedly closed the connection.");break;
+            case LInterface::PROXY_CONNECT_REFUSED: errStr = tr("Proxy server refused connection.");break;
+            case LInterface::PROXY_TIMEOUT: errStr = tr("Timed response proxy.");break;
+            case LInterface::ERRORS_MAX_COUNT: errStr = tr("Maximum number of errors.");break;
+            default:
+                errStr = ldr->errorString(errno_);
+            }
 
             qr.prepare("UPDATE tasks SET totalsize=:totalsize, currentsize=:currentsize, filename=:filename, downtime=:downtime, tstatus=:tstatus, speed_avg=:speedavg,lasterror=:lasterror WHERE id=:id");
             qr.bindValue("totalsize",QString::number(totalsize));
@@ -1169,7 +1200,7 @@ void REXWindow::syncTaskData()
             qr.bindValue("downtime",downtime);
             qr.bindValue("tstatus",tstatus);
             qr.bindValue("speedavg",QString::number(speedAvg));
-            qr.bindValue("lasterror",QString("%1 (%2)").arg(errStr,QString::number(errno_)));
+            qr.bindValue("lasterror",tr("%1 (Error code: %2)").arg(errStr,QString::number(errno_)));
             qr.bindValue("id",id_row);
 
             if(!qr.exec())
