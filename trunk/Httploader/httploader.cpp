@@ -723,7 +723,7 @@ void HttpLoader::sectError(int _errno)
         if(!ignore_critical && tsk->sections_cnt < 2)
         {
             tsk->status = LInterface::ERROR_TASK; //в случае критичных ошибок
-            tsk->error_number = _errno;
+            tsk->error_number = LInterface::FILE_NOT_FOUND;
             stopDownload(id_task);
             break;
         }
