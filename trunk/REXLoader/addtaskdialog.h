@@ -61,6 +61,7 @@ protected slots:
     void startNow();
     void startLater();
     void acceptQAction(QAbstractButton *btn); //обработчик решений пользователя на задаваемые программой вопросы
+    void getCategory(const QString &file); //распознает категорию для файла по его расширению
 
 private:
     Ui::AddTaskDialog *gui;

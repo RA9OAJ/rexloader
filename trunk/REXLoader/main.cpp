@@ -103,10 +103,10 @@ void checkDatabase()
 
             qr->clear();
             QString queries("INSERT INTO categories (title,dir,parent_id) VALUES ('#downloads','',0);\r\n"
-                            "INSERT INTO categories (title,dir,parent_id) VALUES ('#archives','',(SELECT id FROM categories WHERE title='#downloads'));\r\n"
-                            "INSERT INTO categories (title,dir,parent_id) VALUES ('#apps','',(SELECT id FROM categories WHERE title='#downloads'));\r\n"
-                            "INSERT INTO categories (title,dir,parent_id) VALUES ('#audio','',(SELECT id FROM categories WHERE title='#downloads'))\r\n;"
-                            "INSERT INTO categories (title,dir,parent_id) VALUES ('#video','',(SELECT id FROM categories WHERE title='#downloads'));\r\n"
+                            "INSERT INTO categories (title,dir,extlist,parent_id) VALUES ('#archives','','7z ace arj bz2 cab cpio deb f gz ha img iso jar lzh lzo lzx rar rpm smc tar xz zip zoo',(SELECT id FROM categories WHERE title='#downloads'));\r\n"
+                            "INSERT INTO categories (title,dir,extlist,parent_id) VALUES ('#apps','','bin sh bash exe',(SELECT id FROM categories WHERE title='#downloads'));\r\n"
+                            "INSERT INTO categories (title,dir,extlist,parent_id) VALUES ('#audio','','aa aac amr ape asf cda fla flac mp3 mt9 ogg voc wav wma midi mod stm s3m mmf m3u gtp gp3 gp4 gp5',(SELECT id FROM categories WHERE title='#downloads'))\r\n;"
+                            "INSERT INTO categories (title,dir,extlist,parent_id) VALUES ('#video','','3gp aaf asf avi bik cpk flv mkv mov mpeg mxf nut nsv ogm mov qt pva smk vivo wmv mp4 vob',(SELECT id FROM categories WHERE title='#downloads'));\r\n"
                             "INSERT INTO categories (title,dir,parent_id) VALUES ('#other','',(SELECT id FROM categories WHERE title='#downloads'));");
             QStringList querstr = queries.split("\r\n");
             for(int i=0; i<querstr.size(); i++)
