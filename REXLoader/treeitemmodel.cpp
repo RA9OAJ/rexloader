@@ -252,7 +252,35 @@ bool TreeItemModel::silentUpdate(const QSqlDatabase &db)
     return true;
 }
 
-/*void TreeItemModel::updateRow(int row, const QModelIndex &parent)
+void TreeItemModel::removeRow(int row, const QModelIndex &parent)
+{
+}
+
+void TreeItemModel::updateRow(int row, const QModelIndex &parent)
 {
 
-}*/
+}
+
+void TreeItemModel::insertRow(int row, const QModelIndex &parent)
+{
+
+}
+
+QList<QModelIndex> TreeItemModel::parentsInTree() const
+{
+    QList<QModelIndex> list = link.values();
+    for(int i = 0; i < list.size();)
+    {
+        int cnt = list.size();
+        if(list.value(i) == QModelIndex())
+        {
+            list.removeAll(QModelIndex());
+            continue;
+        }
+        while(list.count(list.value(i)) > 1)
+            list.removeOne(list.value(i));
+        if(cnt > list.size()) i = 0;
+        else ++i;
+    }
+    return list;
+}
