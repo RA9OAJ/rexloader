@@ -522,6 +522,7 @@ void REXWindow::scanClipboard()
         clip_last = url.toString();
         AddTaskDialog *dlg = new AddTaskDialog(downDir, 0);
         connect(dlg,SIGNAL(addedNewTask()),this,SLOT(updateTaskSheet()));
+        connect(dlg,SIGNAL(addedNewTask()),ui->tableView,SLOT(scrollToBottom()));
         dlg->setValidProtocols(plugproto);
         dlg->setNewUrl(url.toString());
         dlg->setWindowFlags(Qt::WindowStaysOnTopHint);
@@ -660,6 +661,7 @@ void REXWindow::scanNewTaskQueue()
 
                     dlg = new AddTaskDialog(downDir, this);
                     connect(dlg,SIGNAL(addedNewTask()),this,SLOT(updateTaskSheet()));
+                    connect(dlg,SIGNAL(addedNewTask()),ui->tableView,SLOT(scrollToBottom()));
                     dlg->setValidProtocols(plugproto);
                     dlg->setNewUrl(QString(newurl.toEncoded()));
                     dlg->setAdditionalInfo(_path,sum,tsize,mime);
@@ -776,6 +778,7 @@ void REXWindow::showAddTaskDialog()
 {
     AddTaskDialog *dlg = new AddTaskDialog(downDir, this);
     connect(dlg,SIGNAL(addedNewTask()),this,SLOT(updateTaskSheet()));
+    connect(dlg,SIGNAL(addedNewTask()),ui->tableView,SLOT(scrollToBottom()));
     dlg->setValidProtocols(plugproto);
     if(!isVisible()) dlg->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
     dlg->show();
@@ -1115,7 +1118,7 @@ void REXWindow::stopAllTasks()
     else //если программа завершает свою работу
     {
         qr.clear();
-        qr.prepare("UPDATE tasks SET tstatus=-100 WHERE tstatus BETWEEN 1 AND 4");
+        qr.prepare("UPDATE tasks SET tstatus=0 WHERE tstatus BETWEEN 1 AND 4 OR tstatus=-100");
         if(!qr.exec())
         {
             //запись в журнал ошибок
@@ -1685,14 +1688,13 @@ void REXWindow::acceptQAction(QAbstractButton *btn)
                 qDebug()<<"void REXWindow::acceptQAction(1): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
             }
             updateTaskSheet();
-            dlg->deleteLater();
-            return;
+            break;
         }
     case EMessageBox::AT_DOWNLOAD_ON_START:
         {
             if(dlg->buttonRole(qobject_cast<QPushButton*>(btn)) == EMessageBox::ApplyRole)
                 startAllTasks();
-            return;
+            break;
         }
     case EMessageBox::AT_NONE:
     default: return;
