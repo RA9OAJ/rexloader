@@ -38,7 +38,10 @@ public:
     virtual bool hasIndex(int row, int column, const QModelIndex &parent) const;
     virtual Qt::ItemFlags flags(const QModelIndex & index) const;
     QFont getFont() const;
-    //void updateRow(int row, const QModelIndex &parent = QModelIndex);
+    void updateRow(int row, const QModelIndex &parent = QModelIndex());
+    void removeRow(int row, const QModelIndex &parent = QModelIndex());
+    void insertRow(int row, const QModelIndex &parent = QModelIndex());
+    QList<QModelIndex> parentsInTree() const;
 
 signals:
 

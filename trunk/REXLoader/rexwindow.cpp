@@ -467,6 +467,19 @@ void REXWindow::saveSettings()
     settings.setValue("WindowState",saveState());
     settings.setValue("WindowVisible",isVisible());
     settings.endGroup();
+    settings.beginGroup("Interface Windgets");
+    settings.setValue("TasksTable",ui->tableView->horizontalHeader()->saveState());
+    settings.setValue("WindowHSplitter", ui->splitter_2->saveState());
+    settings.setValue("WindowVSplitter", ui->splitter->saveState());
+    settings.endGroup();
+    settings.beginWriteArray("TreeViewNodes");
+    QList<QModelIndex> list = treemodel->parentsInTree();
+    for(int i = 0; i < list.size(); ++i)
+    {
+        settings.setArrayIndex(i);
+        settings.setValue("State",ui->treeView->isExpanded(list.value(i)));
+    }
+    settings.endArray();
     settings.sync();
 }
 
@@ -483,6 +496,19 @@ void REXWindow::loadSettings()
         QTimer::singleShot(0,this,SLOT(close()));
     }
     settings.endGroup();
+    settings.beginGroup("Interface Windgets");
+    ui->tableView->horizontalHeader()->restoreState(settings.value("TasksTable").toByteArray());
+    ui->splitter_2->restoreState(settings.value("WindowHSplitter").toByteArray());
+    ui->splitter->restoreState(settings.value("WindowVSplitter").toByteArray());
+    settings.endGroup();
+    settings.beginWriteArray("TreeViewNodes");
+    QList<QModelIndex> list = treemodel->parentsInTree();
+    for(int i = 0; i < list.size(); ++i)
+    {
+        settings.setArrayIndex(i);
+        ui->treeView->setExpanded(list.value(i),settings.value("State").toBool());
+    }
+    settings.endArray();
 }
 
 void REXWindow::scanClipboard()
