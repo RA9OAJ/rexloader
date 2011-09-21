@@ -1768,6 +1768,15 @@ void REXWindow::readSettings()
     else if(ui->actionNormal->isChecked()) down_speed = settDlg->value("s_normal").toLongLong()*8;
     else down_speed = settDlg->value("s_hight").toLongLong()*8;
 
+    QList<LoaderInterface*> plugins = pluglist.values();
+    for(int i = 0; i < plugins.size(); ++i)
+    {
+        if(!plugins.value(i))continue;
+        plugins.value(i)->setMaxErrorsOnTask(settDlg->value("max_number_errors").toInt());
+        plugins.value(i)->setRetryCriticalError(settDlg->value("enable_ignore_errors").toBool());
+        plugins.value(i)->setMaxSectionsOnTask(max_threads);
+    }
+
     calculateSpeed();
 }
 

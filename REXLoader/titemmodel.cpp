@@ -99,27 +99,19 @@ void TItemModel::updateRow(int row)
 
 void TItemModel::addToCache(int row, int col, const QVariant &value)
 {
-    if(!cache.contains(row))
-        cache.insert(row,new QHash<int,QVariant>);
-
-    cache.value(row)->insert(col,value);
+    /*if(!cache.contains(row))
+        cache.insert(row,new QHash<int,QVariant>);*/
+    cache[row].insert(col,value);
 }
 
 void TItemModel::clearCache(int row)
 {
     if(row < 0)
     {
-        QList<int> keys = cache.keys();
-        for(int i = 0; i < keys.size(); i++)
-        {
-            cache.value(keys.value(i))->clear();
-            delete(cache.value(keys.value(i)));
-            cache.remove(keys.value(i));
-        }
+        cache.clear();
         return;
     }
-    cache.value(row)->clear();
-    delete(cache.value(row));
+    cache[row].clear();
     cache.remove(row);
 }
 
@@ -128,10 +120,7 @@ QVariant TItemModel::myData(int row, int col) const
     qr->seek(row);
 
     if(cache.contains(row))
-    {
-        if(cache.value(row)->contains(col))
-            return cache.value(row)->value(col);
-    }
+        if(cache[row].contains(col))return cache[row].value(col);
 
     return qr->value(col);
 }
