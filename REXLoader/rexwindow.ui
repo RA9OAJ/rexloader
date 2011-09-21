@@ -113,15 +113,6 @@
     <property name="title">
      <string>Задания</string>
     </property>
-    <widget class="QMenu" name="menu_6">
-     <property name="title">
-      <string>Скорость загрузки</string>
-     </property>
-     <addaction name="actionWeryLow"/>
-     <addaction name="actionLow"/>
-     <addaction name="actionNormal"/>
-     <addaction name="actionHigh"/>
-    </widget>
     <widget class="QMenu" name="menu_7">
      <property name="title">
       <string>Установить приоритет</string>
@@ -131,6 +122,15 @@
      <addaction name="actionPNormal"/>
      <addaction name="actionPHight"/>
      <addaction name="actionPVeryHight"/>
+    </widget>
+    <widget class="QMenu" name="menu_6">
+     <property name="title">
+      <string>Скорость загрузки</string>
+     </property>
+     <addaction name="actionVeryLow"/>
+     <addaction name="actionLow"/>
+     <addaction name="actionNormal"/>
+     <addaction name="actionHight"/>
     </widget>
     <addaction name="actionStart"/>
     <addaction name="actionStop"/>
@@ -316,7 +316,7 @@
     <string>Shift+Del</string>
    </property>
   </action>
-  <action name="actionWeryLow">
+  <action name="actionVeryLow">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -340,7 +340,7 @@
     <string>Средняя</string>
    </property>
   </action>
-  <action name="actionHigh">
+  <action name="actionHight">
    <property name="checkable">
     <bool>true</bool>
    </property>

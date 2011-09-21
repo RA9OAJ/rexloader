@@ -20,6 +20,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SETTINGSDIALOG_H
 
 #include <QDialog>
+#include <QHash>
+#include <QDesktopWidget>
+#include <QTimer>
+#include <QFileDialog>
 
 namespace Ui {
     class SettingsDialog;
@@ -32,13 +36,33 @@ class SettingsDialog : public QDialog
 public:
     explicit SettingsDialog(QWidget *parent = 0);
     ~SettingsDialog();
+    QList<QString> keys() const;
+    QVariant value(const QString &key) const;
+
+signals:
+    void newSettings();
+
+public slots:
+    void show();
+    void setSettingAttribute(const QString &key, const QVariant &value);
+    void updateInterface();
+
+protected:
+    void closeEvent(QCloseEvent *event);
 
 protected slots:
     void selectSubSettings();
+    void applySets();
+    void cancelSets();
+    void applyAndClose();
+    void setDownDir(const QString &dir);
+    void showFileDialog();
 
 private:
     Ui::SettingsDialog *ui;
     int last_row;
+
+    QHash<QString,QVariant> sets;
 };
 
 #endif // SETTINGSDIALOG_H

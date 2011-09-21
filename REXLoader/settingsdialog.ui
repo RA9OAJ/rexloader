@@ -123,7 +123,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBoMinimize">
+           <widget class="QCheckBox" name="checkBoxMinimize">
             <property name="text">
              <string>Start minimized in tray</string>
             </property>
@@ -214,7 +214,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="lineEdit">
+             <widget class="QLineEdit" name="userAgent">
               <property name="text">
                <string>REXLoader/0.1</string>
               </property>
@@ -277,7 +277,7 @@
           <item>
            <widget class="QTabWidget" name="tabWidget">
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="connectionTab">
              <attribute name="title">
@@ -756,7 +756,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBox">
+           <widget class="QCheckBox" name="checkBoxIgnoreErrors">
             <property name="text">
              <string>Ignore critical errors</string>
             </property>
@@ -785,7 +785,7 @@
              </spacer>
             </item>
             <item>
-             <widget class="QSpinBox" name="spinBox">
+             <widget class="QSpinBox" name="spinBoxMaxErrors">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
@@ -834,13 +834,13 @@
  <tabstops>
   <tabstop>listWidget</tabstop>
   <tabstop>checkBoxLogo</tabstop>
-  <tabstop>checkBoMinimize</tabstop>
+  <tabstop>checkBoxMinimize</tabstop>
   <tabstop>animateTrayBox</tabstop>
   <tabstop>checkBoxUpdates</tabstop>
   <tabstop>checkBoxPasswords</tabstop>
   <tabstop>scanClipboard</tabstop>
   <tabstop>notShowAddingDialog</tabstop>
-  <tabstop>lineEdit</tabstop>
+  <tabstop>userAgent</tabstop>
   <tabstop>defaultsButton</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>spinHight</tabstop>
