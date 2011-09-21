@@ -54,7 +54,7 @@ private:
     QSqlQuery *qr;
     int grow,gcolumn;
     QHash<int,qint64>curspeed;
-    QHash<int,QHash<int,QVariant>*>cache;
+    QHash<int, QHash<int,QVariant> >cache;
 };
 
 #endif // TITEMMODEL_H
