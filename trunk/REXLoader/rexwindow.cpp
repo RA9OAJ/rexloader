@@ -26,7 +26,6 @@ REXWindow::REXWindow(QWidget *parent) :
     ui->setupUi(this);
 
     sched_flag = true;
-    clip_autoscan = false;
     stop_flag = false;
     max_tasks = 1;
     max_threads = 3;
@@ -53,7 +52,9 @@ REXWindow::REXWindow(QWidget *parent) :
     movie = new QMovie(this);
     movie->setFileName(":/appimages/onload.gif");
     connect(movie,SIGNAL(updated(QRect)),this,SLOT(updateTrayIcon()));
+
     settDlg = new SettingsDialog(this);
+    connect(settDlg,SIGNAL(newSettings()),this,SLOT(readSettings()));
 
     apphomedir = QDir::homePath()+"/.rexloader";
 
@@ -217,21 +218,25 @@ void REXWindow::createInterface()
     connect(ui->actionAppSettings,SIGNAL(triggered()),settDlg,SLOT(show()));
     connect(ui->actionImportURL,SIGNAL(triggered()),this,SLOT(showImportFileDialog()));
     connect(ui->actionAboutQt,SIGNAL(triggered()),qApp,SLOT(aboutQt()));
+    connect(ui->actionVeryLow,SIGNAL(triggered(bool)),this,SLOT(selectSpeedRate(bool)));
+    connect(ui->actionLow,SIGNAL(triggered(bool)),this,SLOT(selectSpeedRate(bool)));
+    connect(ui->actionNormal,SIGNAL(triggered(bool)),this,SLOT(selectSpeedRate(bool)));
+    connect(ui->actionHight,SIGNAL(triggered(bool)),this,SLOT(selectSpeedRate(bool)));
 
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);
     QMenu *spdmenu = new QMenu(spdbtn);
-    spdmenu->addAction(ui->actionWeryLow);
+    spdmenu->addAction(ui->actionVeryLow);
     spdmenu->addAction(ui->actionLow);
     spdmenu->addAction(ui->actionNormal);
-    spdmenu->addAction(ui->actionHigh);
-    ui->actionHigh->setChecked(true);
+    spdmenu->addAction(ui->actionHight);
+    ui->actionHight->setChecked(true);
     spdbtn->setMenu(spdmenu);
     spdbtn->setPopupMode(QToolButton::InstantPopup);
-    if(ui->actionHigh->isChecked())spdbtn->setIcon(ui->actionHigh->icon());
+    if(ui->actionHight->isChecked())spdbtn->setIcon(ui->actionHight->icon());
     else if(ui->actionNormal->isChecked())spdbtn->setIcon(ui->actionNormal->icon());
     else if(ui->actionLow->isChecked())spdbtn->setIcon(ui->actionLow->icon());
-    else if(ui->actionWeryLow->isChecked())spdbtn->setIcon(ui->actionWeryLow->icon());
+    else if(ui->actionVeryLow->isChecked())spdbtn->setIcon(ui->actionVeryLow->icon());
     ui->mainToolBar->addWidget(spdbtn);
 
     //настроиваем значок в трее
@@ -247,6 +252,8 @@ void REXWindow::createInterface()
     traymenu->addAction(ui->actionStopAll);
     traymenu->addSeparator();
     traymenu->addMenu(ui->menu_6);
+    traymenu->addSeparator();
+    traymenu->addAction(ui->actionAppSettings);
     traymenu->addSeparator();
     traymenu->addAction(trayact);
     ui->menu_4->addSeparator();
@@ -480,6 +487,15 @@ void REXWindow::saveSettings()
         settings.setValue("State",ui->treeView->isExpanded(list.value(i)));
     }
     settings.endArray();
+    settings.beginWriteArray("Application Settings");
+    QList<QString> keys = settDlg->keys();
+    for(int i = 0; i < keys.size(); ++i)
+    {
+        settings.setArrayIndex(i);
+        settings.setValue("Key",keys.value(i));
+        settings.setValue("Value",settDlg->value(keys.value(i)));
+    }
+    settings.endArray();
     settings.sync();
 }
 
@@ -509,11 +525,23 @@ void REXWindow::loadSettings()
         ui->treeView->setExpanded(list.value(i),settings.value("State").toBool());
     }
     settings.endArray();
+    int cnt = settings.beginReadArray("Application Settings");
+    for(int i = 0; i < cnt; ++i)
+    {
+        settings.setArrayIndex(i);
+        QString key;
+        QVariant value;
+        key = settings.value("Key").toString();
+        value = settings.value("Value");
+        settDlg->setSettingAttribute(key,value);
+    }
+    settDlg->updateInterface();
+    settings.endArray();
 }
 
 void REXWindow::scanClipboard()
 {
-    if(!clip_autoscan)return;
+    if(!settDlg->value("scan_clipboard").toBool())return;
 
     const QClipboard *clipbrd = QApplication::clipboard();
     QUrl url(clipbrd->text());
@@ -791,11 +819,13 @@ void REXWindow::showHideSlot(QSystemTrayIcon::ActivationReason type)
         if(isVisible())
         {
             setHidden(true);
+            settDlg->setWindowFlags(Qt::Window);
             preStat = windowState();
         }
         else
         {
             setHidden(false);
+            settDlg->setWindowFlags(Qt::Dialog);
             setWindowState(preStat);
         }
     }
@@ -1625,6 +1655,7 @@ void REXWindow::closeEvent(QCloseEvent *event)
     if(!isHidden() && sender() != this->findChild<QAction*>("exitAct"))
     {
         hide();
+        settDlg->setWindowFlags(Qt::Window);
         event->ignore();
     }
     else
@@ -1724,4 +1755,56 @@ void REXWindow::scanTasksOnStart()
     question->setModal(true);
     if(!isVisible()) question->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
     question->show();
+}
+
+void REXWindow::readSettings()
+{
+    max_tasks = settDlg->value("max_number_tasks").toInt();
+    max_threads = settDlg->value("max_number_sections").toInt();
+    downDir = settDlg->value("down_dir").toString();
+
+    if(ui->actionVeryLow->isChecked()) down_speed = settDlg->value("s_vlow").toLongLong()*8;
+    else if(ui->actionLow->isChecked()) down_speed = settDlg->value("s_low").toLongLong()*8;
+    else if(ui->actionNormal->isChecked()) down_speed = settDlg->value("s_normal").toLongLong()*8;
+    else down_speed = settDlg->value("s_hight").toLongLong()*8;
+
+    calculateSpeed();
+}
+
+void REXWindow::selectSpeedRate(bool checked)
+{
+    QAction *act = qobject_cast<QAction*>(sender());
+    if(!act)return;
+    if(!checked)act->setChecked(true);
+
+    if(act == ui->actionVeryLow)
+    {
+        ui->actionLow->setChecked(false);
+        ui->actionNormal->setChecked(false);
+        ui->actionHight->setChecked(false);
+        down_speed = settDlg->value("s_vlow").toLongLong()*8;
+    }
+    else if(act == ui->actionLow)
+    {
+        ui->actionVeryLow->setChecked(false);
+        ui->actionNormal->setChecked(false);
+        ui->actionHight->setChecked(false);
+        down_speed = settDlg->value("s_low").toLongLong()*8;
+    }
+    else if(act == ui->actionNormal)
+    {
+        ui->actionVeryLow->setChecked(false);
+        ui->actionLow->setChecked(false);
+        ui->actionHight->setChecked(false);
+        down_speed = settDlg->value("s_normal").toLongLong()*8;
+    }
+    else
+    {
+        ui->actionVeryLow->setChecked(false);
+        ui->actionLow->setChecked(false);
+        ui->actionNormal->setChecked(false);
+        down_speed = settDlg->value("s_hight").toLongLong()*8;
+    }
+    spdbtn->setIcon(act->icon());
+    calculateSpeed();
 }
