@@ -1,5 +1,5 @@
 #define P_VERSION "0.1a.3"
-#define P_BUILD_DATE "2011-07-27"
+#define P_BUILD_DATE "2011-09-22"
 
 #include "httploader.h"
 
@@ -55,7 +55,7 @@ QStringList HttpLoader::pluginInfo() const
     pinfo << QString("Build date: ") + QString(P_BUILD_DATE);
     pinfo << QString("Version: ") + QString(P_VERSION);
     pinfo << QString("Copyright: ") + tr("© 2011 Sarvaritdinov Ravil");
-    pinfo << QString("Lic: ") + tr("GNU GPL 2");
+    pinfo << QString("Lic: ") + tr("GNU LGPL v2.1");
     pinfo << QString("Description: ") + tr("Plugin for downloading files on HTTP.");
     return pinfo;
 }
