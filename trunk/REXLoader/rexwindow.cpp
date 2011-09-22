@@ -225,13 +225,13 @@ void REXWindow::createInterface()
 
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);
-    QMenu *spdmenu = new QMenu(spdbtn);
+    /*QMenu *spdmenu = new QMenu(spdbtn);
     spdmenu->addAction(ui->actionVeryLow);
     spdmenu->addAction(ui->actionLow);
     spdmenu->addAction(ui->actionNormal);
-    spdmenu->addAction(ui->actionHight);
+    spdmenu->addAction(ui->actionHight);*/
     ui->actionHight->setChecked(true);
-    spdbtn->setMenu(spdmenu);
+    spdbtn->setMenu(ui->menu_6);
     spdbtn->setPopupMode(QToolButton::InstantPopup);
     if(ui->actionHight->isChecked())spdbtn->setIcon(ui->actionHight->icon());
     else if(ui->actionNormal->isChecked())spdbtn->setIcon(ui->actionNormal->icon());
@@ -478,6 +478,10 @@ void REXWindow::saveSettings()
     settings.setValue("TasksTable",ui->tableView->horizontalHeader()->saveState());
     settings.setValue("WindowHSplitter", ui->splitter_2->saveState());
     settings.setValue("WindowVSplitter", ui->splitter->saveState());
+    settings.setValue("S_hight",ui->actionHight->isChecked());
+    settings.setValue("S_normal",ui->actionNormal->isChecked());
+    settings.setValue("S_low",ui->actionLow->isChecked());
+    settings.setValue("S_verylow",ui->actionVeryLow->isChecked());
     settings.endGroup();
     settings.beginWriteArray("TreeViewNodes");
     QList<QModelIndex> list = treemodel->parentsInTree();
@@ -516,6 +520,14 @@ void REXWindow::loadSettings()
     ui->tableView->horizontalHeader()->restoreState(settings.value("TasksTable").toByteArray());
     ui->splitter_2->restoreState(settings.value("WindowHSplitter").toByteArray());
     ui->splitter->restoreState(settings.value("WindowVSplitter").toByteArray());
+    ui->actionHight->setChecked(settings.value("S_hight",true).toBool());
+    if(ui->actionHight->isChecked()) movie->setSpeed(100);
+    ui->actionNormal->setChecked(settings.value("S_normal",false).toBool());
+    if(ui->actionNormal->isChecked()) movie->setSpeed(75);
+    ui->actionLow->setChecked(settings.value("S_low",false).toBool());
+    if(ui->actionLow->isChecked()) movie->setSpeed(50);
+    ui->actionVeryLow->setChecked(settings.value("S_verylow",false).toBool());
+    if(ui->actionVeryLow->isChecked()) movie->setSpeed(25);
     settings.endGroup();
     settings.beginWriteArray("TreeViewNodes");
     QList<QModelIndex> list = treemodel->parentsInTree();
@@ -785,8 +797,7 @@ void REXWindow::updateTaskSheet()
 
 void REXWindow::startTrayIconAnimaion()
 {
-    if(movie->state() == QMovie::Running)return;
-    movie->setSpeed(100);
+    if(movie->state() == QMovie::Running || !settDlg->value("animate_tray").toBool())return;
     movie->start();
 }
 
@@ -799,6 +810,11 @@ void REXWindow::stopTrayIconAnimation()
 
 void REXWindow::updateTrayIcon()
 {
+    if(!settDlg->value("animate_tray").toBool())
+    {
+        stopTrayIconAnimation();
+        return;
+    }
     trayicon->setIcon(QIcon(movie->currentPixmap()));
 }
 
@@ -1775,6 +1791,7 @@ void REXWindow::readSettings()
         plugins.value(i)->setMaxErrorsOnTask(settDlg->value("max_number_errors").toInt());
         plugins.value(i)->setRetryCriticalError(settDlg->value("enable_ignore_errors").toBool());
         plugins.value(i)->setMaxSectionsOnTask(max_threads);
+        plugins.value(i)->setUserAgent(settDlg->value("user_agent").toString());
     }
 
     calculateSpeed();
@@ -1792,6 +1809,7 @@ void REXWindow::selectSpeedRate(bool checked)
         ui->actionNormal->setChecked(false);
         ui->actionHight->setChecked(false);
         down_speed = settDlg->value("s_vlow").toLongLong()*8;
+        movie->setSpeed(25);
     }
     else if(act == ui->actionLow)
     {
@@ -1799,6 +1817,7 @@ void REXWindow::selectSpeedRate(bool checked)
         ui->actionNormal->setChecked(false);
         ui->actionHight->setChecked(false);
         down_speed = settDlg->value("s_low").toLongLong()*8;
+        movie->setSpeed(50);
     }
     else if(act == ui->actionNormal)
     {
@@ -1806,6 +1825,7 @@ void REXWindow::selectSpeedRate(bool checked)
         ui->actionLow->setChecked(false);
         ui->actionHight->setChecked(false);
         down_speed = settDlg->value("s_normal").toLongLong()*8;
+        movie->setSpeed(75);
     }
     else
     {
@@ -1813,6 +1833,7 @@ void REXWindow::selectSpeedRate(bool checked)
         ui->actionLow->setChecked(false);
         ui->actionNormal->setChecked(false);
         down_speed = settDlg->value("s_hight").toLongLong()*8;
+        movie->setSpeed(100);
     }
     spdbtn->setIcon(act->icon());
     calculateSpeed();
