@@ -139,6 +139,7 @@ protected slots:
     void syncFileMap(Task* _task); //записывает данные о задании в файл
     void acceptQuery();
     void acceptRang();
+    void addInAQueue(); //распознает задачу-источник и ставит в очередь на анализ прогресса закачки
     void addRetSection();
 
     Task* getTaskSender(QObject* _sender) const;
@@ -146,9 +147,10 @@ protected slots:
 private:
     QHash<int, Task*> *task_list; //хэш заданий по ключам
     QHash<HttpSection*, int> *sections; //хэш ключей заданий по ссылкам на секции
-    QList<int> *squeue;
-    QList<int> *dqueue;
-    QList<HttpSection*> *del_queue;
+    QList<int> *squeue; //очередь на создание нового потока
+    QList<int> *dqueue; //очередь на удаление задачи
+    QList<HttpSection*> *del_queue; //очередь на удаление отработанных секций
+    QList<QObject*> *aqueue; //очередь заданий на обработку в методе acceptRange();
     int maxTaskNum; //хранится максимальный номер существующего задания
     int maxErrors;
     int maxSections;
