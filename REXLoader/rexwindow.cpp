@@ -1314,13 +1314,13 @@ void REXWindow::syncTaskData()
                     question->setActionType(EMessageBox::AT_RENAME);
                     connect(question,SIGNAL(buttonClicked(QAbstractButton*)),this,SLOT(acceptQAction(QAbstractButton*)));
 
-                    int index = newFilename.indexOf(".");
+                    int index = newFilename.lastIndexOf(".");
                     QString reFilename;
-                    if(index < 1) reFilename = newFilename + QDateTime::currentDateTime().toString("_dd-MM-yyyy_hh:mm:ss.z");
+                    if(index < 1) reFilename = newFilename + QDateTime::currentDateTime().toString("_dd-MM-yyyy_hh-mm-ss-z");
                     else
                     {
                         reFilename = newFilename;
-                        reFilename = reFilename.insert(index,QDateTime::currentDateTime().toString("_dd-MM-yyyy_hh:mm:ss.z"));
+                        reFilename = reFilename.insert(index,QDateTime::currentDateTime().toString("_dd-MM-yyyy_hh-mm-ss-z"));
                     }
                     QString params = QString("curname:%1\r\nnewname:%2\r\nrename:%3\r\nid:%4").arg(filepath,newFilename,reFilename,QString::number(id_row));
                     question->setParams(params);

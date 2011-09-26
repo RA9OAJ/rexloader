@@ -158,8 +158,8 @@ private:
     QString uAgent;
     qint64 speed;
 
-    QMutex *t_mutex; //мютекс для списка заданий
-    QMutex *q_mutex; //мютекс для очереди секций
+    //QMutex *t_mutex; //мютекс для списка заданий
+    //QMutex *q_mutex; //мютекс для очереди секций
 
     bool shedule_flag;
     bool fullsize_res; //признак выделения/не выделения места под весь файл
