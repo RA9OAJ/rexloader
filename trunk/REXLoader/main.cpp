@@ -217,7 +217,7 @@ int main(int argc, char *argv[])
     checkDatabase();
 
     QTextCodec::setCodecForLocale(QTextCodec::codecForLocale());
-    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
+    QTextCodec::setCodecForCStrings(QTextCodec::codecForLocale());
     QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
 
     QApplication a(argc, argv);
