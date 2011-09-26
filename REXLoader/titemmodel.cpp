@@ -362,8 +362,8 @@ QModelIndex TItemModel::index(int row, int column, const QModelIndex &parent) co
         if(myData(row,11).toLongLong() != 0)sec = (myData(row,5).toLongLong()-myData(row,4).toLongLong())/myData(row,11).toLongLong();;
         return createIndex(row,column,&sec); //добавление виртуальной колонки
     }
-
-    return createIndex(row,column,&qr->value(column));
+    QVariant val = qr->value(column);
+    return createIndex(row,column,&val);
 }
 
 QStringList TItemModel::sizeForHumans(qint64 sz)
