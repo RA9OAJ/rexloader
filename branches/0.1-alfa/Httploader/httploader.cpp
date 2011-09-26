@@ -9,9 +9,8 @@ HttpLoader::HttpLoader(QObject *parent) : QObject(parent)
     sections = new QHash<HttpSection*, int>;
     squeue = new QList<int>;
     dqueue = new QList<int>;
-    t_mutex = new QMutex();
-    q_mutex = new QMutex();
     del_queue = new QList<HttpSection*>;
+    aqueue = new QList<QObject*>;
     maxTaskNum = 0;
     shedule_flag = false;
     fullsize_res = false; //резервировать место под файл целиком
@@ -32,14 +31,14 @@ HttpLoader::~HttpLoader()
     task_list->clear();
     sections->clear();
     squeue->clear();
+    aqueue->clear();
     while(!del_queue->isEmpty())scanDelQueue();
     delete(task_list);
     delete(sections);
     delete(squeue);
-    delete(t_mutex);
     delete(dqueue);
-    delete(q_mutex);
     delete(del_queue);
+    delete(aqueue);
 }
 
 QStringList HttpLoader::protocols() const
@@ -63,10 +62,9 @@ QStringList HttpLoader::pluginInfo() const
 int HttpLoader::addTask(const QUrl &_url)
 {
     if(_url.isEmpty() || !_url.isValid())return 0; //если URL не валиден или пуст
-    t_mutex->lock();
     Task *tsk = 0;
     tsk = new Task();
-    if(!tsk){t_mutex->unlock();return 0;}
+    if(!tsk)return 0;
     tsk->url = _url;
     tsk->_fullsize_res = fullsize_res;
     tsk->_maxSections = this->maxSections;
@@ -75,7 +73,6 @@ int HttpLoader::addTask(const QUrl &_url)
         task_num = task_list->size()+1;
     else task_num = task_list->key(0);
     task_list->insert(task_num, tsk);
-    t_mutex->unlock();
     return task_num;
 }
 
@@ -86,7 +83,6 @@ int HttpLoader::countTask() const
 
 void HttpLoader::deleteTask(int id_task)
 {
-    t_mutex->lock();
     if(!id_task) //в случае остановки и удаления всех заданий
     {
         QList<HttpSection*> _sections = sections->keys();
@@ -97,11 +93,10 @@ void HttpLoader::deleteTask(int id_task)
             _sections.value(i)->wait();*/
 
         shedule_flag = false;
-        t_mutex->unlock();
         return;
     }
-    if(!task_list->contains(id_task)){t_mutex->unlock(); return;}
-    if(task_list->value(id_task) == 0){t_mutex->unlock(); return;}
+    if(!task_list->contains(id_task))return;
+    if(task_list->value(id_task) == 0)return;
     QList<HttpSection*> _sections = sections->keys(id_task);
     if(!_sections.isEmpty()) //если у задания есть активные секции
     {
@@ -123,7 +118,6 @@ void HttpLoader::deleteTask(int id_task)
     if(id_task == task_list->size()) //если id_task последний добавленный элемент хэша
     task_list->remove(id_task); //просто удаляем его
     else task_list->insert(id_task, 0); //иначе обнуляем указатель на объект задания
-    t_mutex->unlock();
 
     mathSpeed(); //пересчитываем скорость на каждую секцию
 }
@@ -136,18 +130,15 @@ void HttpLoader::setDownSpeed(long long _spd)
 
 void HttpLoader::mathSpeed()
 {
-    t_mutex->lock(); //блочим изменения в заданиях
     int as_cnt = sections->size(); //счетчик активных секций
 
-    if(!as_cnt){t_mutex->unlock(); return;} //если нет активных секций, то и пересчитывать нечего, выходим из метода
+    if(!as_cnt) return; //если нет активных секций, то и пересчитывать нечего, выходим из метода
 
     qint64 sect_spd = speed/(qint64)as_cnt;
     //HttpSection *sect;
     QList<HttpSection*> lst = sections->keys();
     for(int i = 0; i<lst.size(); i++)
         lst.value(i)->setDownSpeed(sect_spd);
-
-    t_mutex->unlock();
 }
 
 void HttpLoader::setMaxSectionsOnTask(int _max)
@@ -295,17 +286,17 @@ void HttpLoader::startDownload(int id_task)
     connect(sect,SIGNAL(fileType(QString)),this,SLOT(setMIME(QString))/*, Qt::QueuedConnection*/);
     connect(sect,SIGNAL(mismatchOfDates(QDateTime,QDateTime)),this,SLOT(mismatchOfDates(QDateTime,QDateTime))/*, Qt::QueuedConnection*/);
     connect(sect,SIGNAL(downloadingCompleted()),this,SLOT(sectionCompleted())/*, Qt::QueuedConnection*/);
-    connect(sect,SIGNAL(acceptRanges()),this,SLOT(acceptRang())/*, Qt::QueuedConnection*/);
+    connect(sect,SIGNAL(acceptRanges()),this,SLOT(addInAQueue())/*, Qt::QueuedConnection*/);
 
     int sect_id = 0;
-    if(tsk->map[0] || tsk->map[2] || tsk->map[4] || tsk->map[6] || tsk->map[8] || tsk->map[10]) //если уже распределены границы, то загружаем данные о первой недокачанной секции
+    if(tsk->map[0] || tsk->map[1] || tsk->map[2] || tsk->map[4] || tsk->map[6] || tsk->map[8] || tsk->map[10]) //если уже распределены границы, то загружаем данные о первой недокачанной секции
     {
         for(int i = 1; i < 7; i++)
         {
             qint64 end_s = tsk->map[2*i] != 0 ? tsk->map[2*i]:tsk->map[12];
             if(end_s > tsk->map[2*i-2] + tsk->map[2*i-1])
             {
-                sect->setSection(tsk->map[2*i-2], tsk->map[2*i]-1);
+                sect->setSection(tsk->map[2*i-2], (tsk->map[2*i] == 0 ? 0 : tsk->map[2*i]-1));
                 if(tsk->map[2*i-1])sect->setOffset(tsk->map[2*i-1]);
                 sect_id = i;
                 break;
@@ -314,11 +305,9 @@ void HttpLoader::startDownload(int id_task)
     }
     if(!sect_id)sect_id = 1;
 
-    t_mutex->lock();
     tsk->sections_cnt += 1;
     tsk->sections.insert(sect_id,sect);
     sections->insert(sect, id_task);
-    t_mutex->unlock();
     mathSpeed();
     if(!shedule_flag) //если шедулер не работает
     {
@@ -337,7 +326,6 @@ void HttpLoader::stopDownload(int id_task)
 
     Task *tsk = task_list->value(id_task);
     HttpSection *sect;
-    t_mutex->lock();
     int last_status = tsk->status;
     tsk->status = LInterface::STOPPING;
     QList<int> keys = tsk->sections.keys();
@@ -355,7 +343,6 @@ void HttpLoader::stopDownload(int id_task)
 
     tsk->status = last_status;
     if(tsk->status != LInterface::ERROR_TASK)tsk->status = LInterface::ON_PAUSE;
-    t_mutex->unlock();
     mathSpeed();
     if(!sections->size())shedule_flag = false; //останавливаем шедулер, если нет активных секций
 }
@@ -383,17 +370,15 @@ Task* HttpLoader::getTaskSender(QObject* _sender) const
 
 void HttpLoader::setTotalSize(qint64 _sz)
 {
-    t_mutex->lock();
     Task* tsk = getTaskSender(sender());
-    if(!tsk){t_mutex->unlock();return;}
-    if(!tsk->size){tsk->size = _sz; tsk->map[12]=_sz;t_mutex->unlock();return;}
+    if(!tsk) return;
+    if(!tsk->size){tsk->size = _sz; tsk->map[12]=_sz;return;}
     if(tsk->size != _sz)
     {
         tsk->status = LInterface::ERROR_TASK;
         tsk->error_number = LInterface::FILE_SIZE_ERROR;
         stopDownload(task_list->key(tsk));
     }
-    t_mutex->unlock();
 }
 
 void HttpLoader::redirectToUrl(const QString &_url)
@@ -442,61 +427,42 @@ void HttpLoader::sectionCompleted()
 
     if(!tsk) // если задание-владелец секции не найден, то секция тупо удаляется
     {
-        //if(!sect->isFinished())sect->stopDownloading();
-        //while(!sect->wait(1000));
         sections->remove(sect);
         addDeleteQueue(sect);
-        //sect->quit();
-        //sect->deleteLater();
         sect = 0;
         mathSpeed();
         return;
     }
     int id_task = task_list->key(tsk);
-
     qint64 _total = (sect->finishByte() == 0 && sect->startByte() == 0) ? tsk->totalLoad() : (sect->finishByte() != 0 ? sect->finishByte()-sect->startByte()+1:sect->totalFileSize()-sect->startByte());
     if(tsk->filepath != sect->fileName())tsk->filepath = sect->fileName();
     if(sect->totalLoadOnSection() == _total && _total > 0) //если закачка прошла успешно
     {
-        //t_mutex->lock();
-        //if(!sect->isFinished())sect->stopDownloading();
-        //while(!sect->isFinished());
         tsk->sections.remove(tsk->sections.key(sect));
         sections->remove(sect);
         addDeleteQueue(sect);
-        //sect->quit();
-        //sect->deleteLater();
         sect = 0;
         tsk->sections_cnt -= 1;
         if(tsk->status == LInterface::SEND_QUERY)tsk->status = LInterface::ON_LOAD;
-
         if(tsk->totalLoad() == tsk->size || (!tsk->size && tsk->MIME.split("/").value(0).toLower() == "text"))
         {
             QFile tmpfl(tsk->filepath);
             if(!tsk->size)tsk->size = _total;
             tmpfl.resize(tsk->size);
             tsk->status = LInterface::FINISHED;
-            //t_mutex->unlock();
             mathSpeed();
             return;
         }
-        //t_mutex->unlock();
         mathSpeed();
     }
     else if(sect->totalLoadOnSection() < _total || !_total) //если скачано меньше, чем нужно или сервер не передал общего размера файла
     {
-            t_mutex->lock();
-            //if(!sect->isFinished())sect->stopDownloading();
-            //while(!sect->isFinished());
             tsk->sections.remove(tsk->sections.key(sect));
             sections->remove(sect);
-            //sect->deleteLater();
             addDeleteQueue(sect);
-            //sect->quit();
             sect = 0;
             tsk->sections_cnt -= 1;
     }
-    t_mutex->unlock();
     mathSpeed();
 
     if(tsk->status != LInterface::STOPPING) tsk->sections_cnt == 0 ? addSection(id_task) : QTimer::singleShot(1000,this,SLOT(addSection()));
@@ -519,15 +485,9 @@ void HttpLoader::syncFileMap(Task* _task)
         return;
     }
 
-    //bool _erflag = false;
     qint64 spos = 0;
     if(!_task->_fullsize_res || !_task->size)
     {
-        /*QList<int> _keys = _task->sections.keys();
-        int maxid = 0;
-        for(int i = 0; i<_keys.size(); ++i)
-            maxid = qMax(maxid, _keys.value(i));
-        spos = _task->map[2*maxid-2]+_task->map[2*maxid-1];*/
         for(int i=11; i>=1; --i)
             if(_task->map[i])
             {
@@ -564,28 +524,24 @@ void HttpLoader::syncFileMap(Task* _task)
 
 void HttpLoader::addSection()
 {
-    q_mutex->lock();
-    if(squeue->isEmpty()){q_mutex->unlock(); return;}
+    if(squeue->isEmpty()) return;
     int id_task = squeue->takeFirst();
-    if(!task_list->contains(id_task)){q_mutex->unlock(); return;}
+    if(!task_list->contains(id_task)) return;
     Task* tsk = task_list->value(id_task);
-    if(!tsk){q_mutex->unlock(); return;}
-    q_mutex->unlock();
+    if(!tsk) return;
 
     addSection(id_task);
 }
 
 void HttpLoader::addSection(int id_task)
 {
-    t_mutex->lock();
-    if(!task_list->contains(id_task)){t_mutex->unlock(); return;}
+    if(!task_list->contains(id_task)) return;
     Task* _task = task_list->value(id_task);
-    if(!_task){t_mutex->unlock(); return;}
-    if(_task->status == LInterface::FINISHED){t_mutex->unlock(); return;}
+    if(!_task) return;
+    if(_task->status == LInterface::FINISHED) return;
 
     if(_task->sections_cnt >= _task->_maxSections) //проверяем на лимит секций
     {
-        t_mutex->unlock();
         _task->status = LInterface::ON_LOAD;
         return;
     }
@@ -600,7 +556,7 @@ void HttpLoader::addSection(int id_task)
         if((cur_sect < end_sect || !end_sect) && !_task->sections.contains(i)){cur_sect_id = i;break;}
     }
 
-    if(!cur_sect_id){_task->status = LInterface::ON_LOAD;t_mutex->unlock(); return;} // если все секции задействованы, то выходим
+    if(!cur_sect_id){_task->status = LInterface::ON_LOAD; return;} // если все секции задействованы, то выходим
 
     HttpSection *sect = new HttpSection();
     sect->setUrlToDownload(_task->url.toString());
@@ -640,7 +596,6 @@ void HttpLoader::addSection(int id_task)
     ++_task->sections_cnt;
     sections->insert(sect,id_task);
 
-    t_mutex->unlock();
     if(!shedule_flag) //если шедулер не работает
     {
         shedule_flag = true; //разрешаем ему работу
@@ -666,13 +621,11 @@ void HttpLoader::setRetryCriticalError(const bool flag)
 
 void HttpLoader::addRetSection()
 {
-    q_mutex->lock();
-    if(dqueue->isEmpty()){q_mutex->unlock(); return;}
+    if(dqueue->isEmpty()) return;
     int id_task = dqueue->takeFirst();
-    if(!task_list->contains(id_task)){q_mutex->unlock(); return;}
+    if(!task_list->contains(id_task)) return;
     Task* tsk = task_list->value(id_task);
-    if(!tsk){q_mutex->unlock(); return;}
-    q_mutex->unlock();
+    if(!tsk) return;
 
     addSection(id_task);
 }
@@ -735,16 +688,6 @@ void HttpLoader::sectError(int _errno)
     case QAbstractSocket::ProxyConnectionTimeoutError:
     case 403:
     case 503:
-        //t_mutex->lock();
-        /*if(tsk->sections_cnt < 2) //если этот сигнал получен от единственной секции
-        {
-            tsk->status = LInterface::ERROR_TASK; //в случае критичных ошибок
-            tsk->error_number = er;
-            //t_mutex->unlock();
-            stopDownload(id_task);
-            mathSpeed();
-            break;
-        }*/
 
         if(tsk->sections_cnt < 2)++tsk->errors_cnt;
         if(tsk->errors_cnt >= maxErrors)
@@ -765,24 +708,20 @@ void HttpLoader::sectError(int _errno)
             dqueue->append(id_task);
             QTimer::singleShot(attempt_interval,this,SLOT(addRetSection()));
         }
-        //t_mutex->unlock();
         mathSpeed();
         break;
 
     case 416:
         if(!tsk->size)
         {
-            t_mutex->lock();
             QFile tmpfl(tsk->filepath);
             tmpfl.resize(sect->totalLoadOnSection());
-            //if(sect->isRunning())sect->wait(5000);
             tsk->sections.remove(tsk->sections.key(sect));
             sections->remove(sect);
             addDeleteQueue(sect);
             --tsk->sections_cnt;
             sect = 0;
             tsk->status = LInterface::FINISHED;
-            t_mutex->unlock();
             break;
         }
 
@@ -851,9 +790,7 @@ void HttpLoader::acceptQuery()
     int id_task = task_list->key(tsk);
 
     if(tsk->sections_cnt == tsk->_maxSections){tsk->status = LInterface::ON_LOAD;return;}
-    q_mutex->lock();
     squeue->append(id_task);
-    q_mutex->unlock();
 
     tsk->status = LInterface::SEND_QUERY;
     QTimer::singleShot(1000,this,SLOT(addSection()));
@@ -888,7 +825,6 @@ int HttpLoader::loadTaskFile(const QString &_path)
     header.clear();
     fgets(buffer.data(), 1024, fl);
     header.append(buffer);
-    //if(header != "RExLoader\r\n")return 0;
     if(header.indexOf("RExLoader")!= 0)return 0;
     QString fversion = header.split(" ").value(1);
     if(fversion != "0.1a.1\r\n")return 0;
@@ -901,7 +837,7 @@ int HttpLoader::loadTaskFile(const QString &_path)
 
     Task *tsk = 0;
     tsk = new Task();
-    if(!tsk){t_mutex->unlock();return 0;}
+    if(!tsk) return 0;
     tsk->url = QUrl::fromEncoded(buffer);
     tsk->_fullsize_res = fullsize_res;
     tsk->_maxSections = this->maxSections;
@@ -921,11 +857,6 @@ int HttpLoader::loadTaskFile(const QString &_path)
 
     fread(&tsk->size, sizeof(qint64), 1, fl); //считываем общий размер задания
 
-    for(int i=0; i<13; ++i)
-    {
-        fread(&tsk->map[i], sizeof(qint64), 1, fl); //считывание карты секций
-    }
-
     length = 0;
     fread(&length, sizeof(int), 1, fl);
     buffer.resize(length);
@@ -933,12 +864,10 @@ int HttpLoader::loadTaskFile(const QString &_path)
     tsk->last_modif = QDateTime::fromString(QString(buffer),"yyyy-MM-ddTHH:mm:ss");
 
     int task_num = 0;
-    t_mutex->lock();
     if(!task_list->key(0))
         task_num = task_list->size()+1;
     else task_num = task_list->key(0);
     task_list->insert(task_num, tsk);
-    t_mutex->unlock();
 
     return task_num;
 }
@@ -958,33 +887,29 @@ void HttpLoader::setTaskFilePath(int id_task, const QString &_path)
 
 void HttpLoader::acceptRang()
 {
-    Task* tsk = getTaskSender(sender());
-    t_mutex->lock();
-    if(!tsk){t_mutex->unlock(); return;}
-    tsk->accept_ranges = true;
-    if(tsk->_maxSections == 1){t_mutex->unlock(); return;}
-    HttpSection* sect = qobject_cast<HttpSection*>(sender());
-    if(!sect){t_mutex->unlock(); return;}
+    if(aqueue->isEmpty())return;
+    QObject* _sender = aqueue->takeFirst();
+    Task* tsk = getTaskSender(_sender);/*getTaskSender(sender());*/
+    if(!tsk)return;
+    if(tsk->_maxSections == 1)return;
+    HttpSection* sect = qobject_cast<HttpSection*>(_sender);
+    if(!sect)return;
     int sect_id = tsk->sections.key(sect);
-    if(!sect_id){t_mutex->unlock(); return;}
-    tsk->status = LInterface::ON_LOAD;
-    tsk->filepath = sect->fileName(); //задаем имя локального файла, определенное при запросе к серверу
+    if(!sect_id)return;
     int id_task = task_list->key(tsk);
+    if(!id_task)return;
 
-    //---Тут анализ и разбивка общего объема на секции---// + Должно быть дополнительное условие на проверку не распределения задания на секции
-    if(!sect->totalFileSize() || tsk->map[2] != 0){tsk->status=LInterface::ON_LOAD;t_mutex->unlock(); addSection(id_task); return;}
-    //if(!sect->totalFileSize()){t_mutex->unlock(); return;}
-    qint64 cur_spd;
-    if(sect->realSpeed())cur_spd = sect->realSpeed();
-    else if(sect->downSpeed()) cur_spd = sect->downSpeed();
-    else cur_spd = 100*1024*1024;
+    //---Тут анализ и разбивка общего объема на секции---
+    if(!sect->totalFileSize() || tsk->map[2] != 0){tsk->status=LInterface::ON_LOAD; addSection(id_task); return;}
 
-   // disconnect(sect,SIGNAL(downloadingCompleted()),this,SLOT(sectionCompleted()));
-    disconnect(sect,SIGNAL(acceptRanges()),this,SLOT(acceptRang()));
-    if(tsk->size / cur_spd <= 10 && (tsk->map[2]+tsk->map[4]+tsk->map[6]+tsk->map[8]+tsk->map[10]==0)){tsk->_maxSections = 1; t_mutex->unlock(); return;}
+    disconnect(sect,SIGNAL(acceptRanges()),this,SLOT(addInAQueue()));
+    if(100*tsk->totalLoad()/tsk->size >= 50 && (tsk->map[2]+tsk->map[4]+tsk->map[6]+tsk->map[8]+tsk->map[10]==0))
+    {
+        tsk->_maxSections = 1;
+        return;
+    }
     sect->stopDownloading();
 
-    //while(!sect->wait(1000)){qDebug()<<"HttpLoader While 4"; /*sect->terminate();*/}
     qint64 sect_size = tsk->size / tsk->_maxSections;
     qint64 load_section = tsk->map[2*sect_id-1];
 
@@ -998,11 +923,9 @@ void HttpLoader::acceptRang()
                 tsk->map[2*i+1] = load_section - sect_size;
         }
     }
-    t_mutex->unlock();
 
     sect->setSection(tsk->map[0], tsk->map[2]-1);
     sect->setOffset(tsk->map[1]);
-    //connect(sect,SIGNAL(downloadingCompleted()),this,SLOT(sectionCompleted())/*, Qt::QueuedConnection*/);
     connect(sect, SIGNAL(acceptQuery()),this,SLOT(acceptQuery()));
     mathSpeed();
     sect->startDownloading();
@@ -1011,8 +934,6 @@ void HttpLoader::acceptRang()
 void HttpLoader::addDeleteQueue(HttpSection *sect_)
 {
     del_queue->append(sect_);
-    //sect_->stopDownloading();
-    //sect_->quit();
 }
 
 void HttpLoader::scanDelQueue()
@@ -1021,6 +942,8 @@ void HttpLoader::scanDelQueue()
     {
         if(!del_queue->value(i)->freedMemory())continue;
         disconnect(this,SIGNAL(sheduleImpulse()),del_queue->value(i),SLOT(transferActSlot()));
+        int index = aqueue->lastIndexOf(del_queue->value(i));
+        if(index != -1)aqueue->replace(index,0);
         del_queue->value(i)->deleteLater();
         del_queue->removeOne(del_queue->value(i));
     }
@@ -1071,6 +994,24 @@ void HttpLoader::setProxy(int id_task, const QUrl &_proxy, LInterface::ProxyType
     tsk->proxy = _proxy;
     tsk->proxy_type = _ptype;
     tsk->proxy_auth = data_base64;
+}
+
+void HttpLoader::addInAQueue()
+{
+    aqueue->append(sender());
+
+    Task* tsk = getTaskSender(sender());
+    if(!tsk)return;
+    tsk->accept_ranges = true;
+    HttpSection* sect = qobject_cast<HttpSection*>(sender());
+    if(!sect)return;
+    int sect_id = tsk->sections.key(sect);
+    if(!sect_id)return;
+    tsk->status = LInterface::ON_LOAD;
+    if(tsk->_maxSections == 1)return;
+    tsk->filepath = sect->fileName();
+
+    QTimer::singleShot(5000,this,SLOT(acceptRang()));
 }
 
 Q_EXPORT_PLUGIN2(HttpLoader, HttpLoader)
