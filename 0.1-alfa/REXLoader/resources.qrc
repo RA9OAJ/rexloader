@@ -1,0 +1,35 @@
+<RCC>
+    <qresource prefix="/appimages">
+        <file alias="trayicon.png">images/RExLoader_64x64.png</file>
+        <file alias="start_24x24.png">images/start_24x24.png</file>
+        <file alias="start_32x32.png">images/start_32x32.png</file>
+        <file alias="start_48x48.png">images/start_48x48.png</file>
+        <file alias="finish_48x48.png">images/finish_48x48.png</file>
+        <file alias="pause_24x24.png">images/pause_24x24.png</file>
+        <file alias="pause_32x32.png">images/pause_32x32.png</file>
+        <file alias="pause_48x48.png">images/pause_48x48.png</file>
+        <file alias="finish_32x32.png">images/finish_32x32.png</file>
+        <file alias="finish_24x24.png">images/finish_24x24.png</file>
+        <file alias="error_24x24.png">images/error_24x24.png</file>
+        <file alias="error_32x32.png">images/error_32x32.png</file>
+        <file alias="error_48x48.png">images/error_48x48.png</file>
+        <file alias="queue_48x48.png">images/queue_48x48.png</file>
+        <file alias="queue_32x32.png">images/queue_32x32.png</file>
+        <file alias="queue_24x24.png">images/queue_24x24.png</file>
+        <file alias="start_16x16.png">images/start_16x16.png</file>
+        <file alias="pause_16x16.png">images/pause_16x16.png</file>
+        <file alias="finish_16x16.png">images/finish_16x16.png</file>
+        <file alias="queue_16x16.png">images/queue_16x16.png</file>
+        <file alias="error_16x16.png">images/error_16x16.png</file>
+        <file alias="onload.gif">images/onload.gif</file>
+        <file alias="phight_16x16.png">images/phight_16x16.png</file>
+        <file alias="plow_16x16.png">images/plow_16x16.png</file>
+        <file alias="pnormal_16x16.png">images/pnormal_16x16.png</file>
+        <file alias="pveryhight_16x16.png">images/pveryhight_16x16.png</file>
+        <file alias="pverylow_16x16.png">images/pverylow_16x16.png</file>
+        <file alias="add_48x48.png">images/add_48x48.png</file>
+        <file alias="delete_48x48.png">images/delete_48x48.png</file>
+        <file alias="start_all_48x48.png">images/start_all_48x48.png</file>
+        <file alias="pause_all_48x8.png">images/pause_all_48x48.png</file>
+    </qresource>
+</RCC>
