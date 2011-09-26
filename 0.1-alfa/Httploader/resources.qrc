@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/lang">
-        <file alias="ru_RU.qm">resources/ru_RU.qm</file>
-    </qresource>
-</RCC>
