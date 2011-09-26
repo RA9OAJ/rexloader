@@ -9,8 +9,6 @@ HttpLoader::HttpLoader(QObject *parent) : QObject(parent)
     sections = new QHash<HttpSection*, int>;
     squeue = new QList<int>;
     dqueue = new QList<int>;
-    //t_mutex = new QMutex();
-    //q_mutex = new QMutex();
     del_queue = new QList<HttpSection*>;
     aqueue = new QList<QObject*>;
     maxTaskNum = 0;
@@ -38,9 +36,7 @@ HttpLoader::~HttpLoader()
     delete(task_list);
     delete(sections);
     delete(squeue);
-    //delete(t_mutex);
     delete(dqueue);
-    //delete(q_mutex);
     delete(del_queue);
     delete(aqueue);
 }
@@ -431,12 +427,8 @@ void HttpLoader::sectionCompleted()
 
     if(!tsk) // если задание-владелец секции не найден, то секция тупо удаляется
     {
-        //if(!sect->isFinished())sect->stopDownloading();
-        //while(!sect->wait(1000));
         sections->remove(sect);
         addDeleteQueue(sect);
-        //sect->quit();
-        //sect->deleteLater();
         sect = 0;
         mathSpeed();
         return;
@@ -446,14 +438,9 @@ void HttpLoader::sectionCompleted()
     if(tsk->filepath != sect->fileName())tsk->filepath = sect->fileName();
     if(sect->totalLoadOnSection() == _total && _total > 0) //если закачка прошла успешно
     {
-        //t_mutex->lock();
-        //if(!sect->isFinished())sect->stopDownloading();
-        //while(!sect->isFinished());
         tsk->sections.remove(tsk->sections.key(sect));
         sections->remove(sect);
         addDeleteQueue(sect);
-        //sect->quit();
-        //sect->deleteLater();
         sect = 0;
         tsk->sections_cnt -= 1;
         if(tsk->status == LInterface::SEND_QUERY)tsk->status = LInterface::ON_LOAD;
@@ -463,22 +450,16 @@ void HttpLoader::sectionCompleted()
             if(!tsk->size)tsk->size = _total;
             tmpfl.resize(tsk->size);
             tsk->status = LInterface::FINISHED;
-            //t_mutex->unlock();
             mathSpeed();
             return;
         }
-        //t_mutex->unlock();
         mathSpeed();
     }
     else if(sect->totalLoadOnSection() < _total || !_total) //если скачано меньше, чем нужно или сервер не передал общего размера файла
     {
-            //if(!sect->isFinished())sect->stopDownloading();
-            //while(!sect->isFinished());
             tsk->sections.remove(tsk->sections.key(sect));
             sections->remove(sect);
-            //sect->deleteLater();
             addDeleteQueue(sect);
-            //sect->quit();
             sect = 0;
             tsk->sections_cnt -= 1;
     }
@@ -504,15 +485,9 @@ void HttpLoader::syncFileMap(Task* _task)
         return;
     }
 
-    //bool _erflag = false;
     qint64 spos = 0;
     if(!_task->_fullsize_res || !_task->size)
     {
-        /*QList<int> _keys = _task->sections.keys();
-        int maxid = 0;
-        for(int i = 0; i<_keys.size(); ++i)
-            maxid = qMax(maxid, _keys.value(i));
-        spos = _task->map[2*maxid-2]+_task->map[2*maxid-1];*/
         for(int i=11; i>=1; --i)
             if(_task->map[i])
             {
@@ -713,16 +688,6 @@ void HttpLoader::sectError(int _errno)
     case QAbstractSocket::ProxyConnectionTimeoutError:
     case 403:
     case 503:
-        //t_mutex->lock();
-        /*if(tsk->sections_cnt < 2) //если этот сигнал получен от единственной секции
-        {
-            tsk->status = LInterface::ERROR_TASK; //в случае критичных ошибок
-            tsk->error_number = er;
-            //t_mutex->unlock();
-            stopDownload(id_task);
-            mathSpeed();
-            break;
-        }*/
 
         if(tsk->sections_cnt < 2)++tsk->errors_cnt;
         if(tsk->errors_cnt >= maxErrors)
@@ -743,7 +708,6 @@ void HttpLoader::sectError(int _errno)
             dqueue->append(id_task);
             QTimer::singleShot(attempt_interval,this,SLOT(addRetSection()));
         }
-        //t_mutex->unlock();
         mathSpeed();
         break;
 
@@ -752,7 +716,6 @@ void HttpLoader::sectError(int _errno)
         {
             QFile tmpfl(tsk->filepath);
             tmpfl.resize(sect->totalLoadOnSection());
-            //if(sect->isRunning())sect->wait(5000);
             tsk->sections.remove(tsk->sections.key(sect));
             sections->remove(sect);
             addDeleteQueue(sect);
@@ -862,7 +825,6 @@ int HttpLoader::loadTaskFile(const QString &_path)
     header.clear();
     fgets(buffer.data(), 1024, fl);
     header.append(buffer);
-    //if(header != "RExLoader\r\n")return 0;
     if(header.indexOf("RExLoader")!= 0)return 0;
     QString fversion = header.split(" ").value(1);
     if(fversion != "0.1a.1\r\n")return 0;
@@ -937,7 +899,7 @@ void HttpLoader::acceptRang()
     int id_task = task_list->key(tsk);
     if(!id_task)return;
 
-    //---Тут анализ и разбивка общего объема на секции---// + Должно быть дополнительное условие на проверку не распределения задания на секции
+    //---Тут анализ и разбивка общего объема на секции---
     if(!sect->totalFileSize() || tsk->map[2] != 0){tsk->status=LInterface::ON_LOAD; addSection(id_task); return;}
 
     disconnect(sect,SIGNAL(acceptRanges()),this,SLOT(addInAQueue()));
