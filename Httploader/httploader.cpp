@@ -857,6 +857,11 @@ int HttpLoader::loadTaskFile(const QString &_path)
 
     fread(&tsk->size, sizeof(qint64), 1, fl); //считываем общий размер задания
 
+    for(int i=0; i<13; ++i)
+        {
+            fread(&tsk->map[i], sizeof(qint64), 1, fl); //считывание карты секций
+        }
+
     length = 0;
     fread(&length, sizeof(int), 1, fl);
     buffer.resize(length);

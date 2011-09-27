@@ -118,7 +118,7 @@ void GTcpSocket::transferAct()
     else
     {
         bytesToRead = qMin<qint64>(inLimit, QSslSocket::bytesAvailable());
-        if(bytesToRead > 0) timeout->start();
+        if(QSslSocket::bytesAvailable() > 0) timeout->start();
         else if(timeout->elapsed() > timeout_interval*1000 && !timeout->isNull())
         {
             emit error(QSslSocket::SocketTimeoutError);
