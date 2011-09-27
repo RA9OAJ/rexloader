@@ -843,6 +843,7 @@ void REXWindow::showHideSlot(QSystemTrayIcon::ActivationReason type)
             setHidden(false);
             settDlg->setWindowFlags(Qt::Dialog);
             setWindowState(preStat);
+            activateWindow();
         }
     }
 }
@@ -946,7 +947,7 @@ void REXWindow::deleteTask()
             if(!fl.isFile())continue;
             QFile::remove(flname);
         }
-        if(ldr){ldr->deleteTask(task_id);qDebug()<<"YES!!!!";}
+        if(ldr)ldr->deleteTask(task_id);
         tasklist.remove(row_id);
     }
 
@@ -1309,7 +1310,7 @@ void REXWindow::syncTaskData()
                     btn1 = question->addButton(tr("Replace"),EMessageBox::ApplyRole);
                     btn2 = question->addButton(tr("Rename"),EMessageBox::RejectRole);
                     question->setDefaultButton(btn2);
-                    question->setText(tr("A file with that name already exists."));
+                    question->setText(tr("A file <b>%1</b> already exists.").arg(newFilename));
                     question->setInformativeText(tr("To replace the file with the same name, click \"Replace\". To rename, click \"Rename.\""));
                     question->setActionType(EMessageBox::AT_RENAME);
                     connect(question,SIGNAL(buttonClicked(QAbstractButton*)),this,SLOT(acceptQAction(QAbstractButton*)));
@@ -1770,7 +1771,7 @@ void REXWindow::scanTasksOnStart()
     connect(question,SIGNAL(buttonClicked(QAbstractButton*)),this,SLOT(acceptQAction(QAbstractButton*)));
     question->setModal(true);
     if(!isVisible()) question->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
-    question->show();
+    QTimer::singleShot(0,question, SLOT(show()));
 }
 
 void REXWindow::readSettings()
