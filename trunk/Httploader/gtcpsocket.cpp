@@ -93,15 +93,11 @@ void GTcpSocket::transferAct()
     shedule_now = true; //устанавливаем признак выполнения данного метода
     int interval = 1000; //начальный интервал для подсчета лимита байт на скачивания/передачи
 
-    if(this->state() != QAbstractSocket::ConnectedState && QSslSocket::bytesAvailable() == 0) return; //если сокет был отсоединен и нету данных во внешнем буфеое, то выходим
+    if(this->state() != QAbstractSocket::ConnectedState && QSslSocket::bytesAvailable() == 0) {shedule_now = false; return;} //если сокет был отсоединен и нету данных во внешнем буфеое, то выходим
 
     if(!watcher->isNull()) //если таймер запускается не впервые
         interval = qMin(watcher->elapsed(), interval);//то выбираем наименьшее между начальным значением и интервалом с момента прошлой передачи данных
     watcher->start();
-
- /*   int dif = interval - last_interval;
-    if( dif <= 5 && dif >= -5) interval = last_interval;
-    else last_interval = interval;*/
 
     qint64 inLimit = (inspeed * interval)/1000; //высчитываем лимит приема/передачи
     qint64 outLimit = (outspeed * interval)/1000;
