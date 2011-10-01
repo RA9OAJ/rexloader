@@ -896,7 +896,6 @@ void HttpLoader::acceptRang()
     QObject* _sender = aqueue->takeFirst();
     Task* tsk = getTaskSender(_sender);/*getTaskSender(sender());*/
     if(!tsk)return;
-    if(tsk->_maxSections == 1)return;
     HttpSection* sect = qobject_cast<HttpSection*>(_sender);
     if(!sect)return;
     int sect_id = tsk->sections.key(sect);

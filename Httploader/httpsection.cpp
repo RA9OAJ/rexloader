@@ -158,6 +158,13 @@ void HttpSection::setAuthorizationData(const QString &data_base64)
 
 void HttpSection::transferActSlot()
 {
+    if(watcher->elapsed() >= 1000)
+    {
+        real_speed = last_buf_size/watcher->elapsed()*1000; //для анализа реальной скорости
+        last_buf_size = 0;
+        watcher->start();
+    }
+
     if(!pause_flag)emit beginTransfer();
 }
 
@@ -240,14 +247,8 @@ void HttpSection::sendHeader()
 
 void HttpSection::dataAnalising()
 {
-    //if(stopFlag)return;
     if(!soc)return;
-    if(watcher->elapsed() >= 1000)
-    {
-        real_speed = last_buf_size/watcher->elapsed()*1000; //для анализа реальной скорости
-        last_buf_size = 0;
-        watcher->start();
-    }
+
     if(watcher->isNull())watcher->start();
 
     if(mode == 0)
@@ -443,6 +444,9 @@ qint64 HttpSection::downSpeed() const
 
 qint64 HttpSection::realSpeed() const
 {
+    if(!real_speed && !watcher->isNull())
+        return (qint64)((double)last_buf_size/(double)watcher->elapsed()*1000.0);
+
     return real_speed;
 }
 
