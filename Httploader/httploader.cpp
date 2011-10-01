@@ -1013,8 +1013,8 @@ void HttpLoader::addInAQueue()
     int sect_id = tsk->sections.key(sect);
     if(!sect_id)return;
     tsk->status = LInterface::ON_LOAD;
-    if(tsk->_maxSections == 1)return;
     tsk->filepath = sect->fileName();
+    if(tsk->_maxSections == 1)return;
 
     QTimer::singleShot(5000,this,SLOT(acceptRang()));
 }
