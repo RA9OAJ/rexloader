@@ -160,7 +160,7 @@ void addURL(const QStringList &_argv)
             url.clear();
             url = QUrl::fromEncoded(_argv.value(i).toAscii());
 
-            if((url.isValid() && !url.scheme().isEmpty()) || QFile::exists(url.toString()))
+            if((url.isValid() && !url.scheme().isEmpty()) || QFile::exists(_argv.value(i)))
             {
                 qr.prepare("INSERT INTO newtasks (url) VALUES (:url)");
                 if(url.scheme() == "file") qr.bindValue(":url",_argv.value(i).right(_argv.value(i).size()-7));

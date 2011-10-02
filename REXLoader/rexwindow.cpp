@@ -615,7 +615,7 @@ void REXWindow::scanNewTaskQueue()
         if(qr.value(1).toString() != "")
         {
             QUrl url(qr.value(1).toString());
-            if((url.scheme().toLower() == "file" || url.scheme().isEmpty()) && QFile::exists(qr.value(1).toString()))
+            if(QFile::exists(qr.value(1).toString()))
             {
                 //тут считываем данные о загрузке из недокачанного файла
                 QString _path = qr.value(1).toString();
@@ -679,25 +679,6 @@ void REXWindow::scanNewTaskQueue()
                     fread(&length, sizeof(int), 1, fl);
                     buffer.resize(length);
                     fread(buffer.data(),length, 1, fl); //считываем дату модификации
-                    /*QDateTime fldate = QDateTime::fromString(QString(buffer),"yyyy-MM-ddTHH:mm:ss");
-
-                    QSqlQuery qr1;
-                    qr1.prepare("INSERT INTO tasks(url,datecreate,filename,currentsize,totalsize,mime,tstatus,categoryid,priority) VALUES(:url,:datecreate,:filename,:currentsize,:totalsize,:mime,:tstatus,:categoryid,:priority)");
-                    qr1.bindValue("url",newurl);
-                    qr1.bindValue("datecreate",QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:ss"));
-                    qr1.bindValue("filename",_path);
-                    qr1.bindValue("currensize",sum);
-                    qr1.bindValue("totalsize",tsize);
-                    qr1.bindValue("mime",mime);
-                    qr1.bindValue("tstatus",-100);
-                    qr1.bindValue("categoryid",6);
-                    qr1.bindValue("priority",2);
-                    if(!qr1.exec())
-                    {
-                        //запись в журнал ошибок
-                        qDebug()<<"Error: void REXWindow::scanNewTaskQueue(): "<<qr.lastError().text();
-                        return;
-                    }*/
 
                     dlg = new AddTaskDialog(downDir, this);
                     connect(dlg,SIGNAL(addedNewTask()),this,SLOT(updateTaskSheet()));
