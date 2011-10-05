@@ -629,22 +629,22 @@ void REXWindow::scanNewTaskQueue()
 
                     qint64 spos = 0;
 
-                    if(fseek(fl, flinfo.size()-8, SEEK_SET) != 0)break;
+                    if(fseek(fl, flinfo.size()-8, SEEK_SET) != 0){fclose(fl);break;}
                     fread(&spos, sizeof(qint64), 1, fl);
-                    if(fseek(fl, spos, SEEK_SET) != 0)break;
+                    if(fseek(fl, spos, SEEK_SET) != 0){fclose(fl);break;}
 
                     QString header;
                     QByteArray buffer;
                     buffer.resize(1024);
                     fgets(buffer.data(), 1024, fl);
                     header.append(buffer);
-                    if(header != "\r\n")break;
+                    if(header != "\r\n"){fclose(fl);break;}
                     header.clear();
                     fgets(buffer.data(), 1024, fl);
                     header.append(buffer);
-                    if(header.indexOf("RExLoader")!= 0)break;
+                    if(header.indexOf("RExLoader")!= 0){fclose(fl);break;}
                     QString fversion = header.split(" ").value(1);
-                    if(fversion != "0.1a.1\r\n")break;
+                    if(fversion != "0.1a.1\r\n"){fclose(fl);break;}
 
                     int length = 0;
                     fread(&length, sizeof(int), 1, fl);
@@ -679,6 +679,7 @@ void REXWindow::scanNewTaskQueue()
                     fread(&length, sizeof(int), 1, fl);
                     buffer.resize(length);
                     fread(buffer.data(),length, 1, fl); //считываем дату модификации
+                    fclose(fl);
 
                     dlg = new AddTaskDialog(downDir, this);
                     connect(dlg,SIGNAL(addedNewTask()),this,SLOT(updateTaskSheet()));
