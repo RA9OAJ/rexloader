@@ -681,6 +681,7 @@ void HttpLoader::sectError(int _errno)
             break;
         }
     case HttpSection::SERV_CONNECT_ERROR:
+    case QAbstractSocket::RemoteHostClosedError:
     case QAbstractSocket::ConnectionRefusedError:
     case QAbstractSocket::SocketTimeoutError:
     case QAbstractSocket::ProxyConnectionRefusedError:
@@ -812,22 +813,22 @@ int HttpLoader::loadTaskFile(const QString &_path)
 
     qint64 spos = 0;
 
-    if(fseek(fl, flinfo.size()-8, SEEK_SET) != 0)return 0;
+    if(fseek(fl, flinfo.size()-8, SEEK_SET) != 0){fclose(fl); return 0;}
     fread(&spos, sizeof(qint64), 1, fl);
-    if(fseek(fl, spos, SEEK_SET) != 0)return 0;
+    if(fseek(fl, spos, SEEK_SET) != 0){fclose(fl); return 0;}
 
     QString header;
     QByteArray buffer;
     buffer.resize(1024);
     fgets(buffer.data(), 1024, fl);
     header.append(buffer);
-    if(header != "\r\n")return 0;
+    if(header != "\r\n"){fclose(fl); return 0;}
     header.clear();
     fgets(buffer.data(), 1024, fl);
     header.append(buffer);
-    if(header.indexOf("RExLoader")!= 0)return 0;
+    if(header.indexOf("RExLoader")!= 0){fclose(fl); return 0;}
     QString fversion = header.split(" ").value(1);
-    if(fversion != "0.1a.1\r\n")return 0;
+    if(fversion != "0.1a.1\r\n"){fclose(fl); return 0;}
 
     int length = 0;
     fread(&length, sizeof(int), 1, fl);
@@ -837,7 +838,7 @@ int HttpLoader::loadTaskFile(const QString &_path)
 
     Task *tsk = 0;
     tsk = new Task();
-    if(!tsk) return 0;
+    if(!tsk) {fclose(fl); return 0;}
     tsk->url = QUrl::fromEncoded(buffer);
     tsk->_fullsize_res = fullsize_res;
     tsk->_maxSections = this->maxSections;
@@ -867,6 +868,7 @@ int HttpLoader::loadTaskFile(const QString &_path)
     buffer.resize(length);
     fread(buffer.data(),length, 1, fl); //считываем дату модификации
     tsk->last_modif = QDateTime::fromString(QString(buffer),"yyyy-MM-ddTHH:mm:ss");
+    fclose(fl);
 
     int task_num = 0;
     if(!task_list->key(0))

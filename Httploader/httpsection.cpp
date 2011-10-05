@@ -414,7 +414,11 @@ void HttpSection::dataAnalising()
 void HttpSection::socketErrorSlot(QAbstractSocket::SocketError _err)
 {
     _errno = _err;
-    if(_err == QAbstractSocket::RemoteHostClosedError)return;
+    if(_err == QAbstractSocket::RemoteHostClosedError)
+    {
+        qint64 canload = totalload + soc->bytesAvailableOnNetwork() + soc->bytesAvailable();
+        if((canload == totalsize && totalsize) || (!totalsize && canload > 0))return;
+    }
     stopDownloading();
 
     emit errorSignal(_errno);
