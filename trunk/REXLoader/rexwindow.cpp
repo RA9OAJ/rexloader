@@ -556,7 +556,7 @@ void REXWindow::scanClipboard()
     if(!settDlg->value("scan_clipboard").toBool())return;
 
     const QClipboard *clipbrd = QApplication::clipboard();
-    QUrl url(clipbrd->text());
+    QUrl url = QUrl::fromEncoded(clipbrd->text().toUtf8());
     if(url.isValid() && plugproto.contains(url.scheme().toLower()) && url.toString() != clip_last)
     {
         clip_last = url.toString();
@@ -651,7 +651,8 @@ void REXWindow::scanNewTaskQueue()
                     buffer.resize(length);
                     fread(buffer.data(),length, 1, fl); //считываем URL
 
-                    QUrl newurl = QUrl::fromEncoded(buffer);
+                    QUrl newurl = QUrl::fromEncoded(buffer, QUrl::StrictMode);
+                    if(!newurl.isValid()){fclose(fl);break;}
 
                     length = 0;
                     fread(&length, sizeof(int), 1, fl);
@@ -685,7 +686,7 @@ void REXWindow::scanNewTaskQueue()
                     connect(dlg,SIGNAL(addedNewTask()),this,SLOT(updateTaskSheet()));
                     connect(dlg,SIGNAL(addedNewTask()),ui->tableView,SLOT(scrollToBottom()));
                     dlg->setValidProtocols(plugproto);
-                    dlg->setNewUrl(QString(newurl.toEncoded()));
+                    dlg->setNewUrl(QString(newurl.toString()));
                     dlg->setAdditionalInfo(_path,sum,tsize,mime);
                     dlg->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
                     dlg->show();
@@ -1570,8 +1571,8 @@ void REXWindow::updateStatusBar()
             break;
         }
         priority->setVisible(true);
-        QString encoded(model->index(row_id,1).data(Qt::DisplayRole).toUrl().toEncoded());
-        urllbl->setText(QString("<a href='%1'>%2</a>").arg(encoded,model->index(row_id,1).data(Qt::DisplayRole).toString()));
+        QUrl cur_url = QUrl::fromEncoded(model->index(row_id,1).data(Qt::DisplayRole).toByteArray());
+        urllbl->setText(QString("<a href='%1'>%1</a>").arg(cur_url.toString()));
         urllbl->setVisible(true);
         progress->setMaximum(100);
         int curVal = model->index(row_id,5).data(100).toLongLong() > 0 ? ((qint64)100*model->index(row_id,4).data(100).toLongLong()/model->index(row_id,5).data(100).toLongLong()) : 0;

@@ -178,10 +178,9 @@ void AddTaskDialog::scanClipboard()
 {
     const QClipboard *clipbrd = QApplication::clipboard();
 
-    QUrl url(clipbrd->text());
-
+    QUrl url = QUrl::fromEncoded(clipbrd->text().toUtf8());
     if(url.isValid() && protocols.contains(url.scheme().toLower()))
-        gui->urlBox->setEditText(clipbrd->text());
+        gui->urlBox->setEditText(url.toString());
 }
 
 void AddTaskDialog::startNow()
@@ -264,7 +263,7 @@ void AddTaskDialog::addTask()
 
     QDir().mkpath(gui->locationEdit->text());
     QDateTime dtime(QDateTime::currentDateTime());
-    QUrl curl = QUrl::fromEncoded(gui->urlBox->currentText().toAscii());
+    QUrl curl = QUrl::fromEncoded(gui->urlBox->currentText().toUtf8());
     QFileInfo flinfo(curl.toString(QUrl::RemoveQuery | QUrl::RemoveFragment));
     QString flname = (flinfo.fileName() != QString() ? flinfo.fileName() : "noname.html");
     flname = gui->locationEdit->text() + "/" + flname + "." + dtime.toString("yyyyMMddhhmmss") + ".rldr";
