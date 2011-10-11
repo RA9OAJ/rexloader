@@ -283,7 +283,7 @@ void HttpSection::dataAnalising()
 
             if(_tmpname.isEmpty())
             {
-                flinfo.setFile(url.toString());
+                flinfo.setFile(url.path());
                 _tmpname = flinfo.fileName();
             }
 
@@ -380,6 +380,12 @@ void HttpSection::dataAnalising()
             fl->setFileName(flname);
             if(fl->exists())fl->open(QFile::ReadWrite);
             else fl->open(QFile::WriteOnly);
+            if(!fl->isOpen())
+            {
+                _errno = -4;
+                emit errorSignal(_errno);
+                return;
+            }
             fl->seek(offset_f+start_s+totalload);
         }
         if(mode != 0) mode = 2;
