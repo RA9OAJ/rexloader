@@ -474,7 +474,7 @@ void REXWindow::saveSettings()
     settings.setValue("WindowState",saveState());
     settings.setValue("WindowVisible",isVisible());
     settings.endGroup();
-    settings.beginGroup("Interface Windgets");
+    settings.beginGroup("Windgets Interface");
     settings.setValue("TasksTable",ui->tableView->horizontalHeader()->saveState());
     settings.setValue("WindowHSplitter", ui->splitter_2->saveState());
     settings.setValue("WindowVSplitter", ui->splitter->saveState());
@@ -509,14 +509,10 @@ void REXWindow::loadSettings()
     settings.beginGroup("Main Window");
     restoreGeometry(settings.value("WindowGeometry").toByteArray());
     restoreState(settings.value("WindowState").toByteArray());
-    if(!settings.value("WindowVisible").toBool())
-    {
-        preStat = windowState();
-        setWindowState(Qt::WindowMinimized);
-        QTimer::singleShot(0,this,SLOT(close()));
-    }
+    bool _windowVisible = settings.value("WindowVisible").toBool();
     settings.endGroup();
-    settings.beginGroup("Interface Windgets");
+
+    settings.beginGroup("Windgets Interface");
     ui->tableView->horizontalHeader()->restoreState(settings.value("TasksTable").toByteArray());
     ui->splitter_2->restoreState(settings.value("WindowHSplitter").toByteArray());
     ui->splitter->restoreState(settings.value("WindowVSplitter").toByteArray());
@@ -549,6 +545,13 @@ void REXWindow::loadSettings()
     }
     settDlg->updateInterface();
     settings.endArray();
+
+    if(!_windowVisible || settDlg->value("start_minimized").toBool())
+    {
+        preStat = windowState();
+        setWindowState(Qt::WindowMinimized);
+        QTimer::singleShot(0,this,SLOT(close()));
+    }
 }
 
 void REXWindow::scanClipboard()
@@ -968,6 +971,7 @@ void REXWindow::startTask()
         if(!i || where.isEmpty()) where = QString("id=%1").arg(QString::number(id_row));
         else where += QString(" OR id=%1").arg(QString::number(id_row));
     }
+    if(where.isEmpty())return;
 
     QSqlQuery qr(QSqlDatabase::database());
     qr.prepare("UPDATE tasks SET tstatus=-100, lasterror='' WHERE " + where);
@@ -1572,7 +1576,7 @@ void REXWindow::updateStatusBar()
         }
         priority->setVisible(true);
         QUrl cur_url = QUrl::fromEncoded(model->index(row_id,1).data(Qt::DisplayRole).toByteArray());
-        urllbl->setText(QString("<a href='%1'>%1</a>").arg(cur_url.toString()));
+        urllbl->setText(QString("<a href='%1'>%2</a>").arg(cur_url.toString(),TItemModel::shortUrl(cur_url.toString())));
         urllbl->setVisible(true);
         progress->setMaximum(100);
         int curVal = model->index(row_id,5).data(100).toLongLong() > 0 ? ((qint64)100*model->index(row_id,4).data(100).toLongLong()/model->index(row_id,5).data(100).toLongLong()) : 0;

@@ -204,7 +204,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
             case LInterface::STOPPING:
             case LInterface::ON_LOAD:
                 if(myData(row,5).toLongLong()) return QString::number(myData(row,4).toLongLong()*100/myData(row,5).toLongLong())+QString("%");
-                else return QString("0%");
+                else return tr("N/a");
             case LInterface::FINISHED: return QString(tr("Completed"));
 
             default: return QVariant();
@@ -277,8 +277,8 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         qint64 totalsz = myData(row,5).toLongLong();
 
         if(!myData(row,4).toLongLong() || !myData(row,5).toLongLong())
-            percent = "0";
-        else percent = QString::number(myData(row,4).toLongLong()*100/myData(row,5).toLongLong());
+            percent = "";
+        else percent = "(" + QString::number(myData(row,4).toLongLong()*100/myData(row,5).toLongLong()) + "%)";
 
         QString filename = QFileInfo(myData(row,3).toString()).fileName();
         if(filename.right(5) == ".rldr")filename = filename.left(filename.size()-20);
@@ -297,7 +297,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         }
         else spd = "---";
 
-        tooltip = QString(tr("URL: %1<br>Filename: %2<br>Total size: %3<br>Left: %4 (%5%)<br><font color='#00bb00'>Down. speed: %6</font>")).arg(myData(row,1).toString(),filename,totalszStr,cursz,percent,spd);
+        tooltip = QString(tr("URL: %1<br>Filename: %2<br>Total size: %3<br>Left: %4 %5<br><font color='#00bb00'>Down. speed: %6</font>")).arg(shortUrl(myData(row,1).toString()),shortUrl(filename),totalszStr,cursz,percent,spd);
         return tooltip;
     }
 
@@ -434,4 +434,12 @@ bool TItemModel::setMetaData(int key, const QString &name,const QVariant &value)
 TItemModel::~TItemModel()
 {
     if(qr)delete(qr);
+}
+
+QString TItemModel::shortUrl(QString url, int max_len)
+{
+    if(url.size() <= max_len) return url;
+    int pos = url.size()/2 - (url.size() + 3 - max_len)/2;
+    url.replace(pos,(url.size() + 3 - max_len),"...");
+    return url;
 }
