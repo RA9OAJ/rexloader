@@ -12,6 +12,7 @@
 #include <QLocale>
 #include <QPointer>
 #include <QNetworkProxy>
+#include <zlib.h>
 #include "gtcpsocket.h"
 
 class HttpSection : public QObject/*: public QThread*/
@@ -81,6 +82,7 @@ protected slots:
     void sendHeader(); // слот посылает запрос на получение содержимого по URL
     void dataAnalising(); // слот вызывается при наличии во входном буфере сокета данных и анализирует их, сдесь же происходит и запись в файл
     void socketErrorSlot(QAbstractSocket::SocketError _err);//слот для обработки ошибок сокета
+    QByteArray ungzipData(QByteArray &data); //распаковывает gzip упакованные секции при получении сжатых данный от сервера
 
 private:
     QPointer<GTcpSocket> soc; // указатель на сокет (нужен ли он?)
@@ -101,6 +103,9 @@ private:
     QDateTime lastmodified; //дата прошлой модификации удаленного файла для скачивания
 
     qint64 down_speed; //предельная скорость скачивания
+    qint64 chunked_size; //общий размер текущей секции
+    qint64 decompressSize; //текущий размер скачанного в данной секции
+    QByteArray inbuf; //буфер для нераспакованных данных gzip
 
     QString user_agent; //для протокола HTTP идентификация клиента
     QString referer; //реферер для HTTP
