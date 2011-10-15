@@ -1,7 +1,7 @@
 #include "httpsection.h"
 
 HttpSection::HttpSection(QObject *parent) : QObject(parent) /*:
-    QThread(parent)*/
+      QThread(parent)*/
 {
     clear();
     mutex = new QMutex();
@@ -9,6 +9,9 @@ HttpSection::HttpSection(QObject *parent) : QObject(parent) /*:
     proxytype = QNetworkProxy::NoProxy;
     proxyaddr.clear();
     proxy_auth.clear();
+    chunked_size = -1;
+    decompressSize = 0;
+    inbuf.clear();
 }
 
 void HttpSection::clear()
@@ -173,11 +176,11 @@ void HttpSection::startDownloading()
     //if(isRunning())return;
     //if(soc)return;
     mode = 0;
-   _errno = 0;
-   header.clear();
+    _errno = 0;
+    header.clear();
 
-   run();
-   //start();
+    run();
+    //start();
 }
 
 void HttpSection::stopDownloading()
@@ -228,7 +231,7 @@ void HttpSection::sendHeader()
     if(!soc)return;
     QString target = (proxytype != QNetworkProxy::NoProxy) ? url.toEncoded() : url.encodedPath();
     if(!url.encodedQuery().isEmpty()) target += "?" + url.encodedQuery();
-    QString _header = QString("GET %1 HTTP/1.0\r\nHost: %2\r\nAccept: */*\r\nUser-Agent: %3\r\n").arg(target,url.host(),user_agent);
+    QString _header = QString("GET %1 HTTP/1.1\r\nHost: %2\r\nAccept: */*\r\nAccept-Encoding: gzip, deflate\r\nUser-Agent: %3\r\n").arg(target,url.host(),user_agent);
 
     if(start_s > finish_s && finish_s != 0){qint64 _tmp = finish_s; finish_s = start_s; start_s = _tmp;}
 
@@ -241,7 +244,7 @@ void HttpSection::sendHeader()
         _header += QString("Authorization: Basic %1\r\n").arg(authorization);
 
     _header += QString("Referer: http://%1/\r\n").arg(referer == "" ? url.host():referer);
-    _header += QString("Connection: Keep-Alive\r\n\r\n");
+    _header += QString("Connection: Close\r\n\r\n");
     soc->write(_header.toAscii().data());
 }
 
@@ -300,7 +303,7 @@ void HttpSection::dataAnalising()
             totalsize = header["content-length"].toLongLong();
             emit totalSize(totalsize);
             emit fileType(header["content-type"]);
-            if(header.contains("accept-ranges")) emit acceptRanges();
+            if(header.contains("accept-ranges") && !header.contains("transfer-encoding")) emit acceptRanges();
             if(lastmodified.isNull() && header.contains("last-modified"))
             {
                 QLocale locale(QLocale::C);
@@ -312,7 +315,7 @@ void HttpSection::dataAnalising()
 
             if(totalsize != 0 && totalsize != header["content-range"].split("/").value(1).toLongLong())
             {
-               _errno = -2; //несоответствие размеров
+                _errno = -2; //несоответствие размеров
                 emit errorSignal(_errno);
 
                 stopDownloading();
@@ -334,7 +337,7 @@ void HttpSection::dataAnalising()
                 QDateTime _dtime = locale.toDateTime(header["last-modified"], "ddd, dd MMM yyyy hh:mm:ss 'GMT'");
                 if(lastmodified != _dtime)
                 {
-                   _errno = -3; //несоответствие дат
+                    _errno = -3; //несоответствие дат
                     emit mismatchOfDates(lastmodified, _dtime);
                     stopDownloading();
                     return;
@@ -394,7 +397,37 @@ void HttpSection::dataAnalising()
     }
     if(mode == 2)
     {
-        qint64 cur_bloc = fl->write(soc->readAll());
+        qint64 cur_bloc = 0;
+
+        if(header.contains("transfer-encoding"))
+        {
+            if(chunked_size < 0) //распознаем строку с размером секции
+            {
+                if(!soc->canReadLine()) return;
+                QString buf = soc->readLine(1024);
+                chunked_size = buf.toLongLong(0,16);
+                if(!chunked_size)
+                {
+                    fl->close();
+                    stopDownloading();
+                    //emit totalSize(decompressSize);
+                    emit downloadingCompleted();
+                    decompressSize = 0;
+                    return;
+                }
+            }
+            inbuf.append(soc->read(chunked_size - inbuf.size()));
+            cur_bloc = inbuf.size();
+        }
+        else cur_bloc = fl->write(soc->readAll());
+
+        if(chunked_size > 0 && chunked_size - inbuf.size() == 0) //если скачка по методу Chunked
+        {
+            chunked_size = -1; //если выкачали секцию целиком, то сбрасываем общий размер текущей chunkde-секции в -1
+            decompressSize += fl->write(ungzipData(inbuf));
+            if(decompressSize < 0) cur_bloc = -1;
+            inbuf.clear();
+        }
         if(cur_bloc == -1)
         {
             _errno = -4; //ошибка при записи в файл
@@ -498,4 +531,47 @@ void HttpSection::setProxy(const QUrl &_proxy, QNetworkProxy::ProxyType _ptype, 
     proxyaddr = _proxy;
     proxytype = _ptype;
     proxy_auth = base64_userdata;
+}
+
+QByteArray HttpSection::ungzipData(QByteArray &data)
+{
+    if (data.size() <= 4) return QByteArray();
+
+        QByteArray outdata;
+
+        int ret;
+        z_stream strm;
+        static const int CHUNK_SIZE = 4096;
+        char out[CHUNK_SIZE];
+
+        strm.zalloc = Z_NULL;
+        strm.zfree = Z_NULL;
+        strm.opaque = Z_NULL;
+        strm.avail_in = data.size();
+        strm.next_in = (Bytef*)(data.data());
+
+        ret = inflateInit2(&strm, 47);
+        if (ret != Z_OK)
+            return QByteArray();
+
+        do {
+            strm.avail_out = CHUNK_SIZE;
+            strm.next_out = (Bytef*)(out);
+
+            ret = inflate(&strm, Z_NO_FLUSH);
+
+            switch (ret) {
+            case Z_NEED_DICT:
+                ret = Z_DATA_ERROR;
+            case Z_DATA_ERROR:
+            case Z_MEM_ERROR:
+                (void)inflateEnd(&strm);
+                return QByteArray();
+            }
+
+            outdata.append(out, CHUNK_SIZE - strm.avail_out);
+        } while (strm.avail_out == 0);
+
+        inflateEnd(&strm);
+        return outdata;
 }

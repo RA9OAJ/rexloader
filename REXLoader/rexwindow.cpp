@@ -1177,6 +1177,7 @@ void REXWindow::syncTaskData()
         int id_proto = (tasklist.value(id_row))/100;
 
         LoaderInterface *ldr = pluglist.value(id_proto);
+        if(!ldr)continue;
         int tstatus = ldr->taskStatus(id_task);
         qr.clear();
 

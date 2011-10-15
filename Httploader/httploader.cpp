@@ -434,7 +434,7 @@ void HttpLoader::sectionCompleted()
         return;
     }
     int id_task = task_list->key(tsk);
-    qint64 _total = (sect->finishByte() == 0 && sect->startByte() == 0) ? tsk->totalLoad() : (sect->finishByte() != 0 ? sect->finishByte()-sect->startByte()+1:sect->totalFileSize()-sect->startByte());
+    qint64 _total = (sect->finishByte() == 0 && sect->startByte() == 0) ? tsk->size : (sect->finishByte() != 0 ? sect->finishByte()-sect->startByte()+1:sect->totalFileSize()-sect->startByte());
     if(tsk->filepath != sect->fileName())tsk->filepath = sect->fileName();
     if(sect->totalLoadOnSection() == _total && _total > 0) //если закачка прошла успешно
     {
@@ -457,11 +457,18 @@ void HttpLoader::sectionCompleted()
     }
     else if(sect->totalLoadOnSection() < _total || !_total) //если скачано меньше, чем нужно или сервер не передал общего размера файла
     {
-            tsk->sections.remove(tsk->sections.key(sect));
-            sections->remove(sect);
-            addDeleteQueue(sect);
-            sect = 0;
-            tsk->sections_cnt -= 1;
+        if(!tsk->accept_ranges)
+        {
+            tsk->status = LInterface::FINISHED;
+            tsk->size = tsk->totalLoad();
+            mathSpeed();
+            return;
+        }
+        tsk->sections.remove(tsk->sections.key(sect));
+        sections->remove(sect);
+        addDeleteQueue(sect);
+        sect = 0;
+        tsk->sections_cnt -= 1;
     }
     mathSpeed();
 
