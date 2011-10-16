@@ -44,6 +44,7 @@ public:
     void setDefaultTimeout(int sec);
     void setActionType(ActionTypes type);
     void setParams(const QString &par);
+    void setWindowTitle(const QString &title);
     ActionTypes myTypes() const;
     QString myParams() const;
 
@@ -64,6 +65,7 @@ private:
     QTimer *timer;
     QPushButton *defBtn;
     QString btntext;
+    QString wtitle;
     int timeout;
     ActionTypes mytype;
     QString myparam;

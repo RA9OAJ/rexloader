@@ -31,6 +31,7 @@ EMessageBox::EMessageBox(QWidget *parent) :
     setWindowModality(Qt::WindowModal);
     timer->start(1000);
     setWindowTitle("REXLoader - "+tr("File already exists!"));
+    wtitle = windowTitle();
     moveToCenter();
 }
 
@@ -54,6 +55,7 @@ void EMessageBox::setDefaultButton(QPushButton *button)
     if(!defBtn)return;
     btntext = defBtn->text();
     defBtn->setText(btntext + QString(" (%1)").arg(QString::number(timeout)));
+    QMessageBox::setWindowTitle(wtitle + QString(" (%1)").arg(QString::number(timeout)));
 
     QMessageBox::setDefaultButton(button);
 }
@@ -66,6 +68,7 @@ void EMessageBox::setDefaultButton(StandardButton button)
     if(!defBtn)return;
     btntext = defBtn->text();
     defBtn->setText(btntext + QString(" (%1)").arg(QString::number(timeout)));
+    QMessageBox::setWindowTitle(wtitle + QString(" (%1)").arg(QString::number(timeout)));
 }
 
 void EMessageBox::tickTimer()
@@ -77,6 +80,7 @@ void EMessageBox::tickTimer()
     if(defBtn->text().indexOf(btntext) != 0)
         btntext = defBtn->text();
     defBtn->setText(btntext + QString(" (%1)").arg(QString::number(timeout)));
+    QMessageBox::setWindowTitle(wtitle + QString(" (%1)").arg(QString::number(timeout)));
 
     if(timeout > 0)return;
 
@@ -122,4 +126,10 @@ void EMessageBox::closeEvent(QCloseEvent *event)
 {
     emit buttonClicked(defaultButton());
     QMessageBox::closeEvent(event);
+}
+
+void EMessageBox::setWindowTitle(const QString &title)
+{
+    wtitle = "REXLoader - "+title;
+    QMessageBox::setWindowTitle(title);
 }
