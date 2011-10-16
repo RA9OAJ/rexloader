@@ -10,6 +10,7 @@ HttpSection::HttpSection(QObject *parent) : QObject(parent) /*:
     proxyaddr.clear();
     proxy_auth.clear();
     chunked_size = -1;
+    chunked_load = 0;
     decompressSize = 0;
     inbuf.clear();
 }
@@ -406,27 +407,37 @@ void HttpSection::dataAnalising()
                 if(!soc->canReadLine()) return;
                 QString buf = soc->readLine(1024);
                 chunked_size = buf.toLongLong(0,16);
+                chunked_load = 0;
+
                 if(!chunked_size)
                 {
+                    decompressSize += fl->write(ungzipData(inbuf));
+                    if(decompressSize < 0)
+                    {
+                        _errno = -4; //ошибка при записи в файл
+                        stopDownloading();
+                        emit errorSignal(_errno);
+                        return;
+                    }
                     fl->close();
                     stopDownloading();
-                    //emit totalSize(decompressSize);
                     emit downloadingCompleted();
                     decompressSize = 0;
+                    inbuf.clear();
                     return;
                 }
             }
-            inbuf.append(soc->read(chunked_size - inbuf.size()));
-            cur_bloc = inbuf.size();
+            qint64 lbufs = inbuf.size();
+            inbuf.append(soc->read(chunked_size - chunked_load));
+            chunked_load += inbuf.size() - lbufs;
+            cur_bloc = inbuf.size() - lbufs;
         }
         else cur_bloc = fl->write(soc->readAll());
 
-        if(chunked_size > 0 && chunked_size - inbuf.size() == 0) //если скачка по методу Chunked
+        if(chunked_size > 0 && chunked_size - chunked_load == 0) //если скачка по методу Chunked
         {
             chunked_size = -1; //если выкачали секцию целиком, то сбрасываем общий размер текущей chunkde-секции в -1
-            decompressSize += fl->write(ungzipData(inbuf));
-            if(decompressSize < 0) cur_bloc = -1;
-            inbuf.clear();
+            while(soc->read(1) != "\n");
         }
         if(cur_bloc == -1)
         {

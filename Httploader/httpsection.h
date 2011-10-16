@@ -104,6 +104,7 @@ private:
 
     qint64 down_speed; //предельная скорость скачивания
     qint64 chunked_size; //общий размер текущей секции
+    qint64 chunked_load;
     qint64 decompressSize; //текущий размер скачанного в данной секции
     QByteArray inbuf; //буфер для нераспакованных данных gzip
 
