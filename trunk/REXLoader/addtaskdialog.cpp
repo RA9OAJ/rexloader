@@ -214,6 +214,7 @@ void AddTaskDialog::addTask()
     {
         EMessageBox *question = new EMessageBox(this);
         question->setIcon(QMessageBox::Question);
+        question->setWindowTitle(tr("URL already exists"));
         question->addButton(tr("Redownload"), EMessageBox::YesRole);
         QPushButton *btn = question->addButton(tr("Cancel"),EMessageBox::RejectRole);
         question->setDefaultButton(btn);
