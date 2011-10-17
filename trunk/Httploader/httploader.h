@@ -119,6 +119,7 @@ public:
 
 signals:
     void sheduleImpulse(); //сигнал генериться с интервалом шедулера
+    virtual void messageAvailable(int id_task); //сигнал сообщает о наличии служебных сообщений для задания id_task
 
 protected:
     void mathSpeed(); //перерасчитывает скорость секций всех закачек;

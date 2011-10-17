@@ -87,6 +87,8 @@ public:
     virtual QString statusString(int _stat) const =0; //возвращает строку статуса по заданному коду
     virtual void setProxy(int id_task, const QUrl &_proxy, LInterface::ProxyType _ptype, const QString &data_base64)=0; //устанавливает прокси
 
+signals:
+    virtual void messageAvailable(int id_task)=0; //сигнал сообщает о наличии служебных сообщений для задания id_task
 };
 
 
