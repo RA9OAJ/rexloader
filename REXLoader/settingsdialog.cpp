@@ -124,8 +124,8 @@ void SettingsDialog::applySets()
     sets.insert("proxy_password",ui->proxyPassword->text());
 
     sets.insert("down_dir",ui->downDir->text());
-    sets.insert("max_number_tasks",ui->maxTasksSpin->value());
-    sets.insert("max_number_sections",ui->maxSectionsSpin->value());
+    sets.insert("max_number_tasks",ui->maxTasks->currentIndex()+1);
+    sets.insert("max_number_sections",ui->maxSections->currentIndex()+1);
     sets.insert("enable_ignore_errors",ui->checkBoxIgnoreErrors->isChecked());
     sets.insert("max_number_errors",ui->spinBoxMaxErrors->value());
 
@@ -157,8 +157,8 @@ void SettingsDialog::cancelSets()
     ui->proxyPassword->setText(sets.value("proxy_password").toString());
 
     ui->downDir->setText(sets.value("down_dir").toString());
-    ui->maxTasksSpin->setValue(sets.value("max_number_tasks").toInt());
-    ui->maxSectionsSpin->setValue(sets.value("max_number_sections").toInt());
+    ui->maxTasks->setCurrentIndex(sets.value("max_number_tasks").toInt()-1);
+    ui->maxSections->setCurrentIndex(sets.value("max_number_sections").toInt()-1);
     ui->checkBoxIgnoreErrors->setChecked(sets.value("enable_ignore_errors").toBool());
     ui->spinBoxMaxErrors->setValue(sets.value("max_number_errors").toInt());
 }
