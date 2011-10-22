@@ -96,6 +96,9 @@ protected slots:
     void acceptQAction(QAbstractButton *btn); //обработчик решений пользователя на задаваемые программой вопросы
     void readSettings(); //считывает параметры настрое после их изменения
     void selectSpeedRate(bool checked); //переключение скорости скачивания
+    void showTreeContextMenu(const QPoint &pos); //отображает контекстное меню для дерева категорий и фильтров
+    void deleteCategory(); //удаляет выбранную категорию
+    void addCategory(); //добавляет новую категорию, родительским элементом является выбранная категория
 
 signals:
     void transAct();
@@ -103,7 +106,7 @@ signals:
 private:
     void lockProcess(bool flag=true); //позволяет создать/удалить файл блокировки процесса
     void createInterface(); //настраивает элемкнты графического интерфейса
-    void setEnabledTaskMenu(bool stat=false); //активирует/деактивирует меню для выделенныз задач
+    void setEnabledTaskMenu(bool stat=false); //активирует/деактивирует меню для выделенных задач
 
     Ui::REXWindow *ui;
     QSystemTrayIcon *trayicon; //объект системного лотка

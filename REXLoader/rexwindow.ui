@@ -434,6 +434,21 @@
     <string>Import URL</string>
    </property>
   </action>
+  <action name="actionAddCategory">
+   <property name="text">
+    <string>Создать категорию</string>
+   </property>
+  </action>
+  <action name="actionDeleteCategory">
+   <property name="text">
+    <string>Удалить категорию</string>
+   </property>
+  </action>
+  <action name="actionCatProperties">
+   <property name="text">
+    <string>Свойства</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

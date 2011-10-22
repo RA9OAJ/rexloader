@@ -114,6 +114,7 @@ void REXWindow::createInterface()
     ui->treeView->hideColumn(2);
     ui->treeView->hideColumn(3);
     ui->treeView->hideColumn(4);
+    ui->treeView->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->treeView->setExpanded(treemodel->index(0,0),true);
     ui->treeView->setExpanded(treemodel->index(1,0),true);
 
@@ -204,6 +205,7 @@ void REXWindow::createInterface()
     connect(ui->actionStopAll,SIGNAL(triggered()),this,SLOT(stopAllTasks()));
     connect(ui->tableView,SIGNAL(clicked(QModelIndex)),this,SLOT(updateStatusBar()));
     connect(ui->tableView,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(showTableContextMenu(QPoint)));
+    connect(ui->treeView,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(showTreeContextMenu(QPoint)));
     connect(ui->actionOpenDir,SIGNAL(triggered()),this,SLOT(openTaskDir()));
     connect(ui->actionOpenTask,SIGNAL(triggered()),this,SLOT(openTask()));
     connect(ui->actionPVeryLow,SIGNAL(triggered()),this,SLOT(setTaskPriority()));
@@ -279,6 +281,15 @@ void REXWindow::createInterface()
     tblMenu->addMenu(ui->menu_7);
     tblMenu->addSeparator();
     tblMenu->addAction(ui->actionTaskPropert);
+
+    //Настраиваем меню для дерева категорий и фильтров
+    QMenu *treeMenu = new QMenu(this);
+    treeMenu->setObjectName("treeMenu");
+    treeMenu->addAction(ui->actionAddCategory);
+    treeMenu->addAction(ui->actionDeleteCategory);
+    treeMenu->addSeparator();
+    treeMenu->addAction(ui->actionCatProperties);
+    connect(ui->actionDeleteCategory,SIGNAL(triggered()),this,SLOT(deleteCategory()));
 }
 
 void REXWindow::showTableContextMenu(const QPoint &pos)
@@ -1826,4 +1837,75 @@ void REXWindow::selectSpeedRate(bool checked)
     }
     spdbtn->setIcon(act->icon());
     calculateSpeed();
+}
+
+void REXWindow::showTreeContextMenu(const QPoint &pos)
+{
+    QItemSelectionModel *selected = ui->treeView->selectionModel();
+    if(!selected->selectedRows().size())
+        return; //если ничего не выделено
+
+    QModelIndex index = ui->treeView->indexAt(pos);
+    index = treemodel->index(index.row(),1,index.parent());
+    int id = treemodel->data(index,100).toInt();
+    if(id < 1)
+        return;
+
+    if(id > 0 && id < 7)
+        ui->actionDeleteCategory->setVisible(false);
+    else ui->actionDeleteCategory->setVisible(true);
+
+    QMenu *mnu = findChild<QMenu*>("treeMenu");
+    if(mnu)mnu->popup(QCursor::pos());
+}
+
+void REXWindow::deleteCategory()
+{
+    QItemSelectionModel *selected = ui->treeView->selectionModel();
+    if(!selected->selectedRows().size())
+        return; //если ничего не выделено
+
+    QModelIndex index = selected->selectedIndexes().value(0);
+    QModelIndex parent_index = index.parent();
+    index = treemodel->index(index.row(),1,index.parent());
+    int id = treemodel->data(index,100).toInt();
+    parent_index = treemodel->index(parent_index.row(),1,parent_index.parent());
+    int parent_id = treemodel->data(parent_index,100).toInt();
+    if(id < 7) return; //если выделены встроенные категории или фильтры
+
+    QSqlQuery qr;
+    qr.prepare("DELETE FROM categories WHERE id=:id"); //удаляем категорию
+    qr.bindValue("id",id);
+    if(!qr.exec())
+    {
+        ///запись в журнал ошибок
+        qDebug()<<"void REXWindow::deleteCategory(1): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
+    }
+
+    qr.clear();
+    qr.prepare("UPDATE categories SET parent_id=:pid WHERE parent_id=:id");
+    qr.bindValue("pid",parent_id);
+    qr.bindValue("id",id);
+    if(!qr.exec())
+    {
+        ///запись в журнал ошибок
+        qDebug()<<"void REXWindow::deleteCategory(2): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
+    }
+
+    qr.clear();
+    qr.prepare("UPDATE tasks SET categoryid=:catid WHERE categoryid=:id"); //привязываем закачки удаляемой категории к её родителю
+    qr.bindValue("catid",parent_id);
+    qr.bindValue("id",id);
+    if(!qr.exec())
+    {
+        ///запись в журнал ошибок
+        qDebug()<<"void REXWindow::deleteCategory(3): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
+    }
+    model->silentUpdateModel();
+    treemodel->removeRow(index.row(),index.parent());
+}
+
+void REXWindow::addCategory()
+{
+
 }
