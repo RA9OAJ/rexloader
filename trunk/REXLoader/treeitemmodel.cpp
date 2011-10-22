@@ -252,10 +252,6 @@ bool TreeItemModel::silentUpdate(const QSqlDatabase &db)
     return true;
 }
 
-void TreeItemModel::removeRow(int row, const QModelIndex &parent)
-{
-}
-
 void TreeItemModel::updateRow(int row, const QModelIndex &parent)
 {
 
@@ -283,4 +279,35 @@ QList<QModelIndex> TreeItemModel::parentsInTree() const
         else ++i;
     }
     return list;
+}
+
+bool TreeItemModel::removeRows(int row, int count, const QModelIndex &parent)
+{
+    if(row >= rowCount(parent)) return false;
+    if(count > rowCount(parent))count = -1;
+    QModelIndex cur = QModelIndex();
+
+    beginRemoveRows(parent, row, row + count - 1);
+    for(int i = row; i < count; ++i)
+    {
+        for(int t = 0; t < columnCount(parent); ++t)
+        {
+            cur = index(i,t,parent); //определяем текущий элемент строки для удаления
+            if(!t)
+            {
+                for(int y = 0; y < rowCount(cur); ++y) //перепривязываем детей удаляемой строки к родителю удаляемой строки
+                {
+                    for(int z = 0; z < columnCount(cur); ++z)
+                    {
+                        QModelIndex curchild = index(y,z,cur);
+                        link.insert(curchild,parent);
+                    }
+                }
+            }
+            link.remove(cur);
+            nodes.remove(cur);
+        }
+    }
+    endRemoveRows();
+    return true;
 }

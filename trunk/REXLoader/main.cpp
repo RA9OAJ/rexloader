@@ -158,13 +158,13 @@ void addURL(const QStringList &_argv)
         for(int i=1; i<_argv.size(); i++)
         {
             url.clear();
-            url = QUrl::fromEncoded(_argv.value(i).toAscii());
+            url = QUrl::fromEncoded(_argv.value(i).toUtf8());
 
             if((url.isValid() && !url.scheme().isEmpty()) || QFile::exists(_argv.value(i)))
             {
                 qr.prepare("INSERT INTO newtasks (url) VALUES (:url)");
                 if(url.scheme() == "file") qr.bindValue(":url",_argv.value(i).right(_argv.value(i).size()-7));
-                else qr.bindValue(":url",_argv.value(i));
+                else qr.bindValue(":url",url.toString()/*_argv.value(i)*/);
                 if(!qr.exec())
                 {
                     //тут записываем сообщение об ошибке в error.log

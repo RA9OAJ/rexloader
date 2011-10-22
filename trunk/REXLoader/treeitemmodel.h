@@ -29,7 +29,7 @@ public:
     explicit TreeItemModel(QObject *parent = 0);
     virtual ~TreeItemModel();
 
-    virtual QVariant data(const QModelIndex &index, int role) const;
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     virtual int rowCount(const QModelIndex &parent) const;
     virtual int columnCount(const QModelIndex &parent) const;
     virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
@@ -39,9 +39,9 @@ public:
     virtual Qt::ItemFlags flags(const QModelIndex & index) const;
     QFont getFont() const;
     void updateRow(int row, const QModelIndex &parent = QModelIndex());
-    void removeRow(int row, const QModelIndex &parent = QModelIndex());
     void insertRow(int row, const QModelIndex &parent = QModelIndex());
     QList<QModelIndex> parentsInTree() const;
+    virtual bool removeRows(int row, int count, const QModelIndex & parent = QModelIndex());
 
 signals:
 
