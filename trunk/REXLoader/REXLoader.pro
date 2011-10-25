@@ -18,7 +18,8 @@ SOURCES += main.cpp\
     emessagebox.cpp \
     treeitemmodel.cpp \
     settingsdialog.cpp \
-    importdialog.cpp
+    importdialog.cpp \
+    categorydialog.cpp
 
 HEADERS  += rexwindow.h \
     titemmodel.h \
@@ -26,12 +27,14 @@ HEADERS  += rexwindow.h \
     emessagebox.h \
     treeitemmodel.h \
     settingsdialog.h \
-    importdialog.h
+    importdialog.h \
+    categorydialog.h
 
 FORMS    += rexwindow.ui \
     addtaskdialog.ui \
     settingsdialog.ui \
-    importdialog.ui
+    importdialog.ui \
+    categorydialog.ui
 
 TRANSLATIONS += lang/ru_RU.ts
 
