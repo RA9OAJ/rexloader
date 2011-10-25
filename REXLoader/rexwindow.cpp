@@ -1907,5 +1907,15 @@ void REXWindow::deleteCategory()
 
 void REXWindow::addCategory()
 {
+    int parent;
 
+    QItemSelectionModel *selected = ui->treeView->selectionModel();
+    if(!selected->selectedRows().size())
+        parent = 1;
+    else
+    {
+        QModelIndex index = selected->selectedRows().value(0);
+        index = treemodel->index(index.row(),1,index.parent());
+        parent = treemodel->data(index,100).toInt();
+    }
 }
