@@ -2,6 +2,8 @@
 #define CATEGORYDIALOG_H
 
 #include <QDialog>
+#include <QtGui>
+#include "treeitemmodel.h"
 
 namespace Ui {
     class CategoryDialog;
@@ -13,10 +15,25 @@ class CategoryDialog : public QDialog
 
 public:
     explicit CategoryDialog(QWidget *parent = 0);
+    explicit CategoryDialog(QSqlDatabase &db_, QWidget *parent = 0);
     ~CategoryDialog();
 
+    void setParentCategory(int parent);
+
+protected:
+    bool isValid() const;
+
+protected slots:
+    void setCategoryDir(const QString &dir);
+    void applyCategory();
+    void showDirDialog();
+
 private:
+    void initialize();
     Ui::CategoryDialog *ui;
+    TreeItemModel *model;
+
+    QSqlDatabase mydb;
 };
 
 #endif // CATEGORYDIALOG_H

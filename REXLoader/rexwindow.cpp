@@ -290,6 +290,7 @@ void REXWindow::createInterface()
     treeMenu->addSeparator();
     treeMenu->addAction(ui->actionCatProperties);
     connect(ui->actionDeleteCategory,SIGNAL(triggered()),this,SLOT(deleteCategory()));
+    connect(ui->actionAddCategory,SIGNAL(triggered()),this,SLOT(addCategory()));
 }
 
 void REXWindow::showTableContextMenu(const QPoint &pos)
@@ -1918,4 +1919,8 @@ void REXWindow::addCategory()
         index = treemodel->index(index.row(),1,index.parent());
         parent = treemodel->data(index,100).toInt();
     }
+
+    CategoryDialog *dlg = new CategoryDialog(this);
+    dlg->setParentCategory(parent);
+    dlg->show();
 }

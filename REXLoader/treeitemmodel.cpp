@@ -25,6 +25,7 @@ TreeItemModel::TreeItemModel(QObject *parent) :
     qr = 0;
     nodes.insert(QModelIndex(),QVariant());
     font.setPointSize(10);
+    ignore_flag = false;
 }
 
 TreeItemModel::~TreeItemModel()
@@ -136,7 +137,7 @@ bool TreeItemModel::updateModel(const QSqlDatabase &db)
     reset();
     delete(qr);
     qr = 0;
-    addFiltersSubtree();
+    if(!ignore_flag)addFiltersSubtree();
     return true;
 }
 
@@ -248,7 +249,7 @@ bool TreeItemModel::silentUpdate(const QSqlDatabase &db)
     }
     delete(qr);
     qr = 0;
-    addFiltersSubtree();
+    if(ignore_flag)addFiltersSubtree();
     return true;
 }
 
@@ -310,4 +311,21 @@ bool TreeItemModel::removeRows(int row, int count, const QModelIndex &parent)
     }
     endRemoveRows();
     return true;
+}
+
+void TreeItemModel::setIgnoreFilters(bool ignore)
+{
+    ignore_flag = ignore;
+}
+
+QModelIndex TreeItemModel::indexById(int id) const
+{
+    QModelIndexList keys = nodes.keys();
+    for(int i = 0; i < keys.size(); i++)
+    {
+        if(keys.value(i).column()!=1)continue;
+        if(nodes.value(keys.value(i)) == id)
+            return keys.value(i);
+    }
+    return QModelIndex();
 }

@@ -42,6 +42,8 @@ public:
     void insertRow(int row, const QModelIndex &parent = QModelIndex());
     QList<QModelIndex> parentsInTree() const;
     virtual bool removeRows(int row, int count, const QModelIndex & parent = QModelIndex());
+    void setIgnoreFilters(bool ignore);
+    QModelIndex indexById(int id) const;
 
 signals:
 
@@ -55,6 +57,7 @@ private:
 
     QSqlQuery *qr;
     int gcol;
+    bool ignore_flag;
 
     QHash<QModelIndex,QVariant> nodes; //хэш всех узлов дерева
     QHash<QModelIndex,QModelIndex> link; //связи узлов между собой
