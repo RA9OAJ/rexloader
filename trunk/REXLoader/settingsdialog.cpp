@@ -196,8 +196,9 @@ void SettingsDialog::showFileDialog()
     dlg->setDirectory(ui->downDir->text());
     dlg->setAttribute(Qt::WA_DeleteOnClose);
     dlg->setFileMode(QFileDialog::DirectoryOnly);
-    dlg->setWindowTitle(tr("Select directory"));
+    dlg->setWindowTitle(tr("Select Directory"));
     dlg->setOption(QFileDialog::DontUseNativeDialog);
+    dlg->setModal(true);
     connect(dlg,SIGNAL(fileSelected(QString)),this,SLOT(setDownDir(QString)));
     dlg->show();
 }
