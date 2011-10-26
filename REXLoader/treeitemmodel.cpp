@@ -258,11 +258,6 @@ void TreeItemModel::updateRow(int row, const QModelIndex &parent)
 
 }
 
-void TreeItemModel::insertRow(int row, const QModelIndex &parent)
-{
-
-}
-
 QList<QModelIndex> TreeItemModel::parentsInTree() const
 {
     QList<QModelIndex> list = link.values();
@@ -285,11 +280,11 @@ QList<QModelIndex> TreeItemModel::parentsInTree() const
 bool TreeItemModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     if(row >= rowCount(parent)) return false;
-    if(count > rowCount(parent))count = -1;
+    if(count > rowCount(parent))return false;
     QModelIndex cur = QModelIndex();
 
     beginRemoveRows(parent, row, row + count - 1);
-    for(int i = row; i < count; ++i)
+    for(int i = row; i < row + count; ++i)
     {
         for(int t = 0; t < columnCount(parent); ++t)
         {
@@ -309,6 +304,32 @@ bool TreeItemModel::removeRows(int row, int count, const QModelIndex &parent)
             nodes.remove(cur);
         }
     }
+
+    for(int i = row + count; index(i,0,parent) != QModelIndex(); i++)
+    {
+        for(int y = 0; y < gcol; y++)
+        {
+            cur = index(i,y,parent);
+            if(!y)
+            {
+                QModelIndexList child_nodes = link.keys(cur);
+                QModelIndex new_node = createIndex(i - 1, 0, row*gcol);
+                nodes.insert(new_node, nodes.value(cur));
+                link.insert(new_node,link.value(cur));
+                nodes.remove(cur);
+                link.remove(cur);
+                for(int z = 0; z < child_nodes.size(); z++)
+                    link.insert(child_nodes.value(z),new_node);
+                continue;
+            }
+            QModelIndex new_node = createIndex(i - 1, y, row * gcol + y);
+            nodes.insert(new_node, nodes.value(cur));
+            link.insert(new_node,link.value(cur));
+            nodes.remove(cur);
+            link.remove(cur);
+        }
+    }
+
     endRemoveRows();
     return true;
 }
@@ -328,4 +349,45 @@ QModelIndex TreeItemModel::indexById(int id) const
             return keys.value(i);
     }
     return QModelIndex();
+}
+
+bool TreeItemModel::insertRows(int row, int count, const QModelIndex &parent)
+{
+    beginInsertRows(parent,row,row + count - 1);
+    if(rowCount(parent) - 1 > row)
+    {
+        QModelIndex cur;
+        for(int i = rowCount(parent) - 1 ; i >= row; i-- )
+        {
+            for(int y = 0; y < gcol; y++)
+            {
+                cur = index(i, y, parent);
+                QModelIndex new_node = createIndex(i + count, y, gcol * row + y);
+                nodes.insert(new_node, nodes.value(cur));
+                link.insert(new_node, parent);
+                nodes.insert(cur, QVariant());
+            }
+        }
+    }
+    else
+    {
+        for(int i = 0; i < count; i++)
+        {
+            for(int y = 0; y < gcol; y++)
+            {
+                QModelIndex cur = createIndex(row + i, y, gcol * row + y);
+                nodes.insert(cur, QVariant());
+                link.insert(cur,parent);
+            }
+        }
+    }
+    endInsertRows();
+    return true;
+}
+
+bool TreeItemModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if(!nodes.contains(index))return false;
+    nodes.insert(index,value);
+    emit dataChanged(index,index);
 }

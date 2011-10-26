@@ -37,9 +37,10 @@ public:
     virtual bool hasChildren(const QModelIndex &parent) const;
     virtual bool hasIndex(int row, int column, const QModelIndex &parent) const;
     virtual Qt::ItemFlags flags(const QModelIndex & index) const;
+    virtual bool insertRows(int row, int count, const QModelIndex & parent = QModelIndex());
+    virtual bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
     QFont getFont() const;
     void updateRow(int row, const QModelIndex &parent = QModelIndex());
-    void insertRow(int row, const QModelIndex &parent = QModelIndex());
     QList<QModelIndex> parentsInTree() const;
     virtual bool removeRows(int row, int count, const QModelIndex & parent = QModelIndex());
     void setIgnoreFilters(bool ignore);

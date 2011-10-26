@@ -1922,5 +1922,26 @@ void REXWindow::addCategory()
 
     CategoryDialog *dlg = new CategoryDialog(this);
     dlg->setParentCategory(parent);
+    connect(dlg,SIGNAL(canUpdateModel(QString,int,int)),this,SLOT(updateTreeModel(QString,int,int)));
     dlg->show();
+}
+
+void REXWindow::updateTreeModel(const QString cat_name, int row, int parent_id)
+{
+    QSqlQuery qr;
+    qr.prepare("SELECT title, id, dir, extlist, parent_id FROM categories WHERE title=:title");
+    qr.bindValue("title", cat_name);
+
+    if(!qr.exec())
+    {
+        ///запись в журнал ошибок
+        qDebug()<<"void REXWindow::updateTreeModel(): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
+        treemodel->updateModel();
+    }
+
+    qr.next();
+    QModelIndex parent = treemodel->indexById(parent_id);
+    treemodel->insertRow(row,parent);
+    for(int i = 0; i < treemodel->columnCount(parent); i++)
+        treemodel->setData(treemodel->index(row,i,parent),qr.value(i));
 }
