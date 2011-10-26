@@ -23,6 +23,9 @@ public:
 protected:
     bool isValid() const;
 
+signals:
+    void canUpdateModel(QString cat_title, int row, int parent_id);
+
 protected slots:
     void setCategoryDir(const QString &dir);
     void applyCategory();

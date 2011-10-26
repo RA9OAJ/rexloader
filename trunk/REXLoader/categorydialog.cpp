@@ -30,6 +30,32 @@ CategoryDialog::~CategoryDialog()
 
 void CategoryDialog::applyCategory()
 {
+    int parent_id = 1;
+    QModelIndex parent = model->index(0,0);
+    QItemSelectionModel *selection = ui->treeView->selectionModel();
+    qDebug()<<selection;
+    if(selection->selectedRows(0).size() > 0)
+    {
+        parent = selection->selectedRows(0).value(0);
+        parent_id = model->data(model->index(parent.row(), 1, parent.parent()),100).toInt();
+        qDebug()<<parent_id;
+    }
+
+    QSqlQuery qr(mydb);
+    qr.prepare("INSERT INTO categories(title, dir, extlist, parent_id) VALUES (:title, :dir, :extlist, :parent)");
+    qr.bindValue("title", ui->cattitle->text());
+    qr.bindValue("dir", ui->catpath->text());
+    qr.bindValue("extlist", ui->textEdit->document()->toPlainText());
+    qr.bindValue("parent", parent_id);
+
+    if(!qr.exec())
+    {
+        //Запись в журнал ошибок
+        qDebug()<<"void CategoryDialog::applyCategory(): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
+        return;
+    }
+
+    emit canUpdateModel(ui->cattitle->text(), model->rowCount(parent), parent_id);
 
     QPushButton *btn = qobject_cast<QPushButton*>(sender());
     if(btn == ui->buttonBox->button(QDialogButtonBox::Ok))accept();
