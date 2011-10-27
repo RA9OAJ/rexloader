@@ -33,12 +33,11 @@ void CategoryDialog::applyCategory()
     int parent_id = 1;
     QModelIndex parent = model->index(0,0);
     QItemSelectionModel *selection = ui->treeView->selectionModel();
-    qDebug()<<selection;
-    if(selection->selectedRows(0).size() > 0)
+
+    if(selection->hasSelection())
     {
         parent = selection->selectedRows(0).value(0);
         parent_id = model->data(model->index(parent.row(), 1, parent.parent()),100).toInt();
-        qDebug()<<parent_id;
     }
 
     QSqlQuery qr(mydb);
