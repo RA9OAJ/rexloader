@@ -34,11 +34,9 @@ void CategoryDialog::applyCategory()
     QModelIndex parent = model->index(0,0);
     QItemSelectionModel *selection = ui->treeView->selectionModel();
 
-    if(selection->hasSelection())
-    {
-        parent = selection->selectedRows(0).value(0);
-        parent_id = model->data(model->index(parent.row(), 1, parent.parent()),100).toInt();
-    }
+    parent = selection->selectedIndexes().value(0,parent);
+    parent_id = model->data(model->index(parent.row(), 1, parent.parent()),100).toInt();
+
 
     QSqlQuery qr(mydb);
     qr.prepare("INSERT INTO categories(title, dir, extlist, parent_id) VALUES (:title, :dir, :extlist, :parent)");

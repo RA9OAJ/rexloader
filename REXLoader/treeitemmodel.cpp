@@ -375,7 +375,7 @@ bool TreeItemModel::insertRows(int row, int count, const QModelIndex &parent)
         {
             for(int y = 0; y < gcol; y++)
             {
-                QModelIndex cur = createIndex(row + i, y, gcol * row + y);
+                QModelIndex cur = createIndex(row + i, y, gcol * row + y + qrand());
                 nodes.insert(cur, QVariant());
                 link.insert(cur,parent);
             }
