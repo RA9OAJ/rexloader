@@ -1929,8 +1929,9 @@ void REXWindow::addCategory()
 void REXWindow::updateTreeModel(const QString cat_name, int row, int parent_id)
 {
     QSqlQuery qr;
-    qr.prepare("SELECT title, id, dir, extlist, parent_id FROM categories WHERE title=:title");
+    qr.prepare("SELECT title, id, dir, extlist, parent_id FROM categories WHERE title=:title AND parent_id=:parent");
     qr.bindValue("title", cat_name);
+    qr.bindValue("parent", parent_id);
 
     if(!qr.exec())
     {

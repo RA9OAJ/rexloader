@@ -50,7 +50,11 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="cattitle"/>
+          <widget class="QLineEdit" name="cattitle">
+           <property name="maxLength">
+            <number>256</number>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -136,7 +140,7 @@
      </widget>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <spacer name="horizontalSpacer">
@@ -159,6 +163,24 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="error_label">
+     <property name="styleSheet">
+      <string notr="true">font: 13px;
+color: #ff0000;
+background: #ffffff;</string>
+     </property>
+     <property name="text">
+      <string>Error</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

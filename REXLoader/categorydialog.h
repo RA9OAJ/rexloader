@@ -20,9 +20,6 @@ public:
 
     void setParentCategory(int parent);
 
-protected:
-    bool isValid() const;
-
 signals:
     void canUpdateModel(QString cat_title, int row, int parent_id);
 
@@ -30,6 +27,7 @@ protected slots:
     void setCategoryDir(const QString &dir);
     void applyCategory();
     void showDirDialog();
+    void formValidator();
 
 private:
     void initialize();
@@ -37,6 +35,7 @@ private:
     TreeItemModel *model;
 
     QSqlDatabase mydb;
+    int internal_id;
 };
 
 #endif // CATEGORYDIALOG_H
