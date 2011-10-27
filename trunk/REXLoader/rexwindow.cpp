@@ -1939,8 +1939,10 @@ void REXWindow::updateTreeModel(const QString cat_name, int row, int parent_id)
         treemodel->updateModel();
     }
 
-    qr.next();
+    if(!qr.next())return;
+
     QModelIndex parent = treemodel->indexById(parent_id);
+    parent = treemodel->index(parent.row(),0,parent.parent());
     treemodel->insertRow(row,parent);
     for(int i = 0; i < treemodel->columnCount(parent); i++)
         treemodel->setData(treemodel->index(row,i,parent),qr.value(i));
