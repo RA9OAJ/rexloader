@@ -291,6 +291,7 @@ void REXWindow::createInterface()
     treeMenu->addAction(ui->actionCatProperties);
     connect(ui->actionDeleteCategory,SIGNAL(triggered()),this,SLOT(deleteCategory()));
     connect(ui->actionAddCategory,SIGNAL(triggered()),this,SLOT(addCategory()));
+    connect(ui->actionCatProperties,SIGNAL(triggered()),this,SLOT(categorySettings()));
 }
 
 void REXWindow::showTableContextMenu(const QPoint &pos)
@@ -1856,6 +1857,10 @@ void REXWindow::showTreeContextMenu(const QPoint &pos)
         ui->actionDeleteCategory->setVisible(false);
     else ui->actionDeleteCategory->setVisible(true);
 
+    if(id == 1)
+        ui->actionCatProperties->setVisible(false);
+    else ui->actionCatProperties->setVisible(true);
+
     QMenu *mnu = findChild<QMenu*>("treeMenu");
     if(mnu)mnu->popup(QCursor::pos());
 }
@@ -1911,7 +1916,7 @@ void REXWindow::addCategory()
     int parent;
 
     QItemSelectionModel *selected = ui->treeView->selectionModel();
-    if(!selected->selectedRows().size())
+    if(!selected->hasSelection())
         parent = 1;
     else
     {
@@ -1922,29 +1927,70 @@ void REXWindow::addCategory()
 
     CategoryDialog *dlg = new CategoryDialog(this);
     dlg->setParentCategory(parent);
-    connect(dlg,SIGNAL(canUpdateModel(QString,int,int)),this,SLOT(updateTreeModel(QString,int,int)));
+    connect(dlg,SIGNAL(canUpdateModel(QString,int,int,int)),this,SLOT(updateTreeModel(QString,int,int,int)));
     dlg->show();
 }
 
-void REXWindow::updateTreeModel(const QString cat_name, int row, int parent_id)
+void REXWindow::updateTreeModel(const QString cat_name, int row, int parent_id, int cat_id)
 {
     QSqlQuery qr;
-    qr.prepare("SELECT title, id, dir, extlist, parent_id FROM categories WHERE title=:title AND parent_id=:parent");
-    qr.bindValue("title", cat_name);
-    qr.bindValue("parent", parent_id);
 
-    if(!qr.exec())
+    QModelIndex parent = treemodel->indexById(parent_id);
+    parent = treemodel->index(parent.row(),0,parent.parent());
+
+    if(!cat_name.isEmpty())
     {
-        ///запись в журнал ошибок
-        qDebug()<<"void REXWindow::updateTreeModel(): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
-        treemodel->updateModel();
+        qr.prepare("SELECT title, id, dir, extlist, parent_id FROM categories WHERE title=:title AND parent_id=:parent");
+        qr.bindValue("title", cat_name);
+        qr.bindValue("parent", parent_id);
+
+        if(!qr.exec())
+        {
+            //запись в журнал ошибок
+            qDebug()<<"void REXWindow::updateTreeModel(1): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
+            treemodel->updateModel();
+        }
+        treemodel->insertRow(row,parent);
+    }
+    else
+    {
+        qr.prepare("SELECT title, id, dir, extlist, parent_id FROM categories WHERE id=:id");
+        qr.bindValue("id", cat_id);
+
+        if(!qr.exec())
+        {
+            //запись в журнал ошибок
+            qDebug()<<"void REXWindow::updateTreeModel(2): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
+            treemodel->updateModel();
+        }
     }
 
     if(!qr.next())return;
 
-    QModelIndex parent = treemodel->indexById(parent_id);
-    parent = treemodel->index(parent.row(),0,parent.parent());
-    treemodel->insertRow(row,parent);
     for(int i = 0; i < treemodel->columnCount(parent); i++)
         treemodel->setData(treemodel->index(row,i,parent),qr.value(i));
+}
+
+void REXWindow::categorySettings()
+{
+    int parent;
+
+    QItemSelectionModel *selected = ui->treeView->selectionModel();
+    if(!selected->hasSelection()) return;
+    QModelIndex index = selected->selectedRows().value(0);
+    index = treemodel->index(index.row(),1,index.parent());
+    treemodel->index(index.row(),4,index.parent());
+    parent = treemodel->data(treemodel->index(index.row(),4,index.parent()),100).toInt();
+    QString catDir = treemodel->data(treemodel->index(index.row(),2,index.parent()),100).toString();
+    QString ext = treemodel->data(treemodel->index(index.row(),3,index.parent()),100).toString();
+    QString catTitle = treemodel->data(treemodel->index(index.row(),0,index.parent()),100).toString();
+
+    CategoryDialog *dlg = new CategoryDialog(this);
+    dlg->setParentCategory(parent);
+    dlg->setCategory(treemodel->data(index,100).toInt(), parent);
+    dlg->setCategoryDir(catDir);
+    dlg->setCategoryExtList(ext);
+    dlg->setCategoryTitle(catTitle);
+    connect(dlg,SIGNAL(canUpdateModel(QString,int,int,int)),this,SLOT(updateTreeModel(QString,int,int,int)));
+    dlg->show();
 }

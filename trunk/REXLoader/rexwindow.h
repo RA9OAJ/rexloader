@@ -100,7 +100,8 @@ protected slots:
     void showTreeContextMenu(const QPoint &pos); //отображает контекстное меню для дерева категорий и фильтров
     void deleteCategory(); //удаляет выбранную категорию
     void addCategory(); //добавляет новую категорию, родительским элементом является выбранная категория
-    void updateTreeModel(const QString cat_name, int row, int parent_id);
+    void categorySettings(); //вызывает окно свойств категорий
+    void updateTreeModel(const QString cat_name, int row, int parent_id, int cat_id); //добавляет/обновляет строку категории в дереве категорий
 
 signals:
     void transAct();

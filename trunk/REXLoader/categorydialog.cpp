@@ -1,3 +1,21 @@
+/*
+Project: REXLoader (Downloader), Source file: categorydialog.cpp
+Copyright (C) 2011  Sarvaritdinov R.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "categorydialog.h"
 #include "ui_categorydialog.h"
 
@@ -30,6 +48,8 @@ CategoryDialog::~CategoryDialog()
 
 void CategoryDialog::applyCategory()
 {
+    QSqlQuery qr(mydb);
+
     if(internal_id == -1)
     {
         int parent_id = 1;
@@ -39,8 +59,6 @@ void CategoryDialog::applyCategory()
         parent = selection->selectedIndexes().value(0,parent);
         parent_id = model->data(model->index(parent.row(), 1, parent.parent()),100).toInt();
 
-
-        QSqlQuery qr(mydb);
         qr.prepare("INSERT INTO categories(title, dir, extlist, parent_id) VALUES (:title, :dir, :extlist, :parent)");
         qr.bindValue("title", ui->cattitle->text());
         qr.bindValue("dir", ui->catpath->text());
@@ -54,7 +72,9 @@ void CategoryDialog::applyCategory()
             return;
         }
 
-        emit canUpdateModel(ui->cattitle->text(), model->rowCount(parent), parent_id);
+        myrow =  model->rowCount(parent);
+
+        emit canUpdateModel(ui->cattitle->text(), myrow, parent_id, 0);
 
         QPushButton *btn = qobject_cast<QPushButton*>(sender());
         if(btn == ui->buttonBox->button(QDialogButtonBox::Ok))accept();
@@ -76,10 +96,29 @@ void CategoryDialog::applyCategory()
 
             qr.next();
             internal_id = qr.value(0).toInt();
+            myparent_id = parent_id;
         }
         return;
     }
 
+    qr.prepare("UPDATE categories SET title=:title, dir=:dir, extlist=:ext WHERE id=:id");
+    qr.bindValue("title", ui->cattitle->text());
+    qr.bindValue("dir", ui->catpath->text());
+    qr.bindValue("ext", ui->textEdit->document()->toPlainText());
+    qr.bindValue("id", internal_id);
+
+    if(!qr.exec())
+    {
+        //Запись в журнал ошибок
+        qDebug()<<"void CategoryDialog::applyCategory(3): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
+        accept();
+        return;
+    }
+
+    emit canUpdateModel(QString(), myrow, myparent_id, internal_id);
+
+    QPushButton *btn = qobject_cast<QPushButton*>(sender());
+    if(btn == ui->buttonBox->button(QDialogButtonBox::Ok))accept();
 }
 
 void CategoryDialog::initialize()
@@ -117,7 +156,7 @@ void CategoryDialog::setParentCategory(int parent)
     QItemSelectionModel *selection = ui->treeView->selectionModel();
     QModelIndex index = model->indexById(parent);
     selection->select(model->index(index.row(),0,index.parent()),QItemSelectionModel::Select);
-    while(index != model->index(0,0))
+    while(index != model->index(0,0) && index != QModelIndex())
     {
         ui->treeView->setExpanded(index,true);
         index = index.parent();
@@ -140,6 +179,7 @@ void CategoryDialog::showDirDialog()
 void CategoryDialog::setCategoryDir(const QString &dir)
 {
     ui->catpath->setText(dir);
+    formValidator();
 }
 
 void CategoryDialog::formValidator()
@@ -166,7 +206,7 @@ void CategoryDialog::formValidator()
             return;
         }
 
-        if(qr.next() && qr.value(0).toInt() == 0)
+        if((qr.next() && qr.value(0).toInt() == 0) || internal_id != -1)
         {
             QPushButton *btn = ui->buttonBox->button(QDialogButtonBox::Ok);
             btn->setEnabled(true);
@@ -186,4 +226,22 @@ void CategoryDialog::formValidator()
     btn->setEnabled(false);
     btn = ui->buttonBox->button(QDialogButtonBox::Apply);
     btn->setEnabled(false);
+}
+
+void CategoryDialog::setCategory(int id, int parent)
+{
+    ui->treeView->setEnabled(false);
+    internal_id = id;
+    myparent_id = parent;
+    myrow = model->indexById(id).row();
+}
+
+void CategoryDialog::setCategoryExtList(const QString &extlist)
+{
+    ui->textEdit->document()->setPlainText(extlist);
+}
+
+void CategoryDialog::setCategoryTitle(const QString &title)
+{
+    ui->cattitle->setText(title);
 }
