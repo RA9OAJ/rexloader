@@ -1926,6 +1926,7 @@ void REXWindow::addCategory()
     }
 
     CategoryDialog *dlg = new CategoryDialog(this);
+    dlg->setCategoryDir(downDir);
     dlg->setParentCategory(parent);
     connect(dlg,SIGNAL(canUpdateModel(QString,int,int,int)),this,SLOT(updateTreeModel(QString,int,int,int)));
     dlg->show();
@@ -1983,7 +1984,13 @@ void REXWindow::categorySettings()
     parent = treemodel->data(treemodel->index(index.row(),4,index.parent()),100).toInt();
     QString catDir = treemodel->data(treemodel->index(index.row(),2,index.parent()),100).toString();
     QString ext = treemodel->data(treemodel->index(index.row(),3,index.parent()),100).toString();
-    QString catTitle = treemodel->data(treemodel->index(index.row(),0,index.parent()),100).toString();
+    QString catTitle = treemodel->data(treemodel->index(index.row(),0,index.parent())).toString();
+    if(catDir.isEmpty())
+    {
+        catDir = downDir;
+        if(treemodel->data(index,100).toInt() > 0 && treemodel->data(index,100).toInt() < 7)
+            catDir += "/" + catTitle;
+    }
 
     CategoryDialog *dlg = new CategoryDialog(this);
     dlg->setParentCategory(parent);

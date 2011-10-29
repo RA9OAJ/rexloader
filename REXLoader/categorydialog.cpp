@@ -147,6 +147,7 @@ void CategoryDialog::initialize()
     ui->error_label->setVisible(false);
     connect(btn,SIGNAL(released()),this,SLOT(applyCategory()));
     connect(ui->cattitle,SIGNAL(textEdited(QString)),this,SLOT(formValidator()));
+    connect(ui->textEdit,SIGNAL(textChanged()),this,SLOT(formValidator()));
 
     connect(ui->toolButton,SIGNAL(released()),this,SLOT(showDirDialog()));
 }
@@ -166,7 +167,7 @@ void CategoryDialog::setParentCategory(int parent)
 void CategoryDialog::showDirDialog()
 {
     QFileDialog *dlg = new QFileDialog(this);
-    dlg->setDirectory(ui->cattitle->text());
+    dlg->setDirectory(ui->catpath->text());
     dlg->setAttribute(Qt::WA_DeleteOnClose);
     dlg->setFileMode(QFileDialog::DirectoryOnly);
     dlg->setWindowTitle(tr("Select Directory"));
@@ -231,6 +232,7 @@ void CategoryDialog::formValidator()
 void CategoryDialog::setCategory(int id, int parent)
 {
     ui->treeView->setEnabled(false);
+    if(id > 0 && id < 7)ui->cattitle->setReadOnly(true);
     internal_id = id;
     myparent_id = parent;
     myrow = model->indexById(id).row();
