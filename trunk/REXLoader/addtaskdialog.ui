@@ -6,20 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>364</width>
-    <height>229</height>
+    <width>339</width>
+    <height>254</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>REXLoader - </string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
-   <property name="leftMargin">
-    <number>4</number>
-   </property>
-   <property name="rightMargin">
-    <number>2</number>
-   </property>
    <property name="bottomMargin">
     <number>2</number>
    </property>
@@ -79,7 +73,7 @@
         <string notr="true">font: bold 12px;</string>
        </property>
        <property name="text">
-        <string>Category</string>
+        <string>Category:</string>
        </property>
       </widget>
      </item>
@@ -140,23 +134,25 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="browseButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>24</width>
-         <height>24</height>
-        </size>
-       </property>
+      <widget class="QToolButton" name="browseButton">
        <property name="text">
-        <string/>
+        <string>...</string>
        </property>
       </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <item>
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Filename:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="fileName"/>
      </item>
     </layout>
    </item>
@@ -286,7 +282,6 @@ background: #ffffff;</string>
  <tabstops>
   <tabstop>urlBox</tabstop>
   <tabstop>categoryBox</tabstop>
-  <tabstop>browseButton</tabstop>
   <tabstop>locationEdit</tabstop>
   <tabstop>textEdit</tabstop>
  </tabstops>

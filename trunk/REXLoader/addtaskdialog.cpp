@@ -158,7 +158,7 @@ void AddTaskDialog::loadDatabaseData()
         else if(qr.value(1).toString() == "#apps"){cattitle = tr("Applications"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
         else if(qr.value(1).toString() == "#audio"){cattitle = tr("Audio"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
         else if(qr.value(1).toString() == "#video"){cattitle = tr("Video"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
-        else if(qr.value(1).toString() == "#other"){cattitle = tr("All Downloads"); otherId = qr.value(0).toInt();dirs.insert(qr.value(0).toInt(),downDir);}
+        else if(qr.value(1).toString() == "#other"){cattitle = tr("Other"); otherId = qr.value(0).toInt();dirs.insert(qr.value(0).toInt(),downDir);}
         else {cattitle = qr.value(1).toString(); dirs.insert(qr.value(0).toInt(),qr.value(2).toString());}
 
         gui->categoryBox->addItem(cattitle, qr.value(0).toInt());
@@ -266,7 +266,9 @@ void AddTaskDialog::addTask()
     QDateTime dtime(QDateTime::currentDateTime());
     QUrl curl = QUrl::fromEncoded(gui->urlBox->currentText().toUtf8());
     QFileInfo flinfo(curl.toString(QUrl::RemoveQuery | QUrl::RemoveFragment));
-    QString flname = (flinfo.fileName() != QString() ? flinfo.fileName() : "noname.html");
+    QString flname;
+    if(gui->fileName->text().isEmpty()) flname = (flinfo.fileName() != QString() ? flinfo.fileName() : "noname.html");
+    else flname = gui->fileName->text();
     flname = gui->locationEdit->text() + "/" + flname + "." + dtime.toString("yyyyMMddhhmmss") + ".rldr";
 
     qr.clear();

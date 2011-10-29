@@ -86,7 +86,7 @@ protected slots:
     void stopAllTasks(); //останавливает все выполняемые задачи
     void redownloadTask(); //сбрасывает признаки скачивания файла и ставит его снова на закачку
     void syncTaskData(); //синхронизирует состояние задач с БД
-    void manageTaskQueue(); //сканирует
+    void manageTaskQueue(); //менеджер очереди заданий
     void startTaskNumber(int id_row, const QUrl &url, const QString &filename = QString(), qint64 totalload = 0);
     void showTableContextMenu(const QPoint &pos); //отображает контекстное меню в таблице
     void openTask(); //отображает окно свойств задачи, если оно не закачано, или же пытается открыть файл стандартными программами
