@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDialog>
 #include <QtGui>
 #include "treeitemmodel.h"
+#include "filenamevalidator.h"
 
 namespace Ui {
     class CategoryDialog;

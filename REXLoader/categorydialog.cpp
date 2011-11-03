@@ -136,6 +136,8 @@ void CategoryDialog::initialize()
     ui->treeView->hideColumn(3);
     ui->treeView->hideColumn(4);
     ui->treeView->setExpanded(model->index(0,0),true);
+    FileNameValidator *validator = new FileNameValidator(this);
+    ui->cattitle->setValidator(validator);
 
     QPushButton *btn = ui->buttonBox->button(QDialogButtonBox::Ok);
     btn->setEnabled(false);
