@@ -57,6 +57,10 @@ void AddTaskDialog::construct()
     setWindowTitle("REXLoader - "+tr("New task"));
     priority = 2; //нормальный приоритет
     if(!parent())setWindowIcon(QIcon(":/appimages/trayicon.png"));
+    FileNameValidator *validator = new FileNameValidator(this);
+    gui->fileName->setValidator(validator);
+    gui->categoryBox->setValidator(validator);
+    urlValidator();
 
     loadDatabaseData();
     connect(gui->categoryBox,SIGNAL(currentIndexChanged(int)),this,SLOT(updateLocation(int)));
@@ -107,6 +111,14 @@ void AddTaskDialog::openDirDialog()
 
 void AddTaskDialog::urlValidator()
 {
+    if(gui->urlBox->currentText().isEmpty())
+    {
+        gui->startNowBtn->setEnabled(false);
+        gui->startLaterBtn->setEnabled(false);
+        gui->errorFrame->setHidden(true);
+        return;
+    }
+
     if(protocols.isEmpty())return;
 
     QUrl url(gui->urlBox->currentText());

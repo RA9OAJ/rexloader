@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QFileDialog>
 #include <QDesktopWidget>
 #include "emessagebox.h"
+#include "filenamevalidator.h"
 
 namespace Ui {
     class AddTaskDialog;
