@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     settingsdialog.cpp \
     importdialog.cpp \
     categorydialog.cpp \
-    filenamevalidator.cpp
+    filenamevalidator.cpp \
+    taskdialog.cpp
 
 HEADERS  += rexwindow.h \
     titemmodel.h \
@@ -30,17 +31,17 @@ HEADERS  += rexwindow.h \
     settingsdialog.h \
     importdialog.h \
     categorydialog.h \
-    filenamevalidator.h
+    filenamevalidator.h \
+    taskdialog.h
 
 FORMS    += rexwindow.ui \
     addtaskdialog.ui \
     settingsdialog.ui \
     importdialog.ui \
-    categorydialog.ui
+    categorydialog.ui \
+    taskdialog.ui
 
 TRANSLATIONS += lang/ru_RU.ts
 
 RESOURCES += \
     resources.qrc
-
-
