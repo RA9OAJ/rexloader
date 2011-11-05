@@ -49,13 +49,13 @@ QStringList HttpLoader::protocols() const
 QStringList HttpLoader::pluginInfo() const
 {
     QStringList pinfo;
-    pinfo << QString("Authors: ") + tr("Sarvaritdinov Ravil (mailto:ra9oaj@mail.ru)");
-    pinfo << QString("Place: ") + tr("Russia, Barabinsk, 2011");
+    pinfo << QString("Authors: ") + tr("Сарваритдинов Равиль (mailto:ra9oaj@mail.ru)");
+    pinfo << QString("Place: ") + tr("Россия, Барабинск, 2011");
     pinfo << QString("Build date: ") + QString(P_BUILD_DATE);
     pinfo << QString("Version: ") + QString(P_VERSION);
-    pinfo << QString("Copyright: ") + tr("© 2011 Sarvaritdinov Ravil");
+    pinfo << QString("Copyright: ") + tr("© 2011 Сарваритдинов Равиль");
     pinfo << QString("Lic: ") + tr("GNU LGPL v2.1");
-    pinfo << QString("Description: ") + tr("Plugin for downloading files on HTTP.");
+    pinfo << QString("Description: ") + tr("Плагин для скачивания файлов по протоколу HTTP.");
     return pinfo;
 }
 
@@ -987,7 +987,7 @@ QString HttpLoader::errorString(int _err) const
     case 504: errstr = tr("504 Gateway Timeout"); break;
     case 505: errstr = tr("505 HTTP Version Not Supported"); break;
 
-    default: errstr = tr("Unknown Error. Error code = ") + QString::number(_err); break;
+    default: errstr = tr("Неизвестная ошибка. Код ошибки = ") + QString::number(_err); break;
     }
 
     return errstr;
