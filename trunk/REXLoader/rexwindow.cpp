@@ -64,7 +64,7 @@ REXWindow::REXWindow(QWidget *parent) :
     if(!loadPlugins())
     {
         setEnabled(false);
-        int quit_ok = QMessageBox::critical(this,windowTitle()+" - "+tr("Critical Error"),tr("Could not find any plug-in application will be closed.\r\n Check the files in the plugins directory '.rexloader' and '/usr/{local/}lib/rexloader/plugins'."));
+        int quit_ok = QMessageBox::critical(this,windowTitle()+" - "+tr("Критическая ошибка"),tr("Не найден ни один плагин.\r\n Проверьте наличие файлов плагинов в директории '.rexloader' и '/usr/{local/}lib/rexloader/plugins'."));
         if(quit_ok == QMessageBox::Ok)QTimer::singleShot(0,this,SLOT(close()));
     }
 
@@ -224,6 +224,11 @@ void REXWindow::createInterface()
     connect(ui->actionLow,SIGNAL(triggered(bool)),this,SLOT(selectSpeedRate(bool)));
     connect(ui->actionNormal,SIGNAL(triggered(bool)),this,SLOT(selectSpeedRate(bool)));
     connect(ui->actionHight,SIGNAL(triggered(bool)),this,SLOT(selectSpeedRate(bool)));
+    connect(ui->actionOneTask,SIGNAL(triggered()),this,SLOT(setTaskCnt()));
+    connect(ui->actionTwoTasks,SIGNAL(triggered()),this,SLOT(setTaskCnt()));
+    connect(ui->actionThreeTasks,SIGNAL(triggered()),this,SLOT(setTaskCnt()));
+    connect(ui->actionFourTasks,SIGNAL(triggered()),this,SLOT(setTaskCnt()));
+    connect(ui->actionFiveTasks,SIGNAL(triggered()),this,SLOT(setTaskCnt()));
 
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);
@@ -241,12 +246,25 @@ void REXWindow::createInterface()
     else if(ui->actionVeryLow->isChecked())spdbtn->setIcon(ui->actionVeryLow->icon());
     ui->mainToolBar->addWidget(spdbtn);
 
+    //кнопка-меню для выбора количества одновременных закачек
+    taskbtn = new QToolButton(this);
+    QMenu *taskmenu = new QMenu(taskbtn);
+    taskmenu->setTitle(tr("Одновременные скачивания"));
+    taskmenu->addAction(ui->actionOneTask);
+    taskmenu->addAction(ui->actionTwoTasks);
+    taskmenu->addAction(ui->actionThreeTasks);
+    taskmenu->addAction(ui->actionFourTasks);
+    taskmenu->addAction(ui->actionFiveTasks);
+    taskbtn->setMenu(taskmenu);
+    taskbtn->setPopupMode(QToolButton::InstantPopup);
+    ui->mainToolBar->addWidget(taskbtn);
+
     //настроиваем значок в трее
     QMenu *traymenu = new QMenu(this);
     traymenu->setObjectName("traymenu");
     QAction *trayact = new QAction(this);
     trayact->setObjectName("exitAct");
-    trayact->setText(tr("Exit"));
+    trayact->setText(tr("Выход"));
     connect(trayact,SIGNAL(triggered()),this,SLOT(close()));
     traymenu->addAction(ui->actionAdd_URL);
     traymenu->addSeparator();
@@ -254,6 +272,7 @@ void REXWindow::createInterface()
     traymenu->addAction(ui->actionStopAll);
     traymenu->addSeparator();
     traymenu->addMenu(ui->menu_6);
+    traymenu->addMenu(taskmenu);
     traymenu->addSeparator();
     traymenu->addAction(ui->actionAppSettings);
     traymenu->addSeparator();
@@ -597,7 +616,7 @@ void REXWindow::openDataBase()
     if(!db.open())
     {
         setEnabled(false);
-        int quit_ok = QMessageBox::critical(this,windowTitle()+" - "+tr("Critical Error"),tr("Can not open a database file.\r\n This is a critical error and the application will close.\r\n Check your access privileges on read and write in the home directory, or if exists directory '.rexloader' delete him self."));
+        int quit_ok = QMessageBox::critical(this,windowTitle()+" - "+tr("Критическая ошибка"),tr("Невозможно открыть файл базы данных.\r\n Это критическая ошибка, приложение будет закрыто.\r\n Проверьте свои права доступа к директории '.rexloader'."));
         if(quit_ok == QMessageBox::Ok)QTimer::singleShot(0,this,SLOT(close()));
     }
 
@@ -914,8 +933,8 @@ void REXWindow::deleteTask()
     {
         EMessageBox dlg(this);
         dlg.setIcon(EMessageBox::Warning);
-        dlg.setText(tr("Select more than one task."));
-        dlg.setInformativeText("To delete an entire group of selected tasks, click <b>\"Ok\"</b> or <b>\"Cancel\"</b> to cancel.");
+        dlg.setText(tr("Выбрано более одного задания."));
+        dlg.setInformativeText("Чтобы подтвердить удаление нескольких заданий нажмите <b>\"Ok\"</b> или <b>\"Отмена\"</b> для отмены удаления.");
         dlg.setStandardButtons(EMessageBox::Ok | EMessageBox::Cancel);
         dlg.setDefaultButton(EMessageBox::Cancel);
 
@@ -1249,23 +1268,23 @@ void REXWindow::syncTaskData()
 
             switch(errno_)
             {
-            case LInterface::FILE_NOT_FOUND: errStr = tr("File not found.");break;
-            case LInterface::FILE_DATETIME_ERROR: errStr = tr("Date and time of file modification does not coincide with those.");break;
-            case LInterface::FILE_SIZE_ERROR: errStr = tr("File size does not match the expected.");break;
-            case LInterface::FILE_CREATE_ERROR: errStr = tr("Can not create a file on local disk.");break;
-            case LInterface::FILE_WRITE_ERROR: errStr = tr("Unable to write data to a local file.");break;
-            case LInterface::FILE_READ_ERROR:errStr = tr("Unable to read data to a local file.");break;
-            case LInterface::HOST_NOT_FOUND: errStr = tr("The remote host is not found.");break;
-            case LInterface::CONNECT_ERROR: errStr = tr("Error connecting to remote host.");break;
-            case LInterface::CONNECT_LOST: errStr = tr("Connecting to remote host was lost.");break;
-            case LInterface::SERVER_REJECT_QUERY: errStr = tr("Server rejected request.");break;
-            case LInterface::PROXY_NOT_FOUND: errStr = tr("Proxies can not be found.");break;
-            case LInterface::PROXY_AUTH_ERROR: errStr = tr("Unable to authenticate to the proxy server.");break;
-            case LInterface::PROXY_ERROR: errStr = tr("Proxy protocol error.");break;
-            case LInterface::PROXY_CONNECT_CLOSE: errStr = tr("The proxy server unexpectedly closed the connection.");break;
-            case LInterface::PROXY_CONNECT_REFUSED: errStr = tr("Proxy server refused connection.");break;
-            case LInterface::PROXY_TIMEOUT: errStr = tr("Timed response proxy.");break;
-            case LInterface::ERRORS_MAX_COUNT: errStr = tr("Maximum number of errors.");break;
+            case LInterface::FILE_NOT_FOUND: errStr = tr("Файл не найден.");break;
+            case LInterface::FILE_DATETIME_ERROR: errStr = tr("Файл на стороне сервера был изменён.");break;
+            case LInterface::FILE_SIZE_ERROR: errStr = tr("Размер файла на сервере отличается от размера задания.");break;
+            case LInterface::FILE_CREATE_ERROR: errStr = tr("Невозможно создать файл на локальном диске.");break;
+            case LInterface::FILE_WRITE_ERROR: errStr = tr("Невозможно записать в локальный файл.");break;
+            case LInterface::FILE_READ_ERROR:errStr = tr("Невозможно прочитать локальный файл.");break;
+            case LInterface::HOST_NOT_FOUND: errStr = tr("Удаленнй сервер не найден.");break;
+            case LInterface::CONNECT_ERROR: errStr = tr("Ошибка подключения к удалённому серверу.");break;
+            case LInterface::CONNECT_LOST: errStr = tr("Подключение к удаленному серверу потеряно.");break;
+            case LInterface::SERVER_REJECT_QUERY: errStr = tr("Сервер отклонил запрос на соединение.");break;
+            case LInterface::PROXY_NOT_FOUND: errStr = tr("Прокси не найден.");break;
+            case LInterface::PROXY_AUTH_ERROR: errStr = tr("Не удалось пройти аутентификацию на прокси.");break;
+            case LInterface::PROXY_ERROR: errStr = tr("Ошибка протокола прокси.");break;
+            case LInterface::PROXY_CONNECT_CLOSE: errStr = tr("Прокси неожиданно разорвал соединение.");break;
+            case LInterface::PROXY_CONNECT_REFUSED: errStr = tr("Прокси отверг попытку подключения.");break;
+            case LInterface::PROXY_TIMEOUT: errStr = tr("Таймаут прокси.");break;
+            case LInterface::ERRORS_MAX_COUNT: errStr = tr("Достигнуто максимальное количество ошибок.");break;
             default:
                 errStr = ldr->errorString(errno_);
             }
@@ -1277,7 +1296,7 @@ void REXWindow::syncTaskData()
             qr.bindValue("downtime",downtime);
             qr.bindValue("tstatus",tstatus);
             qr.bindValue("speedavg",QString::number(speedAvg));
-            qr.bindValue("lasterror",tr("%1 (Error code: %2)").arg(errStr,QString::number(errno_)));
+            qr.bindValue("lasterror",tr("%1 (Код ошибки: %2)").arg(errStr,QString::number(errno_)));
             qr.bindValue("id",id_row);
 
             if(!qr.exec())
@@ -1308,11 +1327,11 @@ void REXWindow::syncTaskData()
                     EMessageBox *question = new EMessageBox(this);
                     QPushButton *btn1, *btn2;
                     question->setIcon(EMessageBox::Question);
-                    btn1 = question->addButton(tr("Replace"),EMessageBox::ApplyRole);
-                    btn2 = question->addButton(tr("Rename"),EMessageBox::RejectRole);
+                    btn1 = question->addButton(tr("Заменить"),EMessageBox::ApplyRole);
+                    btn2 = question->addButton(tr("Переименовать"),EMessageBox::RejectRole);
                     question->setDefaultButton(btn2);
-                    question->setText(tr("A file <b>%1</b> already exists.").arg(newFilename));
-                    question->setInformativeText(tr("To replace the file with the same name, click \"Replace\". To rename, click \"Rename.\""));
+                    question->setText(tr("Файл <b>%1</b> уже существет.").arg(newFilename));
+                    question->setInformativeText(tr("Для замены существующего файла нажмите \"Заменить\". Для переименования нажмите \"Переименовать\"."));
                     question->setActionType(EMessageBox::AT_RENAME);
                     connect(question,SIGNAL(buttonClicked(QAbstractButton*)),this,SLOT(acceptQAction(QAbstractButton*)));
 
@@ -1369,7 +1388,7 @@ void REXWindow::syncTaskData()
     qr.clear();
     qr.exec("SELECT id FROM tasks WHERE tstatus IN (-100,-2,0)");
     if(!tasklist.size() && !qr.next())
-        trayicon->showMessage(tr("REXLoader"),tr("All tasks completed."));
+        trayicon->showMessage(tr("REXLoader"),tr("Все задания завершены."));
 }
 
 void REXWindow::manageTaskQueue()
@@ -1391,7 +1410,7 @@ void REXWindow::manageTaskQueue()
             QSqlQuery qr1(QSqlDatabase::database());
             qr1.prepare("UPDATE tasks SET tstatus=:status, lasterror=:error WHERE id=:id");
             qr1.bindValue("status",LInterface::ERROR_TASK);
-            qr1.bindValue("error",tr("This protocol is not supported. Check whether there is a plugin to work with the protocol and whether it is enabled."));
+            qr1.bindValue("error",tr("Этот протокол не поддерживается. Проверьте наличие соответствующего плагина и его состояние."));
             qr1.bindValue("id",qr.value(0).toInt());
             if(!qr1.exec())
             {
@@ -1468,7 +1487,7 @@ void REXWindow::manageTaskQueue()
                 QSqlQuery qr1(QSqlDatabase::database());
                 qr1.prepare("UPDATE tasks SET status=:status, lasterror=:error WHERE id=:id");
                 qr1.bindValue("status",LInterface::ERROR_TASK);
-                qr1.bindValue("error",tr("This protocol is not supported. Check whether there is a plugin to work with the protocol and whether it is enabled."));
+                qr1.bindValue("error",tr("Этот протокол не поддерживается. Проверьте наличие соответствующего плагина и его состояние."));
                 qr1.bindValue("id",qr.value(0).toInt());
                 if(!qr1.exec())
                 {
@@ -1540,7 +1559,7 @@ void REXWindow::updateStatusBar()
             total_speed += pluglist.value(plug_keys.value(y))->totalDownSpeed();
 
         QStringList spd_ = TItemModel::speedForHumans(total_speed);
-        speed->setText(tr("Spd: %1").arg(spd_.value(0)+spd_.value(1)));
+        speed->setText(tr("Скорость: %1").arg(spd_.value(0)+spd_.value(1)));
         progress->setMaximum(100);
         int cur_val = total_s ? 100*total_l/total_s : 0;
         progress->setValue(cur_val);
@@ -1599,7 +1618,7 @@ void REXWindow::updateStatusBar()
         lefttime->setVisible(true);
         lasterror->setText(model->index(row_id,7).data(100).toString());
         lasterror->setVisible(true);
-        if(!model->index(row_id,14).data().toString().isEmpty()) speed->setText(tr("Spd: %1").arg(model->index(row_id,14).data().toString()));
+        if(!model->index(row_id,14).data().toString().isEmpty()) speed->setText(tr("Скорость: %1").arg(model->index(row_id,14).data().toString()));
         else speed->hide();
     }
 
@@ -1641,7 +1660,7 @@ void REXWindow::showImportFileDialog()
     dlg->setAcceptMode(QFileDialog::AcceptOpen);
     dlg->setFileMode(QFileDialog::ExistingFiles);
     dlg->setDirectory(QDir::home());
-    dlg->setWindowTitle(tr("Open file for import"));
+    dlg->setWindowTitle(tr("Файл для импорта"));
     dlg->setOption(QFileDialog::DontUseNativeDialog);
 
     connect(dlg,SIGNAL(filesSelected(QStringList)),this,SLOT(importUrlFromFile(QStringList)));
@@ -1763,11 +1782,11 @@ void REXWindow::scanTasksOnStart()
     if(qr.value(0).toInt() == 0)return;
     EMessageBox *question = new EMessageBox(this);
     question->setIcon(EMessageBox::Question);
-    QPushButton *btn1 = question->addButton(tr("Resume all"),EMessageBox::ApplyRole);
-    question->addButton(tr("Cancel"),EMessageBox::RejectRole);
+    QPushButton *btn1 = question->addButton(tr("Продолжить все"),EMessageBox::ApplyRole);
+    question->addButton(tr("Отмена"),EMessageBox::RejectRole);
     question->setDefaultButton(btn1);
-    question->setText(tr("There are outstanding tasks."));
-    question->setInformativeText(tr("To complete all tasks, click \"Resume all\", to cancel - \"Cancel\""));
+    question->setText(tr("Есть незавершённые задания."));
+    question->setInformativeText(tr("Для продолжения выполнения заданий нажмите \"Продолжить все\", для отмены - \"Отмена\""));
     question->setActionType(EMessageBox::AT_DOWNLOAD_ON_START);
     connect(question,SIGNAL(buttonClicked(QAbstractButton*)),this,SLOT(acceptQAction(QAbstractButton*)));
     question->setModal(true);
@@ -1796,6 +1815,7 @@ void REXWindow::readSettings()
         plugins.value(i)->setUserAgent(settDlg->value("user_agent").toString());
     }
 
+    setTaskCnt();
     calculateSpeed();
 }
 
@@ -2000,4 +2020,64 @@ void REXWindow::categorySettings()
     dlg->setCategoryTitle(catTitle);
     connect(dlg,SIGNAL(canUpdateModel(QString,int,int,int)),this,SLOT(updateTreeModel(QString,int,int,int)));
     dlg->show();
+}
+
+void REXWindow::setTaskCnt()
+{
+    QAction *sndr = qobject_cast<QAction*>(sender());
+    if(!sndr)
+        switch(settDlg->value("max_number_tasks").toInt())
+        {
+        case 1: sndr = ui->actionOneTask; break;
+        case 2: sndr = ui->actionTwoTasks; break;
+        case 3: sndr = ui->actionThreeTasks; break;
+        case 4: sndr = ui->actionFourTasks; break;
+        default: sndr = ui->actionFiveTasks; break;
+        }
+
+    if(sndr == ui->actionOneTask)
+    {
+        ui->actionTwoTasks->setChecked(false);
+        ui->actionThreeTasks->setChecked(false);
+        ui->actionFourTasks->setChecked(false);
+        ui->actionFiveTasks->setChecked(false);
+        settDlg->setSettingAttribute("max_number_tasks",1);
+    }
+    else if(sndr == ui->actionTwoTasks)
+    {
+        ui->actionOneTask->setChecked(false);
+        ui->actionThreeTasks->setChecked(false);
+        ui->actionFourTasks->setChecked(false);
+        ui->actionFiveTasks->setChecked(false);
+        settDlg->setSettingAttribute("max_number_tasks",2);
+    }
+    else if(sndr == ui->actionThreeTasks)
+    {
+        ui->actionTwoTasks->setChecked(false);
+        ui->actionOneTask->setChecked(false);
+        ui->actionFourTasks->setChecked(false);
+        ui->actionFiveTasks->setChecked(false);
+        settDlg->setSettingAttribute("max_number_tasks",3);
+    }
+    else if(sndr == ui->actionFourTasks)
+    {
+        ui->actionTwoTasks->setChecked(false);
+        ui->actionThreeTasks->setChecked(false);
+        ui->actionOneTask->setChecked(false);
+        ui->actionFiveTasks->setChecked(false);
+        settDlg->setSettingAttribute("max_number_tasks",4);
+    }
+    else if(sndr == ui->actionFiveTasks)
+    {
+        ui->actionTwoTasks->setChecked(false);
+        ui->actionThreeTasks->setChecked(false);
+        ui->actionFourTasks->setChecked(false);
+        ui->actionOneTask->setChecked(false);
+        settDlg->setSettingAttribute("max_number_tasks",5);
+    }
+
+    max_tasks = settDlg->value("max_number_tasks").toInt();
+    sndr->setChecked(true);
+    taskbtn->setIcon(sndr->icon());
+    taskbtn->setText(sndr->text());
 }

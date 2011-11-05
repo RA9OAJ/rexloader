@@ -45,7 +45,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Title</string>
+            <string>Название</string>
            </property>
           </widget>
          </item>
@@ -68,7 +68,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Path</string>
+            <string>Путь</string>
            </property>
           </widget>
          </item>
@@ -105,7 +105,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Attributes list</string>
+            <string>Список атрибутов</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -129,7 +129,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Parent Category</string>
+          <string>Родительская категория</string>
          </property>
         </widget>
        </item>

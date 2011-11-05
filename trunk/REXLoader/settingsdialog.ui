@@ -25,7 +25,7 @@
      <widget class="QListWidget" name="listWidget">
       <item>
        <property name="text">
-        <string>General</string>
+        <string>Основные</string>
        </property>
        <property name="font">
         <font>
@@ -40,7 +40,7 @@
       </item>
       <item>
        <property name="text">
-        <string>Network</string>
+        <string>Сеть</string>
        </property>
        <property name="font">
         <font>
@@ -53,7 +53,7 @@
       </item>
       <item>
        <property name="text">
-        <string>Downloads</string>
+        <string>Закачки</string>
        </property>
        <property name="font">
         <font>
@@ -66,7 +66,7 @@
       </item>
       <item>
        <property name="text">
-        <string>Interface</string>
+        <string>Интерфейс</string>
        </property>
        <property name="font">
         <font>
@@ -79,7 +79,7 @@
       </item>
       <item>
        <property name="text">
-        <string>Plugins</string>
+        <string>Плагины</string>
        </property>
        <property name="font">
         <font>
@@ -92,7 +92,7 @@
       </item>
       <item>
        <property name="text">
-        <string>Reports</string>
+        <string>Отчеты</string>
        </property>
        <property name="font">
         <font>
@@ -109,13 +109,13 @@
        <item>
         <widget class="QGroupBox" name="generalBox">
          <property name="title">
-          <string>General settings</string>
+          <string>Основные настройки</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
            <widget class="QCheckBox" name="checkBoxLogo">
             <property name="text">
-             <string>Show logo</string>
+             <string>Показывать лого</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -125,7 +125,7 @@
           <item>
            <widget class="QCheckBox" name="checkBoxMinimize">
             <property name="text">
-             <string>Start minimized in tray</string>
+             <string>Минимизировать в трей при запуске</string>
             </property>
             <property name="checked">
              <bool>false</bool>
@@ -135,7 +135,7 @@
           <item>
            <widget class="QCheckBox" name="animateTrayBox">
             <property name="text">
-             <string>Animate tray icon</string>
+             <string>Анимировать значёк в трее</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -145,7 +145,7 @@
           <item>
            <widget class="QCheckBox" name="checkBoxUpdates">
             <property name="text">
-             <string>Check for updates</string>
+             <string>Проверять обновления</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -162,7 +162,7 @@
           <item>
            <widget class="QCheckBox" name="checkBoxPasswords">
             <property name="text">
-             <string>Restore passwords in a database</string>
+             <string>Сохранять пароли в локальной базе данных</string>
             </property>
            </widget>
           </item>
@@ -176,21 +176,21 @@
           <item>
            <widget class="QCheckBox" name="scanClipboard">
             <property name="text">
-             <string>Scan clipboard</string>
+             <string>Сканировать буфер обмена</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QCheckBox" name="notShowAddingDialog">
             <property name="text">
-             <string>Do not show dialog for adding tasks</string>
+             <string>Не показывать диалог нового задания</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QCheckBox" name="notAddTaskUnsupported">
             <property name="text">
-             <string>Do not add tasks with unsupported protocols</string>
+             <string>Не добавлять задания с неизвестными протоколами</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -209,7 +209,7 @@
             <item>
              <widget class="QLabel" name="label">
               <property name="text">
-               <string>User agent</string>
+               <string>Идентификация клиента</string>
               </property>
              </widget>
             </item>
@@ -243,7 +243,7 @@
             <item>
              <widget class="QPushButton" name="defaultsButton">
               <property name="text">
-               <string>Defaults</string>
+               <string>Сбросить</string>
               </property>
              </widget>
             </item>
@@ -268,7 +268,7 @@
        <item>
         <widget class="QGroupBox" name="networkBox">
          <property name="title">
-          <string>Network</string>
+          <string>Сеть</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_4">
           <property name="margin">
@@ -281,7 +281,7 @@
             </property>
             <widget class="QWidget" name="connectionTab">
              <attribute name="title">
-              <string>Connection</string>
+              <string>Подключение</string>
              </attribute>
              <layout class="QVBoxLayout" name="verticalLayout_5">
               <item>
@@ -289,7 +289,7 @@
                 <item>
                  <widget class="QLabel" name="label_2">
                   <property name="text">
-                   <string>Hight</string>
+                   <string>Высокая скорость</string>
                   </property>
                  </widget>
                 </item>
@@ -316,7 +316,7 @@
                 <item>
                  <widget class="QLabel" name="label_3">
                   <property name="text">
-                   <string>Normal</string>
+                   <string>Нормальная скорость</string>
                   </property>
                  </widget>
                 </item>
@@ -346,7 +346,7 @@
                 <item>
                  <widget class="QLabel" name="label_4">
                   <property name="text">
-                   <string>Low</string>
+                   <string>Низка скорость</string>
                   </property>
                  </widget>
                 </item>
@@ -376,7 +376,7 @@
                 <item>
                  <widget class="QLabel" name="label_5">
                   <property name="text">
-                   <string>Very low</string>
+                   <string>Очень низкая скорость</string>
                   </property>
                  </widget>
                 </item>
@@ -413,7 +413,7 @@
                 <item>
                  <widget class="QLabel" name="label_6">
                   <property name="text">
-                   <string>Connection timeout</string>
+                   <string>Таймаут соединения</string>
                   </property>
                  </widget>
                 </item>
@@ -465,13 +465,13 @@
             </widget>
             <widget class="QWidget" name="proxyTab">
              <attribute name="title">
-              <string>Proxy</string>
+              <string>Прокси</string>
              </attribute>
              <layout class="QVBoxLayout" name="verticalLayout_7">
               <item>
                <widget class="QCheckBox" name="proxyCheckBox">
                 <property name="text">
-                 <string>Enable proxy</string>
+                 <string>Использовать прокси</string>
                 </property>
                </widget>
               </item>
@@ -481,7 +481,7 @@
                  <bool>false</bool>
                 </property>
                 <property name="title">
-                 <string>Proxy Settings</string>
+                 <string>Настройки прокси</string>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_6">
                  <item>
@@ -489,7 +489,7 @@
                    <item>
                     <widget class="QLabel" name="label_7">
                      <property name="text">
-                      <string>Address</string>
+                      <string>Адрес</string>
                      </property>
                     </widget>
                    </item>
@@ -516,7 +516,7 @@
                       </size>
                      </property>
                      <property name="text">
-                      <string>Port</string>
+                      <string>Порт</string>
                      </property>
                     </widget>
                    </item>
@@ -571,7 +571,7 @@
                    <item>
                     <widget class="QLabel" name="label_9">
                      <property name="text">
-                      <string>User name</string>
+                      <string>Имя пользователя</string>
                      </property>
                     </widget>
                    </item>
@@ -585,7 +585,7 @@
                    <item>
                     <widget class="QLabel" name="label_10">
                      <property name="text">
-                      <string>Password</string>
+                      <string>Пароль</string>
                      </property>
                     </widget>
                    </item>
@@ -624,7 +624,7 @@
        <item>
         <widget class="QGroupBox" name="downloadsBox">
          <property name="title">
-          <string>Downloads</string>
+          <string>Закачки</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_8">
           <item>
@@ -632,7 +632,7 @@
             <item>
              <widget class="QLabel" name="label_11">
               <property name="text">
-               <string>Download in</string>
+               <string>Скачивать в</string>
               </property>
              </widget>
             </item>
@@ -673,7 +673,7 @@
             <item>
              <widget class="QLabel" name="label_12">
               <property name="text">
-               <string>Maximum number of concurrent downloads</string>
+               <string>Одновременных закачек</string>
               </property>
              </widget>
             </item>
@@ -735,7 +735,7 @@
             <item>
              <widget class="QLabel" name="label_13">
               <property name="text">
-               <string>Maximum number of sections</string>
+               <string>Секций на закачку</string>
               </property>
              </widget>
             </item>
@@ -805,7 +805,7 @@
           <item>
            <widget class="QCheckBox" name="checkBoxIgnoreErrors">
             <property name="text">
-             <string>Ignore critical errors</string>
+             <string>Игнорировать критические ошибки</string>
             </property>
            </widget>
           </item>
@@ -814,7 +814,7 @@
             <item>
              <widget class="QLabel" name="label_14">
               <property name="text">
-               <string>Maximum number of errors</string>
+               <string>Максимальное количество ошибок</string>
               </property>
              </widget>
             </item>

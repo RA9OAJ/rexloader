@@ -180,7 +180,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
 
         if(index.column() == 5)
         {
-            if(!myData(row,5).toLongLong())return tr("N/a");
+            if(!myData(row,5).toLongLong())return tr("Н/д");
             QStringList sz = sizeForHumans(myData(row,5).toLongLong());
             return sz.value(0)+sz.value(1);
         }
@@ -195,17 +195,17 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         {
             switch(myData(row,9).toInt())
             {
-            case LInterface::ON_PAUSE: return QString(tr("Suspended"));
-            case LInterface::ERROR_TASK: return QString(tr("Error"));
-            case -100: return QString(tr("Waiting"));
+            case LInterface::ON_PAUSE: return QString(tr("Остановлено"));
+            case LInterface::ERROR_TASK: return QString(tr("Ошибка"));
+            case -100: return QString(tr("Ожидание"));
             case LInterface::ACCEPT_QUERY:
             case LInterface::SEND_QUERY:
             case LInterface::REDIRECT:
             case LInterface::STOPPING:
             case LInterface::ON_LOAD:
                 if(myData(row,5).toLongLong()) return QString::number(myData(row,4).toLongLong()*100/myData(row,5).toLongLong())+QString("%");
-                else return tr("N/a");
-            case LInterface::FINISHED: return QString(tr("Completed"));
+                else return tr("Н/д");
+            case LInterface::FINISHED: return QString(tr("Завершено"));
 
             default: return QVariant();
             }
@@ -284,7 +284,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         if(filename.right(5) == ".rldr")filename = filename.left(filename.size()-20);
 
         QStringList _tmp = sizeForHumans(totalsz);
-        if(!totalsz) totalszStr = tr("N/a");
+        if(!totalsz) totalszStr = tr("Н/д");
         else totalszStr = _tmp.value(0)+_tmp.value(1);
         _tmp.clear();
         _tmp = sizeForHumans(myData(row,4).toLongLong());
@@ -297,7 +297,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         }
         else spd = "---";
 
-        tooltip = QString(tr("URL: %1<br>Filename: %2<br>Total size: %3<br>Left: %4 %5<br><font color='#00bb00'>Down. speed: %6</font>")).arg(shortUrl(myData(row,1).toString()),shortUrl(filename),totalszStr,cursz,percent,spd);
+        tooltip = QString(tr("URL: %1<br>Имя файла: %2<br>Размер: %3<br>Завершено: %4 %5<br><font color='#00bb00'>Скорость: %6</font>")).arg(shortUrl(myData(row,1).toString()),shortUrl(filename),totalszStr,cursz,percent,spd);
         return tooltip;
     }
 
@@ -319,20 +319,20 @@ QVariant TItemModel::headerData(int section, Qt::Orientation orientation, int ro
     if(!qr || gcolumn == 0)return QVariant();
 
     if(section == gcolumn && orientation == Qt::Horizontal) //добавление виртуальной колонки скорости скачивания
-        return QString(tr("Down. speed"));
+        return QString(tr("Скорость"));
 
     if(section == gcolumn+1 && orientation == Qt::Horizontal) //добавление виртуальной колонки
-        return QString(tr("Time left"));
+        return QString(tr("До завершения"));
 
     if(orientation == Qt::Horizontal)
         switch(section)
         {
-        case 2: return tr("Date create");
-        case 3: return tr("File");
-        case 5: return tr("File size");
-        case 6: return tr("Download time");
-        case 9: return tr("Status");
-        case 12: return tr("Note");
+        case 2: return tr("Дата создания");
+        case 3: return tr("Файл");
+        case 5: return tr("Размер");
+        case 6: return tr("Время скачивания");
+        case 9: return tr("Статус");
+        case 12: return tr("Пояснение");
 
         default: return qr->record().field(section).name();
         }
@@ -369,10 +369,10 @@ QModelIndex TItemModel::index(int row, int column, const QModelIndex &parent) co
 QStringList TItemModel::sizeForHumans(qint64 sz)
 {
     QStringList outstrings;
-    if(sz >= 1073741824)outstrings << QString::number((qint64)sz/1073741824.0,'f',2) << tr(" GB");
-    else if(sz >= 1048576)outstrings << QString::number((qint64)sz/1048576.0,'f',1) << tr(" MB");
-    else if(sz >= 1024)outstrings << QString::number((qint64)sz/1024.0,'f',1) << tr(" kB");
-    else outstrings << QString::number(sz) << tr(" Bytes");
+    if(sz >= 1073741824)outstrings << QString::number((qint64)sz/1073741824.0,'f',2) << tr(" ГБ");
+    else if(sz >= 1048576)outstrings << QString::number((qint64)sz/1048576.0,'f',1) << tr(" МБ");
+    else if(sz >= 1024)outstrings << QString::number((qint64)sz/1024.0,'f',1) << tr(" КБ");
+    else outstrings << QString::number(sz) << tr(" Байт");
 
     return outstrings;
 }
@@ -382,17 +382,17 @@ QStringList TItemModel::speedForHumans(qint64 sp, bool in_bytes, bool out_bytes)
     QStringList outstrings;
     if(in_bytes && !out_bytes)sp = sp*8;
     if(!in_bytes && out_bytes)sp = sp/8;
-    if(sp >= 1073741824)outstrings << QString::number((qint64)sp/1073741824.0,'f',1) << (out_bytes ? tr(" GB/s"):tr(" Gbps"));
-    else if(sp >= 1048576)outstrings << QString::number((qint64)sp/1048576.0,'f',1) << (out_bytes ? tr(" MB/s"):tr(" Mbps"));
-    else if(sp >= 1024)outstrings << QString::number((qint64)sp/1024.0,'f',1) << (out_bytes ? tr(" kB/s"):tr(" Kbps"));
-    else outstrings << QString::number(sp) << (out_bytes ? tr(" B/s"):tr(" bps"));;
+    if(sp >= 1073741824)outstrings << QString::number((qint64)sp/1073741824.0,'f',1) << (out_bytes ? tr(" ГБ/с"):tr(" Gbps"));
+    else if(sp >= 1048576)outstrings << QString::number((qint64)sp/1048576.0,'f',1) << (out_bytes ? tr(" МБ/с"):tr(" Mbps"));
+    else if(sp >= 1024)outstrings << QString::number((qint64)sp/1024.0,'f',1) << (out_bytes ? tr(" КБ/с"):tr(" Kbps"));
+    else outstrings << QString::number(sp) << (out_bytes ? tr(" Байт/с"):tr(" bps"));;
 
     return outstrings;
 }
 
 QString TItemModel::secForHumans(int sec)
 {
-    if(sec < 0) return tr("N/a");
+    if(sec < 0) return tr("Н/д");
     int days,hours,minuts;
     days = hours = minuts = 0;
     QString out;
@@ -405,13 +405,13 @@ QString TItemModel::secForHumans(int sec)
     sec %= 60;
 
     if(days)
-        out = tr("%1d %2h %3m %4s").arg(QString::number(days), QString::number(hours), QString::number(minuts), QString::number(sec));
+        out = tr("%1д %2ч %3м %4с").arg(QString::number(days), QString::number(hours), QString::number(minuts), QString::number(sec));
     else if(hours)
-        out = tr("%1h %2m %3s").arg(QString::number(hours), QString::number(minuts), QString::number(sec));
+        out = tr("%1ч %2м %3с").arg(QString::number(hours), QString::number(minuts), QString::number(sec));
     else if(minuts)
-        out = tr("%1m %2s").arg(QString::number(minuts), QString::number(sec));
+        out = tr("%1м %2с").arg(QString::number(minuts), QString::number(sec));
     else
-        out = tr("%1s").arg(QString::number(sec));
+        out = tr("%1с").arg(QString::number(sec));
 
     return out;
 }

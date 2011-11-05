@@ -26,12 +26,12 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(parent->windowTitle() + " - " + tr("Settings"));
+    setWindowTitle(parent->windowTitle() + " - " + tr("Настройки"));
     QList<int> sz;
     sz << 50 << 200;
     ui->splitter->setSizes(sz);
     last_row = 0;
-    ui->downDir->setText(QDir::home().path()+"/"+tr("Downloads"));
+    ui->downDir->setText(QDir::home().path()+"/"+tr("Закачки"));
 
     connect(ui->listWidget,SIGNAL(clicked(QModelIndex)),this,SLOT(selectSubSettings()));
     connect(ui->proxyCheckBox,SIGNAL(toggled(bool)),ui->groupBox,SLOT(setEnabled(bool)));
@@ -196,7 +196,7 @@ void SettingsDialog::showFileDialog()
     dlg->setDirectory(ui->downDir->text());
     dlg->setAttribute(Qt::WA_DeleteOnClose);
     dlg->setFileMode(QFileDialog::DirectoryOnly);
-    dlg->setWindowTitle(tr("Select Directory"));
+    dlg->setWindowTitle(tr("Выбор директории"));
     dlg->setOption(QFileDialog::DontUseNativeDialog);
     dlg->setModal(true);
     connect(dlg,SIGNAL(fileSelected(QString)),this,SLOT(setDownDir(QString)));
@@ -206,6 +206,7 @@ void SettingsDialog::showFileDialog()
 void SettingsDialog::setSettingAttribute(const QString &key, const QVariant &value)
 {
     sets.insert(key,value);
+    cancelSets();
 }
 
 void SettingsDialog::updateInterface()

@@ -54,7 +54,7 @@ void AddTaskDialog::construct()
     ++obj_cnt;
     additional_flag = false;
     setAttribute(Qt::WA_DeleteOnClose);
-    setWindowTitle("REXLoader - "+tr("New task"));
+    setWindowTitle("REXLoader - "+tr("Новое задание"));
     priority = 2; //нормальный приоритет
     if(!parent())setWindowIcon(QIcon(":/appimages/trayicon.png"));
     FileNameValidator *validator = new FileNameValidator(this);
@@ -104,7 +104,7 @@ void AddTaskDialog::openDirDialog()
 
     if(QDir().exists(gui->locationEdit->text()))dir = gui->locationEdit->text();
 
-    dir = QFileDialog::getExistingDirectory(this,tr("Folder select"),dir);
+    dir = QFileDialog::getExistingDirectory(this,tr("Выбор диалога"),dir);
 
     if(!dir.isEmpty())gui->locationEdit->setText(dir);
 }
@@ -124,8 +124,8 @@ void AddTaskDialog::urlValidator()
     QUrl url(gui->urlBox->currentText());
     QString errorStr;
 
-    if(!url.isValid())errorStr = tr("URL is not correct. Enter another URL or adjust it.");
-    else if(!protocols.contains(url.scheme().toLower()))errorStr = tr("This protocol is not supported. Check whether there is a plugin to work with the protocol and whether it is enabled.");
+    if(!url.isValid())errorStr = tr("URL не корректен. Введите другой URL или справьте этот.");
+    else if(!protocols.contains(url.scheme().toLower()))errorStr = tr("Этот протокол не поддерживается. Проверьте наличие соответствующего плагина и его состояние.");
 
     if(errorStr.isEmpty())
     {
@@ -166,11 +166,11 @@ void AddTaskDialog::loadDatabaseData()
     {
         QString cattitle;
         if(qr.value(1).toString() == "#downloads")continue;
-        else if(qr.value(1).toString() == "#archives"){cattitle = tr("Archives"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
-        else if(qr.value(1).toString() == "#apps"){cattitle = tr("Applications"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
-        else if(qr.value(1).toString() == "#audio"){cattitle = tr("Audio"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
-        else if(qr.value(1).toString() == "#video"){cattitle = tr("Video"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
-        else if(qr.value(1).toString() == "#other"){cattitle = tr("Other"); otherId = qr.value(0).toInt();dirs.insert(qr.value(0).toInt(),downDir);}
+        else if(qr.value(1).toString() == "#archives"){cattitle = tr("Архивы"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
+        else if(qr.value(1).toString() == "#apps"){cattitle = tr("Приложения"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
+        else if(qr.value(1).toString() == "#audio"){cattitle = tr("Аудио"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
+        else if(qr.value(1).toString() == "#video"){cattitle = tr("Видео"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
+        else if(qr.value(1).toString() == "#other"){cattitle = tr("Другое"); otherId = qr.value(0).toInt();dirs.insert(qr.value(0).toInt(),downDir);}
         else {cattitle = qr.value(1).toString(); dirs.insert(qr.value(0).toInt(),qr.value(2).toString());}
 
         gui->categoryBox->addItem(cattitle, qr.value(0).toInt());
@@ -226,12 +226,12 @@ void AddTaskDialog::addTask()
     {
         EMessageBox *question = new EMessageBox(this);
         question->setIcon(QMessageBox::Question);
-        question->setWindowTitle(tr("URL already exists"));
-        question->addButton(tr("Redownload"), EMessageBox::YesRole);
-        QPushButton *btn = question->addButton(tr("Cancel"),EMessageBox::RejectRole);
+        question->setWindowTitle(tr("URL уже существует"));
+        question->addButton(tr("Перезакачать"), EMessageBox::YesRole);
+        QPushButton *btn = question->addButton(tr("Отмена"),EMessageBox::RejectRole);
         question->setDefaultButton(btn);
-        question->setText(tr("This URL <a href=\"%1\">%1</a> already exists.").arg(gui->urlBox->currentText()));
-        question->setInformativeText(tr("Click <b>\"Redownload\"</b> to add a task or <b>\"Cancel\"</b> to cancel this action."));
+        question->setText(tr("Этот URL <a href=\"%1\">%1</a> уже присутствует в списке заданий.").arg(gui->urlBox->currentText()));
+        question->setInformativeText(tr("Нажмите <b>\"Перезакачать\"</b> для продолжения или <b>\"Отмена\"</b> для отмены действия."));
         question->setActionType(EMessageBox::AT_REDOWNLOAD);
 
         connect(question,SIGNAL(buttonClicked(QAbstractButton*)),this,SLOT(acceptQAction(QAbstractButton*)));

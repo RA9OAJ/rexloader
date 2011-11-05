@@ -40,12 +40,12 @@ QVariant TreeItemModel::data(const QModelIndex &index, int role) const
     case Qt::DisplayRole:
         if(!index.column())
         {
-            if(nodes.value(index).toString() == "#downloads")return tr("All Downloads");
-            else if(nodes.value(index).toString() == "#archives")return tr("Archives");
-            else if(nodes.value(index).toString() == "#apps") return tr("Applications");
-            else if(nodes.value(index).toString() == "#audio") return tr("Music");
-            else if(nodes.value(index).toString() == "#video") return tr("Video");
-            else if(nodes.value(index).toString() == "#other") return tr("Other");
+            if(nodes.value(index).toString() == "#downloads")return tr("Все закачки");
+            else if(nodes.value(index).toString() == "#archives")return tr("Архивы");
+            else if(nodes.value(index).toString() == "#apps") return tr("Приложение");
+            else if(nodes.value(index).toString() == "#audio") return tr("Аудио");
+            else if(nodes.value(index).toString() == "#video") return tr("Видео");
+            else if(nodes.value(index).toString() == "#other") return tr("Другое");
             return nodes.value(index).toString();
         }
         return nodes.value(index);
@@ -157,12 +157,12 @@ bool TreeItemModel::hasIndex(int row, int column, const QModelIndex &parent) con
 void TreeItemModel::addFiltersSubtree()
 {
     QList<QVariant> filters;
-    filters << tr("Filters")<< -1 << 0 << 0;
-    filters << tr("Downloading")<< -2 << -1 << 3;
-    filters << tr("Waiting") << -3 << -1 << -100;
-    filters << tr("Stopped") << -4 << -1 << 0;
-    filters << tr("Completed") << -5 << -1 << 5;
-    filters << tr("With an error") << -6 << -1 << -2;
+    filters << tr("Фильры")<< -1 << 0 << 0;
+    filters << tr("В закачке")<< -2 << -1 << 3;
+    filters << tr("В одидании") << -3 << -1 << -100;
+    filters << tr("Остановленные") << -4 << -1 << 0;
+    filters << tr("Завершенные") << -5 << -1 << 5;
+    filters << tr("С ошибками") << -6 << -1 << -2;
 
     QModelIndex parent = QModelIndex();
     QHash<QModelIndex, int> cur_nodes;
