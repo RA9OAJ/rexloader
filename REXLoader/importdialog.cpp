@@ -56,11 +56,11 @@ void ImportDialog::loadDatabaseData()
     {
         QString cattitle;
         if(qr.value(1).toString() == "#downloads")continue;
-        else if(qr.value(1).toString() == "#archives"){cattitle = tr("Archives"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
-        else if(qr.value(1).toString() == "#apps"){cattitle = tr("Applications"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
-        else if(qr.value(1).toString() == "#audio"){cattitle = tr("Audio"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
-        else if(qr.value(1).toString() == "#video"){cattitle = tr("Video"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
-        else if(qr.value(1).toString() == "#other"){cattitle = tr("All Downloads"); otherId = qr.value(0).toInt();dirs.insert(qr.value(0).toInt(),downDir);}
+        else if(qr.value(1).toString() == "#archives"){cattitle = tr("Архивы"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
+        else if(qr.value(1).toString() == "#apps"){cattitle = tr("Приложения"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
+        else if(qr.value(1).toString() == "#audio"){cattitle = tr("Аудио"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
+        else if(qr.value(1).toString() == "#video"){cattitle = tr("Видео"); dirs.insert(qr.value(0).toInt(),downDir+"/"+cattitle);}
+        else if(qr.value(1).toString() == "#other"){cattitle = tr("Другое"); otherId = qr.value(0).toInt();dirs.insert(qr.value(0).toInt(),downDir);}
         else {cattitle = qr.value(1).toString(); dirs.insert(qr.value(0).toInt(),qr.value(2).toString());}
 
         ui->categoryBox->addItem(cattitle, qr.value(0).toInt());

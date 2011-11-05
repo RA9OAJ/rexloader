@@ -102,6 +102,7 @@ protected slots:
     void addCategory(); //добавляет новую категорию, родительским элементом является выбранная категория
     void categorySettings(); //вызывает окно свойств категорий
     void updateTreeModel(const QString cat_name, int row, int parent_id, int cat_id); //добавляет/обновляет строку категории в дереве категорий
+    void setTaskCnt(); //устанавливает кол-во одновременных закачек
 
 signals:
     void transAct();
@@ -131,6 +132,7 @@ private:
     QSortFilterProxyModel *sfmodel; //прокси-модель для сортировки
 
     QToolButton *spdbtn; //кнопка выбора скорости загрузки
+    QToolButton *taskbtn;
     QString downDir; //директория для загрузки файлов по умолчанию
 
     QString clip_last; //последняя строка в бюфере обьмена, на которую была реакция

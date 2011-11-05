@@ -172,7 +172,7 @@ void CategoryDialog::showDirDialog()
     dlg->setDirectory(ui->catpath->text());
     dlg->setAttribute(Qt::WA_DeleteOnClose);
     dlg->setFileMode(QFileDialog::DirectoryOnly);
-    dlg->setWindowTitle(tr("Select Directory"));
+    dlg->setWindowTitle(tr("Выбор директории"));
     dlg->setOption(QFileDialog::DontUseNativeDialog);
     dlg->setModal(true);
     connect(dlg,SIGNAL(fileSelected(QString)),this,SLOT(setCategoryDir(QString)));
@@ -204,7 +204,7 @@ void CategoryDialog::formValidator()
         {
             //Запись в журнал ошибок
             qDebug()<<"void CategoryDialog::formValidator(): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
-            ui->error_label->setText(tr("Internal error in SQL."));
+            ui->error_label->setText(tr("Внутренняя ошибка SQL."));
             ui->error_label->setVisible(true);
             return;
         }
@@ -220,7 +220,7 @@ void CategoryDialog::formValidator()
         }
         else
         {
-            ui->error_label->setText(tr("Category with that name already exists."));
+            ui->error_label->setText(tr("Категория с таким именем уже сущетвует."));
             ui->error_label->setVisible(true);
         }
     }

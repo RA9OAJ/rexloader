@@ -30,7 +30,7 @@ EMessageBox::EMessageBox(QWidget *parent) :
     connect(timer,SIGNAL(timeout()),this,SLOT(tickTimer()));
     setWindowModality(Qt::WindowModal);
     timer->start(1000);
-    setWindowTitle("REXLoader - "+tr("File already exists!"));
+    setWindowTitle("REXLoader - "+tr("Файл уже существует!"));
     wtitle = windowTitle();
     moveToCenter();
 }

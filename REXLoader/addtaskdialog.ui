@@ -73,7 +73,7 @@
         <string notr="true">font: bold 12px;</string>
        </property>
        <property name="text">
-        <string>Category:</string>
+        <string>Категория</string>
        </property>
       </widget>
      </item>
@@ -113,7 +113,7 @@
         <string notr="true">font:  bold 12px;</string>
        </property>
        <property name="text">
-        <string>Save Location:</string>
+        <string>Директория</string>
        </property>
       </widget>
      </item>
@@ -147,7 +147,7 @@
      <item>
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>Filename:</string>
+        <string>Имя файла</string>
        </property>
       </widget>
      </item>
@@ -170,7 +170,7 @@
        <item>
         <widget class="QLabel" name="label_4">
          <property name="text">
-          <string>Note</string>
+          <string>Примечание</string>
          </property>
         </widget>
        </item>
@@ -264,14 +264,14 @@ background: #ffffff;</string>
      <item>
       <widget class="QPushButton" name="startNowBtn">
        <property name="text">
-        <string>Start Now</string>
+        <string>Закачать сейчас</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="startLaterBtn">
        <property name="text">
-        <string>Start Later</string>
+        <string>Закачать потом</string>
        </property>
       </widget>
      </item>
