@@ -24,9 +24,42 @@ TaskDialog::TaskDialog(QWidget *parent) :
     ui(new Ui::TaskDialog)
 {
     ui->setupUi(this);
+    setWindowFlags(Qt::Window);
+    setAttribute(Qt::WA_DeleteOnClose);
+
+    QTimer::singleShot(0,this,SLOT(scheduler()));
 }
 
 TaskDialog::~TaskDialog()
 {
     delete ui;
+}
+
+void TaskDialog::setSourceData(TItemModel *model, QModelIndex index, LoaderInterface *loader)
+{
+    mdl = model;
+    idx = index;
+    ldr = loader;
+}
+
+void TaskDialog::deleteThisTask(QModelIndex index)
+{
+    if(index == idx)
+        close();
+}
+
+void TaskDialog::scheduler()
+{
+    if(mdl)
+    {
+        ui->lineEdit->setText(mdl->data(mdl->index(idx.row(),1),100).toString());
+        ui->comboBox->setCurrentIndex(mdl->data(mdl->index(idx.row(),13),100).toInt());
+        ui->sizeLabel->setText(mdl->data(mdl->index(idx.row(),5),Qt::DisplayRole).toString());
+        QStringList load = TItemModel::sizeForHumans(mdl->data(mdl->index(idx.row(),4),100).toLongLong());
+        ui->loadLabel->setText(load.value(0) + load.value(1));
+        ui->timeLabel->setText(mdl->data(mdl->index(idx.row(),6),Qt::DisplayRole).toString());
+        ui->leftLabel->setText(mdl->data(mdl->index(idx.row(),15),Qt::DisplayRole).toString());
+    }
+
+    QTimer::singleShot(0,this,SLOT(scheduler()));
 }

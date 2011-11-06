@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define TASKDIALOG_H
 
 #include <QDialog>
+#include <QTimer>
+#include "titemmodel.h"
 
 namespace Ui {
     class TaskDialog;
@@ -33,8 +35,20 @@ public:
     explicit TaskDialog(QWidget *parent = 0);
     ~TaskDialog();
 
+    void setSourceData(TItemModel *model, QModelIndex index, LoaderInterface *loader);
+
+public slots:
+    void deleteThisTask(QModelIndex index);
+
+protected slots:
+    void scheduler();
+
 private:
     Ui::TaskDialog *ui;
+
+    QPointer<TItemModel> mdl;
+    QModelIndex idx;
+    LoaderInterface *ldr;
 };
 
 #endif // TASKDIALOG_H
