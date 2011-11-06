@@ -2092,6 +2092,12 @@ void REXWindow::showTaskDialog()
     {
         int id_row = select->selectedRows(0).value(i).data(100).toInt(); // id записи в базе данных
         int id_task = tasklist.value(id_row);
+        if(dlglist.contains(id_task))
+        {
+            dlglist.value(id_task)->activateWindow();
+            return;
+        }
+
         QUrl url = QUrl::fromEncoded(select->selectedRows(1).value(i).data(100).toString().toUtf8());
         LoaderInterface *ldr = pluglist.value(plugproto.value(url.scheme().toLower()));
 
