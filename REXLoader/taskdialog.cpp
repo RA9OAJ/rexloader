@@ -40,6 +40,12 @@ void TaskDialog::setSourceData(TItemModel *model, QModelIndex index, LoaderInter
     mdl = model;
     idx = index;
     ldr = loader;
+
+    if(mdl)
+    {
+        ui->lineEdit->setText(mdl->data(mdl->index(idx.row(),1),100).toString());
+        ui->comboBox->setCurrentIndex(mdl->data(mdl->index(idx.row(),13),100).toInt());
+    }
 }
 
 void TaskDialog::deleteThisTask(QModelIndex index)
@@ -52,8 +58,6 @@ void TaskDialog::scheduler()
 {
     if(mdl)
     {
-        ui->lineEdit->setText(mdl->data(mdl->index(idx.row(),1),100).toString());
-        ui->comboBox->setCurrentIndex(mdl->data(mdl->index(idx.row(),13),100).toInt());
         ui->sizeLabel->setText(mdl->data(mdl->index(idx.row(),5),Qt::DisplayRole).toString());
         QStringList load = TItemModel::sizeForHumans(mdl->data(mdl->index(idx.row(),4),100).toLongLong());
         ui->loadLabel->setText(load.value(0) + load.value(1));
@@ -61,5 +65,5 @@ void TaskDialog::scheduler()
         ui->leftLabel->setText(mdl->data(mdl->index(idx.row(),15),Qt::DisplayRole).toString());
     }
 
-    QTimer::singleShot(0,this,SLOT(scheduler()));
+    QTimer::singleShot(1000,this,SLOT(scheduler()));
 }
