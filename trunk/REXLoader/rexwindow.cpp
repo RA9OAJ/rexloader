@@ -229,6 +229,7 @@ void REXWindow::createInterface()
     connect(ui->actionThreeTasks,SIGNAL(triggered()),this,SLOT(setTaskCnt()));
     connect(ui->actionFourTasks,SIGNAL(triggered()),this,SLOT(setTaskCnt()));
     connect(ui->actionFiveTasks,SIGNAL(triggered()),this,SLOT(setTaskCnt()));
+    connect(ui->actionTaskPropert,SIGNAL(triggered()),this,SLOT(showTaskDialog()));
 
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);
@@ -1737,33 +1738,33 @@ void REXWindow::acceptQAction(QAbstractButton *btn)
     switch(dlg->myTypes())
     {
     case EMessageBox::AT_RENAME:
+    {
+        QFile file(params.value("curname"));
+        if(dlg->buttonRole(qobject_cast<QPushButton*>(btn)) == EMessageBox::ApplyRole)
         {
-            QFile file(params.value("curname"));
-            if(dlg->buttonRole(qobject_cast<QPushButton*>(btn)) == EMessageBox::ApplyRole)
-            {
-                file.remove(params.value("newname"));
-                file.rename(params.value("newname"));
-            }
-            else file.rename(params.value("rename"));
+            file.remove(params.value("newname"));
+            file.rename(params.value("newname"));
+        }
+        else file.rename(params.value("rename"));
 
-            QSqlQuery qr;
-            qr.prepare("UPDATE tasks SET filename=:filename WHERE id=:id");
-            qr.bindValue("filename",file.fileName());
-            qr.bindValue("id",params.value("id"));
-            if(!qr.exec())
-            {
-                ///запись в журнал ошибок
-                qDebug()<<"void REXWindow::acceptQAction(1): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
-            }
-            updateTaskSheet();
-            break;
-        }
-    case EMessageBox::AT_DOWNLOAD_ON_START:
+        QSqlQuery qr;
+        qr.prepare("UPDATE tasks SET filename=:filename WHERE id=:id");
+        qr.bindValue("filename",file.fileName());
+        qr.bindValue("id",params.value("id"));
+        if(!qr.exec())
         {
-            if(dlg->buttonRole(qobject_cast<QPushButton*>(btn)) == EMessageBox::ApplyRole)
-                startAllTasks();
-            break;
+            ///запись в журнал ошибок
+            qDebug()<<"void REXWindow::acceptQAction(1): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
         }
+        updateTaskSheet();
+        break;
+    }
+    case EMessageBox::AT_DOWNLOAD_ON_START:
+    {
+        if(dlg->buttonRole(qobject_cast<QPushButton*>(btn)) == EMessageBox::ApplyRole)
+            startAllTasks();
+        break;
+    }
     case EMessageBox::AT_NONE:
     default: return;
     }
@@ -2080,4 +2081,33 @@ void REXWindow::setTaskCnt()
     sndr->setChecked(true);
     taskbtn->setIcon(sndr->icon());
     taskbtn->setText(sndr->text());
+}
+
+void REXWindow::showTaskDialog()
+{
+    QItemSelectionModel *select = ui->tableView->selectionModel();
+    if(!select->hasSelection())return; //если ничего не выделено, то выходим
+
+    for(int i=0; i < select->selectedRows().length(); i++)
+    {
+        int id_row = select->selectedRows(0).value(i).data(100).toInt(); // id записи в базе данных
+        int id_task = tasklist.value(id_row);
+        QUrl url = QUrl::fromEncoded(select->selectedRows(1).value(i).data(100).toString().toUtf8());
+        LoaderInterface *ldr = pluglist.value(plugproto.value(url.scheme().toLower()));
+
+        TaskDialog *dlg = new TaskDialog(this);
+        dlg->setSourceData(model, select->selectedRows(0).value(i), ldr);
+        connect(dlg,SIGNAL(rejected()),this,SLOT(closeTaskDialog()));
+        dlglist.insert(id_task, dlg);
+        dlg->show();
+    }
+}
+
+void REXWindow::closeTaskDialog()
+{
+    TaskDialog *dlg = qobject_cast<TaskDialog*>(sender());
+    if(!dlg) return;
+
+    int key = dlglist.key(dlg);
+    dlglist.remove(key);
 }

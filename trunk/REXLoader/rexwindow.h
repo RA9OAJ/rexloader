@@ -37,6 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settingsdialog.h"
 #include "importdialog.h"
 #include "categorydialog.h"
+#include "taskdialog.h"
 
 #include "../Httploader/LoaderInterface.h"
 
@@ -103,6 +104,8 @@ protected slots:
     void categorySettings(); //вызывает окно свойств категорий
     void updateTreeModel(const QString cat_name, int row, int parent_id, int cat_id); //добавляет/обновляет строку категории в дереве категорий
     void setTaskCnt(); //устанавливает кол-во одновременных закачек
+    void showTaskDialog(); //показывает диалог состояния выделенного задания
+    void closeTaskDialog(); //удаляет закрытый диалог состояния задания
 
 signals:
     void transAct();
@@ -120,6 +123,7 @@ private:
     QStringList pluginDirs; //список с директориями, в которых могут быть плагины
     QHash<int,QStringList> mesqueue; //очередь сообщений
     QHash<int,int> tasklist; //список дескрипторов активных заданий (id_in_table, id_task)
+    QHash<int,TaskDialog*> dlglist;
     QString apphomedir; //путь к рабочему каталогу приложения, где хранятся все его файлы конфигураций
     QString dbconnect; //имя подклюения к БД
     bool sched_flag; //признак разрешения работы планировщика
