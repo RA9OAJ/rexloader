@@ -35,7 +35,7 @@ public:
     explicit TaskDialog(QWidget *parent = 0);
     ~TaskDialog();
 
-    void setSourceData(TItemModel *model, QModelIndex index, LoaderInterface *loader);
+    void setSourceData(TItemModel *model, QModelIndex index, LoaderInterface *loader, const QHash<int,int> &list);
 
 public slots:
     void deleteThisTask(QModelIndex index);
@@ -45,7 +45,7 @@ protected slots:
 
 private:
     Ui::TaskDialog *ui;
-
+    const QHash<int,int> *lst;
     QPointer<TItemModel> mdl;
     QModelIndex idx;
     LoaderInterface *ldr;

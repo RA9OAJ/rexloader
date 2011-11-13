@@ -35,11 +35,12 @@ TaskDialog::~TaskDialog()
     delete ui;
 }
 
-void TaskDialog::setSourceData(TItemModel *model, QModelIndex index, LoaderInterface *loader)
+void TaskDialog::setSourceData(TItemModel *model, QModelIndex index, LoaderInterface *loader, const QHash<int,int> &list)
 {
     mdl = model;
     idx = index;
     ldr = loader;
+    lst = &list;
 
     if(mdl)
     {
@@ -60,10 +61,15 @@ void TaskDialog::scheduler()
     {
         ui->sizeLabel->setText(mdl->data(mdl->index(idx.row(),5),Qt::DisplayRole).toString());
         QStringList load = TItemModel::sizeForHumans(mdl->data(mdl->index(idx.row(),4),100).toLongLong());
+        int value = mdl->data(mdl->index(idx.row(),4),100).toLongLong() * 100 / mdl->data(mdl->index(idx.row(),5),100).toLongLong();
+        ui->progressBar->setValue(value);
         ui->loadLabel->setText(load.value(0) + load.value(1));
         ui->timeLabel->setText(mdl->data(mdl->index(idx.row(),6),Qt::DisplayRole).toString());
         ui->leftLabel->setText(mdl->data(mdl->index(idx.row(),15),Qt::DisplayRole).toString());
+        int id = mdl->data(mdl->index(idx.row(),0),100).toInt();
+        int sect_cnt = ldr->countSectionTask(lst->value(id));
+        ui->sectionLabel->setText(sect_cnt == 0 ? "":QString::number(sect_cnt));
     }
 
-    QTimer::singleShot(1000,this,SLOT(scheduler()));
+    QTimer::singleShot(500,this,SLOT(scheduler()));
 }

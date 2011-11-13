@@ -2102,7 +2102,8 @@ void REXWindow::showTaskDialog()
         LoaderInterface *ldr = pluglist.value(plugproto.value(url.scheme().toLower()));
 
         TaskDialog *dlg = new TaskDialog(this);
-        dlg->setSourceData(model, select->selectedRows(0).value(i), ldr);
+        QModelIndex index = sfmodel->mapToSource(select->selectedRows(0).value(i));
+        dlg->setSourceData(model, index, ldr, tasklist);
         connect(dlg,SIGNAL(rejected()),this,SLOT(closeTaskDialog()));
         dlglist.insert(id_task, dlg);
         dlg->show();
