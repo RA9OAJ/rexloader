@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>412</width>
-    <height>196</height>
+    <width>410</width>
+    <height>193</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,13 +19,13 @@
   <property name="minimumSize">
    <size>
     <width>410</width>
-    <height>170</height>
+    <height>193</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>412</width>
-    <height>200</height>
+    <width>410</width>
+    <height>193</height>
    </size>
   </property>
   <property name="baseSize">
@@ -38,6 +38,18 @@
    <string>Задание</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>4</number>
+   </property>
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="rightMargin">
+    <number>4</number>
+   </property>
+   <property name="bottomMargin">
+    <number>3</number>
+   </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -58,7 +70,7 @@
       <widget class="QLineEdit" name="lineEdit">
        <property name="minimumSize">
         <size>
-         <width>368</width>
+         <width>358</width>
          <height>0</height>
         </size>
        </property>
@@ -312,17 +324,11 @@
     </layout>
    </item>
    <item>
-    <spacer name="verticalSpacer">
+    <widget class="Line" name="line">
      <property name="orientation">
-      <enum>Qt::Vertical</enum>
+      <enum>Qt::Horizontal</enum>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>5</height>
-      </size>
-     </property>
-    </spacer>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
