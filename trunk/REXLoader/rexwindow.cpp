@@ -2098,12 +2098,11 @@ void REXWindow::showTaskDialog()
             return;
         }
 
-        QUrl url = QUrl::fromEncoded(select->selectedRows(1).value(i).data(100).toString().toUtf8());
-        LoaderInterface *ldr = pluglist.value(plugproto.value(url.scheme().toLower()));
+        //QUrl url = QUrl::fromEncoded(select->selectedRows(1).value(i).data(100).toString().toUtf8());
 
         TaskDialog *dlg = new TaskDialog(this);
         QModelIndex index = sfmodel->mapToSource(select->selectedRows(0).value(i));
-        dlg->setSourceData(model, index, ldr, tasklist);
+        dlg->setSourceData(model, index, pluglist, tasklist);
         connect(dlg,SIGNAL(rejected()),this,SLOT(closeTaskDialog()));
         dlglist.insert(id_task, dlg);
         dlg->show();
