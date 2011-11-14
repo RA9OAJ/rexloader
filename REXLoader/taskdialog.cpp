@@ -35,11 +35,11 @@ TaskDialog::~TaskDialog()
     delete ui;
 }
 
-void TaskDialog::setSourceData(TItemModel *model, QModelIndex index, LoaderInterface *loader, const QHash<int,int> &list)
+void TaskDialog::setSourceData(TItemModel *model, QModelIndex index, const QHash<int,LoaderInterface*> &pluglist, const QHash<int,int> &list)
 {
     mdl = model;
     idx = index;
-    ldr = loader;
+    ldr = &pluglist;
     lst = &list;
 
     if(mdl)
@@ -67,7 +67,12 @@ void TaskDialog::scheduler()
         ui->timeLabel->setText(mdl->data(mdl->index(idx.row(),6),Qt::DisplayRole).toString());
         ui->leftLabel->setText(mdl->data(mdl->index(idx.row(),15),Qt::DisplayRole).toString());
         int id = mdl->data(mdl->index(idx.row(),0),100).toInt();
-        int sect_cnt = ldr->countSectionTask(lst->value(id));
+        int task_id = lst->value(id)%100;
+        int proto_id = lst->value(id)/100;
+        int sect_cnt = 0;
+        if(ldr->contains(proto_id))
+                   sect_cnt = ldr->value(proto_id)->countSectionTask(task_id);
+
         ui->sectionLabel->setText(sect_cnt == 0 ? "":QString::number(sect_cnt));
     }
 
