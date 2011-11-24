@@ -61,19 +61,19 @@ void SettingsDialog::selectSubSettings()
     switch(ui->listWidget->currentRow())
     {
     case 0:
-        ui->generalBox->setVisible(true);
-        ui->networkBox->setVisible(false);
         ui->downloadsBox->setVisible(false);
+        ui->networkBox->setVisible(false);
+        ui->generalBox->setVisible(true);
         break;
     case 1:
-        ui->networkBox->setVisible(true);
-        ui->generalBox->setVisible(false);
         ui->downloadsBox->setVisible(false);
+        ui->generalBox->setVisible(false);
+        ui->networkBox->setVisible(true);
         break;
     case 2:
-        ui->downloadsBox->setVisible(true);
         ui->networkBox->setVisible(false);
         ui->generalBox->setVisible(false);
+        ui->downloadsBox->setVisible(true);
         break;
     default: ui->generalBox->setVisible(false); break;
     }

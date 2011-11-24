@@ -332,7 +332,7 @@ QVariant TItemModel::headerData(int section, Qt::Orientation orientation, int ro
         case 5: return tr("Размер");
         case 6: return tr("Время скачивания");
         case 9: return tr("Статус");
-        case 12: return tr("Пояснение");
+        case 12: return tr("Примечание");
 
         default: return qr->record().field(section).name();
         }
