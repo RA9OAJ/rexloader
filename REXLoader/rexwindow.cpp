@@ -917,6 +917,7 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
     }
     updateTaskSheet();
     QString fldir = flinfo.isDir() ? flinfo.absolutePath():flinfo.absoluteFilePath();
+    if(fldir.right(5) != ".rldr") fldir += "." + QDateTime::currentDateTime().toString("yyyyMMddhhmmss") + ".rldr";
     tasklist.insert(id_row, id_task + id_proto*100);
     pluglist.value(id_proto)->setTaskFilePath(id_task,fldir);
     calculateSpeed();
