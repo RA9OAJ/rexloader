@@ -54,6 +54,7 @@ QVariant TreeItemModel::data(const QModelIndex &index, int role) const
         if(!index.column()) return font;
         return QFont();
 
+    case Qt::EditRole:
     case 100: return nodes.value(index);
 
     default: return QVariant();
@@ -158,8 +159,8 @@ void TreeItemModel::addFiltersSubtree()
 {
     QList<QVariant> filters;
     filters << tr("Фильры")<< -1 << 0 << 0;
-    filters << tr("В закачке")<< -2 << -1 << 3;
-    filters << tr("В одидании") << -3 << -1 << -100;
+    filters << tr("Выполняются")<< -2 << -1 << 3;
+    filters << tr("В ожидании") << -3 << -1 << -100;
     filters << tr("Остановленные") << -4 << -1 << 0;
     filters << tr("Завершенные") << -5 << -1 << 5;
     filters << tr("С ошибками") << -6 << -1 << -2;
@@ -387,7 +388,86 @@ bool TreeItemModel::insertRows(int row, int count, const QModelIndex &parent)
 
 bool TreeItemModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if(!nodes.contains(index))return false;
+    if(!nodes.contains(index) || role != Qt::EditRole)return false;
     nodes.insert(index,value);
     emit dataChanged(index,index);
+}
+
+Qt::DropActions TreeItemModel::supportedDropActions() const
+{
+    return Qt::MoveAction;
+}
+
+bool TreeItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
+{
+    if(action == Qt::IgnoreAction)
+        return false;
+
+    if(!data->hasFormat("application/sql.tree.record"))
+        return false;
+
+    if(column > 0)
+        return false;
+
+    QString dt = data->data("application/sql.tree.record");
+    if(dt.right(1) == ",") dt.chop(1);
+
+    int prnt = this->data(index(parent.row(),1,parent.parent()),100).toInt();
+
+    QString sql = QString("UPDATE categories SET parent_id=%1 WHERE id IN (%2)").arg(QString::number(prnt),dt);
+
+    QSqlQuery query(sql);
+    if(!query.exec())
+    {
+        qDebug()<<"TreeItemModel::dropMimeData(1)" + query.executedQuery() + " Error:" + query.lastError().text();
+        return false;
+    }
+
+    QStringList rows = dt.split(",");
+    for(int i = 0; i < rows.size(); ++i) //проходим по всем строкам модели, которые перемещаются
+    {
+        QModelIndex sourceidx = indexById(rows.value(i).toInt()); //узнаем индекс перемещаемой строки
+        sourceidx = index(sourceidx.row(),0,sourceidx.parent());
+        if(sourceidx.parent() == parent) return false; //если родительские узлы места назначения и переносимой строки совпадают, то ничего не делаем
+
+        beginMoveRows(sourceidx.parent(),sourceidx.row(),sourceidx.row(),parent,rowCount(parent));
+        insertRow(rowCount(parent),parent);
+        for(int y = 0; y < columnCount(sourceidx.parent()); y++)
+        {
+            QModelIndex cur_src = index(sourceidx.row(),y,sourceidx.parent());
+            QModelIndex cur = index(rowCount(parent)-1,y,parent);
+            setData(cur,this->data(cur_src));
+        }
+
+        QModelIndexList children = link.keys(sourceidx);
+        for(int y = 0; y < children.size(); y++)
+            link.insert(children.value(y),index(rowCount(parent)-1,0,parent));
+        removeRow(sourceidx.row(),sourceidx.parent());
+        endMoveRows();
+    }
+    return true;
+}
+
+QMimeData* TreeItemModel::mimeData(const QModelIndexList &indexes) const
+{
+    QMimeData *mimedata = new QMimeData();
+    QByteArray encoded;
+
+    for(int i = 0; i < indexes.size(); i++)
+    {
+        QModelIndex idx = index(indexes.value(i).row(),1,indexes.value(i).parent());
+        QString dt = data(idx,Qt::DisplayRole).toString() + ",";
+        encoded.append(dt);
+    }
+
+    mimedata->setData("application/sql.tree.record",encoded);
+
+    return mimedata;
+}
+
+QStringList TreeItemModel::mimeTypes() const
+{
+    QStringList mimetypes;
+    mimetypes << "application/sql.tree.record";
+    return mimetypes;
 }

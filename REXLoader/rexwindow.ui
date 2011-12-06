@@ -47,7 +47,7 @@
         <enum>QAbstractItemView::DragDrop</enum>
        </property>
        <property name="defaultDropAction">
-        <enum>Qt::LinkAction</enum>
+        <enum>Qt::MoveAction</enum>
        </property>
       </widget>
       <widget class="QSplitter" name="splitter">
