@@ -279,9 +279,9 @@ void AddTaskDialog::addTask()
     QUrl curl = QUrl::fromEncoded(gui->urlBox->currentText().toUtf8());
     QFileInfo flinfo(curl.toString(QUrl::RemoveQuery | QUrl::RemoveFragment));
     QString flname;
-    if(gui->fileName->text().isEmpty()) flname = (flinfo.fileName() != QString() ? flinfo.fileName() : "noname.html");
+    if(gui->fileName->text().isEmpty()) flname = (flinfo.fileName() != QString() ? flinfo.fileName() + "." + dtime.toString("yyyyMMddhhmmss") + ".rldr" : "noname.html");
     else flname = gui->fileName->text();
-    flname = gui->locationEdit->text() + "/" + flname + "." + dtime.toString("yyyyMMddhhmmss") + ".rldr";
+    flname = gui->locationEdit->text() + "/" + flname;
 
     qr.clear();
     if(additional_flag && gui->urlBox->currentText() == defUrl)

@@ -39,6 +39,10 @@ public:
     virtual Qt::ItemFlags flags(const QModelIndex & index) const;
     virtual bool insertRows(int row, int count, const QModelIndex & parent = QModelIndex());
     virtual bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
+    Qt::DropActions supportedDropActions() const;
+    virtual bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent);
+    virtual QMimeData* mimeData(const QModelIndexList & indexes)const;
+    QStringList mimeTypes()const;
     QFont getFont() const;
     void updateRow(int row, const QModelIndex &parent = QModelIndex());
     QList<QModelIndex> parentsInTree() const;
