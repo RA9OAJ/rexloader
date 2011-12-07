@@ -61,7 +61,7 @@ void TaskDialog::scheduler()
     {
         ui->sizeLabel->setText(mdl->data(mdl->index(idx.row(),5),Qt::DisplayRole).toString());
         QStringList load = TItemModel::sizeForHumans(mdl->data(mdl->index(idx.row(),4),100).toLongLong());
-        int value = mdl->data(mdl->index(idx.row(),4),100).toLongLong() * 100 / mdl->data(mdl->index(idx.row(),5),100).toLongLong();
+        int value = (mdl->data(mdl->index(idx.row(),5),100).toLongLong()) ? mdl->data(mdl->index(idx.row(),4),100).toLongLong() * 100 / mdl->data(mdl->index(idx.row(),5),100).toLongLong() : 0;
         ui->progressBar->setValue(value);
         ui->loadLabel->setText(load.value(0) + load.value(1));
         ui->timeLabel->setText(mdl->data(mdl->index(idx.row(),6),Qt::DisplayRole).toString());
