@@ -504,7 +504,8 @@ void HttpLoader::syncFileMap(Task* _task)
     }
     else spos = _task->size;
 
-    fseek(fl, spos, SEEK_SET);
+    qint64 point = spos - flinfo.size() + 1;
+    fseek(fl, point, SEEK_END);
     QByteArray outbuf("\r\nRExLoader 0.1a.1\r\n");
     fwrite(outbuf.data(), 1, outbuf.size(), fl);
     int _lenght = _task->url.toEncoded().size();
@@ -818,10 +819,11 @@ int HttpLoader::loadTaskFile(const QString &_path)
     if(!fl)return 0;
 
     qint64 spos = 0;
-
-    if(fseek(fl, flinfo.size()-8, SEEK_SET) != 0){fclose(fl); return 0;}
+    if(fseek(fl, -8, SEEK_END) != 0){fclose(fl); return 0;}
     fread(&spos, sizeof(qint64), 1, fl);
-    if(fseek(fl, spos, SEEK_SET) != 0){fclose(fl); return 0;}
+    spos -= flinfo.size() - 1;
+    if(spos > 0) {fclose(fl); return 0;}
+    if(fseek(fl, spos, SEEK_END) != 0){fclose(fl); return 0;}
 
     QString header;
     QByteArray buffer;
