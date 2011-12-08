@@ -482,8 +482,8 @@ void HttpLoader::syncFileMap(Task* _task)
     QFileInfo flinfo(_task->filepath);
     if(!QFile::exists(_task->filepath) || !flinfo.isFile()) return;
 
-    FILE *fl = fopen(_task->filepath.toAscii().data(), "rb+");
-    if(!fl)
+    QFile fl(_task->filepath);
+    if(!fl.open(QIODevice::ReadWrite))
     {
         _task->status = LInterface::ERROR_TASK;
         _task->error_number = LInterface::FILE_WRITE_ERROR;
@@ -504,30 +504,30 @@ void HttpLoader::syncFileMap(Task* _task)
     }
     else spos = _task->size;
 
-    qint64 point = spos - flinfo.size() + 1;
-    fseek(fl, point, SEEK_END);
+    fl.seek(spos);
+    QDataStream file(&fl);
     QByteArray outbuf("\r\nRExLoader 0.1a.1\r\n");
-    fwrite(outbuf.data(), 1, outbuf.size(), fl);
+    file.writeRawData(outbuf.data(),outbuf.size());
     int _lenght = _task->url.toEncoded().size();
-    fwrite(&_lenght, 1, sizeof(int),fl); //длина строки с URL
-    fwrite(_task->url.toEncoded().data(), 1, _task->url.toEncoded().size(), fl); //строка с URL
+    file << (qint32)_lenght; //длина строки с URL
+    file.writeRawData(_task->url.toEncoded().data(), _task->url.toEncoded().size()); //строка с URL
     _lenght = _task->referer.toAscii().size();
-    fwrite(&_lenght, 1, sizeof(int), fl); //длина строки реферера, если нет, то 0
-    if(_lenght) fwrite(_task->referer.toAscii().data(), 1, _task->referer.toAscii().size(), fl);
-    _lenght = _task->MIME.toAscii().size();
-    fwrite(&_lenght, 1, sizeof(int), fl); //длина строки с MIME-типом файла
-    if(_lenght) fwrite(_task->MIME.toAscii().data(), 1, _task->MIME.toAscii().size(), fl);
+    file << (qint32)_lenght; //длина строки реферера, если нет, то 0
+    if(_lenght) file.writeRawData(_task->referer.toAscii().data(),_task->referer.toAscii().size());
+    _lenght = (qint32)_task->MIME.toAscii().size();
+    file << (qint32)_lenght; //длина строки с MIME-типом файла
+    if(_lenght) file.writeRawData(_task->MIME.toAscii().data(), _task->MIME.toAscii().size());
     qint64 total_ = _task->size;
-    fwrite(&total_, 1, sizeof(qint64), fl);
+    file << total_;
     for(int i = 0; i < 13; i++)
-        fwrite(&_task->map[i], 1, sizeof(qint64), fl);
+        file << _task->map[i];
     QString lastmodif = _task->last_modif.toString("yyyy-MM-ddTHH:mm:ss");
     _lenght = lastmodif.size();
-    fwrite(&_lenght, 1, sizeof(int), fl); //длина строки с датой
-    if(_lenght) fwrite(lastmodif.toAscii().data(), 1, _lenght, fl);
-    fwrite(&spos, sizeof(qint64), 1,fl); //метка начала блока метаданных
+    file << (qint32)_lenght; //длина строки с датой
+    if(_lenght) file.writeRawData(lastmodif.toAscii().data(), _lenght);
+    file << spos; //метка начала блока метаданных
 
-    fclose(fl);
+    fl.close();
 }
 
 void HttpLoader::addSection()
@@ -815,68 +815,63 @@ int HttpLoader::loadTaskFile(const QString &_path)
     QFileInfo flinfo(_path);
     if(!QFile::exists(_path) || !flinfo.isFile())return 0;
 
-    FILE *fl = fopen(_path.toAscii().data(), "rb");
-    if(!fl)return 0;
+    QFile fl(_path);
+    if(!fl.open(QIODevice::ReadOnly))return 0;
+    QDataStream file(&fl);
 
     qint64 spos = 0;
-    if(fseek(fl, -8, SEEK_END) != 0){fclose(fl); return 0;}
-    fread(&spos, sizeof(qint64), 1, fl);
-    spos -= flinfo.size() - 1;
-    if(spos > 0) {fclose(fl); return 0;}
-    if(fseek(fl, spos, SEEK_END) != 0){fclose(fl); return 0;}
+    if(!fl.seek(flinfo.size() - 8)){fl.close(); return 0;}
+    file >> spos;
+    if(!fl.seek(spos)){fl.close(); return 0;}
 
     QString header;
-    QByteArray buffer;
-    buffer.resize(1024);
-    fgets(buffer.data(), 1024, fl);
-    header.append(buffer);
-    if(header != "\r\n"){fclose(fl); return 0;}
+    header = fl.readLine(3);
+    if(header != "\r\n"){fl.close(); return 0;}
     header.clear();
-    fgets(buffer.data(), 1024, fl);
-    header.append(buffer);
-    if(header.indexOf("RExLoader")!= 0){fclose(fl); return 0;}
+    header = fl.readLine(254);
+    if(header.indexOf("RExLoader")!= 0){fl.close(); return 0;}
     QString fversion = header.split(" ").value(1);
-    if(fversion != "0.1a.1\r\n"){fclose(fl); return 0;}
+    if(fversion != "0.1a.1\r\n"){fl.close(); return 0;}
 
     int length = 0;
-    fread(&length, sizeof(int), 1, fl);
+    file >> length;
+    QByteArray buffer;
     buffer.resize(length);
-    fread(buffer.data(),length, 1, fl); //считываем URL
-
+    file.readRawData(buffer.data(),length); //считываем URL
 
     Task *tsk = 0;
     tsk = new Task();
-    if(!tsk) {fclose(fl); return 0;}
+    if(!tsk) {fl.close(); return 0;}
     tsk->url = QUrl::fromEncoded(buffer);
     tsk->_fullsize_res = fullsize_res;
     tsk->_maxSections = this->maxSections;
     tsk->filepath = _path;
 
     length = 0;
-    fread(&length, sizeof(int), 1, fl);
+    file >> length;
     buffer.resize(length);
-    fread(buffer.data(),length, 1, fl); //считываем реферера
+    file.readRawData(buffer.data(),length); //считываем реферера
     tsk->referer = buffer;
 
     length = 0;
-    fread(&length, sizeof(int), 1, fl);
+    file >> length;
     buffer.resize(length);
-    fread(buffer.data(),length, 1, fl); //считываем MIME
+    file.readRawData(buffer.data(),length); //считываем MIME
     tsk->MIME = buffer;
 
-    fread(&tsk->size, sizeof(qint64), 1, fl); //считываем общий размер задания
+    file >> tsk->size; //считываем общий размер задания
 
     for(int i=0; i<13; ++i)
         {
-            fread(&tsk->map[i], sizeof(qint64), 1, fl); //считывание карты секций
+            file >> tsk->map[i]; //считывание карты секций
         }
 
     length = 0;
-    fread(&length, sizeof(int), 1, fl);
+    file >> length;
     buffer.resize(length);
-    fread(buffer.data(),length, 1, fl); //считываем дату модификации
+    file.readRawData(buffer.data(),length); //считываем дату модификации
     tsk->last_modif = QDateTime::fromString(QString(buffer),"yyyy-MM-ddTHH:mm:ss");
-    fclose(fl);
+    fl.close();
 
     int task_num = 0;
     if(!task_list->key(0))
