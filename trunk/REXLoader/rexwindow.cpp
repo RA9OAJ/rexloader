@@ -61,18 +61,28 @@ REXWindow::REXWindow(QWidget *parent) :
     lockProcess();
     openDataBase();
 
-    if(!loadPlugins())
-    {
-        setEnabled(false);
-        int quit_ok = QMessageBox::critical(this,windowTitle()+" - "+tr("Критическая ошибка"),tr("Не найден ни один плагин.\r\n Проверьте наличие файлов плагинов в директории '.rexloader' и '/usr/{local/}lib/rexloader/plugins'."));
-        if(quit_ok == QMessageBox::Ok)QTimer::singleShot(0,this,SLOT(close()));
-    }
+    plugmgr = new PluginManager(this);
+    connect(plugmgr,SIGNAL(pluginStatus(bool)),this,SLOT(pluginStatus(bool)));
+
+    loadPlugins();
 
     createInterface();
 
     QTimer::singleShot(250,this,SLOT(scheuler()));
     updateTaskSheet();
     loadSettings();
+}
+
+void REXWindow::pluginStatus(bool stat)
+{
+    if(!stat)
+    {
+        setEnabled(false);
+        int quit_ok = QMessageBox::critical(this,windowTitle()+" - "+tr("Критическая ошибка"),tr("Не найден ни один плагин.\r\n Проверьте наличие файлов плагинов в директории '.rexloader' и '/usr/{local/}lib/rexloader/plugins'."));
+        if(quit_ok == QMessageBox::Ok)QTimer::singleShot(0,this,SLOT(close()));
+    }
+    plugmgr->loadLocale(QLocale::system());
+
     scanTasksOnStart();
 }
 
@@ -230,6 +240,7 @@ void REXWindow::createInterface()
     connect(ui->actionFourTasks,SIGNAL(triggered()),this,SLOT(setTaskCnt()));
     connect(ui->actionFiveTasks,SIGNAL(triggered()),this,SLOT(setTaskCnt()));
     connect(ui->actionTaskPropert,SIGNAL(triggered()),this,SLOT(showTaskDialog()));
+    connect(qApp->clipboard(),SIGNAL(dataChanged()),this,SLOT(scanClipboard()));
 
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);
@@ -660,63 +671,60 @@ void REXWindow::scanNewTaskQueue()
                 {
                 case 1:
                 {
-                    FILE *fl = fopen(_path.toAscii().data(), "rb");
-                    if(!fl) break;
+                    QFile fl(_path);
+                    if(!fl.open(QFile::ReadOnly)) break;
+                    QDataStream in(&fl);
 
                     qint64 spos = 0;
 
-                    if(fseek(fl, flinfo.size()-8, SEEK_SET) != 0){fclose(fl);break;}
-                    fread(&spos, sizeof(qint64), 1, fl);
-                    if(fseek(fl, spos, SEEK_SET) != 0){fclose(fl);break;}
+                    if(!fl.seek(flinfo.size()-8)){fl.close();break;}
+                    in >> spos;
+                    if(!fl.seek(spos)){fl.close();break;}
 
                     QString header;
-                    QByteArray buffer;
-                    buffer.resize(1024);
-                    fgets(buffer.data(), 1024, fl);
-                    header.append(buffer);
-                    if(header != "\r\n"){fclose(fl);break;}
-                    header.clear();
-                    fgets(buffer.data(), 1024, fl);
-                    header.append(buffer);
-                    if(header.indexOf("RExLoader")!= 0){fclose(fl);break;}
+                    header = fl.readLine(3);
+                    if(header != "\r\n"){fl.close();break;}
+                    header = fl.readLine(1024);
+                    if(header.indexOf("RExLoader")!= 0){fl.close();break;}
                     QString fversion = header.split(" ").value(1);
-                    if(fversion != "0.1a.1\r\n"){fclose(fl);break;}
+                    if(fversion != "0.1a.1\r\n"){fl.close();break;}
 
                     int length = 0;
-                    fread(&length, sizeof(int), 1, fl);
+                    in >> length;
+                    QByteArray buffer;
                     buffer.resize(length);
-                    fread(buffer.data(),length, 1, fl); //считываем URL
+                    in.readRawData(buffer.data(),length); //считываем URL
 
                     QUrl newurl = QUrl::fromEncoded(buffer, QUrl::StrictMode);
-                    if(!newurl.isValid()){fclose(fl);break;}
+                    if(!newurl.isValid()){fl.close();break;}
 
                     length = 0;
-                    fread(&length, sizeof(int), 1, fl);
+                    in >> length;
                     buffer.resize(length);
-                    fread(buffer.data(),length, 1, fl); //считываем реферера
+                    in.readRawData(buffer.data(),length); //считываем реферера
                     QString ref = buffer;
 
                     length = 0;
-                    fread(&length, sizeof(int), 1, fl);
+                    in >> length;
                     buffer.resize(length);
-                    fread(buffer.data(),length, 1, fl); //считываем MIME
+                    in.readRawData(buffer.data(),length); //считываем MIME
                     QString mime = buffer;
                     qint64 tsize = 0;
-                    fread(&tsize, sizeof(qint64), 1, fl); //считываем общий размер задания
+                    in >> tsize; //считываем общий размер задания
 
                     qint64 sum = 0;
                     for(int i=1; i<12; i+=2)
                     {
                         qint64 tmp = 0;
-                        fread(&tmp, sizeof(qint64), 1, fl); //считывание карты секций
+                        in >> tmp; //считывание карты секций
                         sum += tmp;
                     }
 
                     length = 0;
-                    fread(&length, sizeof(int), 1, fl);
+                    in >> length;
                     buffer.resize(length);
-                    fread(buffer.data(),length, 1, fl); //считываем дату модификации
-                    fclose(fl);
+                    in.readRawData(buffer.data(),length); //считываем дату модификации
+                    fl.close();
 
                     dlg = new AddTaskDialog(downDir, this);
                     connect(dlg,SIGNAL(addedNewTask()),this,SLOT(updateTaskSheet()));
@@ -754,9 +762,15 @@ void REXWindow::scanNewTaskQueue()
     }
 }
 
-int REXWindow::loadPlugins()
+void REXWindow::loadPlugins()
 {
-    for(int i=0; i<pluginDirs.size(); i++)
+    plugmgr->setDefaultSettings(max_tasks, max_threads, down_speed);
+    plugmgr->setPlugDir(pluginDirs);
+    plugmgr->setPlugLists(&plugfiles, &pluglist, &plugproto);
+    plugmgr->start();
+
+
+    /*for(int i=0; i<pluginDirs.size(); i++)
     {
         QDir dir(pluginDirs.value(i));
         QStringList plg = dir.entryList(QDir::Files);
@@ -779,7 +793,7 @@ int REXWindow::loadPlugins()
             }
         }
     }
-    return pluglist.size();
+    //return pluglist.size();*/
 }
 
 void REXWindow::lockProcess(bool flag)
@@ -801,7 +815,7 @@ void REXWindow::scheuler()
     lockProcess(true);
 
     scanNewTaskQueue();
-    scanClipboard();
+    //scanClipboard();
     syncTaskData();
     manageTaskQueue();
 
@@ -885,7 +899,8 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
                 tasklist.insert(id_row, id_task + id_proto*100);
                 //pluglist.value(id_proto)->setTaskFilePath(id_task,flinfo.absolutePath());
                 calculateSpeed();
-                pluglist.value(id_proto)->startDownload(id_task);
+                //pluglist.value(id_proto)->startDownload(id_task);
+                plugmgr->startDownload(id_task + id_proto*100);
                 updateTaskSheet();
                 return;
             }
@@ -922,7 +937,8 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
     tasklist.insert(id_row, id_task + id_proto*100);
     pluglist.value(id_proto)->setTaskFilePath(id_task,fldir);
     calculateSpeed();
-    pluglist.value(id_proto)->startDownload(id_task);
+    //pluglist.value(id_proto)->startDownload(id_task);
+    plugmgr->startDownload(id_task + id_proto*100);
 }
 
 void REXWindow::deleteTask()
@@ -1110,9 +1126,9 @@ void REXWindow::stopTask()
         }
 
         int id_proto = plugproto.value(_url.scheme().toLower()); // id плагина с соответствующим протоколом
-        int id_task = tasklist.value(id_row)%100; // id задачи
+        //int id_task = tasklist.value(id_row)%100; // id задачи
 
-        if(pluglist.contains(id_proto)) pluglist.value(id_proto)->stopDownload(id_task);
+        if(pluglist.contains(id_proto)) plugmgr->stopDownload(tasklist.value(id_row));//pluglist.value(id_proto)->stopDownload(id_task);
         if(!i || where.isEmpty())where = QString("id=%1").arg(QString::number(id_row));
         else where += QString(" OR id=%1").arg(QString::number(id_row));
     }
@@ -1154,11 +1170,12 @@ void REXWindow::stopAllTasks()
     {
         int id_row = qr.value(0).toInt();
         int id_task = tasklist.value(id_row)%100;
-        int id_proto = tasklist.value(id_row)/100;
+        //int id_proto = tasklist.value(id_row)/100;
         if(!id_task)continue;
 
-        LoaderInterface *ldr = pluglist.value(id_proto);
-        ldr->stopDownload(id_task);
+        //LoaderInterface *ldr = pluglist.value(id_proto);
+        plugmgr->stopDownload(tasklist.value(id_row));
+        //ldr->stopDownload(id_task);
     }
 
     if(!stop_flag) //если программа продолжает штатную работу
@@ -1328,11 +1345,11 @@ void REXWindow::syncTaskData()
                 if(fl.exists(newFilename))
                 {
                     EMessageBox *question = new EMessageBox(this);
-                    QPushButton *btn1, *btn2;
+                    QPushButton *btn1;
                     question->setIcon(EMessageBox::Question);
-                    btn1 = question->addButton(tr("Заменить"),EMessageBox::ApplyRole);
-                    btn2 = question->addButton(tr("Переименовать"),EMessageBox::RejectRole);
-                    question->setDefaultButton(btn2);
+                    question->addButton(tr("Заменить"),EMessageBox::ApplyRole);
+                    btn1 = question->addButton(tr("Переименовать"),EMessageBox::RejectRole);
+                    question->setDefaultButton(btn1);
                     question->setText(tr("Файл <b>%1</b> уже существет.").arg(newFilename));
                     question->setInformativeText(tr("Для замены существующего файла нажмите \"Заменить\". Для переименования нажмите \"Переименовать\"."));
                     question->setActionType(EMessageBox::AT_RENAME);
@@ -1645,6 +1662,7 @@ REXWindow::~REXWindow()
 {
     delete ui;
     sched_flag = false;
+    plugmgr->quit();
 
     lockProcess(false);
 }

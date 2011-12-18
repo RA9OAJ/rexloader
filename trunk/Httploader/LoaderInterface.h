@@ -4,6 +4,8 @@
 class QString;
 class QStringList;
 class QUrl;
+class QTranslator;
+class QLocale;
 
 namespace LInterface{
 
@@ -86,6 +88,7 @@ public:
     virtual QString errorString(int _err) const =0; //возвращает строку по заданному коду ошибки
     virtual QString statusString(int _stat) const =0; //возвращает строку статуса по заданному коду
     virtual void setProxy(int id_task, const QUrl &_proxy, LInterface::ProxyType _ptype, const QString &data_base64)=0; //устанавливает прокси
+    virtual QTranslator* getTranslator(const QLocale &locale) =0; //возвращает указатель на транслятор для указанной локали, либо 0 при отсутствии транслятора
 
 signals:
     virtual void messageAvailable(int id_task)=0; //сигнал сообщает о наличии служебных сообщений для задания id_task

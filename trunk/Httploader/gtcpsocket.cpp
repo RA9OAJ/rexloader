@@ -21,7 +21,6 @@ GTcpSocket::GTcpSocket(QObject *parent) :
     timeout_interval = 30;
 
     connect(this, SIGNAL(connected()), this, SLOT(connectedAct()));
-
 }
 
 GTcpSocket::~GTcpSocket()

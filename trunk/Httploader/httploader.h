@@ -116,6 +116,7 @@ public:
     virtual QString errorString(int _err) const; //возвращает строку по заданному коду ошибки
     virtual QString statusString(int _stat) const; //возвращает строку статуса по заданному коду
     virtual void setProxy(int id_task, const QUrl &_proxy, LInterface::ProxyType _ptype, const QString &data_base64); //устанавливает прокси
+    virtual QTranslator* getTranslator(const QLocale &locale); //возвращает указатель на транслятор для указанной локали, либо 0 при отсутствии транслятора
 
 signals:
     void sheduleImpulse(); //сигнал генериться с интервалом шедулера
