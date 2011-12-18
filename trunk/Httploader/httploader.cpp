@@ -1024,7 +1024,7 @@ QTranslator* HttpLoader::getTranslator(const QLocale &locale)
     slocale += locale.name();
     if(!translator->load(slocale))
     {
-        delete(translator);
+        translator->deleteLater();
         translator = 0;
     }
 

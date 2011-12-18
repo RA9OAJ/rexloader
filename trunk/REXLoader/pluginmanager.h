@@ -73,6 +73,7 @@ private:
     QHash<int,QString> *plugfiles; //хэш путей к файлам плагинов
     QHash<int,LoaderInterface*> *pluglist; //хэш ссылок на плагины
     QHash<QString,int> *plugproto; //хэш дескрипторов плагинов с соответствующими протоколами
+    QHash<int,QTranslator*> translators;
 
     const int *max_tasks; //максимальное количество одновременных закачек
     const int *max_threads; //максимальное кол-во потоков при скачивании

@@ -126,13 +126,28 @@ void PluginOperator::stopDownload(int id_task)
 
 void PluginManager::loadLocale(const QLocale &locale)
 {
-    QList<int> keys = pluglist->keys();
+    QList<int> keys;
+
+    if(!translators.isEmpty())
+    {
+        keys = translators.keys();
+        for(int i = 0; i < keys.size(); ++i)
+        {
+            qApp->removeTranslator(translators.value(keys.value(i)));
+            translators.value(keys.value(i))->deleteLater();
+            translators.remove(keys.value(i));
+        }
+        keys.clear();
+    }
+
+    keys = pluglist->keys();
     for(int i = 0; i < keys.size(); ++i)
     {
         QTranslator *translator = pluglist->value(keys.value(i))->getTranslator(locale);
         if(!translator) continue;
         translator->moveToThread(thread());
         qApp->installTranslator(translator);
+        translators.insert(keys.value(i),translator);
     }
 }
 
