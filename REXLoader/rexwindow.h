@@ -38,6 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "importdialog.h"
 #include "categorydialog.h"
 #include "taskdialog.h"
+#include "pluginmanager.h"
 
 #include "../Httploader/LoaderInterface.h"
 
@@ -70,11 +71,12 @@ protected:
     void openDataBase(); //создает/открывает существующую базу данных закачек
     void saveSettings(); //сохраняет свойства приложения
     void loadSettings(); //загружает свйоства приложения
-    int loadPlugins(); //сканирует директории в поисках доступных плагинов, возвращает количество найденных и загруженных плагинов
+    void loadPlugins(); //сканирует директории в поисках доступных плагинов, возвращает количество найденных и загруженных плагинов
     void calculateSpeed(); //пересчитывает и перераспределяет скорость между плагинами
     void scanTasksOnStart(); //сканирует список задач при каждом запуске программы, выделяет приостановленные и предлагает их докачать
 
 protected slots:
+    void pluginStatus(bool stat);
     void scheuler(); //внутренний планировщик с интервалом в 1 секунду
     void updateTrayIcon(); //обновляет иконку в трее при анимации
     void updateStatusBar(); //обновляет данные, отображаемые в statusBar
@@ -120,6 +122,7 @@ private:
     QMovie *movie; //мувик для реализауии анимации в трее
     SettingsDialog *settDlg;
 
+    PluginManager *plugmgr;
     QStringList pluginDirs; //список с директориями, в которых могут быть плагины
     QHash<int,QStringList> mesqueue; //очередь сообщений
     QHash<int,int> tasklist; //список дескрипторов активных заданий (id_in_table, id_task)

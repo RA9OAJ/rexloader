@@ -17,12 +17,6 @@ HttpLoader::HttpLoader(QObject *parent) : QObject(parent)
     ignore_critical = 0;
     maxErrors = 5;
     attempt_interval = 3000;
-
-    translator = new QTranslator(this);
-    QString slocale = ":/lang/";
-    slocale += QLocale::system().name();
-    if(!translator->load(slocale))translator->deleteLater();
-    else QApplication::installTranslator(translator);
 }
 
 HttpLoader::~HttpLoader()
@@ -1021,6 +1015,20 @@ void HttpLoader::addInAQueue()
     if(tsk->_maxSections == 1)return;
 
     QTimer::singleShot(5000,this,SLOT(acceptRang()));
+}
+
+QTranslator* HttpLoader::getTranslator(const QLocale &locale)
+{
+    translator = new QTranslator();
+    QString slocale = ":/lang/";
+    slocale += locale.name();
+    if(!translator->load(slocale))
+    {
+        delete(translator);
+        translator = 0;
+    }
+
+    return translator;
 }
 
 Q_EXPORT_PLUGIN2(HttpLoader, HttpLoader)

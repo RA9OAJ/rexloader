@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     importdialog.cpp \
     categorydialog.cpp \
     filenamevalidator.cpp \
-    taskdialog.cpp
+    taskdialog.cpp \
+    pluginmanager.cpp
 
 HEADERS  += rexwindow.h \
     titemmodel.h \
@@ -32,7 +33,8 @@ HEADERS  += rexwindow.h \
     importdialog.h \
     categorydialog.h \
     filenamevalidator.h \
-    taskdialog.h
+    taskdialog.h \
+    pluginmanager.h
 
 FORMS    += rexwindow.ui \
     addtaskdialog.ui \

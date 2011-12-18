@@ -391,6 +391,7 @@ bool TreeItemModel::setData(const QModelIndex &index, const QVariant &value, int
     if(!nodes.contains(index) || role != Qt::EditRole)return false;
     nodes.insert(index,value);
     emit dataChanged(index,index);
+    return true;
 }
 
 Qt::DropActions TreeItemModel::supportedDropActions() const

@@ -25,9 +25,9 @@ FileNameValidator::FileNameValidator(QObject *parent) :
 
 FileNameValidator::State FileNameValidator::validate(QString &input, int &pos) const
 {
-    if(input.indexOf(QRegExp("[\\\\/:\*\?\"<>|]")) > -1)
+    if(input.indexOf(QRegExp("[\\\\/:*\?\"<>|]")) > -1)
     {
-        input.replace(QRegExp("[\\\\/:\*\?\"|]"),"_");
+        input.replace(QRegExp("[\\\\/:*\?\"|]"),"_");
         input.replace(QRegExp("[<]"),"[");
         input.replace(QRegExp("[>]"),"]");
     }
