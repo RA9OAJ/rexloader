@@ -27,12 +27,6 @@ NoticeWindow::NoticeWindow(QWidget *parent)
     QDesktopWidget ds;
     base = ds.availableGeometry();
     move(base.topLeft().x()+base.width()-size().width()-dx-ddx, base.topLeft().y()+base.height()-dy-ddy);
-
-    createWidgets();
-    createSettingsWidgets();
-    setWindowStyle();
-
-    setWindowOpacity(0.01);
     //moveToAllDesktops();
 }
 
@@ -70,6 +64,8 @@ void NoticeWindow::createWidgets()
                             "QPushButton::hover {image: url(:/noticewindow/run1_27x20.png);}"
                             "QPushButton::pressed {image: url(:/noticewindow/run2_27x20.png);}"
                             "QPushButton::disabled {image: url(:/noticewindow/run3_27x20.png);}");
+    pExec->setToolTip(tr("Run"));
+
     pOpenDir = new QPushButton(this);
     pOpenDir->setMaximumWidth(30);
     pOpenDir->setMaximumHeight(20);
@@ -77,6 +73,7 @@ void NoticeWindow::createWidgets()
                             "QPushButton::hover {image: url(:/noticewindow/folder1_27x20.png);}"
                             "QPushButton::pressed {image: url(:/noticewindow/folder2_27x20.png);}"
                             "QPushButton::disabled {image: url(:/noticewindow/folder3_27x20.png);}");
+    pOpenDir->setToolTip(tr("Open folder"));
 
     connect(btn1,SIGNAL(released()),this,SLOT(closeNotice()));
     connect(btn2,SIGNAL(released()),this,SLOT(switchDiaplay()));
@@ -115,6 +112,7 @@ void NoticeWindow::createWidgets()
     textbrowser->setMaximumHeight(maximumHeight()-toolbar->size().height()-2);
     textbrowser->resize(textbrowser->maximumSize());
     textbrowser->setStyleSheet("QTextBrowser {border: none; font: 12px; background: url(:/noticewindow/info.png) center no-repeat;}");
+    textbrowser->setWordWrapMode(QTextOption::WrapAnywhere);
     pOpenDir->move(width()-pOpenDir->width()-2,textbrowser->height());
     pExec->move(width()-pOpenDir->width()-pExec->width()-2,textbrowser->height());
 }
@@ -252,6 +250,12 @@ void NoticeWindow::closeNotice()
 
 void NoticeWindow::showNotice(const QString &title, const QString &message, WindowType wtype)
 {
+    createWidgets();
+    createSettingsWidgets();
+    setWindowStyle();
+
+    setWindowOpacity(0.01);
+
     if(desktopflag)moveToAllDesktops(true);
     setWindowTitle(title);
     ltitle->setText(title);
