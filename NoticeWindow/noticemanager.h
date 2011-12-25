@@ -27,16 +27,20 @@ class NoticeManager : public QObject
     Q_OBJECT
 
 public:
-    NoticeManager(QObject *parent = 0);
+    explicit NoticeManager(QObject *parent = 0);
+    virtual ~NoticeManager();
 
 public slots:
     void showNotice(const QString &title, const QString &message, NoticeWindow::WindowType type = NoticeWindow::WT_Info);
     void closeOneWindow();
 
+protected slots:
+    void nextInQueue();
+
 private:
     QList<QStringList> notices;
     QList<NoticeWindow*> list;
-    int notice_cnt;
+    QList<QPair<QStringList,NoticeWindow::WindowType> > queue;
     int maxnotices;
     QSize notice_size;
     QSize dif;
