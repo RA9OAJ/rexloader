@@ -71,8 +71,12 @@ void NoticeManager::closeOneWindow()
     {
         for(int i = id; i < list.size(); i++)
         {
-            list.value(i)->setDOffsetPos(0,(i != 0) ? (i*notice_size.height()+dif.height()+i-1) : 0);
-            if(!i)list.value(i)->setOffsetPos(dif.width(),dif.height());
+            if(list.value(i)->size().height() < notice_size.height())
+            {
+                list.value(i)->setDOffsetPos(0,(i != 0) ? (i*notice_size.height()+dif.height()+i-1) : 0);
+                if(!i)list.value(i)->setOffsetPos(dif.width(),dif.height());
+            }
+            else list.value(i)->move(list.value(i)->pos().x(),list.value(i)->pos().y()+notice_size.height()+1);
         }
     }
 
