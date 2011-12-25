@@ -14,11 +14,16 @@ int main(int argc, char *argv[])
     w.setDisplayTime(10000);
     w.showNotice("REXLoader","Файл SETUP.EXE успечно закачан.",NoticeWindow::WT_Info);*/
     NoticeManager w;
-    w.showNotice("REXLoader","Файл SETUP.EXE успешно закачан.",NoticeWindow::WT_Info);
-    w.showNotice("REXLoader","Файл SETUP.EXE успешно закачан.",NoticeWindow::WT_Info);
-    w.showNotice("REXLoader","Файл SETUP.EXE успешно закачан.",NoticeWindow::WT_Info);
-    w.showNotice("REXLoader","Файл SETUP.EXE успешно закачан.",NoticeWindow::WT_Info);
-    w.showNotice("REXLoader","Файл SETUP.EXE успешно закачан.",NoticeWindow::WT_Info);
+    w.showNotice("REXLoader","1",NoticeWindow::WT_Info);
+    w.showNotice("REXLoader","2",NoticeWindow::WT_Info);
+    w.showNotice("REXLoader","3",NoticeWindow::WT_Info);
+    w.showNotice("REXLoader","4",NoticeWindow::WT_Info);
+    w.showNotice("REXLoader","5",NoticeWindow::WT_Info);
+    w.showNotice("REXLoader","6",NoticeWindow::WT_Info);
+    w.showNotice("REXLoader","7",NoticeWindow::WT_Info);
+    w.showNotice("REXLoader","8",NoticeWindow::WT_Info);
+    w.showNotice("REXLoader","9",NoticeWindow::WT_Info);
+    w.showNotice("REXLoader","10",NoticeWindow::WT_Info);
 
     return a.exec();
 }
