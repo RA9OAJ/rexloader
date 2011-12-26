@@ -76,7 +76,7 @@ void NoticeWindow::createWidgets()
     pOpenDir->setToolTip(tr("Open folder"));
 
     connect(btn1,SIGNAL(released()),this,SLOT(closeNotice()));
-    connect(btn2,SIGNAL(released()),this,SLOT(switchDiaplay()));
+    connect(btn2,SIGNAL(released()),this,SLOT(switchDisplay()));
 
     toolbar->setMinimumSize(maximumWidth(),23);
     toolbar->setMaximumWidth(maximumWidth());
@@ -160,7 +160,7 @@ void NoticeWindow::createSettingsWidgets()
     lbl1 = new QLabel(tr("Offset X, Y"),this);
     lbl2 = new QLabel(tr("Size width, height"),this);
     btnCancel = new QPushButton(tr("Cancel"),this);
-    connect(btnCancel,SIGNAL(released()),this,SLOT(switchDiaplay()));
+    connect(btnCancel,SIGNAL(released()),this,SLOT(switchDisplay()));
     deltaX = new QSpinBox(this);
     deltaX->setValue(dx);
     deltaY = new QSpinBox(this);
@@ -201,7 +201,7 @@ void NoticeWindow::createSettingsWidgets()
     sarea1->setVisible(false);
 }
 
-void NoticeWindow::switchDiaplay()
+void NoticeWindow::switchDisplay()
 {
     if(textbrowser->isVisible())
     {

@@ -64,7 +64,7 @@ private slots:
     void closeEffect();
     void approximationCloseEffect();
     void appearanceCloseEffect();
-    void switchDiaplay();
+    void switchDisplay();
 
 private:
     void createWidgets();
