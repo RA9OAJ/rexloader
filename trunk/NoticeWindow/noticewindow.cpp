@@ -15,13 +15,13 @@ NoticeWindow::NoticeWindow(QWidget *parent)
     disp_time = 3000;
     show_effect = SE_PopUp;
     close_effect = SE_PopUp;
-    effects_speed = 5; /* 1 - это полное появление за 3 секунды, 10 - за 0,3 секунды*/
+    effects_speed = 4; /* 1 - это полное появление за 3 секунды, 10 - за 0,3 секунды*/
     diff = (float)maximumSize().height()/(2000/effects_speed/15);
     if(!diff)diff = 1;
     diff_opac = 1.0/(double)(2000/effects_speed/15);
     if(diff_opac < 0.005)diff_opac = 0.005;
     desktopflag = true;
-    ptop = false;
+    ptop = true;
     pleft = false;
 
     QDesktopWidget ds;
@@ -349,8 +349,17 @@ void NoticeWindow::showEffect()
 {
     if(size().height() >= maximumHeight()){QTimer::singleShot(disp_time,this,SLOT(closeNotice()));ts = QTime::currentTime();return;}
     if(windowOpacity() != 1.0)setWindowOpacity(1.0);
-    resize(size().width(), size().height()+diff);
-    move(pos().x(), base.topLeft().y()+base.height()-size().height()-dy-ddy);
+    if(!ptop)
+    {
+        resize(size().width(), size().height()+diff);
+        move(pos().x(), base.topLeft().y()+base.height()-size().height()-dy-ddy);
+    }
+    else
+    {
+        move(pos().x(), base.topLeft().y()+dy+ddy);
+        resize(size().width(), size().height()+diff);
+    }
+
     QTimer::singleShot(15,this,SLOT(showEffect()));
 }
 
