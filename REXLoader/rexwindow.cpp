@@ -63,6 +63,7 @@ REXWindow::REXWindow(QWidget *parent) :
 
     plugmgr = new PluginManager(this);
     connect(plugmgr,SIGNAL(pluginStatus(bool)),this,SLOT(pluginStatus(bool)));
+    connect(qApp,SIGNAL(aboutToQuit()),this,SLOT(prepareToQuit()));
 
     loadPlugins();
 
@@ -244,11 +245,6 @@ void REXWindow::createInterface()
 
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);
-    /*QMenu *spdmenu = new QMenu(spdbtn);
-    spdmenu->addAction(ui->actionVeryLow);
-    spdmenu->addAction(ui->actionLow);
-    spdmenu->addAction(ui->actionNormal);
-    spdmenu->addAction(ui->actionHight);*/
     ui->actionHight->setChecked(true);
     spdbtn->setMenu(ui->menu_6);
     spdbtn->setPopupMode(QToolButton::InstantPopup);
@@ -768,32 +764,6 @@ void REXWindow::loadPlugins()
     plugmgr->setPlugDir(pluginDirs);
     plugmgr->setPlugLists(&plugfiles, &pluglist, &plugproto);
     plugmgr->start();
-
-
-    /*for(int i=0; i<pluginDirs.size(); i++)
-    {
-        QDir dir(pluginDirs.value(i));
-        QStringList plg = dir.entryList(QDir::Files);
-
-        for(int y=0; y<plg.size(); y++)
-        {
-            QPluginLoader plug(pluginDirs.value(i)+"/"+plg.value(y));
-            if(!plug.load())continue;
-            LoaderInterface *ldr = qobject_cast<LoaderInterface*>(plug.instance());
-            pluglist.insert(pluglist.size()+1,ldr);
-            plugfiles.insert(pluglist.size(),pluginDirs.value(i)+"/"+plg.value(y));
-
-            QStringList protocols = ldr->protocols();
-            for(int x=0; x<protocols.size(); x++)
-            {
-                if(plugproto.value(protocols.value(x)))continue;
-                plugproto.insert(protocols.value(x),pluglist.size());
-                ldr->setMaxSectionsOnTask(max_threads);
-                ldr->setDownSpeed(down_speed*1024/8);
-            }
-        }
-    }
-    //return pluglist.size();*/
 }
 
 void REXWindow::lockProcess(bool flag)
@@ -1718,9 +1688,6 @@ void REXWindow::closeEvent(QCloseEvent *event)
     }
     else
     {
-        stop_flag = true;
-        stopAllTasks();
-        saveSettings();
         event->accept();
         qApp->quit();
     }
@@ -2136,4 +2103,11 @@ void REXWindow::closeTaskDialog()
 
     int key = dlglist.key(dlg);
     dlglist.remove(key);
+}
+
+void REXWindow::prepareToQuit()
+{
+    stop_flag = true;
+    stopAllTasks();
+    saveSettings();
 }
