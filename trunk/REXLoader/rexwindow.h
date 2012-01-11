@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "categorydialog.h"
 #include "taskdialog.h"
 #include "pluginmanager.h"
+#include "tableview.h"
 
 #include "../Httploader/LoaderInterface.h"
 
