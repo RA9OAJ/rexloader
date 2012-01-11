@@ -112,6 +112,7 @@ void PluginOperator::startDownload(int id_task)
 {
     if(!pluglist)return;
     int task = id_task%100;
+    if(!task)return;
     int plug = id_task/100;
     pluglist->value(plug)->startDownload(task);
 }
@@ -120,6 +121,7 @@ void PluginOperator::stopDownload(int id_task)
 {
     if(!pluglist)return;
     int task = id_task%100;
+    if(!task)return;
     int plug = id_task/100;
     pluglist->value(plug)->stopDownload(task);
 }

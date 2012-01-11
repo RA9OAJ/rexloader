@@ -37,7 +37,7 @@ REXWindow::REXWindow(QWidget *parent) :
     libdir.cdUp();
     pluginDirs << libdir.absolutePath()+"/lib/rexloader/plugins" << QDir::homePath()+"/.rexloader/plugins";
 
-    downDir = QDir::homePath()+tr("/Downloads");
+    downDir = QDir::homePath()+tr("/Загрузки");
     if(!QDir().exists(downDir))
         QDir().mkpath(downDir);
 
@@ -228,6 +228,7 @@ void REXWindow::createInterface()
     connect(ui->treeView,SIGNAL(clicked(QModelIndex)),this,SLOT(setTaskFilter(QModelIndex)));
     connect(ui->actionDelURLFiles,SIGNAL(triggered()),this,SLOT(deleteTask()));
     connect(ui->tableView,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(openTask()));
+    connect(ui->tableView,SIGNAL(enterPressed()),this,SLOT(openTask()));
     connect(ui->actionAppSettings,SIGNAL(triggered()),settDlg,SLOT(show()));
     connect(ui->actionImportURL,SIGNAL(triggered()),this,SLOT(showImportFileDialog()));
     connect(ui->actionAboutQt,SIGNAL(triggered()),qApp,SLOT(aboutQt()));
@@ -241,6 +242,7 @@ void REXWindow::createInterface()
     connect(ui->actionFourTasks,SIGNAL(triggered()),this,SLOT(setTaskCnt()));
     connect(ui->actionFiveTasks,SIGNAL(triggered()),this,SLOT(setTaskCnt()));
     connect(ui->actionTaskPropert,SIGNAL(triggered()),this,SLOT(showTaskDialog()));
+    connect(ui->tableView,SIGNAL(showTaskProp()),this,SLOT(showTaskDialog()));
     connect(qApp->clipboard(),SIGNAL(dataChanged()),this,SLOT(scanClipboard()));
 
     //кнопка-меню для выбора скорости
@@ -1769,6 +1771,7 @@ void REXWindow::scanTasksOnStart()
     qr.next();
     if(qr.value(0).toInt() == 0)return;
     EMessageBox *question = new EMessageBox(this);
+    question->setWindowTitle(tr("Продолжить закачку?"));
     question->setIcon(EMessageBox::Question);
     QPushButton *btn1 = question->addButton(tr("Продолжить все"),EMessageBox::ApplyRole);
     question->addButton(tr("Отмена"),EMessageBox::RejectRole);
