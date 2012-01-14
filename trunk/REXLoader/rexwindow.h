@@ -93,6 +93,7 @@ protected slots:
     void syncTaskData(); //синхронизирует состояние задач с БД
     void manageTaskQueue(); //менеджер очереди заданий
     void startTaskNumber(int id_row, const QUrl &url, const QString &filename = QString(), qint64 totalload = 0);
+    void setProxy(int id_task, int id_proto, bool global = true); //настраивает задание на скачивание через прокси
     void showTableContextMenu(const QPoint &pos); //отображает контекстное меню в таблице
     void openTask(); //отображает окно свойств задачи, если оно не закачано, или же пытается открыть файл стандартными программами
     void openTaskDir(); //открывает в файловом менеджере папку куда сохраняется/сохранен целевой файл
