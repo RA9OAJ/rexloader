@@ -869,9 +869,10 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
             if(id_task) //если плагин удачно прочитал метаданные и добавил задачу
             {
                 tasklist.insert(id_row, id_task + id_proto*100);
-                //pluglist.value(id_proto)->setTaskFilePath(id_task,flinfo.absolutePath());
                 calculateSpeed();
-                //pluglist.value(id_proto)->startDownload(id_task);
+
+                setProxy(id_task, id_proto);
+
                 plugmgr->startDownload(id_task + id_proto*100);
                 updateTaskSheet();
                 return;
@@ -910,6 +911,7 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
     pluglist.value(id_proto)->setTaskFilePath(id_task,fldir);
     calculateSpeed();
     //pluglist.value(id_proto)->startDownload(id_task);
+    setProxy(id_task, id_proto);
     plugmgr->startDownload(id_task + id_proto*100);
 }
 
@@ -2113,4 +2115,24 @@ void REXWindow::prepareToQuit()
     stop_flag = true;
     stopAllTasks();
     saveSettings();
+}
+
+void REXWindow::setProxy(int id_task, int id_proto, bool global)
+{
+    if(settDlg->value("proxy_enable").toBool())
+    {
+        QUrl addr;
+        addr.setHost(settDlg->value("proxy_address").toString());
+        addr.setPort(settDlg->value("proxy_port").toInt());
+        LInterface::ProxyType ptype = settDlg->value("enable_sockss").toBool() ? LInterface::PROXY_SOCKS5 : LInterface::PROXY_HTTP;
+        QByteArray auth;
+        QString authdata;
+        if(settDlg->value("proxy_user").toString() != "")
+        {
+            auth.append(settDlg->value("proxy_user").toString() + ":" + settDlg->value("proxy_password").toString());
+            authdata = auth.toBase64();
+        }
+
+        pluglist.value(id_proto)->setProxy(id_task, addr, ptype, authdata); //если настроен прокси, то указываем прокси для задачи
+    }
 }

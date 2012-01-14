@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>477</width>
+    <width>503</width>
     <height>961</height>
    </rect>
   </property>
@@ -22,7 +22,22 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
+     <property name="childrenCollapsible">
+      <bool>false</bool>
+     </property>
      <widget class="QListWidget" name="listWidget">
+      <property name="minimumSize">
+       <size>
+        <width>150</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>150</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <item>
        <property name="text">
         <string>Основные</string>
@@ -547,7 +562,7 @@
                    <item>
                     <widget class="QCheckBox" name="sockssCheck">
                      <property name="text">
-                      <string>SOCKSS</string>
+                      <string>SOCKS5</string>
                      </property>
                     </widget>
                    </item>
@@ -652,10 +667,10 @@
                </size>
               </property>
               <property name="toolTip">
-               <string>View folders</string>
+               <string>Выбрать папку</string>
               </property>
               <property name="text">
-               <string/>
+               <string>...</string>
               </property>
              </widget>
             </item>
