@@ -258,7 +258,7 @@ void REXWindow::createInterface()
 
     //кнопка-меню для выбора количества одновременных закачек
     taskbtn = new QToolButton(this);
-    QMenu *taskmenu = new QMenu(taskbtn);
+    QMenu *taskmenu = new QMenu(this);
     taskmenu->setTitle(tr("Одновременные скачивания"));
     taskmenu->addAction(ui->actionOneTask);
     taskmenu->addAction(ui->actionTwoTasks);
