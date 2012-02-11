@@ -18,7 +18,7 @@
     <normaloff>:/appimages/trayicon.png</normaloff>:/appimages/trayicon.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <layout class="QVBoxLayout" name="verticalLayout">
     <property name="spacing">
      <number>1</number>
     </property>
@@ -27,6 +27,9 @@
     </property>
     <item>
      <widget class="QSplitter" name="splitter_2">
+      <property name="autoFillBackground">
+       <bool>true</bool>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -62,9 +65,9 @@
         <property name="currentIndex">
          <number>0</number>
         </property>
-        <widget class="QWidget" name="tab">
+        <widget class="QWidget" name="tabAppEvents">
          <attribute name="title">
-          <string>Tab 1</string>
+          <string>События приложения</string>
          </attribute>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <property name="spacing">
@@ -78,9 +81,9 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tab_2">
+        <widget class="QWidget" name="tabTaskEvents">
          <attribute name="title">
-          <string>Tab 2</string>
+          <string>События задания</string>
          </attribute>
         </widget>
        </widget>
@@ -95,12 +98,19 @@
      <x>0</x>
      <y>0</y>
      <width>687</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QMenuBar 
+{
+margin: 2px;
+Font-size: 13px;
+}</string>
    </property>
    <widget class="QMenu" name="menuURL">
     <property name="title">
-     <string>URL</string>
+     <string>&amp;URL</string>
     </property>
     <addaction name="actionAdd_URL"/>
     <addaction name="actionDelURL"/>
@@ -111,7 +121,7 @@
    </widget>
    <widget class="QMenu" name="menu">
     <property name="title">
-     <string>Задания</string>
+     <string>&amp;Задания</string>
     </property>
     <widget class="QMenu" name="menu_7">
      <property name="title">
@@ -149,7 +159,7 @@
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
-     <string>Автоматизация</string>
+     <string>&amp;Автоматизация</string>
     </property>
     <widget class="QMenu" name="menu_3">
      <property name="title">
@@ -162,7 +172,7 @@
    </widget>
    <widget class="QMenu" name="menu_4">
     <property name="title">
-     <string>Приложение</string>
+     <string>&amp;Приложение</string>
     </property>
     <addaction name="actionpluginsShow"/>
     <addaction name="separator"/>
@@ -170,7 +180,7 @@
    </widget>
    <widget class="QMenu" name="menu_5">
     <property name="title">
-     <string>Помощь</string>
+     <string>П&amp;омощь</string>
     </property>
     <addaction name="actionHelp"/>
     <addaction name="actionOnlineHelp"/>
@@ -185,6 +195,37 @@
    <addaction name="menu_5"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QToolBar
+{
+background-color: rgb(232, 232, 232);
+padding: 5px;
+margin-left: 3px;
+margin-right: 3px;
+border-radius: 5;
+border-top: 1px solid rgb(128, 128, 128);
+border-bottom: 1px solid rgb(128, 128, 128);
+}
+</string>
+   </property>
+   <property name="movable">
+    <bool>true</bool>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="floatable">
+    <bool>false</bool>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
@@ -295,7 +336,7 @@
   </action>
   <action name="actionOnlineHelp">
    <property name="text">
-    <string>Online руководства</string>
+    <string>On-line руководства</string>
    </property>
   </action>
   <action name="actionAbout">
@@ -310,7 +351,7 @@
   </action>
   <action name="actionDelURLFiles">
    <property name="text">
-    <string>Удалить URL и результат</string>
+    <string>Удалить URL и файл</string>
    </property>
    <property name="shortcut">
     <string>Shift+Del</string>
