@@ -70,8 +70,25 @@ void TaskDialog::scheduler()
         int task_id = lst->value(id)%100;
         int proto_id = lst->value(id)/100;
         int sect_cnt = 0;
+
         if(ldr->contains(proto_id))
                    sect_cnt = ldr->value(proto_id)->countSectionTask(task_id);
+
+        int status = mdl->data(mdl->index(idx.row(),9),100).toInt();
+        switch(status)
+        {
+        case LInterface::ERROR_TASK: ui->statusLabel->setText(QString("<font color='red'>%1</font>").arg(tr("Ошибка"))); break;
+        case LInterface::STOPPING:
+        case LInterface::ON_PAUSE: ui->statusLabel->setText(tr("Приостановлено")); break;
+        case -100: ui->statusLabel->setText(tr("Ожидание")); break;
+        case LInterface::FINISHED: ui->statusLabel->setText(tr("Завершено")); break;
+        case LInterface::SEND_QUERY: ui->statusLabel->setText(QString("%1 (%2)").arg(tr("Посылка запроса"),QString::number(sect_cnt ? sect_cnt : 1))); break;
+        case LInterface::ACCEPT_QUERY: ui->statusLabel->setText(QString("%1 (%2)").arg(tr("Запрос принят"),QString::number(sect_cnt))); break;
+        case LInterface::REDIRECT:
+        case LInterface::ON_LOAD: ui->statusLabel->setText(tr("Закачивается")); break;
+
+        default: ui->statusLabel->setText(ldr->value(proto_id)->statusString(status)); break;
+        }
 
         ui->sectionLabel->setText(sect_cnt == 0 ? "":QString::number(sect_cnt));
     }

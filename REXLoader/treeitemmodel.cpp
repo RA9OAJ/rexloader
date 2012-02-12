@@ -40,13 +40,19 @@ QVariant TreeItemModel::data(const QModelIndex &index, int role) const
     case Qt::DisplayRole:
         if(!index.column())
         {
-            if(nodes.value(index).toString() == "#downloads")return tr("Все закачки");
-            else if(nodes.value(index).toString() == "#archives")return tr("Архивы");
-            else if(nodes.value(index).toString() == "#apps") return tr("Приложение");
-            else if(nodes.value(index).toString() == "#audio") return tr("Аудио");
-            else if(nodes.value(index).toString() == "#video") return tr("Видео");
-            else if(nodes.value(index).toString() == "#other") return tr("Другое");
-            return nodes.value(index).toString();
+            QString nodename;
+            if(nodes.value(index).toString() == "#downloads") nodename = tr("Все закачки");
+            else if(nodes.value(index).toString() == "#archives") nodename = tr("Архивы");
+            else if(nodes.value(index).toString() == "#apps") nodename = tr("Приложения");
+            else if(nodes.value(index).toString() == "#audio") nodename = tr("Аудио");
+            else if(nodes.value(index).toString() == "#video") nodename = tr("Видео");
+            else if(nodes.value(index).toString() == "#other") nodename = tr("Другое");
+            else nodename = nodes.value(index).toString();
+
+            int tsk_cnt = taskCount(index);
+            if(tsk_cnt) nodename += QString(" (%1)").arg(QString::number(tsk_cnt));
+
+            return nodename;
         }
         return nodes.value(index);
 
@@ -158,7 +164,7 @@ bool TreeItemModel::hasIndex(int row, int column, const QModelIndex &parent) con
 void TreeItemModel::addFiltersSubtree()
 {
     QList<QVariant> filters;
-    filters << tr("Фильры")<< -1 << 0 << 0;
+    filters << tr("Состояния")<< -1 << 0 << 0;
     filters << tr("Выполняются")<< -2 << -1 << 3;
     filters << tr("В ожидании") << -3 << -1 << -100;
     filters << tr("Остановленные") << -4 << -1 << 0;
@@ -257,6 +263,11 @@ bool TreeItemModel::silentUpdate(const QSqlDatabase &db)
 void TreeItemModel::updateRow(int row, const QModelIndex &parent)
 {
 
+}
+
+void TreeItemModel::updateRow(const QModelIndex &index)
+{
+    emit dataChanged(index,index);
 }
 
 QList<QModelIndex> TreeItemModel::parentsInTree() const
@@ -471,4 +482,37 @@ QStringList TreeItemModel::mimeTypes() const
     QStringList mimetypes;
     mimetypes << "application/sql.tree.record";
     return mimetypes;
+}
+
+int TreeItemModel::taskCount(const QModelIndex &index) const
+{
+    int cnt = 0;
+    int id = nodes.value(this->index(index.row(),1,index.parent())).toInt();
+    QSqlQuery query;
+    query.prepare("SELECT id FROM categories WHERE parent_id=:id");
+    query.bindValue("id",id);
+
+    if(!query.exec())
+    {
+        qDebug()<<"TreeItemModel::taskCount(1)" + query.executedQuery() + " Error:" + query.lastError().text();
+        return 0;
+    }
+
+    while(query.next())
+        cnt += taskCount(indexById(query.value(0).toInt()));
+
+    query.clear();
+    query.prepare("SELECT COUNT(*) FROM tasks WHERE categoryid=:id");
+    query.bindValue("id",id);
+
+    if(!query.exec())
+    {
+        qDebug()<<"TreeItemModel::taskCount(2)" + query.executedQuery() + " Error:" + query.lastError().text();
+        return 0;
+    }
+
+    query.next();
+    cnt += query.value(0).toInt();
+
+    return cnt;
 }

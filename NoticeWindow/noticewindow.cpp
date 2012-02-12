@@ -112,6 +112,7 @@ void NoticeWindow::createWidgets()
     textbrowser->setMaximumHeight(maximumHeight()-toolbar->size().height()-2);
     textbrowser->resize(textbrowser->maximumSize());
     textbrowser->setStyleSheet("QTextBrowser {border: none; font: 12px; background: url(:/noticewindow/info.png) center no-repeat;}");
+    textbrowser->setTextColor(QColor("#000000"));
     textbrowser->setWordWrapMode(QTextOption::WrapAnywhere);
     pOpenDir->move(width()-pOpenDir->width()-2,textbrowser->height());
     pExec->move(width()-pOpenDir->width()-pExec->width()-2,textbrowser->height());

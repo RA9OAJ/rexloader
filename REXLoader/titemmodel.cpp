@@ -301,6 +301,27 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         return tooltip;
     }
 
+    if(role == Qt::TextColorRole)
+    {
+        return QColor("#111111");
+    }
+
+    if(role == Qt::TextAlignmentRole)
+    {
+        if(index.column() == gcolumn || index.column() == gcolumn + 1)
+            return (QVariant)(Qt::AlignRight | Qt::AlignVCenter);
+
+        switch(index.column())
+        {
+        case 2:
+        case 4:
+        case 5:
+        case 6: return (QVariant)(Qt::AlignRight | Qt::AlignVCenter);
+
+        default: return QVariant();
+        }
+    }
+
     if(role == 100) //для сортировки
     {
         switch(index.column())
