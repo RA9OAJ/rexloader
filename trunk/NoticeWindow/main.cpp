@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     w.setDisplayTime(10000);
     w.showNotice("REXLoader","Файл SETUP.EXE успечно закачан.",NoticeWindow::WT_Info);*/
     NoticeManager w;
-    w.showNotice("REXLoader","1",NoticeWindow::WT_Info);
+    w.showNotice("REXLoader","<font color='red'>1</font>",NoticeWindow::WT_Info);
     w.showNotice("REXLoader","2",NoticeWindow::WT_Info);
     w.showNotice("REXLoader","3",NoticeWindow::WT_Info);
     w.showNotice("REXLoader","4",NoticeWindow::WT_Info);

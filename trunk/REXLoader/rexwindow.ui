@@ -57,7 +57,14 @@
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <widget class="TableView" name="tableView"/>
+       <widget class="TableView" name="tableView">
+        <attribute name="verticalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="verticalHeaderDefaultSectionSize">
+         <number>25</number>
+        </attribute>
+       </widget>
        <widget class="QTabWidget" name="tabWidget">
         <property name="tabPosition">
          <enum>QTabWidget::South</enum>
@@ -98,14 +105,14 @@
      <x>0</x>
      <y>0</y>
      <width>687</width>
-     <height>26</height>
+     <height>28</height>
     </rect>
    </property>
    <property name="styleSheet">
     <string notr="true">QMenuBar 
 {
-margin: 2px;
 Font-size: 13px;
+margin: 3px;
 }</string>
    </property>
    <widget class="QMenu" name="menuURL">
@@ -201,6 +208,9 @@ Font-size: 13px;
      <height>0</height>
     </size>
    </property>
+   <property name="windowTitle">
+    <string>Панель инструментов</string>
+   </property>
    <property name="styleSheet">
     <string notr="true">QToolBar
 {
@@ -212,7 +222,11 @@ border-radius: 5;
 border-top: 1px solid rgb(128, 128, 128);
 border-bottom: 1px solid rgb(128, 128, 128);
 }
-</string>
+
+QToolButton
+{
+Color: rgb(48, 48, 48);
+}</string>
    </property>
    <property name="movable">
     <bool>true</bool>

@@ -45,17 +45,19 @@ public:
     QStringList mimeTypes()const;
     QFont getFont() const;
     void updateRow(int row, const QModelIndex &parent = QModelIndex());
+    void updateRow(const QModelIndex &index);
     QList<QModelIndex> parentsInTree() const;
     virtual bool removeRows(int row, int count, const QModelIndex & parent = QModelIndex());
     void setIgnoreFilters(bool ignore);
     QModelIndex indexById(int id) const;
 
-signals:
-
 public slots:
     bool updateModel(const QSqlDatabase &db = QSqlDatabase());
     void setFont(const QFont &fnt);
     bool silentUpdate(const QSqlDatabase &db = QSqlDatabase());
+
+protected:
+    int taskCount(const QModelIndex &index) const;
 
 private:
     void addFiltersSubtree();

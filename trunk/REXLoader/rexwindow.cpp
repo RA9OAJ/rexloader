@@ -925,6 +925,7 @@ void REXWindow::deleteTask()
     if(select->selectedRows().length() > 1) //если выделено более 1 строки
     {
         EMessageBox dlg(this);
+        dlg.setWindowTitle(tr("Что делать?"));
         dlg.setIcon(EMessageBox::Warning);
         dlg.setText(tr("Выбрано более одного задания."));
         dlg.setInformativeText("Чтобы подтвердить удаление нескольких заданий нажмите <b>\"Ok\"</b> или <b>\"Отмена\"</b> для отмены удаления.");
@@ -939,10 +940,12 @@ void REXWindow::deleteTask()
 
     QSqlQuery qr(QSqlDatabase::database());
 
+    QMap<int,int> cat_map;
     QString where;
     for(int i=0; i < select->selectedRows().length(); i++)
     {
         int row_id = select->selectedRows().value(i).data(Qt::DisplayRole).toInt();
+        cat_map.insert(select->selectedRows().value(i).data(Qt::DisplayRole).toInt(),0);
         QString flname = select->selectedRows(3).value(i).data(100).toString();
         int task_id = tasklist.value(row_id)%100;
         LoaderInterface *ldr = pluglist.value(tasklist.value(row_id)/100);
@@ -958,6 +961,13 @@ void REXWindow::deleteTask()
             if(!fl.isFile())continue;
             QFile::remove(flname);
         }
+
+        if(dlglist.contains(row_id))
+        {
+            dlglist.value(row_id)->close();
+            dlglist.remove(row_id);
+        }
+
         if(ldr)ldr->deleteTask(task_id);
         tasklist.remove(row_id);
     }
@@ -972,6 +982,10 @@ void REXWindow::deleteTask()
 
     model->updateModel(); //обновляем таблицу задач
     model->clearCache();
+
+    foreach(int cur_row, cat_map.keys()) //обновляем счетчики в строках категорий
+        treemodel->updateRow(treemodel->indexById(cur_row));
+
     manageTaskQueue();
 }
 
@@ -1526,6 +1540,7 @@ void REXWindow::updateStatusBar()
         priority->hide();
         urllbl->hide();
         lasterror->hide();
+        lefttime->hide();
         speed->setVisible(true);
         setEnabledTaskMenu(false);
 
@@ -1557,9 +1572,9 @@ void REXWindow::updateStatusBar()
         progress->setMaximum(100);
         int cur_val = total_s ? 100*total_l/total_s : 0;
         progress->setValue(cur_val);
-        int sec = total_speed ? (total_s-total_l)/total_speed : -1;
-        lefttime->setText(TItemModel::secForHumans(sec));
-        lefttime->setVisible(true);
+        //int sec = total_speed ? (total_s-total_l)/total_speed : -1;
+        //lefttime->setText(TItemModel::secForHumans(sec));
+        //lefttime->setVisible(true);
     }
     else // если выделено определенное задание, то выводим по нему информацию
     {
@@ -2083,20 +2098,17 @@ void REXWindow::showTaskDialog()
     for(int i=0; i < select->selectedRows().length(); i++)
     {
         int id_row = select->selectedRows(0).value(i).data(100).toInt(); // id записи в базе данных
-        int id_task = tasklist.value(id_row);
-        if(dlglist.contains(id_task))
+        if(dlglist.contains(id_row))
         {
-            dlglist.value(id_task)->activateWindow();
+            dlglist.value(id_row)->activateWindow();
             return;
         }
-
-        //QUrl url = QUrl::fromEncoded(select->selectedRows(1).value(i).data(100).toString().toUtf8());
 
         TaskDialog *dlg = new TaskDialog(this);
         QModelIndex index = sfmodel->mapToSource(select->selectedRows(0).value(i));
         dlg->setSourceData(model, index, pluglist, tasklist);
         connect(dlg,SIGNAL(rejected()),this,SLOT(closeTaskDialog()));
-        dlglist.insert(id_task, dlg);
+        dlglist.insert(id_row, dlg);
         dlg->show();
     }
 }
