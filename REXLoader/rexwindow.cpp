@@ -1032,6 +1032,34 @@ void REXWindow::startTask()
     syncTaskData();
 }
 
+void REXWindow::startTask(int id)
+{
+    QSqlQuery qr(QSqlDatabase::database());
+    qr.prepare("UPDATE tasks SET tstatus=-100, lasterror='' WHERE id=:id AND tstatus <> :tstatus");
+    qr.bindValue("id",id);
+    qr.bindValue("tstatus",(int)LInterface::FINISHED);
+
+    if(!qr.exec())
+    {
+        //запись в журнал ошибок
+        qDebug()<<"void REXWindow::startTask(2): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
+        return;
+    }
+    updateTaskSheet();
+
+    QSortFilterProxyModel smodel;
+    smodel.setSourceModel(model);
+    smodel.setFilterRole(100);
+    smodel.setFilterKeyColumn(0);
+    smodel.setFilterFixedString(QString::number(id));
+    if(!smodel.rowCount()) return;
+    QModelIndex idx = smodel.mapToSource(smodel.index(0,0));
+    model->updateRow(idx.row());
+
+    manageTaskQueue();
+    syncTaskData();
+}
+
 void REXWindow::startAllTasks()
 {
     QSqlQuery qr(QSqlDatabase::database());
@@ -1139,6 +1167,40 @@ void REXWindow::stopTask()
         QModelIndex index = sfmodel->mapToSource(select->selectedRows(9).value(i));
         model->updateRow(index.row());
     }
+    manageTaskQueue();
+    syncTaskData();
+}
+
+void REXWindow::stopTask(int id)
+{
+    int task_id = tasklist.value(id,0);
+    if(!task_id) return;
+
+    int id_proto = task_id/100;
+    if(pluglist.contains(id_proto)) plugmgr->stopDownload(task_id);
+
+    QSqlQuery qr(QSqlDatabase::database());
+    qr.prepare("UPDATE tasks SET tstatus=0, lasterror='' WHERE id=:id");
+    qr.bindValue("id",id);
+
+    if(!qr.exec())
+    {
+        //запись в журнал ошибок
+        qDebug()<<"void REXWindow::stopTask(2): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
+        return;
+    }
+
+    updateTaskSheet();
+
+    QSortFilterProxyModel smodel;
+    smodel.setSourceModel(model);
+    smodel.setFilterRole(100);
+    smodel.setFilterKeyColumn(0);
+    smodel.setFilterFixedString(QString::number(id));
+    if(!smodel.rowCount()) return;
+    QModelIndex idx = smodel.mapToSource(smodel.index(0,0));
+    model->updateRow(idx.row());
+
     manageTaskQueue();
     syncTaskData();
 }
@@ -2108,6 +2170,9 @@ void REXWindow::showTaskDialog()
         QModelIndex index = sfmodel->mapToSource(select->selectedRows(0).value(i));
         dlg->setSourceData(model, index, pluglist, tasklist);
         connect(dlg,SIGNAL(rejected()),this,SLOT(closeTaskDialog()));
+        connect(dlg,SIGNAL(startTask(int)),this,SLOT(startTask(int)));
+        connect(dlg,SIGNAL(stopTask(int)),this,SLOT(stopTask(int)));
+        //connect(dlg,SIGNAL(redownloadTask(int)),this,SLOT(redownloadTask()));
         dlglist.insert(id_row, dlg);
         dlg->show();
     }

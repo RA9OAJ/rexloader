@@ -19,15 +19,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "taskdialog.h"
 #include "ui_taskdialog.h"
 
+int TaskDialog::obj_cnt = 0;
+
 TaskDialog::TaskDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::TaskDialog)
 {
+    ++obj_cnt;
     ui->setupUi(this);
     setWindowFlags(Qt::Window);
     setAttribute(Qt::WA_DeleteOnClose);
+    connect(ui->startButton,SIGNAL(released()),this,SLOT(pressAnaliser()));
 
     QTimer::singleShot(0,this,SLOT(scheduler()));
+    moveToCenter();
 }
 
 TaskDialog::~TaskDialog()
@@ -72,20 +77,69 @@ void TaskDialog::scheduler()
         int sect_cnt = 0;
 
         if(ldr->contains(proto_id))
-                   sect_cnt = ldr->value(proto_id)->countSectionTask(task_id);
+            sect_cnt = ldr->value(proto_id)->countSectionTask(task_id);
 
         int status = mdl->data(mdl->index(idx.row(),9),100).toInt();
         switch(status)
         {
-        case LInterface::ERROR_TASK: ui->statusLabel->setText(QString("<font color='red'>%1</font>").arg(tr("Ошибка"))); break;
+        case LInterface::ERROR_TASK:
+        {
+            ui->statusLabel->setText(QString("<font color='red'>%1</font>").arg(tr("Ошибка")));
+            ui->startButton->setText(tr("Запустить"));
+            ui->startButton->setIcon(QIcon(":/appimages/start_24x24.png"));
+            ui->startButton->setEnabled(true);
+            break;
+        }
         case LInterface::STOPPING:
-        case LInterface::ON_PAUSE: ui->statusLabel->setText(tr("Приостановлено")); break;
-        case -100: ui->statusLabel->setText(tr("Ожидание")); break;
-        case LInterface::FINISHED: ui->statusLabel->setText(tr("Завершено")); break;
-        case LInterface::SEND_QUERY: ui->statusLabel->setText(QString("%1 (%2)").arg(tr("Посылка запроса"),QString::number(sect_cnt ? sect_cnt : 1))); break;
-        case LInterface::ACCEPT_QUERY: ui->statusLabel->setText(QString("%1 (%2)").arg(tr("Запрос принят"),QString::number(sect_cnt))); break;
+        case LInterface::ON_PAUSE:
+        {
+            ui->statusLabel->setText(tr("Приостановлено"));
+            ui->startButton->setText(tr("Запустить"));
+            ui->startButton->setIcon(QIcon(":/appimages/start_24x24.png"));
+            ui->startButton->setEnabled(true);
+            break;
+        }
+        case -100:
+        {
+            ui->statusLabel->setText(tr("Ожидание"));
+            ui->startButton->setText(tr("Приостановить"));
+            ui->startButton->setIcon(QIcon(":/appimages/pause_24x24.png"));
+            ui->startButton->setEnabled(true);
+            break;
+        }
+        case LInterface::FINISHED:
+        {
+            ui->statusLabel->setText(tr("Завершено"));
+            ui->startButton->setText(tr("Перезакачать"));
+            ui->startButton->setIcon(QIcon());
+            ui->startButton->setEnabled(false);
+            break;
+        }
+        case LInterface::SEND_QUERY:
+        {
+            ui->statusLabel->setText(QString("%1 (%2)").arg(tr("Посылка запроса"),QString::number(sect_cnt ? sect_cnt : 1)));
+            ui->startButton->setText(tr("Приостановить"));
+            ui->startButton->setIcon(QIcon(":/appimages/pause_24x24.png"));
+            ui->startButton->setEnabled(true);
+            break;
+        }
+        case LInterface::ACCEPT_QUERY:
+        {
+            ui->statusLabel->setText(QString("%1 (%2)").arg(tr("Запрос принят"),QString::number(sect_cnt)));
+            ui->startButton->setText(tr("Приостановить"));
+            ui->startButton->setIcon(QIcon(":/appimages/pause_24x24.png"));
+            ui->startButton->setEnabled(true);
+            break;
+        }
         case LInterface::REDIRECT:
-        case LInterface::ON_LOAD: ui->statusLabel->setText(tr("Закачивается")); break;
+        case LInterface::ON_LOAD:
+        {
+            ui->statusLabel->setText(tr("Закачивается"));
+            ui->startButton->setText(tr("Приостановить"));
+            ui->startButton->setIcon(QIcon(":/appimages/pause_24x24.png"));
+            ui->startButton->setEnabled(true);
+            break;
+        }
 
         default: ui->statusLabel->setText(ldr->value(proto_id)->statusString(status)); break;
         }
@@ -94,4 +148,37 @@ void TaskDialog::scheduler()
     }
 
     QTimer::singleShot(500,this,SLOT(scheduler()));
+}
+
+void TaskDialog::pressAnaliser()
+{
+    if(mdl)
+    {
+        int id = mdl->data(mdl->index(idx.row(),0),100).toInt();
+
+        int status = mdl->data(mdl->index(idx.row(),9),100).toInt();
+        switch(status)
+        {
+        case LInterface::ERROR_TASK:
+        case LInterface::STOPPING:
+        case LInterface::ON_PAUSE:  emit startTask(id); break;
+        case -100:  break;
+        case LInterface::FINISHED:  emit redownloadTask(id); break;
+        case LInterface::SEND_QUERY:
+        case LInterface::ACCEPT_QUERY:
+        case LInterface::REDIRECT:
+        case LInterface::ON_LOAD: emit stopTask(id); break;
+
+        default: break;
+        }
+        ui->startButton->setDisabled(true);
+    }
+}
+
+void TaskDialog::moveToCenter()
+{
+    QDesktopWidget ds;
+    QRect desktop = ds.availableGeometry();
+    QPoint top_left = QPoint((desktop.bottomRight().x()-size().width())/2+20*(obj_cnt-1),(desktop.bottomRight().y()-size().height())/2+20*(obj_cnt-1));
+    move(top_left);
 }

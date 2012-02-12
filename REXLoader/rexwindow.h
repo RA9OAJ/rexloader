@@ -86,8 +86,10 @@ protected slots:
     void showHideSlot(QSystemTrayIcon::ActivationReason type); //отображает/скрывает главное окно
     void deleteTask(); //удаляет выбранные задания из списка задач
     void startTask(); //запускает выбранные задания на выполнение
+    void startTask(int id); //запускает задание по id в БД
     void startAllTasks(); //запускает все доступные для запуска задачи
     void stopTask(); //останавливает выполнение выбранной задачи
+    void stopTask(int id); //останавливает выполнение задания по id в БД
     void stopAllTasks(); //останавливает все выполняемые задачи
     void redownloadTask(); //сбрасывает признаки скачивания файла и ставит его снова на закачку
     void syncTaskData(); //синхронизирует состояние задач с БД
