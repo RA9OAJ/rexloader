@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QDialog>
 #include <QTimer>
+#include <QDesktopWidget>
 #include "titemmodel.h"
 
 namespace Ui {
@@ -42,6 +43,13 @@ public slots:
 
 protected slots:
     void scheduler();
+    void pressAnaliser();
+    void moveToCenter();
+
+signals:
+    void startTask(int id);
+    void stopTask(int id);
+    void redownloadTask(int id);
 
 private:
     Ui::TaskDialog *ui;
@@ -49,6 +57,8 @@ private:
     QPointer<TItemModel> mdl;
     QModelIndex idx;
     const QHash<int,LoaderInterface*> *ldr;
+
+    static int obj_cnt;
 };
 
 #endif // TASKDIALOG_H
