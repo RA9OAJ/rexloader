@@ -47,6 +47,9 @@ public:
     NoticeWindow(QWidget *parent = 0);
     virtual ~NoticeWindow();
 
+    bool positionTop() const;
+    bool positionLeft() const;
+
 public slots:
     void showNotice(const QString &title, const QString &message, WindowType wtype = WT_Info);
     void setDisplayTime(const int sec);

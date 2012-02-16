@@ -50,14 +50,24 @@ QVariant TreeItemModel::data(const QModelIndex &index, int role) const
             else nodename = nodes.value(index).toString();
 
             int tsk_cnt = taskCount(index);
-            if(tsk_cnt) nodename += QString(" (%1)").arg(QString::number(tsk_cnt));
+            int incompl_cnt = taskCount(index, true);
+            if(tsk_cnt) incompl_cnt ? nodename += QString(" (%1/%2)").arg(QString::number(incompl_cnt),QString::number(tsk_cnt)) : nodename += QString(" (%1)").arg(QString::number(tsk_cnt));
 
             return nodename;
         }
         return nodes.value(index);
 
     case Qt::FontRole:
-        if(!index.column()) return font;
+        if(!index.column())
+        {
+            if(nodes.value(index).toString() != "#downloads" && taskCount(index, true))
+            {
+                QFont fnt(font);
+                fnt.setWeight((int)QFont::DemiBold);
+                return fnt;
+            }
+            return font;
+        }
         return QFont();
 
     case Qt::EditRole:
@@ -484,10 +494,11 @@ QStringList TreeItemModel::mimeTypes() const
     return mimetypes;
 }
 
-int TreeItemModel::taskCount(const QModelIndex &index) const
+int TreeItemModel::taskCount(const QModelIndex &index,  bool incomplete) const
 {
     int cnt = 0;
     int id = nodes.value(this->index(index.row(),1,index.parent())).toInt();
+    QString filter = incomplete ? QString(" AND tstatus <> %1").arg(QString::number((int)LInterface::FINISHED)) : "";
     QSqlQuery query;
     query.prepare("SELECT id FROM categories WHERE parent_id=:id");
     query.bindValue("id",id);
@@ -499,10 +510,10 @@ int TreeItemModel::taskCount(const QModelIndex &index) const
     }
 
     while(query.next())
-        cnt += taskCount(indexById(query.value(0).toInt()));
+        cnt += taskCount(indexById(query.value(0).toInt()),incomplete);
 
     query.clear();
-    query.prepare("SELECT COUNT(*) FROM tasks WHERE categoryid=:id");
+    query.prepare("SELECT COUNT(*) FROM tasks WHERE categoryid=:id" + filter);
     query.bindValue("id",id);
 
     if(!query.exec())

@@ -15,7 +15,7 @@ NoticeWindow::NoticeWindow(QWidget *parent)
     disp_time = 3000;
     show_effect = SE_PopUp;
     close_effect = SE_PopUp;
-    effects_speed = 4; /* 1 - это полное появление за 3 секунды, 10 - за 0,3 секунды*/
+    effects_speed = 7; /* 1 - это полное появление за 3 секунды, 10 - за 0,3 секунды*/
     diff = (float)maximumSize().height()/(2000/effects_speed/15);
     if(!diff)diff = 1;
     diff_opac = 1.0/(double)(2000/effects_speed/15);
@@ -27,7 +27,7 @@ NoticeWindow::NoticeWindow(QWidget *parent)
     QDesktopWidget ds;
     base = ds.availableGeometry();
     move(base.topLeft().x()+base.width()-size().width()-dx-ddx, base.topLeft().y()+base.height()-dy-ddy);
-    //moveToAllDesktops();
+    moveToAllDesktops(false);
 }
 
 void NoticeWindow::moveToAllDesktops(bool _flag)
@@ -433,4 +433,14 @@ void NoticeWindow::setDOffsetPos(int x, int y)
     QDesktopWidget ds;
     base = ds.availableGeometry();
     move(base.topLeft().x()+base.width()-size().width()-dx-ddx, base.topLeft().y()+base.height()-dy-ddy);
+}
+
+bool NoticeWindow::positionTop() const
+{
+    return ptop;
+}
+
+bool NoticeWindow::positionLeft() const
+{
+    return pleft;
 }

@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QAbstractItemModel>
 #include <QtSql/QtSql>
+#include "../Httploader/LoaderInterface.h"
 
 class TreeItemModel : public QAbstractItemModel
 {
@@ -57,7 +58,7 @@ public slots:
     bool silentUpdate(const QSqlDatabase &db = QSqlDatabase());
 
 protected:
-    int taskCount(const QModelIndex &index) const;
+    int taskCount(const QModelIndex &index, bool incomplete = false) const;
 
 private:
     void addFiltersSubtree();
