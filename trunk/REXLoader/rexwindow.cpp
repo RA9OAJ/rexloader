@@ -35,7 +35,7 @@ REXWindow::REXWindow(QWidget *parent) :
     QList<int> sz1;
     QDir libdir(QApplication::applicationDirPath());
     libdir.cdUp();
-    pluginDirs << libdir.absolutePath()+"/lib/rexloader/plugins" << QDir::homePath()+"/.rexloader/plugins";
+    pluginDirs << libdir.absolutePath()+"/lib/rexloader/plugins" << libdir.absolutePath()+"/lib64/rexloader/plugins" << QDir::homePath()+"/.rexloader/plugins";
 
     downDir = QDir::homePath()+tr("/Загрузки");
     if(!QDir().exists(downDir))
@@ -514,7 +514,6 @@ void REXWindow::saveSettings()
     settings.beginGroup("Main Window");
     settings.setValue("WindowGeometry",saveGeometry());
     settings.setValue("WindowState",saveState());
-    settings.setValue("WindowVisible",isVisible());
     settings.endGroup();
     settings.beginGroup("Windgets Interface");
     settings.setValue("TasksTable",ui->tableView->horizontalHeader()->saveState());
@@ -551,7 +550,6 @@ void REXWindow::loadSettings()
     settings.beginGroup("Main Window");
     restoreGeometry(settings.value("WindowGeometry").toByteArray());
     restoreState(settings.value("WindowState").toByteArray());
-    bool _windowVisible = settings.value("WindowVisible").toBool();
     settings.endGroup();
 
     settings.beginGroup("Windgets Interface");
@@ -588,7 +586,7 @@ void REXWindow::loadSettings()
     settDlg->updateInterface();
     settings.endArray();
 
-    if(!_windowVisible || settDlg->value("start_minimized").toBool())
+    if(settDlg->value("start_minimized").toBool())
     {
         preStat = windowState();
         setWindowState(Qt::WindowMinimized);
