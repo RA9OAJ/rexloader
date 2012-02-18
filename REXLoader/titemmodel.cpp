@@ -93,8 +93,14 @@ void TItemModel::updateRow(int row)
     {
         QModelIndex ModelIndex = index(row, i, QModelIndex());
         emit dataChanged(ModelIndex, ModelIndex);
-        qApp->processEvents();
+        //qApp->processEvents();
     }
+}
+
+void TItemModel::updateRow()
+{
+    int row = upd_queue.takeFirst();
+    updateRow(row);
 }
 
 void TItemModel::addToCache(int row, int col, const QVariant &value)
@@ -463,4 +469,9 @@ QString TItemModel::shortUrl(QString url, int max_len)
     int pos = url.size()/2 - (url.size() + 3 - max_len)/2;
     url.replace(pos,(url.size() + 3 - max_len),"...");
     return url;
+}
+
+void TItemModel::addToUpdateRowQueue(int row)
+{
+    upd_queue.append(row);
 }

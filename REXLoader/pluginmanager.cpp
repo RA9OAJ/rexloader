@@ -186,8 +186,6 @@ void PluginManager::restorePluginsState(const QByteArray &stat)
         if(!pluglist->contains(id) || !pluglist->value(id)) continue;
         plugproto->insert(proto,id);
     }
-    qDebug()<<*plugproto;
-
     if(!plugproto->size()) *plugproto = last_state;
 }
 
