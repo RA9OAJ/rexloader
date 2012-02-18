@@ -1459,7 +1459,8 @@ void REXWindow::syncTaskData()
             tasklist.remove(id_row);
             calculateSpeed();
         }
-        model->updateRow(index.row());
+        model->addToUpdateRowQueue(index.row());
+        QTimer::singleShot(0,model,SLOT(updateRow()));
     }
     qr.clear();
     qr.exec("SELECT id FROM tasks WHERE tstatus IN (-100,-2,0)");

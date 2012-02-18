@@ -34,7 +34,6 @@ public:
     virtual int rowCount(const QModelIndex &parent) const;
     virtual int columnCount(const QModelIndex &parent) const;
     bool setMetaData(int key, const QString &name, const QVariant &value);
-    void updateRow(int row);
     void addToCache(int row, int col, const QVariant &value);
     virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
     virtual QModelIndex parent(const QModelIndex &child) const;
@@ -45,6 +44,9 @@ public:
     static QString shortUrl(QString url, int max_len = 72);
 
 public slots:
+    void updateRow(int row);
+    void updateRow();
+    void addToUpdateRowQueue(int row);
     bool updateModel(const QSqlDatabase &db = QSqlDatabase());
     bool silentUpdateModel(const QSqlDatabase &db = QSqlDatabase());
     void clearCache(int row = -1);
@@ -56,6 +58,7 @@ private:
     int grow,gcolumn;
     QHash<int,qint64>curspeed;
     QHash<int, QHash<int,QVariant> >cache;
+    QList<int> upd_queue;
 };
 
 #endif // TITEMMODEL_H
