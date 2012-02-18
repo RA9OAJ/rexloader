@@ -153,4 +153,67 @@ void PluginManager::loadLocale(const QLocale &locale)
     }
 }
 
+void PluginManager::restorePluginsState(const QByteArray &stat)
+{
+    if(!plugfiles || !pluglist || !plugproto || !pluginDirs) return;
+    if(!plugfiles->size() || !pluglist->size()) return;
+
+    QHash<QString,int> last_state = *plugproto;
+    plugproto->clear();
+    QDataStream in(stat);
+
+    int len;
+    in >> len; //считываем размер первой строки с протоколом
+
+    while(len > 0)
+    {
+        QByteArray inbuf;
+        inbuf.resize(len);
+        in.readRawData(inbuf.data(),len); //считываем строку с названием протокола
+        QString proto = inbuf;
+        if(proto == "")break; //если не удалось считать, то выходим
+
+        in >> len; //считываем размер строки пути до файла плагина
+        if(!len) break;
+        inbuf.clear();
+        inbuf.resize(len);
+        in.readRawData(inbuf.data(),len); //считываем строку пути до файла плагина
+        QString filepath = inbuf;
+        if(filepath == "") break; //если не удалось считать, то выходим
+
+        in >> len;
+        int id = plugfiles->key(filepath);
+        if(!pluglist->contains(id) || !pluglist->value(id)) continue;
+        plugproto->insert(proto,id);
+    }
+    qDebug()<<*plugproto;
+
+    if(!plugproto->size()) *plugproto = last_state;
+}
+
+QByteArray PluginManager::pluginsState() const
+{
+    if(!plugfiles || !pluglist || !plugproto || !pluginDirs) return QByteArray();
+    if(!plugfiles->size() || !plugproto->size()) return QByteArray();
+
+    QByteArray out;
+    QDataStream stat(&out,QIODevice::WriteOnly);
+
+    foreach(QString proto, plugproto->keys())
+    {
+        if(!proto.toAscii().size()) continue;
+        stat << proto.toAscii().size(); //размерность строки с названием протокола
+        stat.writeRawData(proto.toAscii().data(),proto.toAscii().size()); //строка с названием протокола
+        int id = plugproto->value(proto); //id плагина
+        QString filepath = plugfiles->value(id); //путь до плагина
+        if(filepath == "") continue;
+
+        stat << filepath.toAscii().size(); //размер строки пути файла плагина
+        stat.writeRawData(filepath.toAscii().data(),filepath.toAscii().size()); //путь до файла плагина
+    }
+    stat << (int) 0;
+
+    return out;
+}
+
 

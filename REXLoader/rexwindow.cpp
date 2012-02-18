@@ -30,6 +30,7 @@ REXWindow::REXWindow(QWidget *parent) :
     max_tasks = 1;
     max_threads = 3;
     down_speed = 2048*8; // 2Mbps
+    plug_state.clear();
 
     QList<int> sz;
     QList<int> sz1;
@@ -65,13 +66,12 @@ REXWindow::REXWindow(QWidget *parent) :
     connect(plugmgr,SIGNAL(pluginStatus(bool)),this,SLOT(pluginStatus(bool)));
     connect(qApp,SIGNAL(aboutToQuit()),this,SLOT(prepareToQuit()));
 
-    loadPlugins();
-
     createInterface();
 
-    QTimer::singleShot(250,this,SLOT(scheuler()));
+    QTimer::singleShot(250,this,SLOT(scheduler()));
     updateTaskSheet();
     loadSettings();
+    loadPlugins();
 }
 
 void REXWindow::pluginStatus(bool stat)
@@ -82,6 +82,7 @@ void REXWindow::pluginStatus(bool stat)
         int quit_ok = QMessageBox::critical(this,windowTitle()+" - "+tr("Критическая ошибка"),tr("Не найден ни один плагин.\r\n Проверьте наличие файлов плагинов в директории '.rexloader' и '/usr/{local/}lib/rexloader/plugins'."));
         if(quit_ok == QMessageBox::Ok)QTimer::singleShot(0,this,SLOT(close()));
     }
+    plugmgr->restorePluginsState(plug_state);
     plugmgr->loadLocale(QLocale::system());
 
     scanTasksOnStart();
@@ -541,6 +542,9 @@ void REXWindow::saveSettings()
         settings.setValue("Value",settDlg->value(keys.value(i)));
     }
     settings.endArray();
+    settings.beginGroup("State Plugins");
+    settings.setValue("EnablePlugins",plugmgr->pluginsState());
+    settings.endGroup();
     settings.sync();
 }
 
@@ -592,6 +596,10 @@ void REXWindow::loadSettings()
         setWindowState(Qt::WindowMinimized);
         QTimer::singleShot(0,this,SLOT(close()));
     }
+
+    settings.beginGroup("State Plugins");
+    plug_state = settings.value("EnablePlugins").toByteArray();
+    settings.endGroup();
 }
 
 void REXWindow::scanClipboard()
@@ -779,7 +787,7 @@ void REXWindow::lockProcess(bool flag)
     else fl.remove();
 }
 
-void REXWindow::scheuler()
+void REXWindow::scheduler()
 {
     if(!sched_flag)return;
     lockProcess(true);
@@ -789,7 +797,7 @@ void REXWindow::scheuler()
     syncTaskData();
     manageTaskQueue();
 
-    QTimer::singleShot(1000,this,SLOT(scheuler()));
+    QTimer::singleShot(1000,this,SLOT(scheduler()));
 }
 
 void REXWindow::updateTaskSheet()
@@ -1463,7 +1471,7 @@ void REXWindow::manageTaskQueue()
 {
     if(stop_flag)return;
     QSqlQuery qr(QSqlDatabase::database());
-    qr.prepare("SELECT * FROM tasks WHERE tstatus=-100 ORDER BY priority DESC"); //список задач в очереди
+    qr.prepare("SELECT * FROM tasks WHERE tstatus=-100 GROUP BY id ORDER BY priority DESC"); //список задач в очереди
     if(!qr.exec())
     {
         //запись в журнал ошибок

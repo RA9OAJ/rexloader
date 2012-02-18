@@ -79,7 +79,7 @@ protected:
 protected slots:
     void prepareToQuit(); //подгатавливает приложение к завершению (останавливает все закачки, сохраняет настройки приложения и т.д.)
     void pluginStatus(bool stat);
-    void scheuler(); //внутренний планировщик с интервалом в 1 секунду
+    void scheduler(); //внутренний планировщик с интервалом в 1 секунду
     void updateTrayIcon(); //обновляет иконку в трее при анимации
     void updateStatusBar(); //обновляет данные, отображаемые в statusBar
     void showAddTaskDialog(); //отображает окно добавления задачи
@@ -154,6 +154,8 @@ private:
     qint64 down_speed; //максимальная общая скорость скачивания (в кбит/с)
     Qt::WindowStates preStat; //предназначено для хранения предыдущего состояния окна (необходимо для реализации метода загрузки состояния окна)
     bool stop_flag; //флаг остановки всех заданий при завершении работы программы
+
+    QByteArray plug_state;
 };
 
 #endif // REXWINDOW_H

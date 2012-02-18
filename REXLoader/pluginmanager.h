@@ -55,6 +55,8 @@ public:
     void setPlugLists(QHash<int,QString> *files, QHash<int,LoaderInterface*> *list, QHash<QString,int> *proto);
     void setDefaultSettings(const int &tasks, const int &threads, const qint64 &speed);
     void loadLocale(const QLocale &locale);
+    void restorePluginsState(const QByteArray &stat);
+    QByteArray pluginsState() const;
 
 signals:
     void pluginStatus(bool stat);
