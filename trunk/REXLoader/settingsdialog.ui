@@ -317,7 +317,7 @@
                    <enum>QAbstractSpinBox::UpDownArrows</enum>
                   </property>
                   <property name="suffix">
-                   <string> kBps</string>
+                   <string> кБ/с</string>
                   </property>
                   <property name="maximum">
                    <number>500000</number>
@@ -344,7 +344,7 @@
                    <enum>QAbstractSpinBox::UpDownArrows</enum>
                   </property>
                   <property name="suffix">
-                   <string> kBps</string>
+                   <string> кБ/с</string>
                   </property>
                   <property name="maximum">
                    <number>500000</number>
@@ -374,7 +374,7 @@
                    <enum>QAbstractSpinBox::UpDownArrows</enum>
                   </property>
                   <property name="suffix">
-                   <string> kBps</string>
+                   <string> кБ/с</string>
                   </property>
                   <property name="maximum">
                    <number>500000</number>
@@ -404,7 +404,7 @@
                    <enum>QAbstractSpinBox::UpDownArrows</enum>
                   </property>
                   <property name="suffix">
-                   <string> kBps</string>
+                   <string> кБ/с</string>
                   </property>
                   <property name="maximum">
                    <number>500000</number>
@@ -435,7 +435,7 @@
                 <item>
                  <widget class="QSpinBox" name="connectionTimeout">
                   <property name="suffix">
-                   <string> sec</string>
+                   <string> с</string>
                   </property>
                   <property name="minimum">
                    <number>1</number>
