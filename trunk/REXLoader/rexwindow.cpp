@@ -65,6 +65,7 @@ REXWindow::REXWindow(QWidget *parent) :
     plugmgr = new PluginManager(this);
     connect(plugmgr,SIGNAL(pluginStatus(bool)),this,SLOT(pluginStatus(bool)));
     connect(qApp,SIGNAL(aboutToQuit()),this,SLOT(prepareToQuit()));
+    connect(this,SIGNAL(needExecQuery(QString)),plugmgr,SLOT(exeQuery(QString)));
 
     createInterface();
 
@@ -768,6 +769,9 @@ void REXWindow::scanNewTaskQueue()
 
 void REXWindow::loadPlugins()
 {
+    QString dbfile = QDir::homePath()+"/.rexloader/tasks.db";
+    plugmgr->setDatabaseFile(dbfile);
+
     plugmgr->setDefaultSettings(max_tasks, max_threads, down_speed);
     plugmgr->setPlugDir(pluginDirs);
     plugmgr->setPlugLists(&plugfiles, &pluglist, &plugproto);
@@ -793,7 +797,6 @@ void REXWindow::scheduler()
     lockProcess(true);
 
     scanNewTaskQueue();
-    //scanClipboard();
     syncTaskData();
     manageTaskQueue();
 
@@ -1068,16 +1071,16 @@ void REXWindow::startTask(int id)
 
 void REXWindow::startAllTasks()
 {
-    QSqlQuery qr(QSqlDatabase::database());
+    /*QSqlQuery qr(QSqlDatabase::database());
     qr.prepare("UPDATE tasks SET tstatus=-100, lasterror='' WHERE tstatus IN (-100,0)");
     if(!qr.exec())
     {
         //запись в журнал ошибок
         qDebug()<<"void REXWindow::startAllTasks(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
         return;
-    }
+    }*/
+    emit needExecQuery("UPDATE tasks SET tstatus=-100, lasterror='' WHERE tstatus IN (-100,0)");
 
-    updateTaskSheet();
     QSortFilterProxyModel fltr;
     fltr.setSourceModel(model);
     fltr.setFilterRole(100);
@@ -1086,6 +1089,8 @@ void REXWindow::startAllTasks()
     for(int i = 0; i < fltr.rowCount(); ++i)
     {
         QModelIndex index = fltr.mapToSource(fltr.index(i,0));
+        model->addToCache(index.row(),9,-100);
+        model->addToCache(index.row(),7,"");
         model->updateRow(index.row());
     }
 
@@ -1213,52 +1218,43 @@ void REXWindow::stopTask(int id)
 
 void REXWindow::stopAllTasks()
 {
-    QSqlQuery qr(QSqlDatabase::database());
-    qr.prepare("SELECT id FROM tasks WHERE tstatus BETWEEN 1 AND 4");
-    if(!qr.exec())
-    {
-        //запись в журнал ошибок
-        qDebug()<<"void REXWindow::startAllTasks(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
-        return;
-    }
+    QSortFilterProxyModel select;
+    select.setSourceModel(model);
+    select.setFilterKeyColumn(9);
+    select.setFilterRole(100);
+    select.setFilterRegExp("^[1234]$");
 
-    while(qr.next())
+    for(int i = 0; i < select.rowCount(); ++i)
     {
-        int id_row = qr.value(0).toInt();
+        QModelIndex idx = select.index(i,0);
+        int id_row = select.data(idx,100).toInt();
         int id_task = tasklist.value(id_row)%100;
-        //int id_proto = tasklist.value(id_row)/100;
         if(!id_task)continue;
 
-        //LoaderInterface *ldr = pluglist.value(id_proto);
         plugmgr->stopDownload(tasklist.value(id_row));
-        //ldr->stopDownload(id_task);
     }
 
     if(!stop_flag) //если программа продолжает штатную работу
     {
-        qr.clear();
-        qr.prepare("UPDATE tasks SET tstatus=0 WHERE tstatus=-100");
-        if(!qr.exec())
-        {
-            //запись в журнал ошибок
-            qDebug()<<"void REXWindow::startAllTasks(2): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
-            return;
-        }
-        updateTaskSheet();
+        emit needExecQuery("UPDATE tasks SET tstatus=0 WHERE tstatus=-100");
+
         QSortFilterProxyModel fltr;
         fltr.setSourceModel(model);
         fltr.setFilterRole(100);
         fltr.setFilterKeyColumn(9);
-        fltr.setFilterFixedString("0");
+        fltr.setFilterFixedString("-100");
         for(int i = 0; i < fltr.rowCount(); ++i)
         {
             QModelIndex index = fltr.mapToSource(fltr.index(i,0));
+            model->addToCache(index.row(),9,0);
             model->updateRow(index.row());
         }
         manageTaskQueue();
     }
     else //если программа завершает свою работу
     {
+        QSqlQuery qr(QSqlDatabase::database());
+
         qr.clear();
         qr.prepare("UPDATE tasks SET tstatus=0 WHERE tstatus BETWEEN 1 AND 4 OR tstatus=-100");
         if(!qr.exec())
@@ -1272,7 +1268,7 @@ void REXWindow::stopAllTasks()
 }
 
 void REXWindow::syncTaskData()
-{
+{    
     if(tasklist.isEmpty())return;
 
     QList<int> keys = tasklist.keys();
@@ -1365,21 +1361,17 @@ void REXWindow::syncTaskData()
                 errStr = ldr->errorString(errno_);
             }
 
-            qr.prepare("UPDATE tasks SET totalsize=:totalsize, currentsize=:currentsize, filename=:filename, downtime=:downtime, tstatus=:tstatus, speed_avg=:speedavg,lasterror=:lasterror WHERE id=:id");
-            qr.bindValue("totalsize",QString::number(totalsize));
-            qr.bindValue("currentsize",QString::number(totalload));
-            qr.bindValue("filename",filepath);
-            qr.bindValue("downtime",downtime);
-            qr.bindValue("tstatus",tstatus);
-            qr.bindValue("speedavg",QString::number(speedAvg));
-            qr.bindValue("lasterror",tr("%1 (Код ошибки: %2)").arg(errStr,QString::number(errno_)));
-            qr.bindValue("id",id_row);
+            QString query = QString("UPDATE tasks SET totalsize='%1', currentsize='%2', filename='%3', downtime='%4', tstatus='%5', speed_avg='%6',lasterror='%7' WHERE id=%8").arg(
+                        QString::number(totalsize),
+                        QString::number(totalload),
+                        filepath,
+                        QString::number(downtime),
+                        QString::number(tstatus),
+                        QString::number(speedAvg),
+                        tr("%1 (Код ошибки: %2)").arg(errStr,QString::number(errno_)),
+                        QString::number(id_row));
+            emit needExecQuery(query);
 
-            if(!qr.exec())
-            {
-                //запись в журнал ошибок
-                qDebug()<<"void REXWindow::syncTaskData(1): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
-            }
             model->addToCache(index.row(),5,totalsize);
             model->addToCache(index.row(),6,downtime);
             model->addToCache(index.row(),4,totalload);
@@ -1431,20 +1423,16 @@ void REXWindow::syncTaskData()
                     filepath = newFilename;
                 }
             }
-            qr.prepare("UPDATE tasks SET totalsize=:totalsize, currentsize=:currentsize, filename=:filename, downtime=:downtime, tstatus=:tstatus, speed_avg=:speedavg WHERE id=:id");
-            qr.bindValue("totalsize",QString::number(totalsize));
-            qr.bindValue("currentsize",QString::number(totalload));
-            qr.bindValue("filename",filepath);
-            qr.bindValue("downtime",downtime);
-            qr.bindValue("tstatus",tstatus);
-            qr.bindValue("speedavg",QString::number(speedAvg));
-            qr.bindValue("id",id_row);
+            QString query = QString("UPDATE tasks SET totalsize='%1', currentsize='%2', filename='%3', downtime=%4, tstatus=%5, speed_avg='%6' WHERE id=%7").arg(
+                        QString::number(totalsize),
+                        QString::number(totalload),
+                        filepath,
+                        QString::number(downtime),
+                        QString::number(tstatus),
+                        QString::number(speedAvg),
+                        QString::number(id_row));
+            emit needExecQuery(query);
 
-            if(!qr.exec())
-            {
-                //запись в журнал ошибок
-                qDebug()<<"void REXWindow::syncTaskData(2): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
-            }
             model->addToCache(index.row(),5,totalsize);
             model->addToCache(index.row(),6,downtime);
             model->addToCache(index.row(),4,totalload);
@@ -1462,74 +1450,78 @@ void REXWindow::syncTaskData()
         model->addToUpdateRowQueue(index.row());
         QTimer::singleShot(0,model,SLOT(updateRow()));
     }
-    qr.clear();
-    qr.exec("SELECT id FROM tasks WHERE tstatus IN (-100,-2,0)");
-    if(!tasklist.size() && !qr.next())
+
+    QSortFilterProxyModel select;
+    select.setSourceModel(model);
+    select.setFilterKeyColumn(9);
+    select.setFilterRole(100);
+    select.setFilterRegExp("(^-100$)|(^-2$)|(^0$)");
+    if(!tasklist.size() && !select.rowCount())
         trayicon->showMessage(tr("REXLoader"),tr("Все задания завершены."));
 }
 
 void REXWindow::manageTaskQueue()
 {
     if(stop_flag)return;
-    QSqlQuery qr(QSqlDatabase::database());
-    qr.prepare("SELECT * FROM tasks WHERE tstatus=-100 GROUP BY id ORDER BY priority DESC"); //список задач в очереди
-    if(!qr.exec())
-    {
-        //запись в журнал ошибок
-        qDebug()<<"void REXWindow::manageTaskQueue(1): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
-    }
 
-    while(tasklist.size() < max_tasks && qr.next()) //если запущено меньше задач, чем разрешено
+    QSortFilterProxyModel select;
+    select.setSourceModel(model);
+    select.setDynamicSortFilter(true);
+    select.setFilterRole(100);
+    select.setFilterKeyColumn(9);
+    select.setFilterFixedString("-100");
+    select.setSortRole(100);
+    select.sort(13,Qt::DescendingOrder);
+
+    int i = 0;
+    for(; tasklist.size() < max_tasks && i < select.rowCount(); ++i)
     {
-        QUrl _url = QUrl::fromEncoded(qr.value(1).toByteArray());
+        int id_row = select.data(select.index(i,0),100).toInt();
+        QUrl _url = QUrl::fromEncoded(select.data(select.index(i,1),100).toByteArray());
         if(!plugproto.contains(_url.scheme().toLower()))
         {
-            QSqlQuery qr1(QSqlDatabase::database());
-            qr1.prepare("UPDATE tasks SET tstatus=:status, lasterror=:error WHERE id=:id");
-            qr1.bindValue("status",LInterface::ERROR_TASK);
-            qr1.bindValue("error",tr("Этот протокол не поддерживается. Проверьте наличие соответствующего плагина и его состояние."));
-            qr1.bindValue("id",qr.value(0).toInt());
-            if(!qr1.exec())
-            {
-                //запись в журнал ошибок
-                qDebug()<<"void REXWindow::manageTaskQueue(2): SQL:" + qr1.executedQuery() + " Error: " + qr1.lastError().text();
-            }
+            QString err = tr("Этот протокол не поддерживается. Проверьте наличие соответствующего плагина и его состояние.");
+            QString query = QString("UPDATE tasks SET tstatus=%1, lasterror='%2' WHERE id=%3").arg(
+                        QString::number((int)LInterface::ERROR_TASK),
+                        err,
+                        QString::number(id_row));
+            emit needExecQuery(query);
+
+            QModelIndex srcIdx = select.mapToSource(select.index(i,9));
+            model->addToCache(srcIdx.row(),srcIdx.column(),(int)LInterface::ERROR_TASK);
+            srcIdx = model->index(srcIdx.row(),7);
+            model->addToCache(srcIdx.row(),srcIdx.column(),err);
+            model->updateRow(srcIdx.row());
             continue;
         }
 
-        int id_row = qr.value(0).toInt();
-        startTaskNumber(id_row,_url,qr.value(3).toString(),qr.value(4).toLongLong());
+        startTaskNumber(id_row,_url,select.data(select.index(i,3),100).toString(),select.data(select.index(i,4),100).toLongLong());
     }
 
-    if(!qr.next())
+    if(i >= select.rowCount())
     {
         if(tasklist.size() > 0)startTrayIconAnimaion();
         else stopTrayIconAnimation();
-        updateStatusBar();
+        QTimer::singleShot(0,this,SLOT(updateStatusBar()));
         return;
     }
 
-    QSqlQuery qr1(QSqlDatabase::database());
-    qr1.prepare("SELECT id,priority FROM tasks WHERE tstatus BETWEEN 1 AND 4 ORDER BY priority ASC"); //список выполняемых задач
-    if(!qr1.exec())
+    QSortFilterProxyModel select1;
+    select1.setSourceModel(model);
+    select1.setFilterRole(100);
+    select1.setFilterKeyColumn(9);
+    select1.setFilterRegExp("^[1234]$");
+    select1.setSortRole(100);
+    select1.sort(13,Qt::AscendingOrder);
+
+    if(!select.rowCount())return;
+
+    for(int y = 0; i < select.rowCount() && y < select1.rowCount(); ++i, ++y)
     {
-        //запись в журнал ошибок
-        qDebug()<<"void REXWindow::manageTaskQueue(3): SQL:" + qr1.executedQuery() + " Error: " + qr1.lastError().text();
-        return;
-    }
-
-    if(!qr1.next())return;
-
-    QSortFilterProxyModel proxymdl;
-    proxymdl.setSourceModel(model);
-    proxymdl.setFilterRole(100);
-    proxymdl.setFilterKeyColumn(0);
-
-    do{
-        if(qr.value(13).toInt() <= qr1.value(13).toInt()) break; //если самый высокий приоритет стоящего в очереди меньше или равен самому маленькому приоритету выполняющегося, то выходим
-        if(qr.value(13).toInt() > qr1.value(1).toInt())
+        if(select.data(select.index(i,13),100).toInt() <= select1.data(select1.index(y,13),100).toInt()) break; //если самый высокий приоритет стоящего в очереди меньше или равен самому маленькому приоритету выполняющегося, то выходим
+        else
         {
-            int id_row = qr1.value(0).toInt();
+            int id_row = select1.data(select1.index(y,0),100).toInt();
             int id_task = tasklist.value(id_row)%100;
             int id_proto = tasklist.value(id_row)/100;
 
@@ -1537,51 +1529,44 @@ void REXWindow::manageTaskQueue()
 
             //останавливаем найденную задачу, удаляем её из менеджера закачек
             ldr->stopDownload(id_task);
-            qr1.clear();
-            qr1.prepare("UPDATE tasks SET tstatus=-100 WHERE id=:id");
-            qr1.bindValue("id",id_row);
-            if(!qr1.exec())
-            {
-                //запись в журнал ошибок
-                qDebug()<<"void REXWindow::manageTaskQueue(2): SQL:" + qr1.executedQuery() + " Error: " + qr1.lastError().text();
-                break;
-            }
-
-            proxymdl.setFilterFixedString(QString::number(id_row));
-            QModelIndex index = proxymdl.mapToSource(proxymdl.index(0,0));
-            model->addToCache(index.row(),9,-100);
+            QString query = QString("UPDATE tasks SET tstatus=-100 WHERE id=%1").arg(QString::number(id_row));
+            emit needExecQuery(query);
+            QModelIndex srcIdx = select1.mapToSource(select1.index(y,9));
+            model->addToCache(srcIdx.row(),srcIdx.column(),-100);
             ldr->deleteTask(id_task);
             tasklist.remove(id_row);
-            model->updateRow(index.row());
+            model->updateRow(srcIdx.row());
 
             //запускаем новую задачу
 
-            QUrl _url(qr.value(1).toString());
-            id_row = qr.value(0).toInt();
+            QUrl _url(select.data(select.index(i,1),100).toString());
+            id_row = select.data(select.index(i,0),100).toInt();
 
             if(!plugproto.contains(_url.scheme().toLower())) //если протокол не поддерживается, то пропускаем эту задачу в очереди, поменяв её статус на ошибку
             {
-                QSqlQuery qr1(QSqlDatabase::database());
-                qr1.prepare("UPDATE tasks SET status=:status, lasterror=:error WHERE id=:id");
-                qr1.bindValue("status",LInterface::ERROR_TASK);
-                qr1.bindValue("error",tr("Этот протокол не поддерживается. Проверьте наличие соответствующего плагина и его состояние."));
-                qr1.bindValue("id",qr.value(0).toInt());
-                if(!qr1.exec())
-                {
-                    //запись в журнал ошибок
-                    qDebug()<<"void REXWindow::manageTaskQueue(2): SQL:" + qr1.executedQuery() + " Error: " + qr1.lastError().text();
-                }
+                QString err = tr("Этот протокол не поддерживается. Проверьте наличие соответствующего плагина и его состояние.");
+                int id = select.data(select.index(i,0),100).toInt();
+                QString query = QString("UPDATE tasks SET status=%1, lasterror='%2' WHERE id=%3").arg(
+                            QString::number((int)LInterface::ERROR_TASK),
+                            err,
+                            QString::number(id));
+
+                emit needExecQuery(query);
+                QModelIndex idx = select.mapToSource(select.index(i,9));
+                model->addToCache(idx.row(),idx.column(),(int)LInterface::ERROR_TASK);
+                idx = model->index(idx.row(),7);
+                model->addToCache(idx.row(),idx.column(),err);
+                model->updateRow(idx.row());
                 continue;
             }
 
-            startTaskNumber(id_row,_url,qr.value(3).toString(),qr.value(4).toLongLong());
-            if(!qr1.next())break;
+            startTaskNumber(id_row,_url,select.data(select.index(i,3),100).toString(),select.data(select.index(i,4),100).toLongLong());
         }
-    }while(qr.next());
+    }
 
     if(tasklist.size() > 0)startTrayIconAnimaion();
     else stopTrayIconAnimation();
-    updateStatusBar();
+    QTimer::singleShot(0,this,SLOT(updateStatusBar()));
 }
 
 void REXWindow::updateStatusBar()
@@ -1721,6 +1706,7 @@ REXWindow::~REXWindow()
     delete ui;
     sched_flag = false;
     plugmgr->quit();
+    plugmgr->wait(3000);
 
     lockProcess(false);
 }

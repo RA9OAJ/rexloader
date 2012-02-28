@@ -1,3 +1,21 @@
+/*
+Project: REXLoader (Downloader, plugin: HttpLoader), Source file: httpsection.cpp
+Copyright (C) 2011  Sarvaritdinov R.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "httpsection.h"
 
 HttpSection::HttpSection(QObject *parent) : QObject(parent) /*:
@@ -280,9 +298,10 @@ void HttpSection::dataAnalising()
 
         //--Определяем имя файла---
         QFileInfo flinfo(flname);
-        if(flinfo.isDir())
+        if(flinfo.isDir() || header.contains("content-disposition"))
         {
-            if(flname[flname.size()-1]!='/')flname += "/";
+            if(flname[flname.size()-1]!='/' && flinfo.isDir())flname += "/";
+            if(flname[flname.size()-1]!='/' && header.contains("content-disposition")) flname = flinfo.absolutePath() + "/";
             QString _tmpname = attachedFileName(header["content-disposition"]);
 
             if(_tmpname.isEmpty())

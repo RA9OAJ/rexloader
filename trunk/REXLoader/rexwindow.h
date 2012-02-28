@@ -116,6 +116,7 @@ protected slots:
 
 signals:
     void transAct();
+    void needExecQuery(const QString &query);
 
 private:
     void lockProcess(bool flag=true); //позволяет создать/удалить файл блокировки процесса
