@@ -431,6 +431,9 @@ void HttpSection::dataAnalising()
                 if(!chunked_size)
                 {
                     decompressSize += fl->write(ungzipData(inbuf));
+                    if(!decompressSize && inbuf.size() > 0 && header["transfer-encoding"].toLower().indexOf("deflate") < 0)
+                        decompressSize += fl->write(inbuf); //если просто chunked без deflate сжатия
+
                     if(decompressSize < 0)
                     {
                         _errno = -4; //ошибка при записи в файл
@@ -583,7 +586,6 @@ QByteArray HttpSection::ungzipData(QByteArray &data)
         ret = inflateInit2(&strm, 47);
         if (ret != Z_OK)
             return QByteArray();
-
         do {
             strm.avail_out = CHUNK_SIZE;
             strm.next_out = (Bytef*)(out);
