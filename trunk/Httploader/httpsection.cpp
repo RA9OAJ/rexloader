@@ -263,7 +263,7 @@ void HttpSection::sendHeader()
         _header += QString("Authorization: Basic %1\r\n").arg(authorization);
 
     _header += QString("Referer: http://%1/\r\n").arg(referer == "" ? url.host():referer);
-    _header += QString("Connection: Close\r\n\r\n");
+    _header += QString("Connection: keep-alive\r\n\r\n");
     soc->write(_header.toAscii().data());
 }
 
@@ -298,7 +298,7 @@ void HttpSection::dataAnalising()
 
         //--Определяем имя файла---
         QFileInfo flinfo(flname);
-        if(flinfo.isDir() || header.contains("content-disposition"))
+        if(flinfo.isDir() || (!flinfo.exists() && header.contains("content-disposition")))
         {
             if(flname[flname.size()-1]!='/' && flinfo.isDir())flname += "/";
             if(flname[flname.size()-1]!='/' && header.contains("content-disposition")) flname = flinfo.absolutePath() + "/";
@@ -455,7 +455,7 @@ void HttpSection::dataAnalising()
 
         if(chunked_size > 0 && chunked_size - chunked_load == 0) //если скачка по методу Chunked
         {
-            chunked_size = -1; //если выкачали секцию целиком, то сбрасываем общий размер текущей chunkde-секции в -1
+            chunked_size = -1; //если выкачали секцию целиком, то сбрасываем общий размер текущей chunked-секции в -1
             while(soc->read(1) != "\n");
         }
         if(cur_bloc == -1)
