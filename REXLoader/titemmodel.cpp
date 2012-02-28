@@ -54,7 +54,7 @@ bool TItemModel::silentUpdateModel(const QSqlDatabase &db)
     if(qr)delete(qr);
     qr = 0;
 
-    qr = new QSqlQuery("SELECT * FROM tasks;",db);
+    qr = new QSqlQuery("SELECT * FROM tasks ORDER BY id ASC;",db);
     if(!qr->exec())
     {
         reset();
@@ -93,7 +93,7 @@ void TItemModel::updateRow(int row)
     {
         QModelIndex ModelIndex = index(row, i, QModelIndex());
         emit dataChanged(ModelIndex, ModelIndex);
-        //qApp->processEvents();
+        qApp->processEvents();
     }
 }
 

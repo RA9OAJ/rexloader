@@ -1,6 +1,6 @@
 /*
-<one line to give the program's name and a brief idea of what it does.>
-Copyright (C) <year>  <name of author>
+Project: REXLoader (Downloader), Source file: pluginmanager.cpp
+Copyright (C) 2011  Sarvaritdinov R.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -26,6 +26,12 @@ PluginManager::PluginManager(QObject *parent) :
     plugproto = 0;
     max_tasks = 0;
     max_threads = 0;
+
+    updOper = 0;
+}
+
+PluginManager::~PluginManager()
+{
 }
 
 void PluginManager::setPlugDir(const QStringList &dir)
@@ -74,6 +80,14 @@ void PluginManager::run()
 
     bool stat = false;
     if(pluglist->size())stat = true;
+    if(stat)
+    {
+        UpdaterOperator *op = new UpdaterOperator();
+
+        op->openDatabase(db);
+        connect(this,SIGNAL(needExecQuery(QString)),op,SLOT(execQuery(QString)),Qt::QueuedConnection);
+    }
+
     emit pluginStatus(stat);
     exec();
 }
@@ -93,6 +107,16 @@ void PluginManager::startDownload(int id_task)
 void PluginManager::stopDownload(int id_tsk)
 {
     emit stopTask(id_tsk);
+}
+
+void PluginManager::exeQuery(const QString &query)
+{
+    emit needExecQuery(query);
+}
+
+void PluginManager::setDatabaseFile(const QString &dbfile)
+{
+    db = dbfile;
 }
 
 //---------------------PluginOperator----------------------
@@ -214,4 +238,31 @@ QByteArray PluginManager::pluginsState() const
     return out;
 }
 
+//-----------------------UpdaterOperator-----------------
 
+UpdaterOperator::UpdaterOperator(QObject *parent) :
+    QObject::QObject(parent)
+{
+}
+
+bool UpdaterOperator::openDatabase(const QString &dbfile)
+{
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE","sqliteConnection");
+    db.setDatabaseName(dbfile);
+
+    return db.open();
+}
+
+void UpdaterOperator::execQuery(const QString &query)
+{
+    QSqlQuery qr;
+    qr.prepare(query);
+    if(!qr.exec())
+    {
+        qDebug()<<"SQL Error:" + qr.executedQuery() + " Error: " + qr.lastError().text();
+    }
+}
+
+UpdaterOperator::~UpdaterOperator()
+{
+}
