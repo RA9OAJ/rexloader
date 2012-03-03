@@ -799,11 +799,12 @@ void REXWindow::scheduler()
     scanNewTaskQueue();
     syncTaskData();
     manageTaskQueue();
-    if(!trayicon->isSystemTrayAvailable()) //исправление исчезновения значка в лотке после падения plasma-desktop на KDE
-    {
-        QTimer::singleShot(0,trayicon,SLOT(hide()));
-        QTimer::singleShot(0,trayicon,SLOT(show()));
-    }
+    if(!trayicon->isSystemTrayAvailable() && trayicon->isVisible()) //исправление исчезновения значка в лотке после падения plasma-desktop на KD
+        trayicon->hide();
+
+    if(trayicon->isSystemTrayAvailable() && !trayicon->isVisible())
+        trayicon->show();
+
 
     QTimer::singleShot(1000,this,SLOT(scheduler()));
 }
