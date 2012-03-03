@@ -374,7 +374,7 @@ void AddTaskDialog::setAdditionalInfo(const QString &flnm, qint64 cursz, qint64 
     totalsize = totalsz;
     mymime = mime;
     additional_flag = true;
-    getCategory(myfilename);
+    getCategory(gui->urlBox->currentText());
 }
 
 void AddTaskDialog::getCategory(const QString &file)

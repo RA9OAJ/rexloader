@@ -175,7 +175,10 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         }
 
         if(index.column() == 2)
-            return QDateTime::fromString(myData(row,2).toString(),"yyyy-MM-ddThh:mm:ss");
+        {
+            QDateTime tm = QDateTime::fromString(myData(row,2).toString(),"yyyy-MM-ddThh:mm:ss");
+            return tm.toString("dd.MM.yyyy hh:mm:ss");
+        }
 
         if(index.column() == 3)
         {
@@ -186,8 +189,10 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
 
         if(index.column() == 5)
         {
-            if(!myData(row,5).toLongLong())return tr("Н/д");
-            QStringList sz = sizeForHumans(myData(row,5).toLongLong());
+            if(!myData(row,5).toLongLong() && !myData(row,4).toLongLong()) return tr("Н/д");
+            QStringList sz;
+            if(!myData(row,5).toLongLong() && myData(row,4).toLongLong()) sz = sizeForHumans(myData(row,4).toLongLong());
+            else sz = sizeForHumans(myData(row,5).toLongLong());
             return sz.value(0)+sz.value(1);
         }
 
@@ -199,19 +204,26 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
 
         if(index.column() == 9)
         {
+            QString percent = tr("Н/д");
+            QString altpersent;
+            if(myData(row,5).toLongLong())
+            {
+                percent = QString::number(myData(row,4).toLongLong()*100/myData(row,5).toLongLong())+QString("%");
+                altpersent = QString(" (%1)").arg(percent);
+            }
+
             switch(myData(row,9).toInt())
             {
-            case LInterface::ON_PAUSE: return QString(tr("Остановлено"));
-            case LInterface::ERROR_TASK: return QString(tr("Ошибка"));
-            case -100: return QString(tr("Ожидание"));
+            case LInterface::ON_PAUSE: return tr("Остановлено") + altpersent;
+            case LInterface::ERROR_TASK: return tr("Ошибка") + altpersent;
+            case -100: return QString(tr("Ожидание")) + altpersent;
             case LInterface::ACCEPT_QUERY:
             case LInterface::SEND_QUERY:
             case LInterface::REDIRECT:
             case LInterface::STOPPING:
             case LInterface::ON_LOAD:
-                if(myData(row,5).toLongLong()) return QString::number(myData(row,4).toLongLong()*100/myData(row,5).toLongLong())+QString("%");
-                else return tr("Н/д");
-            case LInterface::FINISHED: return QString(tr("Завершено"));
+                return percent;
+            case LInterface::FINISHED: return tr("Завершено");
 
             default: return QVariant();
             }

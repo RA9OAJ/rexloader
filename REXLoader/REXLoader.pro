@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     filenamevalidator.cpp \
     taskdialog.cpp \
     pluginmanager.cpp \
-    tableview.cpp
+    tableview.cpp \
+    colorbutton.cpp
 
 HEADERS  += rexwindow.h \
     titemmodel.h \
@@ -36,7 +37,8 @@ HEADERS  += rexwindow.h \
     filenamevalidator.h \
     taskdialog.h \
     pluginmanager.h \
-    tableview.h
+    tableview.h \
+    colorbutton.h
 
 FORMS    += rexwindow.ui \
     addtaskdialog.ui \

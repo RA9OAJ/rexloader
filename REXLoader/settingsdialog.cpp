@@ -42,6 +42,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
     ui->networkBox->setVisible(false);
     ui->downloadsBox->setVisible(false);
+    ui->interfaceBox->setVisible(false);
     resize(size().width(),220);
     applySets();
 }
@@ -64,17 +65,26 @@ void SettingsDialog::selectSubSettings()
         ui->downloadsBox->setVisible(false);
         ui->networkBox->setVisible(false);
         ui->generalBox->setVisible(true);
+        ui->interfaceBox->setVisible(false);
         break;
     case 1:
         ui->downloadsBox->setVisible(false);
         ui->generalBox->setVisible(false);
         ui->networkBox->setVisible(true);
+        ui->interfaceBox->setVisible(false);
         break;
     case 2:
         ui->networkBox->setVisible(false);
         ui->generalBox->setVisible(false);
         ui->downloadsBox->setVisible(true);
+        ui->interfaceBox->setVisible(false);
         break;
+    case 3:
+        ui->networkBox->setVisible(false);
+        ui->generalBox->setVisible(false);
+        ui->downloadsBox->setVisible(false);
+        ui->interfaceBox->setVisible(true);
+
     default: ui->generalBox->setVisible(false); break;
     }
 
