@@ -262,7 +262,7 @@ void HttpSection::sendHeader()
     if(!authorization.isEmpty())
         _header += QString("Authorization: Basic %1\r\n").arg(authorization);
 
-    _header += QString("Referer: http://%1/\r\n").arg(referer == "" ? url.host():referer);
+    if(!referer.isEmpty())_header += QString("Referer: http://%1/\r\n").arg(referer);
     _header += QString("Connection: keep-alive\r\n\r\n");
     soc->write(_header.toAscii().data());
 }
@@ -385,10 +385,12 @@ void HttpSection::dataAnalising()
             }
             else emit unidentifiedServerRequest();
             return;
+        case 400:
         case 401:
         case 403:
         case 404:
         case 405:
+        case 409:
         case 416:
         case 503:
             stopDownloading();

@@ -31,5 +31,9 @@
         <file alias="delete_48x48.png">images/delete_48x48.png</file>
         <file alias="start_all_48x48.png">images/start_all_48x48.png</file>
         <file alias="pause_all_48x8.png">images/pause_all_48x48.png</file>
+        <file alias="yes_16x16.png">images/yes_16x16.png</file>
+        <file alias="yes_24x24.png">images/yes_24x24.png</file>
+        <file alias="no_16x16.png">images/no_16x16.png</file>
+        <file alias="no_24x24.png">images/no_24x24.png</file>
     </qresource>
 </RCC>

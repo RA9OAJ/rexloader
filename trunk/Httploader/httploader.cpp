@@ -706,7 +706,9 @@ void HttpLoader::sectError(int _errno)
     case QAbstractSocket::ProxyConnectionRefusedError:
     case QAbstractSocket::ProxyConnectionClosedError:
     case QAbstractSocket::ProxyConnectionTimeoutError:
+    case 400:
     case 403:
+    case 409:
     case 503:
 
         if(tsk->sections_cnt < 2)++tsk->errors_cnt;
@@ -945,6 +947,7 @@ void HttpLoader::acceptRang()
         }
     }
 
+    sect->setUrlToDownload(QString(tsk->url.toEncoded()));
     sect->setSection(tsk->map[0], tsk->map[2]-1);
     sect->setOffset(tsk->map[1]);
     connect(sect, SIGNAL(acceptQuery()),this,SLOT(acceptQuery()));
