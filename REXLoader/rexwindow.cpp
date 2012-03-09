@@ -619,6 +619,7 @@ void REXWindow::scanClipboard()
         dlg->setNewUrl(url.toString());
         dlg->setWindowFlags(Qt::WindowStaysOnTopHint);
         dlg->show();
+        dlg->activateWindow();
         dlg->setFocus();
     }
 }
@@ -739,6 +740,7 @@ void REXWindow::scanNewTaskQueue()
                     dlg->setAdditionalInfo(_path,sum,tsize,mime);
                     dlg->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
                     dlg->show();
+                    dlg->activateWindow();
                 }
                 default: break;
                 }
@@ -751,6 +753,7 @@ void REXWindow::scanNewTaskQueue()
                 dlg->setNewUrl(qr.value(1).toString());
                 dlg->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
                 dlg->show();
+                dlg->activateWindow();
             }
         }
 
@@ -846,6 +849,7 @@ void REXWindow::showAddTaskDialog()
     dlg->setValidProtocols(plugproto);
     if(!isVisible()) dlg->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
     dlg->show();
+    dlg->activateWindow();
 }
 
 void REXWindow::showHideSlot(QSystemTrayIcon::ActivationReason type)
@@ -1422,6 +1426,7 @@ void REXWindow::syncTaskData()
                     question->setModal(false);
                     if(!isVisible())question->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
                     question->show();
+                    question->activateWindow();
                 }
                 else
                 {

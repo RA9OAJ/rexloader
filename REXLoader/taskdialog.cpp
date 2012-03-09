@@ -51,6 +51,8 @@ void TaskDialog::setSourceData(TItemModel *model, QModelIndex index, const QHash
     {
         ui->lineEdit->setText(mdl->data(mdl->index(idx.row(),1),100).toString());
         ui->comboBox->setCurrentIndex(mdl->data(mdl->index(idx.row(),13),100).toInt());
+        QFileInfo flinfo(model->data(model->index(index.row(),3),Qt::DisplayRole).toString());
+        setWindowTitle(windowTitle() + QString(" - %1").arg(flinfo.fileName()));
     }
 }
 
@@ -76,10 +78,18 @@ void TaskDialog::scheduler()
         int proto_id = lst->value(id)/100;
         int sect_cnt = 0;
 
-        if(ldr->contains(proto_id))
-            sect_cnt = ldr->value(proto_id)->countSectionTask(task_id);
-
         int status = mdl->data(mdl->index(idx.row(),9),100).toInt();
+
+        if(ldr->contains(proto_id))
+        {
+            sect_cnt = ldr->value(proto_id)->countSectionTask(task_id);
+            if(sect_cnt && status == LInterface::ON_LOAD)
+            {
+                ui->acceptIcon->setText(ldr->value(proto_id)->acceptRanges(task_id) ? tr("Есть") : tr("Нет"));
+                ui->acceptIcon->setPixmap(ldr->value(proto_id)->acceptRanges(task_id) ? QPixmap(":/appimages/yes_16x16.png") : QPixmap(":/appimages/no_16x16.png"));
+            }
+        }
+
         switch(status)
         {
         case LInterface::ERROR_TASK:
