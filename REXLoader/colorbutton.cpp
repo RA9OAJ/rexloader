@@ -55,8 +55,9 @@ void ColorButton::setColor(const QColor &color)
         colordlg_stat = dlg->saveGeometry();
         dlg->deleteLater();
         dlg = 0;
+        emit colorSelected(color);
     }
-    emit colorSelected(color);
+    repaint();
 }
 
 QColor ColorButton::currentColor() const
@@ -113,4 +114,5 @@ void ColorButton::cancelColorDialog()
 void ColorButton::resetToDefault()
 {
     cur_color = def_color;
+    repaint();
 }

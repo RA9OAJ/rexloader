@@ -1028,23 +1028,17 @@ void REXWindow::startTask()
         }
         if(!i || where.isEmpty()) where = QString("id=%1").arg(QString::number(id_row));
         else where += QString(" OR id=%1").arg(QString::number(id_row));
+
+        QModelIndex index = sfmodel->mapToSource(select->selectedRows(9).value(i));
+        model->addToCache(index.row(),9,-100);
     }
     if(where.isEmpty())return;
 
-    QSqlQuery qr(QSqlDatabase::database());
-    qr.prepare("UPDATE tasks SET tstatus=-100, lasterror='' WHERE " + where);
-
-    if(!qr.exec())
-    {
-        //запись в журнал ошибок
-        qDebug()<<"void REXWindow::startTask(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
-    }
-    updateTaskSheet();
+    emit needExecQuery("UPDATE tasks SET tstatus=-100, lasterror='' WHERE " + where);
 
     for(int i=0; i < select->selectedRows().length(); i++)
     {
         QModelIndex index = sfmodel->mapToSource(select->selectedRows(9).value(i));
-        //int tstatus = select->selectedRows(9).value(i).data(100).toInt(); //статус в базе данных
         model->updateRow(index.row());
     }
     manageTaskQueue();
@@ -1080,15 +1074,7 @@ void REXWindow::startTask(int id)
 }
 
 void REXWindow::startAllTasks()
-{
-    /*QSqlQuery qr(QSqlDatabase::database());
-    qr.prepare("UPDATE tasks SET tstatus=-100, lasterror='' WHERE tstatus IN (-100,0)");
-    if(!qr.exec())
-    {
-        //запись в журнал ошибок
-        qDebug()<<"void REXWindow::startAllTasks(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
-        return;
-    }*/
+{    
     emit needExecQuery("UPDATE tasks SET tstatus=-100, lasterror='' WHERE tstatus IN (-100,0)");
 
     QSortFilterProxyModel fltr;

@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     taskdialog.cpp \
     pluginmanager.cpp \
     tableview.cpp \
-    colorbutton.cpp
+    colorbutton.cpp \
+    fontselectbutton.cpp
 
 HEADERS  += rexwindow.h \
     titemmodel.h \
@@ -38,7 +39,8 @@ HEADERS  += rexwindow.h \
     taskdialog.h \
     pluginmanager.h \
     tableview.h \
-    colorbutton.h
+    colorbutton.h \
+    fontselectbutton.h
 
 FORMS    += rexwindow.ui \
     addtaskdialog.ui \
