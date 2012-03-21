@@ -4,6 +4,7 @@ CONFIG += plugin
 TARGET = HttpLoader
 TEMPLATE = lib
 CODECFORTR = UTF-8
+LIBS += -lz
 
 DESTDIR = ../usr/lib/rexloader/plugins
 
