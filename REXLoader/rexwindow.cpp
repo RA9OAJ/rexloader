@@ -512,11 +512,13 @@ void REXWindow::showNotice(const QString &title, const QString &text, int type)
 
 void REXWindow::saveSettings()
 {
-    QSettings settings(apphomedir+"/window.ini", QSettings::IniFormat,this);
+    QSettings settings(apphomedir+"/rexloader.ini", QSettings::IniFormat,this);
+
     settings.beginGroup("Main Window");
     settings.setValue("WindowGeometry",saveGeometry());
     settings.setValue("WindowState",saveState());
     settings.endGroup();
+
     settings.beginGroup("Windgets Interface");
     settings.setValue("TasksTable",ui->tableView->horizontalHeader()->saveState());
     settings.setValue("WindowHSplitter", ui->splitter_2->saveState());
@@ -526,6 +528,7 @@ void REXWindow::saveSettings()
     settings.setValue("S_low",ui->actionLow->isChecked());
     settings.setValue("S_verylow",ui->actionVeryLow->isChecked());
     settings.endGroup();
+
     settings.beginWriteArray("TreeViewNodes");
     QList<QModelIndex> list = treemodel->parentsInTree();
     for(int i = 0; i < list.size(); ++i)
@@ -534,6 +537,7 @@ void REXWindow::saveSettings()
         settings.setValue("State",ui->treeView->isExpanded(list.value(i)));
     }
     settings.endArray();
+
     settings.beginWriteArray("Application Settings");
     QList<QString> keys = settDlg->keys();
     for(int i = 0; i < keys.size(); ++i)
@@ -543,6 +547,7 @@ void REXWindow::saveSettings()
         settings.setValue("Value",settDlg->value(keys.value(i)));
     }
     settings.endArray();
+
     settings.beginGroup("State Plugins");
     settings.setValue("EnablePlugins",plugmgr->pluginsState());
     settings.endGroup();
@@ -551,7 +556,7 @@ void REXWindow::saveSettings()
 
 void REXWindow::loadSettings()
 {
-    QSettings settings(apphomedir+"/window.ini", QSettings::IniFormat,this);
+    QSettings settings(apphomedir+"/rexloader.ini", QSettings::IniFormat,this);
     settings.beginGroup("Main Window");
     restoreGeometry(settings.value("WindowGeometry").toByteArray());
     restoreState(settings.value("WindowState").toByteArray());
@@ -893,6 +898,7 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
                 setProxy(id_task, id_proto);
 
                 plugmgr->startDownload(id_task + id_proto*100);
+                if(settDlg->value("show_taskdialog").toBool()) showTaskDialog(id_row);
                 updateTaskSheet();
                 return;
             }
@@ -932,6 +938,7 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
     //pluglist.value(id_proto)->startDownload(id_task);
     setProxy(id_task, id_proto);
     plugmgr->startDownload(id_task + id_proto*100);
+    if(settDlg->value("show_taskdialog").toBool()) showTaskDialog(id_row);
 }
 
 void REXWindow::deleteTask()
@@ -1360,7 +1367,7 @@ void REXWindow::syncTaskData()
             QString query = QString("UPDATE tasks SET totalsize='%1', currentsize='%2', filename='%3', downtime='%4', tstatus='%5', speed_avg='%6',lasterror='%7' WHERE id=%8").arg(
                         QString::number(totalsize),
                         QString::number(totalload),
-                        filepath,
+                        filepath.replace("'","''"),
                         QString::number(downtime),
                         QString::number(tstatus),
                         QString::number(speedAvg),
@@ -1377,6 +1384,7 @@ void REXWindow::syncTaskData()
             model->addToCache(index.row(),7,QString("%1 (%2)").arg(errStr,QString::number(errno_)));
 
             ldr->deleteTask(id_task);
+            if(dlglist.contains(id_row)) dlglist.value(id_row)->close();
             tasklist.remove(id_row);
             calculateSpeed();
         }
@@ -1419,11 +1427,13 @@ void REXWindow::syncTaskData()
                     fl.rename(newFilename);
                     filepath = newFilename;
                 }
+
+                if(dlglist.contains(id_row)) dlglist.value(id_row)->close();
             }
             QString query = QString("UPDATE tasks SET totalsize='%1', currentsize='%2', filename='%3', downtime=%4, tstatus=%5, speed_avg='%6' WHERE id=%7").arg(
                         QString::number(totalsize),
                         QString::number(totalload),
-                        filepath,
+                        filepath.replace("'","''"),
                         QString::number(downtime),
                         QString::number(tstatus),
                         QString::number(speedAvg),
@@ -1875,6 +1885,27 @@ void REXWindow::readSettings()
         plugins.value(i)->setUserAgent(settDlg->value("user_agent").toString());
     }
 
+    model->setRowColor((int)LInterface::ON_PAUSE, settDlg->value("on_pause_color").value<QColor>());
+    model->setRowColor((int)LInterface::ON_LOAD, settDlg->value("on_load_color").value<QColor>());
+    model->setRowColor((int)LInterface::ERROR_TASK, settDlg->value("on_error_color").value<QColor>());
+    model->setRowColor(-100, settDlg->value("on_queue_color").value<QColor>());
+    model->setRowColor(LInterface::FINISHED, settDlg->value("on_finish_color").value<QColor>());
+
+    model->setRowFont((int)LInterface::ON_PAUSE, settDlg->value("on_pause_font").value<QFont>());
+    model->setRowFont((int)LInterface::ON_LOAD, settDlg->value("on_load_font").value<QFont>());
+    model->setRowFont((int)LInterface::ERROR_TASK, settDlg->value("on_error_font").value<QFont>());
+    model->setRowFont(-100, settDlg->value("on_queue_color").value<QFont>());
+    model->setRowFont(LInterface::FINISHED, settDlg->value("on_finish_font").value<QFont>());
+
+    model->setRowFontColor((int)LInterface::ON_PAUSE, settDlg->value("on_pause_font_color").value<QColor>());
+    model->setRowFontColor((int)LInterface::ON_LOAD, settDlg->value("on_load_font_color").value<QColor>());
+    model->setRowFontColor((int)LInterface::ERROR_TASK, settDlg->value("on_error_font_color").value<QColor>());
+    model->setRowFontColor(-100, settDlg->value("on_queue_font_color").value<QColor>());
+    model->setRowFontColor(LInterface::FINISHED, settDlg->value("on_finish_font_color").value<QColor>());
+
+    ui->tableView->resizeRowsToContents();
+    ui->tableView->scroll(0,1); // прокручиваем на 1 пиксел вниз для того, чтобы заставить вьюшку перерисовать строки
+    ui->tableView->scroll(0,-1); // возвращаем скроллер на место
     setTaskCnt();
     calculateSpeed();
 }
@@ -2166,6 +2197,30 @@ void REXWindow::showTaskDialog()
         dlglist.insert(id_row, dlg);
         dlg->show();
     }
+}
+
+void REXWindow::showTaskDialog(int id_row)
+{
+    if(dlglist.contains(id_row))
+    {
+        dlglist.value(id_row)->activateWindow();
+        return;
+    }
+
+    QSortFilterProxyModel filter;
+    filter.setSourceModel(model);
+    filter.setFilterKeyColumn(0);
+    filter.setFilterRole(100);
+    filter.setFilterFixedString(QString::number(id_row));
+    QModelIndex index = filter.mapToSource(filter.index(0,0));
+
+    TaskDialog *dlg = new TaskDialog(this);
+    dlg->setSourceData(model, index, pluglist, tasklist);
+    connect(dlg,SIGNAL(rejected()),this,SLOT(closeTaskDialog()));
+    connect(dlg,SIGNAL(startTask(int)),this,SLOT(startTask(int)));
+    connect(dlg,SIGNAL(stopTask(int)),this,SLOT(stopTask(int)));
+    dlglist.insert(id_row, dlg);
+    dlg->show();
 }
 
 void REXWindow::closeTaskDialog()

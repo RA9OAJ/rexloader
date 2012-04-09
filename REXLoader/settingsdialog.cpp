@@ -40,6 +40,19 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     connect(ui->buttonBox->button(QDialogButtonBox::Ok),SIGNAL(released()),this,SLOT(applyAndClose()));
     connect(ui->browseButton,SIGNAL(released()),this,SLOT(showFileDialog()));
 
+    connect(ui->onPauseColor,SIGNAL(colorSelected(QColor)),ui->onPauseFont,SLOT(setBackgroundColor(QColor)));
+    connect(ui->onPauseFontColor,SIGNAL(colorSelected(QColor)),ui->onPauseFont,SLOT(setFontColor(QColor)));
+    connect(ui->onQueueColor,SIGNAL(colorSelected(QColor)),ui->onQueueFont,SLOT(setBackgroundColor(QColor)));
+    connect(ui->onQueueFontColor,SIGNAL(colorSelected(QColor)),ui->onQueueFont,SLOT(setFontColor(QColor)));
+    connect(ui->onLoadColor,SIGNAL(colorSelected(QColor)),ui->onLoadFont,SLOT(setBackgroundColor(QColor)));
+    connect(ui->onLoadFontColor,SIGNAL(colorSelected(QColor)),ui->onLoadFont,SLOT(setFontColor(QColor)));
+    connect(ui->onErrorColor,SIGNAL(colorSelected(QColor)),ui->onErrorFont,SLOT(setBackgroundColor(QColor)));
+    connect(ui->onErrorFontColor,SIGNAL(colorSelected(QColor)),ui->onErrorFont,SLOT(setFontColor(QColor)));
+    connect(ui->onFinishColor,SIGNAL(colorSelected(QColor)),ui->onFinishFont,SLOT(setBackgroundColor(QColor)));
+    connect(ui->onFinishFontColor,SIGNAL(colorSelected(QColor)),ui->onFinishFont,SLOT(setFontColor(QColor)));
+    connect(ui->fontsColorsReset,SIGNAL(released()),this,SLOT(resetFontsColors()));
+    resetFontsColors();
+
     ui->networkBox->setVisible(false);
     ui->downloadsBox->setVisible(false);
     ui->interfaceBox->setVisible(false);
@@ -139,6 +152,24 @@ void SettingsDialog::applySets()
     sets.insert("enable_ignore_errors",ui->checkBoxIgnoreErrors->isChecked());
     sets.insert("max_number_errors",ui->spinBoxMaxErrors->value());
 
+    sets.insert("show_taskdialog",ui->showTaskDialog->isChecked());
+
+    sets.insert("on_pause_color",ui->onPauseColor->currentColor());
+    sets.insert("on_pause_font",ui->onPauseFont->font());
+    sets.insert("on_pause_font_color",ui->onPauseFontColor->currentColor());
+    sets.insert("on_load_color",ui->onLoadColor->currentColor());
+    sets.insert("on_load_font",ui->onLoadFont->font());
+    sets.insert("on_load_font_color",ui->onLoadFontColor->currentColor());
+    sets.insert("on_queue_color",ui->onQueueColor->currentColor());
+    sets.insert("on_queue_font",ui->onQueueFont->font());
+    sets.insert("on_queue_font_color",ui->onQueueFontColor->currentColor());
+    sets.insert("on_error_color",ui->onErrorColor->currentColor());
+    sets.insert("on_error_font",ui->onErrorFont->font());
+    sets.insert("on_error_font_color",ui->onErrorFontColor->currentColor());
+    sets.insert("on_finish_color",ui->onFinishColor->currentColor());
+    sets.insert("on_finish_font",ui->onFinishFont->font());
+    sets.insert("on_finish_font_color",ui->onFinishFontColor->currentColor());
+
     emit newSettings();
 }
 
@@ -171,6 +202,24 @@ void SettingsDialog::cancelSets()
     ui->maxSections->setCurrentIndex(sets.value("max_number_sections").toInt()-1);
     ui->checkBoxIgnoreErrors->setChecked(sets.value("enable_ignore_errors").toBool());
     ui->spinBoxMaxErrors->setValue(sets.value("max_number_errors").toInt());
+
+    ui->showTaskDialog->setChecked(sets.value("show_taskdialog").toBool());
+
+    ui->onPauseColor->setColor(sets.value("on_pause_color").value<QColor>());
+    ui->onPauseFont->setFont(sets.value("on_pause_font").value<QFont>());
+    ui->onPauseFontColor->setColor(sets.value("on_pause_font_color").value<QColor>());
+    ui->onLoadColor->setColor(sets.value("on_load_color").value<QColor>());
+    ui->onLoadFont->setFont(sets.value("on_load_font").value<QFont>());
+    ui->onLoadFontColor->setColor(sets.value("on_load_font_color").value<QColor>());
+    ui->onQueueColor->setColor(sets.value("on_queue_color").value<QColor>());
+    ui->onQueueFont->setFont(sets.value("on_queue_font").value<QFont>());
+    ui->onQueueFontColor->setColor(sets.value("on_queue_font_color").value<QColor>());
+    ui->onErrorColor->setColor(sets.value("on_error_color").value<QColor>());
+    ui->onErrorFont->setFont(sets.value("on_error_font").value<QFont>());
+    ui->onErrorFontColor->setColor(sets.value("on_error_font_color").value<QColor>());
+    ui->onFinishColor->setColor(sets.value("on_finish_color").value<QColor>());
+    ui->onFinishFont->setFont(sets.value("on_finish_font").value<QFont>());
+    ui->onFinishFontColor->setColor(sets.value("on_finish_font_color").value<QColor>());
 }
 
 QList<QString> SettingsDialog::keys() const
@@ -223,4 +272,27 @@ void SettingsDialog::updateInterface()
 {
     cancelSets();
     emit newSettings();
+}
+
+void SettingsDialog::resetFontsColors()
+{
+    ui->onPauseColor->setColor(QColor("#fff3a4"));
+    ui->onPauseFont->setFont(QApplication::font());
+    ui->onPauseFontColor->setColor(QColor("#111111"));
+
+    ui->onQueueColor->setColor(QColor("#ffbdbd"));
+    ui->onQueueFont->setFont(QApplication::font());
+    ui->onQueueFontColor->setColor(QColor("#111111"));
+
+    ui->onLoadColor->setColor(QColor("#b4e1b4"));
+    ui->onLoadFont->setFont(QApplication::font());
+    ui->onLoadFontColor->setColor(QColor("#111111"));
+
+    ui->onErrorColor->setColor(QColor("#ff5757"));
+    ui->onErrorFont->setFont(QApplication::font());
+    ui->onErrorFontColor->setColor(QColor("#111111"));
+
+    ui->onFinishColor->setColor(QColor("#abc2c8"));
+    ui->onFinishFont->setFont(QApplication::font());
+    ui->onFinishFontColor->setColor(QColor("#111111"));
 }

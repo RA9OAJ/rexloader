@@ -21,8 +21,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 FontSelectButton::FontSelectButton(QWidget *parent) :
     QPushButton(parent)
 {
+    QPushButton::setText("");
+    setText(tr("AaBbYyZz"));
+
+    _flg = NoResize;
     _dlg = 0;
     _fnt_color = _def_color = QApplication::palette().color(QPalette::WindowText);
+    _back_color = _def_back_color = QApplication::palette().color(QPalette::Button);
     _fnt = _def_fnt = QApplication::font();
     connect(this,SIGNAL(released()),this,SLOT(showFontDialog()));
 }
@@ -50,26 +55,60 @@ void FontSelectButton::setDefaultFontColor(const QColor &color)
 void FontSelectButton::setFont(const QFont &fnt)
 {
     _fnt = fnt;
-    if(_dlg == qobject_cast<QFontDialog*>(sender()))
+    if(_dlg == qobject_cast<QFontDialog*>(sender()) && _dlg)
     {
         _dlg_stat = _dlg->saveGeometry();
         _dlg->deleteLater();
         _dlg = 0;
+        emit fontSelected(_fnt);
     }
-    emit fontSelected(_fnt);
+    repaint();
 }
 
-void FontSelectButton::setFontColot(const QColor &color)
+void FontSelectButton::setFontColor(const QColor &color)
 {
+    _fnt_color = color;
+    repaint();
 }
 
 void FontSelectButton::resetToDefault()
 {
+    _fnt = _def_fnt;
+    _fnt_color = _def_color;
+    _back_color = _def_back_color;
+    repaint();
 }
 
 void FontSelectButton::paintEvent(QPaintEvent *event)
 {
     QPushButton::paintEvent(event);
+
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setPen(Qt::NoPen);
+    painter.translate(0,0);
+
+    int x, y, wdth, hght;
+    x = size().width()/6;
+    y = size().height()/4;
+    wdth = size().width() - 2*x;
+    hght = size().height()/2;
+
+    painter.fillRect(x,y,wdth,hght,_back_color);
+
+    QRect rect(x+1,y+1,wdth-1,hght-1);
+
+    if(!_flg)
+    {
+        QFont _tmp_font(_fnt);
+        _tmp_font.setPixelSize(qMin(rect.width(),rect.height()));
+        painter.setFont(_tmp_font);
+    }
+    else painter.setFont(_fnt);
+    painter.setPen(Qt::SolidLine);
+    painter.setPen(_fnt_color);
+    painter.drawText(rect,Qt::AlignCenter,_sample_string);
+    painter.end();
 }
 
 void FontSelectButton::showFontDialog()
@@ -92,7 +131,7 @@ void FontSelectButton::showFontDialog()
 
 void FontSelectButton::cancelFontDialog()
 {
-    if(_dlg == qobject_cast<QFontDialog*>(sender()))
+    if(_dlg == qobject_cast<QFontDialog*>(sender()) && _dlg)
     {
         _dlg_stat = _dlg->saveGeometry();
         _dlg->deleteLater();
@@ -103,4 +142,32 @@ void FontSelectButton::cancelFontDialog()
 FontSelectButton::~FontSelectButton()
 {
     if(_dlg) _dlg->deleteLater();
+}
+
+QColor FontSelectButton::backgroundColor() const
+{
+    return _back_color;
+}
+
+void FontSelectButton::setBackgroundColor(const QColor &color)
+{
+    _back_color = color;
+    repaint();
+}
+
+void FontSelectButton::setText(const QString &text)
+{
+    _sample_string = text;
+    repaint();
+}
+
+void FontSelectButton::setAutoResize(FontSelectButton::AutoResizeFlag flag)
+{
+    _flg = flag;
+    repaint();
+}
+
+int FontSelectButton::autoResizeFlag() const
+{
+    return (int)_flg;
 }

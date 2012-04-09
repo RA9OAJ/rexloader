@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>505</width>
-    <height>1053</height>
+    <height>1106</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -304,7 +304,7 @@
           <item>
            <widget class="QTabWidget" name="tabWidget">
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="connectionTab">
              <attribute name="title">
@@ -897,193 +897,299 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>150</height>
+           <height>270</height>
           </size>
          </property>
          <property name="title">
           <string>Интерфейс</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_9">
+         <layout class="QVBoxLayout" name="verticalLayout_10">
           <item>
-           <layout class="QGridLayout" name="gridLayout">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_15">
-              <property name="text">
-               <string>Приостановлено</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="ColorButton" name="onPauseColor">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="toolTip">
-               <string>Цвет строки</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2">
-             <widget class="FontSelectButton" name="onPauseFont">
-              <property name="toolTip">
-               <string>Шрифт текста</string>
-              </property>
-              <property name="text">
-               <string>Шрифт</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="3">
-             <widget class="ColorButton" name="onPauseFontColor">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="toolTip">
-               <string>Цвет шрифта</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_16">
-              <property name="text">
-               <string>В ожидании</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="ColorButton" name="onQueueColor">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="toolTip">
-               <string>Цвет строки</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="FontSelectButton" name="onQueueFont">
-              <property name="toolTip">
-               <string>Шрифт текста</string>
-              </property>
-              <property name="text">
-               <string>Шрифт</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="3">
-             <widget class="ColorButton" name="onQueueFontColor">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="toolTip">
-               <string>Цвет шрифта</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_17">
-              <property name="text">
-               <string>Выполняется</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="ColorButton" name="onLoadColor">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="toolTip">
-               <string>Цвет строки</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="2">
-             <widget class="FontSelectButton" name="onLoadFont">
-              <property name="toolTip">
-               <string>Шрифт текста</string>
-              </property>
-              <property name="text">
-               <string>Шрифт</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="3">
-             <widget class="ColorButton" name="onLoadFontColor">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="toolTip">
-               <string>Цвет шрифта</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_18">
-              <property name="text">
-               <string>Ошибка</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="ColorButton" name="onErrorColor">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="toolTip">
-               <string>Цвет строки</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="2">
-             <widget class="FontSelectButton" name="onErrorFont_2">
-              <property name="toolTip">
-               <string>Шрифт текста</string>
-              </property>
-              <property name="text">
-               <string>Шрифт</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="3">
-             <widget class="ColorButton" name="onErrorFontColor">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="toolTip">
-               <string>Цвет шрифта</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <widget class="QTabWidget" name="tabWidget_2">
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <widget class="QWidget" name="tab">
+             <attribute name="title">
+              <string>Список заданий</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_9">
+              <item>
+               <layout class="QGridLayout" name="gridLayout">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_15">
+                  <property name="text">
+                   <string>Приостановлено</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="ColorButton" name="onPauseColor">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="toolTip">
+                   <string>Цвет строки</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2">
+                 <widget class="FontSelectButton" name="onPauseFont">
+                  <property name="toolTip">
+                   <string>Шрифт текста</string>
+                  </property>
+                  <property name="text">
+                   <string>Шрифт</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="3">
+                 <widget class="ColorButton" name="onPauseFontColor">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="toolTip">
+                   <string>Цвет шрифта</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_16">
+                  <property name="text">
+                   <string>В ожидании</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="ColorButton" name="onQueueColor">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="toolTip">
+                   <string>Цвет строки</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="2">
+                 <widget class="FontSelectButton" name="onQueueFont">
+                  <property name="toolTip">
+                   <string>Шрифт текста</string>
+                  </property>
+                  <property name="text">
+                   <string>Шрифт</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="3">
+                 <widget class="ColorButton" name="onQueueFontColor">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="toolTip">
+                   <string>Цвет шрифта</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="label_17">
+                  <property name="text">
+                   <string>Выполняется</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="ColorButton" name="onLoadColor">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="toolTip">
+                   <string>Цвет строки</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="2">
+                 <widget class="FontSelectButton" name="onLoadFont">
+                  <property name="toolTip">
+                   <string>Шрифт текста</string>
+                  </property>
+                  <property name="text">
+                   <string>Шрифт</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="3">
+                 <widget class="ColorButton" name="onLoadFontColor">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="toolTip">
+                   <string>Цвет шрифта</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QLabel" name="label_18">
+                  <property name="text">
+                   <string>Ошибка</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="ColorButton" name="onErrorColor">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="toolTip">
+                   <string>Цвет строки</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="2">
+                 <widget class="FontSelectButton" name="onErrorFont">
+                  <property name="toolTip">
+                   <string>Шрифт текста</string>
+                  </property>
+                  <property name="text">
+                   <string>Шрифт</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="3">
+                 <widget class="ColorButton" name="onErrorFontColor">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="toolTip">
+                   <string>Цвет шрифта</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="0">
+                 <widget class="QLabel" name="label_19">
+                  <property name="text">
+                   <string>Завершено</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="1">
+                 <widget class="ColorButton" name="onFinishColor">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="toolTip">
+                   <string>Цвет строки</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="2">
+                 <widget class="FontSelectButton" name="onFinishFont">
+                  <property name="toolTip">
+                   <string>Шрифт текста</string>
+                  </property>
+                  <property name="text">
+                   <string>Шрифт</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="3">
+                 <widget class="ColorButton" name="onFinishFontColor">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="toolTip">
+                   <string>Цвет шрифта</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_17">
+                <item>
+                 <spacer name="horizontalSpacer_8">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>188</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="fontsColorsReset">
+                  <property name="text">
+                   <string>Сбросить</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="tab_2">
+             <attribute name="title">
+              <string>Дерево фильтров</string>
+             </attribute>
+            </widget>
+           </widget>
           </item>
           <item>
            <widget class="Line" name="line_7">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="showTaskDialog">
+            <property name="text">
+             <string>Показывать окно запущенного задания</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Показывать плавающее окно</string>
             </property>
            </widget>
           </item>

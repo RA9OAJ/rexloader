@@ -38,6 +38,8 @@ TaskDialog::TaskDialog(QWidget *parent) :
 TaskDialog::~TaskDialog()
 {
     delete ui;
+
+    --obj_cnt;
 }
 
 void TaskDialog::setSourceData(TItemModel *model, QModelIndex index, const QHash<int,LoaderInterface*> &pluglist, const QHash<int,int> &list)

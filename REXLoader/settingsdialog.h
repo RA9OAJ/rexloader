@@ -57,6 +57,7 @@ protected slots:
     void applyAndClose();
     void setDownDir(const QString &dir);
     void showFileDialog();
+    void resetFontsColors();
 
 private:
     Ui::SettingsDialog *ui;
