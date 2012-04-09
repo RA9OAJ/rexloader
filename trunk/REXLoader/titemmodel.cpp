@@ -23,6 +23,11 @@ TItemModel::TItemModel(QObject *parent) :
 {
     qr = 0;
     grow=gcolumn=0;
+    row_colors.insert((int)LInterface::ON_PAUSE, QColor("#fff3a4"));
+    row_colors.insert((int)LInterface::ERROR_TASK, QColor("#ff5757"));
+    row_colors.insert(-100, QColor("#ffbdbd"));
+    row_colors.insert((int)LInterface::ON_LOAD, QColor("#b4e1b4"));
+    row_colors.insert((int)LInterface::FINISHED, QColor("#abc2c8"));
 }
 
 bool TItemModel::updateModel(const QSqlDatabase &db)
@@ -252,15 +257,15 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
     {
         switch(myData(row,9).toInt())
         {
-        case LInterface::ON_PAUSE: return QColor("#fff3a4");
-        case LInterface::ERROR_TASK: return QColor("#ff5757");
-        case -100: return QColor("#ffbdbd");
+        case LInterface::ON_PAUSE: return row_colors.value((int)LInterface::ON_PAUSE);//QColor("#fff3a4");
+        case LInterface::ERROR_TASK: return row_colors.value((int)LInterface::ERROR_TASK);//QColor("#ff5757");
+        case -100: return row_colors.value(-100);//QColor("#ffbdbd");
         case LInterface::ACCEPT_QUERY:
         case LInterface::SEND_QUERY:
         case LInterface::REDIRECT:
         case LInterface::STOPPING:
-        case LInterface::ON_LOAD: return QColor("#b4e1b4");
-        case LInterface::FINISHED: return QColor("#abc2c8");
+        case LInterface::ON_LOAD: return row_colors.value((int)LInterface::ON_LOAD);//QColor("#b4e1b4");
+        case LInterface::FINISHED: return row_colors.value((int)LInterface::FINISHED);//QColor("#abc2c8");
 
         default: return QVariant();
         }
@@ -284,6 +289,11 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         }
     }
 
+    if(role == Qt::FontRole && row_fonts.contains(myData(row,9).toInt()))
+        return row_fonts.value(myData(row,9).toInt());
+
+    if(role == Qt::TextColorRole && row_font_colors.contains(myData(row,9).toInt()))
+        return row_font_colors.value(myData(row,9).toInt());
 
     if(role == Qt::ToolTipRole)
     {
@@ -486,4 +496,19 @@ QString TItemModel::shortUrl(QString url, int max_len)
 void TItemModel::addToUpdateRowQueue(int row)
 {
     upd_queue.append(row);
+}
+
+void TItemModel::setRowColor(int status, const QColor &color)
+{
+    row_colors.insert(status, color);
+}
+
+void TItemModel::setRowFont(int status, const QFont &font)
+{
+    row_fonts.insert(status,font);
+}
+
+void TItemModel::setRowFontColor(int status, const QColor &font_color)
+{
+    row_font_colors.insert(status,font_color);
 }

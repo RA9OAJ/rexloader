@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define FONTSELECTBUTTON_H
 
 #include <QPushButton>
+#include <QPainter>
 #include <QFontDialog>
 #include <QApplication>
 
@@ -30,17 +31,29 @@ public:
     explicit FontSelectButton(QWidget *parent = 0);
     ~FontSelectButton();
 
+    enum AutoResizeFlag{
+        NoResize = 0,
+        OnWidth = 1,
+        OnHeight = 2,
+        FullResize = OnWidth | OnHeight
+    };
+
     QFont font() const;
     QColor fontColor() const;
+    QColor backgroundColor() const;
     void setDefaultFont(const QFont &fnt);
     void setDefaultFontColor(const QColor &color);
+    void setText(const QString &text);
+    void setAutoResize(AutoResizeFlag flag);
+    int autoResizeFlag() const;
 
 signals:
     void fontSelected(const QFont &fnt);
 
 public slots:
     void setFont(const QFont &fnt);
-    void setFontColot(const QColor &color);
+    void setFontColor(const QColor &color);
+    void setBackgroundColor(const QColor &color);
     void resetToDefault();
 
 protected:
@@ -51,10 +64,14 @@ protected slots:
     void cancelFontDialog();
 
 private:
+    QString _sample_string;
+    AutoResizeFlag _flg;
     QFont _fnt;
     QFont _def_fnt;
     QColor _fnt_color;
     QColor _def_color;
+    QColor _back_color;
+    QColor _def_back_color;
     QByteArray _dlg_stat;
 
     QFontDialog *_dlg;

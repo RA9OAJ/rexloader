@@ -42,6 +42,9 @@ public:
     static QStringList speedForHumans(qint64 sp, bool in_bytes = true, bool out_bytes = false);
     static QString secForHumans(int sec);
     static QString shortUrl(QString url, int max_len = 72);
+    void setRowColor(int status, const QColor &color);
+    void setRowFont(int status, const QFont &font);
+    void setRowFontColor(int status, const QColor &font_color);
 
 public slots:
     void updateRow(int row);
@@ -57,6 +60,9 @@ private:
     QSqlQuery *qr;
     int grow,gcolumn;
     QHash<int,qint64>curspeed;
+    QHash<int,QColor>row_colors;
+    QHash<int,QFont>row_fonts;
+    QHash<int,QColor>row_font_colors;
     QHash<int, QHash<int,QVariant> >cache;
     QList<int> upd_queue;
 };

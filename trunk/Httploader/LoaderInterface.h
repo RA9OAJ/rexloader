@@ -110,6 +110,7 @@ public:
 
 signals:
     virtual void messageAvailable(int id_task)=0; //сигнал сообщает о наличии служебных сообщений для задания id_task
+    virtual void needAuthorization(int id_task)=0; //сигнал сообщает о необходимости авторизации
 };
 
 

@@ -112,6 +112,7 @@ protected slots:
     void updateTreeModel(const QString cat_name, int row, int parent_id, int cat_id); //добавляет/обновляет строку категории в дереве категорий
     void setTaskCnt(); //устанавливает кол-во одновременных закачек
     void showTaskDialog(); //показывает диалог состояния выделенного задания
+    void showTaskDialog(int id_row); //переопределение метода
     void closeTaskDialog(); //удаляет закрытый диалог состояния задания
 
 signals:

@@ -50,13 +50,13 @@ void ColorButton::setDefaultColor(const QColor &color)
 void ColorButton::setColor(const QColor &color)
 {
     cur_color = color;
-    if(dlg == qobject_cast<QColorDialog*>(sender()))
+    if(dlg == qobject_cast<QColorDialog*>(sender()) && dlg)
     {
         colordlg_stat = dlg->saveGeometry();
         dlg->deleteLater();
         dlg = 0;
-        emit colorSelected(color);
     }
+    emit colorSelected(color);
     repaint();
 }
 
@@ -103,7 +103,7 @@ void ColorButton::showColorDialog()
 
 void ColorButton::cancelColorDialog()
 {
-    if(dlg == qobject_cast<QColorDialog*>(sender()))
+    if(dlg == qobject_cast<QColorDialog*>(sender()) && dlg)
     {
         colordlg_stat = dlg->saveGeometry();
         dlg->deleteLater();
