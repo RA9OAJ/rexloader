@@ -45,11 +45,13 @@ protected slots:
     void scheduler();
     void pressAnaliser();
     void moveToCenter();
+    void selectPriority(int cur_index);
 
 signals:
     void startTask(int id);
     void stopTask(int id);
     void redownloadTask(int id);
+    void setPriority(int id, int prior);
 
 private:
     Ui::TaskDialog *ui;

@@ -30,6 +30,7 @@ TaskDialog::TaskDialog(QWidget *parent) :
     setWindowFlags(Qt::Window);
     setAttribute(Qt::WA_DeleteOnClose);
     connect(ui->startButton,SIGNAL(released()),this,SLOT(pressAnaliser()));
+    connect(ui->comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(selectPriority(int)));
 
     QTimer::singleShot(0,this,SLOT(scheduler()));
     moveToCenter();
@@ -100,6 +101,7 @@ void TaskDialog::scheduler()
             ui->startButton->setText(tr("Запустить"));
             ui->startButton->setIcon(QIcon(":/appimages/start_24x24.png"));
             ui->startButton->setEnabled(true);
+            ui->comboBox->setEnabled(true);
             break;
         }
         case LInterface::STOPPING:
@@ -109,6 +111,7 @@ void TaskDialog::scheduler()
             ui->startButton->setText(tr("Запустить"));
             ui->startButton->setIcon(QIcon(":/appimages/start_24x24.png"));
             ui->startButton->setEnabled(true);
+            ui->comboBox->setEnabled(true);
             break;
         }
         case -100:
@@ -117,6 +120,7 @@ void TaskDialog::scheduler()
             ui->startButton->setText(tr("Приостановить"));
             ui->startButton->setIcon(QIcon(":/appimages/pause_24x24.png"));
             ui->startButton->setEnabled(true);
+            ui->comboBox->setEnabled(true);
             break;
         }
         case LInterface::FINISHED:
@@ -125,6 +129,7 @@ void TaskDialog::scheduler()
             ui->startButton->setText(tr("Перезакачать"));
             ui->startButton->setIcon(QIcon());
             ui->startButton->setEnabled(false);
+            ui->comboBox->setEnabled(false);
             break;
         }
         case LInterface::SEND_QUERY:
@@ -133,6 +138,7 @@ void TaskDialog::scheduler()
             ui->startButton->setText(tr("Приостановить"));
             ui->startButton->setIcon(QIcon(":/appimages/pause_24x24.png"));
             ui->startButton->setEnabled(true);
+            ui->comboBox->setEnabled(true);
             break;
         }
         case LInterface::ACCEPT_QUERY:
@@ -141,6 +147,7 @@ void TaskDialog::scheduler()
             ui->startButton->setText(tr("Приостановить"));
             ui->startButton->setIcon(QIcon(":/appimages/pause_24x24.png"));
             ui->startButton->setEnabled(true);
+            ui->comboBox->setEnabled(true);
             break;
         }
         case LInterface::REDIRECT:
@@ -150,6 +157,7 @@ void TaskDialog::scheduler()
             ui->startButton->setText(tr("Приостановить"));
             ui->startButton->setIcon(QIcon(":/appimages/pause_24x24.png"));
             ui->startButton->setEnabled(true);
+            ui->comboBox->setEnabled(true);
             break;
         }
 
@@ -193,4 +201,13 @@ void TaskDialog::moveToCenter()
     QRect desktop = ds.availableGeometry();
     QPoint top_left = QPoint((desktop.bottomRight().x()-size().width())/2+20*(obj_cnt-1),(desktop.bottomRight().y()-size().height())/2+20*(obj_cnt-1));
     move(top_left);
+}
+
+void TaskDialog::selectPriority(int cur_index)
+{
+    if(mdl)
+    {
+        int id = mdl->data(mdl->index(idx.row(),0),100).toInt();
+        emit setPriority(id,cur_index);
+    }
 }

@@ -505,6 +505,20 @@ void REXWindow::setTaskPriority()
     updateTaskSheet();
 }
 
+void REXWindow::setTaskPriority(int id, int prior)
+{
+    QSqlQuery qr(QSqlDatabase::database());
+    qr.prepare("UPDATE tasks SET priority=:priority WHERE id=:id");
+    qr.bindValue("priority",prior);
+    qr.bindValue("id",id);
+    if(!qr.exec())
+    {
+        //записываем ошибку в журнал
+        qDebug()<<"void REXWindow::setTaskPriority(1)" + qr.executedQuery() + " Error:" + qr.lastError().text();
+    }
+    updateTaskSheet();
+}
+
 void REXWindow::showNotice(const QString &title, const QString &text, int type)
 {
 
@@ -2194,7 +2208,7 @@ void REXWindow::showTaskDialog()
         connect(dlg,SIGNAL(rejected()),this,SLOT(closeTaskDialog()));
         connect(dlg,SIGNAL(startTask(int)),this,SLOT(startTask(int)));
         connect(dlg,SIGNAL(stopTask(int)),this,SLOT(stopTask(int)));
-        //connect(dlg,SIGNAL(redownloadTask(int)),this,SLOT(redownloadTask()));
+        connect(dlg,SIGNAL(setPriority(int,int)),this,SLOT(setTaskPriority(int,int)));
         dlglist.insert(id_row, dlg);
         dlg->show();
     }
@@ -2220,6 +2234,7 @@ void REXWindow::showTaskDialog(int id_row)
     connect(dlg,SIGNAL(rejected()),this,SLOT(closeTaskDialog()));
     connect(dlg,SIGNAL(startTask(int)),this,SLOT(startTask(int)));
     connect(dlg,SIGNAL(stopTask(int)),this,SLOT(stopTask(int)));
+    connect(dlg,SIGNAL(setPriority(int,int)),this,SLOT(setTaskPriority(int,int)));
     dlglist.insert(id_row, dlg);
     dlg->show();
 }
