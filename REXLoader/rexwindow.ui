@@ -58,6 +58,9 @@
         <enum>Qt::Vertical</enum>
        </property>
        <widget class="TableView" name="tableView">
+        <property name="wordWrap">
+         <bool>false</bool>
+        </property>
         <attribute name="verticalHeaderVisible">
          <bool>false</bool>
         </attribute>

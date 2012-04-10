@@ -1136,6 +1136,13 @@
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_17">
                 <item>
+                 <widget class="QCheckBox" name="tableWordWrap">
+                  <property name="text">
+                   <string>Переносить по словам</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <spacer name="horizontalSpacer_8">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
