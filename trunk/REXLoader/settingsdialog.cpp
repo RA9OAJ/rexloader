@@ -169,6 +169,7 @@ void SettingsDialog::applySets()
     sets.insert("on_finish_color",ui->onFinishColor->currentColor());
     sets.insert("on_finish_font",ui->onFinishFont->font());
     sets.insert("on_finish_font_color",ui->onFinishFontColor->currentColor());
+    sets.insert("table_word_wrap",ui->tableWordWrap->isChecked());
 
     emit newSettings();
 }
@@ -220,6 +221,7 @@ void SettingsDialog::cancelSets()
     ui->onFinishColor->setColor(sets.value("on_finish_color").value<QColor>());
     ui->onFinishFont->setFont(sets.value("on_finish_font").value<QFont>());
     ui->onFinishFontColor->setColor(sets.value("on_finish_font_color").value<QColor>());
+    ui->tableWordWrap->setChecked(sets.value("table_word_wrap").toBool());
 }
 
 QList<QString> SettingsDialog::keys() const

@@ -1903,6 +1903,7 @@ void REXWindow::readSettings()
     model->setRowFontColor(-100, settDlg->value("on_queue_font_color").value<QColor>());
     model->setRowFontColor(LInterface::FINISHED, settDlg->value("on_finish_font_color").value<QColor>());
 
+    ui->tableView->setWordWrap(settDlg->value("table_word_wrap").toBool());
     ui->tableView->resizeRowsToContents();
     ui->tableView->scroll(0,1); // прокручиваем на 1 пиксел вниз для того, чтобы заставить вьюшку перерисовать строки
     ui->tableView->scroll(0,-1); // возвращаем скроллер на место
