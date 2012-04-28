@@ -48,7 +48,7 @@ QModelIndex LogTreeModel::index(int row, int column, const QModelIndex &parent) 
 {
     if(parent == QModelIndex())
     {
-        QModelIndex idx = root_nodes.key(column+(row*columnCount()),QModelIndex());
+        QModelIndex idx = root_nodes.key(column+row*columnCount(),QModelIndex());
         qDebug()<<idx<<row<<column<<"control"<<column+(row*columnCount());
         return idx;
     }
@@ -115,7 +115,7 @@ bool LogTreeModel::insertRows(int row, int count, const QModelIndex &parent)
             {
                 int new_id = root_nodes.size() + sub_nodes.size();
                 QModelIndex newindex = LogTreeModel::createIndex(row+i,y, new_id);
-                root_nodes.insert(newindex,row+i*columnCount(parent)+y);
+                root_nodes.insert(newindex,row*columnCount(parent)+y);
                 root_values.append(QVariant(1));
             }
             ++rows_cnt;
