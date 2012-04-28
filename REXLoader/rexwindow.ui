@@ -87,7 +87,7 @@
            <number>1</number>
           </property>
           <item>
-           <widget class="QTextEdit" name="textEdit"/>
+           <widget class="QTreeView" name="logTreeView"/>
           </item>
          </layout>
         </widget>
@@ -108,7 +108,7 @@
      <x>0</x>
      <y>0</y>
      <width>687</width>
-     <height>28</height>
+     <height>27</height>
     </rect>
    </property>
    <property name="styleSheet">

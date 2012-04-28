@@ -104,7 +104,7 @@ void AddTaskDialog::openDirDialog()
 
     if(QDir().exists(gui->locationEdit->text()))dir = gui->locationEdit->text();
 
-    dir = QFileDialog::getExistingDirectory(this,tr("Выбор диалога"),dir);
+    dir = QFileDialog::getExistingDirectory(this,tr("Выбор директории"),dir);
 
     if(!dir.isEmpty())gui->locationEdit->setText(dir);
 }

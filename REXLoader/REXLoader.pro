@@ -25,7 +25,8 @@ SOURCES += main.cpp\
     pluginmanager.cpp \
     tableview.cpp \
     colorbutton.cpp \
-    fontselectbutton.cpp
+    fontselectbutton.cpp \
+    logtreemodel.cpp
 
 HEADERS  += rexwindow.h \
     titemmodel.h \
@@ -40,7 +41,8 @@ HEADERS  += rexwindow.h \
     pluginmanager.h \
     tableview.h \
     colorbutton.h \
-    fontselectbutton.h
+    fontselectbutton.h \
+    logtreemodel.h
 
 FORMS    += rexwindow.ui \
     addtaskdialog.ui \
@@ -53,3 +55,5 @@ TRANSLATIONS += lang/ru_RU.ts
 
 RESOURCES += \
     resources.qrc
+
+

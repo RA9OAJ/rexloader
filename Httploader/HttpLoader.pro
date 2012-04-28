@@ -4,8 +4,10 @@ CONFIG += plugin
 TARGET = HttpLoader
 TEMPLATE = lib
 CODECFORTR = UTF-8
-LIBS += -lz
 
+unix: {
+    LIBS += -lz
+}
 DESTDIR = ../usr/lib/rexloader/plugins
 
 SOURCES = httploader.cpp \

@@ -138,7 +138,7 @@ public:
 
 signals:
     void sheduleImpulse(); //сигнал генериться с интервалом шедулера
-    virtual void messageAvailable(int id_task); //сигнал сообщает о наличии служебных сообщений для задания id_task
+    virtual void messageAvailable(int id_task, int ms_type, const QString &title, const QString &more); //сигнал сообщает о наличии служебных сообщений для задания id_task
     virtual void needAuthorization(int id_task); //сигнал сообщает о необходимости авторизации
 
 protected:
