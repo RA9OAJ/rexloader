@@ -4,6 +4,9 @@
 #include <QAbstractItemModel>
 #include <QDebug>
 #include <QStringList>
+#include <QDateTime>
+
+#include "../Httploader/LoaderInterface.h"
 
 class LogTreeModel : public QAbstractItemModel
 {
@@ -31,6 +34,7 @@ public:
 signals:
 
 public slots:
+    void setMaxStringsCount(int max_cnt);
     void clearLog();
     void appendLog(int id_task, int ms_type, const QString &title, const QString &more);
 
@@ -39,6 +43,7 @@ private:
     int rows_cnt;
     int column_cnt;
     int diff;
+    int maxinternalid;
 
     QHash<QModelIndex, int> root_nodes; //основные узлы дерева
     QList<QVariant> root_values; //значения узлов
