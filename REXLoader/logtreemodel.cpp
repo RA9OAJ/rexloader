@@ -5,8 +5,9 @@ LogTreeModel::LogTreeModel(QObject *parent) :
 {
     diff = 0;
     rows_cnt = 0;
-    column_cnt = 4;
+    column_cnt = 5;
     max_rows = 1000;
+    maxinternalid = -1;
 }
 
 LogTreeModel::~LogTreeModel()
@@ -15,16 +16,28 @@ LogTreeModel::~LogTreeModel()
 
 QVariant LogTreeModel::data(const QModelIndex &index, int role) const
 {
-    switch(role)
+    if(index.parent() == QModelIndex())
     {
-    case Qt::DisplayRole:
-    {
-        int id = root_nodes.value(index,-1);
-        if(id < 0) return QVariant();
-        return root_values.value(id);
-    }
+        switch(role)
+        {
+        case Qt::DisplayRole:
+        {
+            int id = root_nodes.value(index,-1);
+            if(id < 0) return QVariant();
+            return root_values.value(id);
+        }
 
-    default: return QVariant();
+        default: return QVariant();
+        }
+    }
+    else
+    {
+        switch(role)
+        {
+        case Qt::DisplayRole: return sub_nodes.value(index);
+
+        default: return QVariant();
+        }
     }
 }
 
@@ -32,8 +45,8 @@ int LogTreeModel::rowCount(const QModelIndex &parent) const
 {
     if(parent == QModelIndex())
         return rows_cnt;
-    int id = root_nodes.value(parent,-1);
-    return links.keys(id-diff).size();
+    int id = root_nodes.value(parent,-1) + diff*columnCount();
+    return links.keys(id).size();
 }
 
 int LogTreeModel::columnCount(const QModelIndex &parent) const
@@ -49,14 +62,13 @@ QModelIndex LogTreeModel::index(int row, int column, const QModelIndex &parent) 
     if(parent == QModelIndex())
     {
         QModelIndex idx = root_nodes.key(column+row*columnCount(),QModelIndex());
-        qDebug()<<idx<<row<<column<<"control"<<column+(row*columnCount());
         return idx;
     }
 
     int id = root_nodes.value(parent,-1);
     if(id > -1)
     {
-        id += diff;
+        id += diff*columnCount();
         QModelIndexList idxs = links.keys(id);
         QModelIndex idx;
         foreach(idx,idxs)
@@ -71,7 +83,7 @@ QModelIndex LogTreeModel::parent(const QModelIndex &child) const
     int prnt_id = links.value(child,-1);
     if(prnt_id == -1) return QModelIndex();
 
-    prnt_id += diff;
+    prnt_id -= diff*columnCount();
     QModelIndex prnt = root_nodes.key(prnt_id, QModelIndex());
     return prnt;
 }
@@ -82,7 +94,7 @@ bool LogTreeModel::hasChildren(const QModelIndex &parent) const
     int prnt_id = root_nodes.value(parent, -1);
     if(prnt_id < 0) return false;
 
-    prnt_id +=diff;
+    prnt_id +=diff*columnCount();
     QModelIndex idx = links.key(prnt_id,QModelIndex());
     if(idx != QModelIndex())
         return true;
@@ -109,19 +121,33 @@ bool LogTreeModel::insertRows(int row, int count, const QModelIndex &parent)
     {
         beginInsertRows(parent,row,row+count);
 
-        for(int i = 0; i < count; ++i)
+        if(parent == QModelIndex())
         {
-            for(int y = 0; y < columnCount(parent); ++y)
+            for(int i = 0; i < count; ++i)
             {
-                int new_id = root_nodes.size() + sub_nodes.size();
-                QModelIndex newindex = LogTreeModel::createIndex(row+i,y, new_id);
-                root_nodes.insert(newindex,row*columnCount(parent)+y);
-                root_values.append(QVariant(1));
+                for(int y = 0; y < columnCount(parent); ++y)
+                { 
+                    QModelIndex newindex = LogTreeModel::createIndex(row+i,y, ++maxinternalid);
+                    root_nodes.insert(newindex,row*columnCount(parent)+y);
+                    root_values.append(QVariant());
+                }
+                ++rows_cnt;
             }
-            ++rows_cnt;
+        }
+        else
+        {
+            for(int i = 0; i < count; ++i)
+            {
+                for(int y = 0; y < columnCount(parent); ++y)
+                {
+                    int parent_id = root_nodes.value(parent) + diff*columnCount();
+                    QModelIndex newindex = LogTreeModel::createIndex(row+i,y, ++maxinternalid);
+                    sub_nodes.insert(newindex,QVariant());
+                    links.insert(newindex, parent_id);
+                }
+            }
         }
         endInsertRows();
-        //qDebug()<<root_nodes;
         return true;
     }
     return false;
@@ -129,6 +155,15 @@ bool LogTreeModel::insertRows(int row, int count, const QModelIndex &parent)
 
 bool LogTreeModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
+    if(!hasIndex(index.row(),index.column(),index.parent())) return false;
+
+    if(index.parent() == QModelIndex())
+    {
+        int id = root_nodes.value(index);
+        root_values[id] = value;
+    }
+    else sub_nodes.insert(index,value);
+    emit dataChanged(index,index);
     return true;
 }
 
@@ -154,20 +189,86 @@ QStringList LogTreeModel::mimeTypes() const
 
 bool LogTreeModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-    return false;
+    if(parent != QModelIndex() || row) return false;
+    if(rowCount() <= count) return false;
+    if(rowCount() == count)
+    {
+        clearLog();
+        return true;
+    }
+
+    beginRemoveRows(parent,0,count);
+    root_values = root_values.mid(count*columnCount());
+
+    for(int i = 0; i < count; ++i)
+    {
+        QModelIndex idx = LogTreeModel::index(row + i, 0);
+        if(hasChildren(idx))
+        {
+            int id = root_nodes.value(idx) + diff*columnCount();
+            QModelIndexList lst = links.keys(id);
+            QModelIndex cur;
+            foreach(cur,lst)
+            {
+                links.remove(cur);
+                sub_nodes.remove(cur);
+            }
+        }
+
+        for(int y = 0; y < columnCount(); ++y)
+        {
+            QModelIndex cur = LogTreeModel::index(rowCount() - i - 1, y);
+            root_nodes.remove(cur);
+        }
+    }
+    diff += count;
+    rows_cnt -= count;
+    endRemoveRows();
+
+    return true;
+}
+
+void LogTreeModel::setMaxStringsCount(int max_cnt)
+{
+    max_rows = max_cnt;
 }
 
 void LogTreeModel::clearLog()
 {
+    beginRemoveRows(QModelIndex(),0,rowCount()-1);
     rows_cnt = 0;
+    maxinternalid = 0;
     root_nodes.clear();
     root_values.clear();
     diff = 0;
     sub_nodes.clear();
     links.clear();
+    endRemoveRows();
 }
 
 void LogTreeModel::appendLog(int id_task, int ms_type, const QString &title, const QString &more)
 {
+    if(rowCount() == max_rows)
+        removeRow(0);
+
+    insertRow(rowCount());
+    QModelIndex idx = LogTreeModel::index(rowCount()-1,0);
+    setData(idx,title);
+    idx = LogTreeModel::index(rowCount()-1,1);
+    setData(idx,QDateTime::currentDateTime());
+    idx = LogTreeModel::index(rowCount()-1,2);
+    setData(idx,ms_type);
+    idx = LogTreeModel::index(rowCount()-1,3);
+    setData(idx,id_task);
+    idx = LogTreeModel::index(rowCount()-1,4);
+    setData(idx,rowCount()-1);
+
+    if(!more.isEmpty())
+    {
+        QModelIndex prnt_idx = LogTreeModel::index(rowCount()-1,0);
+        insertRow(0,prnt_idx);
+        idx = LogTreeModel::index(0,0,prnt_idx);
+        setData(idx,more);
+    }
 }
 

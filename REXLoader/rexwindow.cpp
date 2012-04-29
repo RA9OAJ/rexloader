@@ -132,12 +132,14 @@ void REXWindow::createInterface()
     ui->treeView->setExpanded(treemodel->index(1,0),true);
 
     //настраиваем лог
-    /*logmodel = new LogTreeModel(this);
-    qDebug()<<logmodel->insertRow(0);
-    logmodel->insertRow(1);
-    logmodel->insertRow(2);
-    qDebug()<<logmodel->rowCount();
-    ui->logTreeView->setModel(logmodel);*/
+    logmodel = new LogTreeModel(this);
+    ui->logTreeView->setModel(logmodel);
+    ui->logTreeView->header()->hide();
+    ui->logTreeView->hideColumn(1);
+    ui->logTreeView->hideColumn(2);
+    ui->logTreeView->hideColumn(3);
+    ui->logTreeView->hideColumn(4);
+    logmodel->setMaxStringsCount(1000);
 
     //настраиваем панель инструментов
     ui->mainToolBar->addAction(ui->actionAdd_URL);
