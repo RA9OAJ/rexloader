@@ -1,6 +1,6 @@
 /*
 Project: REXLoader (Downloader), Source file: pluginmanager.cpp
-Copyright (C) 2011  Sarvaritdinov R.
+Copyright (C) 2011-2012  Sarvaritdinov R.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ PluginManager::PluginManager(QObject *parent) :
     plugproto = 0;
     max_tasks = 0;
     max_threads = 0;
+    logmodel = 0;
 
     updOper = 0;
 }
@@ -64,8 +65,10 @@ void PluginManager::run()
             QPluginLoader plug(pluginDirs->value(i)+"/"+plg.value(y));
             if(!plug.load())continue;
             LoaderInterface *ldr = qobject_cast<LoaderInterface*>(plug.instance());
+            if(logmodel) logmodel->appendLog(LInterface::MT_INFO,tr("Плагин %1 версия %2-%3 ('%4') загружен.").arg(pluginInfo(ldr,"Plugin"),pluginInfo(ldr,"Version"),pluginInfo(ldr,"Build date"),pluginDirs->value(i)+"/"+plg.value(y)),QString());
             pluglist->insert(pluglist->size()+1,ldr);
             plugfiles->insert(pluglist->size(),pluginDirs->value(i)+"/"+plg.value(y));
+            if(logmodel) connect(ldr,SIGNAL(messageAvailable(int,int,QString,QString)),this,SLOT(appendLog(int,int,QString,QString)),Qt::QueuedConnection);
 
             QStringList protocols = ldr->protocols();
             for(int x=0; x<protocols.size(); x++)
@@ -112,6 +115,14 @@ void PluginManager::stopDownload(int id_tsk)
 void PluginManager::exeQuery(const QString &query)
 {
     emit needExecQuery(query);
+}
+
+void PluginManager::appendLog(int id_task, int ms_type, const QString &title, const QString &more)
+{
+    LoaderInterface *ldr = qobject_cast<LoaderInterface*>(sender());
+    if(!ldr) return;
+    int new_id = pluglist->key(ldr) * 100 + id_task;
+    emit messageAvailable(ms_type,title,more);
 }
 
 void PluginManager::setDatabaseFile(const QString &dbfile)
@@ -211,6 +222,25 @@ void PluginManager::restorePluginsState(const QByteArray &stat)
         plugproto->insert(proto,id);
     }
     if(!plugproto->size()) *plugproto = last_state;
+}
+
+void PluginManager::setLogModel(LogTreeModel *model)
+{
+    logmodel = model;
+}
+
+QString PluginManager::pluginInfo(const LoaderInterface *ldr, const QString &call) const
+{
+    QMap<QString,QString> calls;
+    QStringList lst = ldr->pluginInfo();
+    if(lst.isEmpty()) return QString();
+
+    for(int i = 0; i < lst.size(); ++i)
+    {
+        QStringList data = lst.value(i).split(": ");
+        calls.insert(data.value(0).toLower(),data.value(1));
+    }
+    return calls.value(call.toLower(),QString());
 }
 
 QByteArray PluginManager::pluginsState() const

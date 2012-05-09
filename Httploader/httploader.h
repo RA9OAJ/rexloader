@@ -94,52 +94,52 @@ public:
     qint64 cur_speed;
 };
 
-class HttpLoader : public QObject , public LoaderInterface
+class HttpLoader : public LoaderInterface
 {
     Q_OBJECT
     Q_INTERFACES(LoaderInterface)
 public:
     explicit HttpLoader(QObject *parent = 0);
-    virtual ~HttpLoader();
+    ~HttpLoader();
 
-    virtual QStringList protocols() const; //возвращает список поддерживаемых протоколов
-    virtual QStringList pluginInfo() const; //возвращает данные о плагине и его авторах
+    QStringList protocols() const; //возвращает список поддерживаемых протоколов
+    QStringList pluginInfo() const; //возвращает данные о плагине и его авторах
 
-    virtual int addTask(const QUrl &_url); //возвращает номер задания при удачной попытке добавления задания на закачку, иначе 0
-    virtual void startDownload(int id_task); //стартует задание id_task
-    virtual void stopDownload(int id_task); //останавливает задание id_task
-    virtual void deleteTask(int id_task); //останавливает задание id_task и удаляет его
-    virtual void setTaskFilePath(int id_task, const QString &_path); //устанавливает имя файла и путь для сохранения
-    virtual void setDownSpeed(long long int _spd); //устанавливает максимальную скорость скачивания на все задания
-    virtual void setMaxSectionsOnTask(int _max); //устанавливает максимальное количество секций на задание
-    virtual void setAuthorizationData(int id_task, const QString &data_base64); //устанавливает логин/пароль в base64 для вэб-авторизации
-    virtual void setUserAgent(const QString &_uagent); //устанавливает идентификационные данные пользовательского агента (например: Opera)
-    virtual void setReferer(int id_task,const QString &uref); //устанавливает реферера для id_task
-    virtual void setAttemptInterval(const int sec); //устанавливает интервал между повторными попытками скачать секцию/задание
-    virtual void setMaxErrorsOnTask(const int max); //устанавливает максимальное количество ошибок при выполнении задания
-    virtual void setRetryCriticalError(const bool flag = false); //указывает, повторять ли попытки закачать при критических ошибках
-    virtual long long int totalSize(int id_task) const; //возвращает общий размер задания id_task
-    virtual long long int sizeOnSection(int id_task, int _sect_num) const; //возвращает общий размер секции _sect_num для задания id_task
-    virtual long long int totalLoadedOnTask(int id_task) const; //возвращает объем закачанного для задания целиком
-    virtual long long int totalLoadedOnSection(int id_task, int _sect_num) const; //возвращает объем скачанного в секции _sect_num для задания id_task
-    virtual long long int totalDownSpeed() const; //общая скорость скачивания
-    virtual long long int downSpeed(int id_task) const; //скорость скачивания задания id_task
-    virtual int taskStatus(int id_task) const; //возвращает состояние задания id_task
-    virtual int errorNo(int id_task) const; //возвращает код ошибки задания
-    virtual int loadTaskFile(const QString &_path); //загружает метаданные задания из указанного файла и возвращает идентификатор задания (при неудаче - 0)
-    virtual int countSectionTask(int id_task) const; //возвращает количество активных секций в задании
-    virtual int countTask() const; //возвращает количество назначенных заданий
-    virtual bool acceptRanges(int id_task) const; //возвращает true, если возможна докачка задания id_task, иначе false
-    virtual QString taskFilePath(int id_task) const; //вохвращает полный путь к локальному файлу
-    virtual QString errorString(int _err) const; //возвращает строку по заданному коду ошибки
-    virtual QString statusString(int _stat) const; //возвращает строку статуса по заданному коду
-    virtual void setProxy(int id_task, const QUrl &_proxy, LInterface::ProxyType _ptype, const QString &data_base64); //устанавливает прокси
-    virtual QTranslator* getTranslator(const QLocale &locale); //возвращает указатель на транслятор для указанной локали, либо 0 при отсутствии транслятора
+    int addTask(const QUrl &_url); //возвращает номер задания при удачной попытке добавления задания на закачку, иначе 0
+    void startDownload(int id_task); //стартует задание id_task
+    void stopDownload(int id_task); //останавливает задание id_task
+    void deleteTask(int id_task); //останавливает задание id_task и удаляет его
+    void setTaskFilePath(int id_task, const QString &_path); //устанавливает имя файла и путь для сохранения
+    void setDownSpeed(long long int _spd); //устанавливает максимальную скорость скачивания на все задания
+    void setMaxSectionsOnTask(int _max); //устанавливает максимальное количество секций на задание
+    void setAuthorizationData(int id_task, const QString &data_base64); //устанавливает логин/пароль в base64 для вэб-авторизации
+    void setUserAgent(const QString &_uagent); //устанавливает идентификационные данные пользовательского агента (например: Opera)
+    void setReferer(int id_task,const QString &uref); //устанавливает реферера для id_task
+    void setAttemptInterval(const int sec); //устанавливает интервал между повторными попытками скачать секцию/задание
+    void setMaxErrorsOnTask(const int max); //устанавливает максимальное количество ошибок при выполнении задания
+    void setRetryCriticalError(const bool flag = false); //указывает, повторять ли попытки закачать при критических ошибках
+    long long int totalSize(int id_task) const; //возвращает общий размер задания id_task
+    long long int sizeOnSection(int id_task, int _sect_num) const; //возвращает общий размер секции _sect_num для задания id_task
+    long long int totalLoadedOnTask(int id_task) const; //возвращает объем закачанного для задания целиком
+    long long int totalLoadedOnSection(int id_task, int _sect_num) const; //возвращает объем скачанного в секции _sect_num для задания id_task
+    long long int totalDownSpeed() const; //общая скорость скачивания
+    long long int downSpeed(int id_task) const; //скорость скачивания задания id_task
+    int taskStatus(int id_task) const; //возвращает состояние задания id_task
+    int errorNo(int id_task) const; //возвращает код ошибки задания
+    int loadTaskFile(const QString &_path); //загружает метаданные задания из указанного файла и возвращает идентификатор задания (при неудаче - 0)
+    int countSectionTask(int id_task) const; //возвращает количество активных секций в задании
+    int countTask() const; //возвращает количество назначенных заданий
+    bool acceptRanges(int id_task) const; //возвращает true, если возможна докачка задания id_task, иначе false
+    QString taskFilePath(int id_task) const; //вохвращает полный путь к локальному файлу
+    QString errorString(int _err) const; //возвращает строку по заданному коду ошибки
+    QString statusString(int _stat) const; //возвращает строку статуса по заданному коду
+    void setProxy(int id_task, const QUrl &_proxy, LInterface::ProxyType _ptype, const QString &data_base64); //устанавливает прокси
+    QTranslator* getTranslator(const QLocale &locale); //возвращает указатель на транслятор для указанной локали, либо 0 при отсутствии транслятора
 
 signals:
     void sheduleImpulse(); //сигнал генериться с интервалом шедулера
-    virtual void messageAvailable(int id_task, int ms_type, const QString &title, const QString &more); //сигнал сообщает о наличии служебных сообщений для задания id_task
-    virtual void needAuthorization(int id_task); //сигнал сообщает о необходимости авторизации
+    void messageAvailable(int id_task, int ms_type, const QString &title, const QString &more); //сигнал сообщает о наличии служебных сообщений для задания id_task
+    void needAuthorization(int id_task); //сигнал сообщает о необходимости авторизации
 
 protected:
     void mathSpeed(); //перерасчитывает скорость секций всех закачек;
@@ -162,6 +162,7 @@ protected slots:
     void acceptRang();
     void addInAQueue(); //распознает задачу-источник и ставит в очередь на анализ прогресса закачки
     void addRetSection();
+    void addMessage(int ms_type,const QString &message, const QString &more); //слот для приема сообщений о событиях от секций заданий
 
     Task* getTaskSender(QObject* _sender) const;
 

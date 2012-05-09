@@ -1,3 +1,21 @@
+/*
+Project: REXLoader (Downloader), Source file: logtreemodel.cpp
+Copyright (C) 2012  Sarvaritdinov R.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "logtreemodel.h"
 
 LogTreeModel::LogTreeModel(QObject *parent) :
@@ -5,7 +23,7 @@ LogTreeModel::LogTreeModel(QObject *parent) :
 {
     diff = 0;
     rows_cnt = 0;
-    column_cnt = 5;
+    column_cnt = 4;
     max_rows = 1000;
     maxinternalid = -1;
 }
@@ -21,6 +39,16 @@ QVariant LogTreeModel::data(const QModelIndex &index, int role) const
         switch(role)
         {
         case Qt::DisplayRole:
+        {
+            int id = root_nodes.value(index,-1);
+            if(id < 0) return QVariant();
+
+            if(!index.column())
+                return getTitle(index);
+
+            return root_values.value(id);
+        }
+        case 100:
         {
             int id = root_nodes.value(index,-1);
             if(id < 0) return QVariant();
@@ -246,7 +274,7 @@ void LogTreeModel::clearLog()
     endRemoveRows();
 }
 
-void LogTreeModel::appendLog(int id_task, int ms_type, const QString &title, const QString &more)
+void LogTreeModel::appendLog(int ms_type, const QString &title, const QString &more)
 {
     if(rowCount() == max_rows)
         removeRow(0);
@@ -259,8 +287,6 @@ void LogTreeModel::appendLog(int id_task, int ms_type, const QString &title, con
     idx = LogTreeModel::index(rowCount()-1,2);
     setData(idx,ms_type);
     idx = LogTreeModel::index(rowCount()-1,3);
-    setData(idx,id_task);
-    idx = LogTreeModel::index(rowCount()-1,4);
     setData(idx,rowCount()-1);
 
     if(!more.isEmpty())
@@ -270,5 +296,28 @@ void LogTreeModel::appendLog(int id_task, int ms_type, const QString &title, con
         idx = LogTreeModel::index(0,0,prnt_idx);
         setData(idx,more);
     }
+}
+
+void LogTreeModel::setLogColor(int m_type, const QColor &color)
+{
+    string_color.insert(m_type,color);
+}
+
+void LogTreeModel::setFont(int m_type, const QFont &font)
+{
+    fonts.insert(m_type,font);
+}
+
+void LogTreeModel::setFont(int m_type, const QColor &color)
+{
+    font_color.insert(m_type, color);
+}
+
+QString LogTreeModel::getTitle(const QModelIndex &index) const
+{
+    QModelIndex idx = LogTreeModel::index(index.row(), 0, index.parent());
+    int id = root_nodes.value(idx);
+    QString out = QString("[%1]: %2").arg(root_values.value(id+1).toDateTime().toString("dd.MM.yyyy hh:mm:ss"),root_values.value(id).toString());
+    return out;
 }
 

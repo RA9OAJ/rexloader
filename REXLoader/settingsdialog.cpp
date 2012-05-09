@@ -27,7 +27,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui->setupUi(this);
 
     if(!parent)setWindowIcon(QIcon(":/appimages/trayicon.png"));
-    setWindowTitle(parent->windowTitle() + " - " + tr("Настройки"));
+    else setWindowTitle(parent->windowTitle() + " - " + tr("Настройки"));
     QList<int> sz;
     sz << 50 << 200;
     ui->splitter->setSizes(sz);

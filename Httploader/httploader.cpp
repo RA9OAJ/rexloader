@@ -17,11 +17,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #define P_VERSION "0.1a.3"
-#define P_BUILD_DATE "2011-09-22"
+#define P_BUILD_DATE "2012-05-01"
 
 #include "httploader.h"
 
-HttpLoader::HttpLoader(QObject *parent) : QObject(parent)
+HttpLoader::HttpLoader(QObject *parent)
 {
     task_list = new QHash<int, Task*>;
     sections = new QHash<HttpSection*, int>;
@@ -61,6 +61,7 @@ QStringList HttpLoader::protocols() const
 QStringList HttpLoader::pluginInfo() const
 {
     QStringList pinfo;
+    pinfo << QString("Plugin: ") + tr("HttpLoader");
     pinfo << QString("Authors: ") + tr("Сарваритдинов Равиль (mailto:ra9oaj@mail.ru)");
     pinfo << QString("Place: ") + tr("Россия, Барабинск, 2011");
     pinfo << QString("Build date: ") + QString(P_BUILD_DATE);
@@ -299,6 +300,7 @@ void HttpLoader::startDownload(int id_task)
     connect(sect,SIGNAL(mismatchOfDates(QDateTime,QDateTime)),this,SLOT(mismatchOfDates(QDateTime,QDateTime))/*, Qt::QueuedConnection*/);
     connect(sect,SIGNAL(downloadingCompleted()),this,SLOT(sectionCompleted())/*, Qt::QueuedConnection*/);
     connect(sect,SIGNAL(acceptRanges()),this,SLOT(addInAQueue())/*, Qt::QueuedConnection*/);
+    connect(sect,SIGNAL(sectionMessage(int,QString,QString)),this,SLOT(addMessage(int,QString,QString)));
 
     int sect_id = 0;
     if(tsk->map[0] || tsk->map[1] || tsk->map[2] || tsk->map[4] || tsk->map[6] || tsk->map[8] || tsk->map[10]) //если уже распределены границы, то загружаем данные о первой недокачанной секции
@@ -607,6 +609,7 @@ void HttpLoader::addSection(int id_task)
     connect(sect,SIGNAL(acceptQuery()),this,SLOT(acceptQuery())/*, Qt::QueuedConnection*/);
     connect(sect,SIGNAL(mismatchOfDates(QDateTime,QDateTime)),this,SLOT(mismatchOfDates(QDateTime,QDateTime))/*, Qt::QueuedConnection*/);
     connect(sect,SIGNAL(downloadingCompleted()),this,SLOT(sectionCompleted())/*, Qt::QueuedConnection*/);
+    connect(sect,SIGNAL(sectionMessage(int,QString,QString)),this,SLOT(addMessage(int,QString,QString)));
 
     sect->setSection(_task->map[2*cur_sect_id-2], (_task->map[2*cur_sect_id] == 0 ? 0 : _task->map[2*cur_sect_id]-1)); //устанавливаем границы секции
 
@@ -648,6 +651,14 @@ void HttpLoader::addRetSection()
     if(!tsk) return;
 
     addSection(id_task);
+}
+
+void HttpLoader::addMessage(int ms_type, const QString &message, const QString &more)
+{
+    HttpSection *sect = qobject_cast<HttpSection*>(sender());
+    if(!sect) return;
+    int task_id = sections->value(sect,0);
+    if(task_id) emit messageAvailable(task_id,ms_type,message,more);
 }
 
 void HttpLoader::sectError(int _errno)
@@ -998,6 +1009,7 @@ QString HttpLoader::errorString(int _err) const
     case 503: errstr = tr("503 Service Unavailable"); break;
     case 504: errstr = tr("504 Gateway Timeout"); break;
     case 505: errstr = tr("505 HTTP Version Not Supported"); break;
+    case HttpSection::FILE_NOT_AVAILABLE: errstr = tr("Файл больше недоступен по данному URL"); break;
 
     default: errstr = tr("Неизвестная ошибка. Код ошибки = ") + QString::number(_err); break;
     }

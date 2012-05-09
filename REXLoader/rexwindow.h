@@ -85,6 +85,7 @@ protected slots:
     void updateStatusBar(); //обновляет данные, отображаемые в statusBar
     void showAddTaskDialog(); //отображает окно добавления задачи
     void showHideSlot(QSystemTrayIcon::ActivationReason type); //отображает/скрывает главное окно
+    void showHideSlot(); //отображает/скрывает главное окно
     void deleteTask(); //удаляет выбранные задания из списка задач
     void startTask(); //запускает выбранные задания на выполнение
     void startTask(int id); //запускает задание по id в БД

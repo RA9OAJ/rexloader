@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QLocale>
 #include <QPointer>
 #include <QNetworkProxy>
+#include "LoaderInterface.h"
 #include "zlib.h"
 #include "gtcpsocket.h"
 
@@ -45,7 +46,8 @@ public:
         SIZE_ERROR = -2, //Изменился размер файла на сервере | критичная
         DATE_ERROR = -3, //Изменилась дата модификации на сервере | критичная
         WRITE_ERROR = -4, //Ошибка записи в файл | критичная
-        SERV_CONNECT_ERROR = -5 //Сервер разорвал соединение | не критичная
+        SERV_CONNECT_ERROR = -5, //Сервер разорвал соединение | не критичная
+        FILE_NOT_AVAILABLE = -6 //файл больше недоступен по данной ссылке
     };
 
     void setFileName(const QString &filenm, int offset=0); // имя файла-назначения и смещение по отношению к началу (нужно учитывать размер метаданных)
@@ -91,6 +93,7 @@ signals:
     void errorSignal(int); // генерится в случаях критических ошибок при попытке скачивания
     void transferCompleted(qint64); //генерится при удачной записи скачанных данных в файл
     void beginTransfer(); //сигнал-посредник
+    void sectionMessage(int ms_type,const QString &message, const QString &more); //сигнал сообщения о событии от секции
 
 protected:
     void run();
