@@ -1,7 +1,27 @@
+/*
+Project: REXLoader (Downloader), Source file: logtreemodel.h
+Copyright (C) 2012  Sarvaritdinov R.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #ifndef LOGTREEMODEL_H
 #define LOGTREEMODEL_H
 
 #include <QAbstractItemModel>
+#include <QColor>
+#include <QFont>
 #include <QDebug>
 #include <QStringList>
 #include <QDateTime>
@@ -36,7 +56,13 @@ signals:
 public slots:
     void setMaxStringsCount(int max_cnt);
     void clearLog();
-    void appendLog(int id_task, int ms_type, const QString &title, const QString &more);
+    void appendLog(int ms_type, const QString &title, const QString &more);
+    void setLogColor(int m_type, const QColor &color);
+    void setFont(int m_type, const QFont &font);
+    void setFont(int m_type, const QColor &color);
+
+protected:
+    QString getTitle(const QModelIndex &index) const;
 
 private:
     int max_rows;
@@ -49,6 +75,10 @@ private:
     QList<QVariant> root_values; //значения узлов
     QHash<QModelIndex, QVariant> sub_nodes; //дочерние узлы ветви дерева
     QHash<QModelIndex, int> links; //связи между дочерними и основными узлами (int - номер родительской строки)
+
+    QHash<int, QColor> string_color;
+    QHash<int, QFont> fonts;
+    QHash<int, QColor> font_color;
 };
 
 #endif // LOGTREEMODEL_H

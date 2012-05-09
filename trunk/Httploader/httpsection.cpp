@@ -265,6 +265,7 @@ void HttpSection::sendHeader()
     if(!referer.isEmpty())_header += QString("Referer: http://%1/\r\n").arg(referer);
     _header += QString("Connection: keep-alive\r\n\r\n");
     soc->write(_header.toAscii().data());
+    emit sectionMessage(LInterface::MT_INFO,tr("Отправка HTTP заголовка"),_header);
 }
 
 void HttpSection::dataAnalising()
@@ -318,6 +319,15 @@ void HttpSection::dataAnalising()
         switch(reqid)
         {
         case 200:
+            if(start_s || finish_s)
+            {
+                _errno = FILE_NOT_AVAILABLE;
+                emit errorSignal(_errno);
+
+                stopDownloading();
+                return;
+            }
+
             emit acceptQuery();
 
             totalsize = header["content-length"].toLongLong();
@@ -335,7 +345,7 @@ void HttpSection::dataAnalising()
 
             if(totalsize != 0 && totalsize != header["content-range"].split("/").value(1).toLongLong())
             {
-                _errno = -2; //несоответствие размеров
+                _errno = SIZE_ERROR; //несоответствие размеров
                 emit errorSignal(_errno);
 
                 stopDownloading();
@@ -357,7 +367,7 @@ void HttpSection::dataAnalising()
                 QDateTime _dtime = locale.toDateTime(header["last-modified"], "ddd, dd MMM yyyy hh:mm:ss 'GMT'");
                 if(lastmodified != _dtime)
                 {
-                    _errno = -3; //несоответствие дат
+                    _errno = DATE_ERROR; //несоответствие дат
                     emit mismatchOfDates(lastmodified, _dtime);
                     stopDownloading();
                     return;
@@ -407,7 +417,7 @@ void HttpSection::dataAnalising()
             else fl->open(QFile::WriteOnly);
             if(!fl->isOpen())
             {
-                _errno = -4;
+                _errno = WRITE_ERROR;
                 emit errorSignal(_errno);
                 return;
             }
@@ -417,7 +427,7 @@ void HttpSection::dataAnalising()
         else return;
 
     }
-    if(mode == 2)
+    if(mode == 2 && soc && fl)
     {
         qint64 cur_bloc = 0;
 

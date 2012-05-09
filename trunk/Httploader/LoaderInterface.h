@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef LOADERINTERFACE_H
 #define LOADERINTERFACE_H
 
+class QObject;
 class QString;
 class QStringList;
 class QUrl;
@@ -77,7 +78,7 @@ enum MessageType{
 
 }
 
-class LoaderInterface{
+class LoaderInterface : public QObject {
 public:
     virtual ~LoaderInterface(){};
 

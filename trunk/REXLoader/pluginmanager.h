@@ -1,6 +1,6 @@
 /*
 Project: REXLoader (Downloader), Source file: pluginmanager.h
-Copyright (C) 2011  Sarvaritdinov R.
+Copyright (C) 2011-2012  Sarvaritdinov R.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "../Httploader/LoaderInterface.h"
 #include "titemmodel.h"
+#include "logtreemodel.h"
 
 class PluginOperator : public QObject
 {
@@ -72,6 +73,8 @@ public:
     void setDatabaseFile(const QString &dbfile);
     void loadLocale(const QLocale &locale);
     void restorePluginsState(const QByteArray &stat);
+    void setLogModel(LogTreeModel *model);
+    QString pluginInfo(const LoaderInterface *ldr,const QString &call) const;
     QByteArray pluginsState() const;
 
 signals:
@@ -79,11 +82,13 @@ signals:
     void startTask(int id_task);
     void stopTask(int id_task);
     void needExecQuery(const QString &query);
+    void messageAvailable(int ms_type, const QString &title, const QString &more);
 
 public slots:
     void startDownload(int id_task);
     void stopDownload(int id_tsk);
     void exeQuery(const QString &query);
+    void appendLog(int id_task, int ms_type, const QString &title, const QString &more);
 
 protected:
     void run();
@@ -98,6 +103,8 @@ private:
     const int *max_tasks; //максимальное количество одновременных закачек
     const int *max_threads; //максимальное кол-во потоков при скачивании
     const qint64 *down_speed;
+
+    LogTreeModel *logmodel;
 
     UpdaterOperator *updOper;
     QString db;

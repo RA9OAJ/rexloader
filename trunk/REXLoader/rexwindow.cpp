@@ -133,13 +133,13 @@ void REXWindow::createInterface()
 
     //настраиваем лог
     logmodel = new LogTreeModel(this);
-    ui->logTreeView->setModel(logmodel);
+    /*ui->logTreeView->setModel(logmodel);
     ui->logTreeView->header()->hide();
     ui->logTreeView->hideColumn(1);
     ui->logTreeView->hideColumn(2);
     ui->logTreeView->hideColumn(3);
-    ui->logTreeView->hideColumn(4);
     logmodel->setMaxStringsCount(1000);
+    connect(plugmgr,SIGNAL(messageAvailable(int,QString,QString)),logmodel,SLOT(appendLog(int,QString,QString)));*/
 
     //настраиваем панель инструментов
     ui->mainToolBar->addAction(ui->actionAdd_URL);
@@ -285,9 +285,9 @@ void REXWindow::createInterface()
     QMenu *traymenu = new QMenu(this);
     traymenu->setObjectName("traymenu");
     QAction *trayact = new QAction(this);
-    trayact->setObjectName("exitAct");
-    trayact->setText(tr("Выход"));
-    connect(trayact,SIGNAL(triggered()),this,SLOT(close()));
+    trayact->setObjectName("showHideAct");
+    trayact->setText(tr("Скрыть"));
+    connect(trayact,SIGNAL(triggered()),this,SLOT(showHideSlot()));
     traymenu->addAction(ui->actionAdd_URL);
     traymenu->addSeparator();
     traymenu->addAction(ui->actionStartAll);
@@ -298,6 +298,11 @@ void REXWindow::createInterface()
     traymenu->addSeparator();
     traymenu->addAction(ui->actionAppSettings);
     traymenu->addSeparator();
+    traymenu->addAction(trayact);
+    trayact = new QAction(this);
+    trayact->setObjectName("exitAct");
+    trayact->setText(tr("Выход"));
+    connect(trayact,SIGNAL(triggered()),this,SLOT(close()));
     traymenu->addAction(trayact);
     ui->menu_4->addSeparator();
     ui->menu_4->addAction(trayact);
@@ -807,6 +812,7 @@ void REXWindow::loadPlugins()
     plugmgr->setDefaultSettings(max_tasks, max_threads, down_speed);
     plugmgr->setPlugDir(pluginDirs);
     plugmgr->setPlugLists(&plugfiles, &pluglist, &plugproto);
+    plugmgr->setLogModel(logmodel);
     plugmgr->start();
 }
 
@@ -883,21 +889,27 @@ void REXWindow::showAddTaskDialog()
 
 void REXWindow::showHideSlot(QSystemTrayIcon::ActivationReason type)
 {
-    if(type == QSystemTrayIcon::DoubleClick)
+    if(type == QSystemTrayIcon::DoubleClick) showHideSlot();
+}
+
+void REXWindow::showHideSlot()
+{
+    QAction *act = findChild<QAction*>("showHideAct");
+    if(isVisible())
     {
-        if(isVisible())
-        {
-            setHidden(true);
-            settDlg->setWindowFlags(Qt::Window);
-            preStat = windowState();
-        }
-        else
-        {
-            setHidden(false);
-            settDlg->setWindowFlags(Qt::Dialog);
-            setWindowState(preStat);
-            activateWindow();
-        }
+        bool vflag = false;
+        if(settDlg->isVisible()) vflag = true;
+        setHidden(true);
+        if(vflag)settDlg->show();
+        preStat = windowState();
+        act->setText(tr("Восстановить"));
+    }
+    else
+    {
+        setHidden(false);
+        setWindowState(preStat);
+        activateWindow();
+        act->setText(tr("Скрыть"));
     }
 }
 
@@ -1788,7 +1800,8 @@ void REXWindow::closeEvent(QCloseEvent *event)
     if(!isHidden() && sender() != this->findChild<QAction*>("exitAct"))
     {
         hide();
-        settDlg->setWindowFlags(Qt::Window);
+        QAction *act = findChild<QAction*>("showHideAct");
+        act->setText(tr("Восстановить"));
         event->ignore();
     }
     else
