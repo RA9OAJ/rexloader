@@ -403,6 +403,8 @@ void HttpLoader::redirectToUrl(const QString &_url)
     sect = qobject_cast<HttpSection*>(_sender);
     if(!sect || !sections->contains(sect)) return;
 
+    Task *tsk = getTaskSender(sender());
+    tsk->mirrors.insert(-1, QUrl::fromEncoded(_url.toAscii()));
     sect->setUrlToDownload(_url);
     sect->startDownloading();
 }
@@ -580,8 +582,9 @@ void HttpLoader::addSection(int id_task)
 
     if(!cur_sect_id){_task->status = LInterface::ON_LOAD; return;} // если все секции задействованы, то выходим
 
+    QUrl _url = _task->mirrors.contains(-1) ? _task->mirrors.value(-1) : _task->url;
     HttpSection *sect = new HttpSection();
-    sect->setUrlToDownload(_task->url.toString());
+    sect->setUrlToDownload(_url.toString());
     sect->setFileName(_task->filepath);
     if(!_task->authData.isEmpty())sect->setAuthorizationData(_task->authData);
     sect->setUserAgent(uAgent);
@@ -674,6 +677,7 @@ void HttpLoader::sectError(int _errno)
     case HttpSection::SIZE_ERROR: tsk->error_number = LInterface::FILE_SIZE_ERROR; break;
     case HttpSection::DATE_ERROR: tsk->error_number = LInterface::FILE_DATETIME_ERROR; break;
     case HttpSection::WRITE_ERROR: tsk->error_number = LInterface::FILE_WRITE_ERROR; break;
+    case HttpSection::FILE_NOT_AVAILABLE: tsk->error_number = HttpSection::FILE_NOT_AVAILABLE; break;
     case QAbstractSocket::HostNotFoundError: tsk->error_number = LInterface::HOST_NOT_FOUND; break;
     case QAbstractSocket::NetworkError: tsk->error_number = LInterface::CONNECT_LOST; break;
     case QAbstractSocket::ProxyNotFoundError: tsk->error_number = LInterface::PROXY_NOT_FOUND; break;
@@ -711,6 +715,7 @@ void HttpLoader::sectError(int _errno)
             break;
         }
     case HttpSection::SERV_CONNECT_ERROR:
+    case HttpSection::FILE_NOT_AVAILABLE:
     case QAbstractSocket::RemoteHostClosedError:
     case QAbstractSocket::ConnectionRefusedError:
     case QAbstractSocket::SocketTimeoutError:
@@ -826,7 +831,7 @@ void HttpLoader::acceptQuery()
     squeue->append(id_task);
 
     tsk->status = LInterface::SEND_QUERY;
-    QTimer::singleShot(1000,this,SLOT(addSection()));
+    QTimer::singleShot(attempt_interval,this,SLOT(addSection()));
 }
 
 void HttpLoader::setAttemptInterval(const int sec)
@@ -958,7 +963,8 @@ void HttpLoader::acceptRang()
         }
     }
 
-    sect->setUrlToDownload(QString(tsk->url.toEncoded()));
+    QUrl _url = tsk->mirrors.contains(-1) ? tsk->mirrors.value(-1) : tsk->url;
+    sect->setUrlToDownload(QString(_url.toEncoded()));
     sect->setSection(tsk->map[0], tsk->map[2]-1);
     sect->setOffset(tsk->map[1]);
     connect(sect, SIGNAL(acceptQuery()),this,SLOT(acceptQuery()));

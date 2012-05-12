@@ -263,7 +263,7 @@ void HttpSection::sendHeader()
         _header += QString("Authorization: Basic %1\r\n").arg(authorization);
 
     if(!referer.isEmpty())_header += QString("Referer: http://%1/\r\n").arg(referer);
-    _header += QString("Connection: keep-alive\r\n\r\n");
+    _header += QString("Connection: Keep-Alive\r\n\r\n");
     soc->write(_header.toAscii().data());
     emit sectionMessage(LInterface::MT_INFO,tr("Отправка HTTP заголовка"),_header);
 }
@@ -274,11 +274,13 @@ void HttpSection::dataAnalising()
 
     if(watcher->isNull())watcher->start();
 
+    QString _request;
     if(mode == 0)
     {
         while(soc->canReadLine())
         {
             QString cur_str = soc->readLine(1024);
+            _request += cur_str;
             last_buf_size += cur_str.toAscii().length();
 
             if(cur_str.indexOf("HTTP/") == 0) {header["HTTP"] = cur_str.split(" ").value(1); continue;}
@@ -290,6 +292,7 @@ void HttpSection::dataAnalising()
             if(cur_str.at(cur_str.size()-2) != 0x0D) header[_tmp.value(0).toLower()].chop(1);
             else header[_tmp.value(0).toLower()].chop(2);
         }
+        emit sectionMessage(LInterface::MT_INFO,tr("Получен ответ %1").arg(header["HTTP"]),_request);
         if(_errno == QAbstractSocket::RemoteHostClosedError && mode != 1){_errno = HttpSection::SERV_CONNECT_ERROR;emit errorSignal(_errno); stopDownloading(); return;}
     }
     if(mode == 1)

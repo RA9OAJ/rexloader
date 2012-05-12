@@ -86,6 +86,7 @@ void REXWindow::pluginStatus(bool stat)
     plugmgr->restorePluginsState(plug_state);
     plugmgr->loadLocale(QLocale::system());
 
+    readSettings();
     scanTasksOnStart();
 }
 
