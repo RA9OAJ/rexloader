@@ -87,7 +87,11 @@
            <number>1</number>
           </property>
           <item>
-           <widget class="QTreeView" name="logTreeView"/>
+           <widget class="QTreeView" name="logTreeView">
+            <property name="horizontalScrollBarPolicy">
+             <enum>Qt::ScrollBarAsNeeded</enum>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -108,7 +112,7 @@
      <x>0</x>
      <y>0</y>
      <width>687</width>
-     <height>27</height>
+     <height>28</height>
     </rect>
    </property>
    <property name="styleSheet">

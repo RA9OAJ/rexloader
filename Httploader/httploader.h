@@ -85,6 +85,7 @@ public:
     bool accept_ranges; //флаг докачки
     bool _fullsize_res; //флаг выделения места под весь файл
     QHash<int, HttpSection*>sections; //хэш указателей на секции закачки
+    QHash<int, QUrl> mirrors; //список зеркал (если key<0, то это альтернатива для основного URL)
     int status; //статус закачки
     int errors_cnt; //общее кол-во ошибок на закачку
     int error_number;
