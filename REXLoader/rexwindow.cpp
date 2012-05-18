@@ -62,6 +62,7 @@ REXWindow::REXWindow(QWidget *parent) :
     lockProcess();
     openDataBase();
 
+    logmgr = new LogManager(this);
     plugmgr = new PluginManager(this);
     connect(plugmgr,SIGNAL(pluginStatus(bool)),this,SLOT(pluginStatus(bool)));
     connect(qApp,SIGNAL(aboutToQuit()),this,SLOT(prepareToQuit()));
@@ -133,14 +134,8 @@ void REXWindow::createInterface()
     ui->treeView->setExpanded(treemodel->index(1,0),true);
 
     //настраиваем лог
-    logmodel = new LogTreeModel(this);
-    /*ui->logTreeView->setModel(logmodel);
-    ui->logTreeView->header()->hide();
-    ui->logTreeView->hideColumn(1);
-    ui->logTreeView->hideColumn(2);
-    ui->logTreeView->hideColumn(3);
-    logmodel->setMaxStringsCount(1000);
-    connect(plugmgr,SIGNAL(messageAvailable(int,QString,QString)),logmodel,SLOT(appendLog(int,QString,QString)));*/
+
+
 
     //настраиваем панель инструментов
     ui->mainToolBar->addAction(ui->actionAdd_URL);
@@ -813,7 +808,6 @@ void REXWindow::loadPlugins()
     plugmgr->setDefaultSettings(max_tasks, max_threads, down_speed);
     plugmgr->setPlugDir(pluginDirs);
     plugmgr->setPlugLists(&plugfiles, &pluglist, &plugproto);
-    plugmgr->setLogModel(logmodel);
     plugmgr->start();
 }
 

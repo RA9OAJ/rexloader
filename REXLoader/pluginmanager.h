@@ -73,7 +73,6 @@ public:
     void setDatabaseFile(const QString &dbfile);
     void loadLocale(const QLocale &locale);
     void restorePluginsState(const QByteArray &stat);
-    void setLogModel(LogTreeModel *model);
     QString pluginInfo(const LoaderInterface *ldr,const QString &call) const;
     QByteArray pluginsState() const;
 
@@ -82,13 +81,13 @@ signals:
     void startTask(int id_task);
     void stopTask(int id_task);
     void needExecQuery(const QString &query);
-    void messageAvailable(int ms_type, const QString &title, const QString &more);
+    void messageAvailable(int id_task, int id_sect, int ms_type, const QString &title, const QString &more);
 
 public slots:
     void startDownload(int id_task);
     void stopDownload(int id_tsk);
     void exeQuery(const QString &query);
-    void appendLog(int id_task, int ms_type, const QString &title, const QString &more);
+    void appendLog(int id_task, int id_sect, int ms_type, const QString &title, const QString &more);
 
 protected:
     void run();

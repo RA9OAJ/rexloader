@@ -70,10 +70,12 @@ enum ProxyType{
 };
 
 enum MessageType{
-    MT_INFO,
-    MT_WARNING,
-    MT_ERROR,
-    MT_USER
+    MT_INFO, //информационное сообщение
+    MT_WARNING, //предуспреждающее сообщение
+    MT_ERROR, //сообщение об ошибке
+    MT_IN, //входящие сообщение со стороны сервера, например HTTP заголовок
+    MT_OUT, //исходящее сообщение, например HTTP запрос
+    MT_USER //пользовательсктй тип сообщения
 };
 
 }
@@ -117,7 +119,7 @@ public:
     virtual QTranslator* getTranslator(const QLocale &locale) =0; //возвращает указатель на транслятор для указанной локали, либо 0 при отсутствии транслятора
 
 signals:
-    virtual void messageAvailable(int id_task, int ms_type, const QString &title, const QString &more)=0; //сигнал сообщает о наличии служебных сообщений для задания id_task
+    virtual void messageAvailable(int id_task, int id_sect, int ms_type, const QString &title, const QString &more)=0; //сигнал сообщает о наличии служебных сообщений для задания id_task
     virtual void needAuthorization(int id_task)=0; //сигнал сообщает о необходимости авторизации
 };
 
