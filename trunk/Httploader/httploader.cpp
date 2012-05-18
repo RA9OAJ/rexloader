@@ -660,8 +660,9 @@ void HttpLoader::addMessage(int ms_type, const QString &message, const QString &
 {
     HttpSection *sect = qobject_cast<HttpSection*>(sender());
     if(!sect) return;
+    Task *tsk = task_list->value(sections->value(sect));
     int task_id = sections->value(sect,0);
-    if(task_id) emit messageAvailable(task_id,ms_type,message,more);
+    if(task_id) emit messageAvailable(task_id, tsk->sections.key(sect),ms_type,message,more);
 }
 
 void HttpLoader::sectError(int _errno)

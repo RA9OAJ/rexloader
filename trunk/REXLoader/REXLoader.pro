@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     tableview.cpp \
     colorbutton.cpp \
     fontselectbutton.cpp \
-    logtreemodel.cpp
+    logtreemodel.cpp \
+    logmanager.cpp
 
 HEADERS  += rexwindow.h \
     titemmodel.h \
@@ -42,7 +43,8 @@ HEADERS  += rexwindow.h \
     tableview.h \
     colorbutton.h \
     fontselectbutton.h \
-    logtreemodel.h
+    logtreemodel.h \
+    logmanager.h
 
 FORMS    += rexwindow.ui \
     addtaskdialog.ui \

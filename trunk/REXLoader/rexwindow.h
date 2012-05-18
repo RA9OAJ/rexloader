@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "taskdialog.h"
 #include "pluginmanager.h"
 #include "tableview.h"
-#include "logtreemodel.h"
+#include "logmanager.h"
 
 #include "../Httploader/LoaderInterface.h"
 
@@ -133,6 +133,7 @@ private:
     SettingsDialog *settDlg;
 
     PluginManager *plugmgr;
+    LogManager *logmgr;
     QStringList pluginDirs; //список с директориями, в которых могут быть плагины
     QHash<int,QStringList> mesqueue; //очередь сообщений
     QHash<int,int> tasklist; //список дескрипторов активных заданий (id_in_table, id_task)
@@ -146,7 +147,6 @@ private:
     QHash<QString,int> plugproto; //хэш дескрипторов плагинов с соответствующими протоколами
     TItemModel *model; //модель для работы с данными БД задач
     TreeItemModel *treemodel; //модель информационного дерева
-    LogTreeModel *logmodel;
     QSortFilterProxyModel *sfmodel; //прокси-модель для сортировки
 
     QToolButton *spdbtn; //кнопка выбора скорости загрузки
