@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 TableView::TableView(QWidget *parent) :
     QTableView(parent)
 {
+    connect(this,SIGNAL(clicked(QModelIndex)),SLOT(sendSelectSignal(QModelIndex)));
 }
 
 void TableView::keyPressEvent(QKeyEvent *event)
@@ -73,4 +74,12 @@ void TableView::keyReleaseEvent(QKeyEvent *event)
     }
 
     QTableView::keyReleaseEvent(event);
+}
+
+void TableView::sendSelectSignal(const QModelIndex &idx)
+{
+    if(!model()) return;
+    QModelIndex _idx = model()->index(idx.row(),0,idx.parent());
+    int table_id = model()->data(_idx,100).toInt();
+    emit clicked(table_id);
 }

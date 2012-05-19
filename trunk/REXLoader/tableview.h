@@ -32,8 +32,12 @@ signals:
     void enterPressed();
     void enterReleased();
     void showTaskProp();
+    void clicked(int table_id);
 
 public slots:
+
+protected slots:
+    void sendSelectSignal(const QModelIndex &idx);
 
 protected:
     void keyPressEvent(QKeyEvent *event);

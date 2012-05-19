@@ -37,13 +37,18 @@ LogTreeModel *LogManager::model(int table_id, int id_sect) const
 {
     if(!loglist.contains(table_id)) return 0;
     QList<LogTreeModel*> lst = loglist.value(table_id);
-    if(lst.isEmpty()) return 0;
-    return lst.value(id_sect,0);
+    if(lst.isEmpty() || lst.size() < id_sect) return 0;
+    return lst.value(id_sect ? id_sect-1 : id_sect,0);
 }
 
 void LogManager::setTabWidget(QTabWidget *widget)
 {
+    if(_tabwidget)
+        while(_tabwidget->count() > 0)
+            _tabwidget->removeTab(0);
+
     _tabwidget = widget;
+    manageTabs(_cur_table_id);
 }
 
 void LogManager::appendLog(int table_id, int id_sect, int mtype, const QString &title, const QString &more)
@@ -63,7 +68,8 @@ void LogManager::appendLog(int table_id, int id_sect, int mtype, const QString &
             manageTabs(table_id);
     }
 
-    model(table_id,id_sect)->appendLog(mtype,title,more);
+    LogTreeModel *mdl = model(table_id,id_sect);
+    if(mdl) mdl->appendLog(mtype,title,more);
 }
 
 void LogManager::setMaxStringCount(int max)
@@ -102,10 +108,24 @@ void LogManager::manageTabs(int table_id)
             loglist.insert(-1,lst);
         }
 
-        getTreeView(wgt)->setModel(model());
+        QTreeView *view = getTreeView(wgt);
+        view->setModel(model());
+        view->header()->hide();
+        view->hideColumn(1);
+        view->hideColumn(2);
+        view->hideColumn(3);
     }
 
-    if(loglist.contains(table_id)) return;
+    if(!loglist.contains(table_id))
+    {
+        while(_tabwidget->count() > 1)
+        {
+            _tabwidget->widget(1)->deleteLater();
+            _tabwidget->removeTab(1);
+        }
+        return;
+    }
+
     QList<LogTreeModel*> lst = loglist.value(table_id);
     LogTreeModel *mdl;
     int i = 1;
@@ -114,20 +134,34 @@ void LogManager::manageTabs(int table_id)
         if(_tabwidget->count() < i+1)
         {
             QWidget *wgt = createTabWidget();
-            getTreeView(wgt)->setModel(mdl);
+            QTreeView *view = getTreeView(wgt);
+            view->setModel(model(table_id,i));
+            view->header()->hide();
+            view->hideColumn(1);
+            view->hideColumn(2);
+            view->hideColumn(3);
             _tabwidget->addTab(wgt,tr("Поток %1").arg(QString::number(i)));
             ++i;
             continue;
         }
 
-        QTreeView *tree = getTreeView(_tabwidget->widget(i));
-        if(tree->model() != mdl)
-            tree->setModel(mdl);
+        QTreeView *view = getTreeView(_tabwidget->widget(i));
+        if(view->model() != mdl)
+        {
+            view->setModel(mdl);
+            view->header()->hide();
+            view->hideColumn(1);
+            view->hideColumn(2);
+            view->hideColumn(3);
+        }
         ++i;
     }
 
-    for(;i < _tabwidget->count(); ++i)
+    while(_tabwidget->count() > i)
+    {
+        _tabwidget->widget(i)->deleteLater();
         _tabwidget->removeTab(i);
+    }
 }
 
 QWidget *LogManager::createTabWidget()

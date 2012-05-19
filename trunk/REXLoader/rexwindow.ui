@@ -73,33 +73,8 @@
          <enum>QTabWidget::South</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>-1</number>
         </property>
-        <widget class="QWidget" name="tabAppEvents">
-         <attribute name="title">
-          <string>События приложения</string>
-         </attribute>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <property name="spacing">
-           <number>1</number>
-          </property>
-          <property name="margin">
-           <number>1</number>
-          </property>
-          <item>
-           <widget class="QTreeView" name="logTreeView">
-            <property name="horizontalScrollBarPolicy">
-             <enum>Qt::ScrollBarAsNeeded</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="tabTaskEvents">
-         <attribute name="title">
-          <string>События задания</string>
-         </attribute>
-        </widget>
        </widget>
       </widget>
      </widget>

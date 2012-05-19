@@ -152,6 +152,7 @@ void SettingsDialog::applySets()
     sets.insert("max_number_sections",ui->maxSections->currentIndex()+1);
     sets.insert("enable_ignore_errors",ui->checkBoxIgnoreErrors->isChecked());
     sets.insert("max_number_errors",ui->spinBoxMaxErrors->value());
+    sets.insert("attempt_interval",ui->spinBoxAttemptInterval->value());
 
     sets.insert("show_taskdialog",ui->showTaskDialog->isChecked());
 
@@ -204,6 +205,7 @@ void SettingsDialog::cancelSets()
     ui->maxSections->setCurrentIndex(sets.value("max_number_sections").toInt()-1);
     ui->checkBoxIgnoreErrors->setChecked(sets.value("enable_ignore_errors").toBool());
     ui->spinBoxMaxErrors->setValue(sets.value("max_number_errors").toInt());
+    ui->spinBoxAttemptInterval->setValue(sets.value("attempt_interval").toInt());
 
     ui->showTaskDialog->setChecked(sets.value("show_taskdialog").toBool());
 

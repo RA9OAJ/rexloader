@@ -68,8 +68,8 @@ public:
     ~PluginManager();
 
     void setPlugDir(const QStringList &dir);
-    void setPlugLists(QHash<int,QString> *files, QHash<int,LoaderInterface*> *list, QHash<QString,int> *proto);
-    void setDefaultSettings(const int &tasks, const int &threads, const qint64 &speed);
+    void setPlugLists(QHash<int,QString> *files, QHash<int,LoaderInterface*> *list, QHash<QString,int> *proto, QHash<int,int> *tsklist);
+    void setDefaultSettings(const int &tasks, const int &threads, const qint64 &speed, const int &att_interval);
     void setDatabaseFile(const QString &dbfile);
     void loadLocale(const QLocale &locale);
     void restorePluginsState(const QByteArray &stat);
@@ -97,11 +97,13 @@ private:
     QHash<int,QString> *plugfiles; //хэш путей к файлам плагинов
     QHash<int,LoaderInterface*> *pluglist; //хэш ссылок на плагины
     QHash<QString,int> *plugproto; //хэш дескрипторов плагинов с соответствующими протоколами
+    QHash<int,int> *tasklist;
     QHash<int,QTranslator*> translators;
 
     const int *max_tasks; //максимальное количество одновременных закачек
     const int *max_threads; //максимальное кол-во потоков при скачивании
-    const qint64 *down_speed;
+    const qint64 *down_speed; //максимальная скорость скачивания
+    const int *attempt_interval; //интервал между посылами запроса потоков
 
     LogTreeModel *logmodel;
 

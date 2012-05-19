@@ -26,6 +26,8 @@ PluginManager::PluginManager(QObject *parent) :
     plugproto = 0;
     max_tasks = 0;
     max_threads = 0;
+    tasklist = 0;
+    attempt_interval = 0;
 
     updOper = 0;
 }
@@ -39,11 +41,12 @@ void PluginManager::setPlugDir(const QStringList &dir)
     pluginDirs = &dir;
 }
 
-void PluginManager::setPlugLists(QHash<int, QString> *files, QHash<int, LoaderInterface *> *list, QHash<QString, int> *proto)
+void PluginManager::setPlugLists(QHash<int, QString> *files, QHash<int, LoaderInterface *> *list, QHash<QString, int> *proto, QHash<int, int> *tsklist)
 {
     plugfiles = files;
     pluglist = list;
     plugproto = proto;
+    tasklist = tsklist;
 }
 
 void PluginManager::run()
@@ -64,7 +67,7 @@ void PluginManager::run()
             QPluginLoader plug(pluginDirs->value(i)+"/"+plg.value(y));
             if(!plug.load())continue;
             LoaderInterface *ldr = qobject_cast<LoaderInterface*>(plug.instance());
-            emit messageAvailable(0,0,LInterface::MT_INFO,tr("Плагин %1 версия %2-%3 ('%4') загружен.").arg(pluginInfo(ldr,"Plugin"),pluginInfo(ldr,"Version"),pluginInfo(ldr,"Build date"),pluginDirs->value(i)+"/"+plg.value(y)),QString());
+            emit messageAvailable(-1,0,LInterface::MT_INFO,tr("Плагин %1 версия %2-%3 ('%4') загружен.").arg(pluginInfo(ldr,"Plugin"),pluginInfo(ldr,"Version"),pluginInfo(ldr,"Build date"),pluginDirs->value(i)+"/"+plg.value(y)),QString());
             pluglist->insert(pluglist->size()+1,ldr);
             plugfiles->insert(pluglist->size(),pluginDirs->value(i)+"/"+plg.value(y));
             connect(ldr,SIGNAL(messageAvailable(int,int,int,QString,QString)),this,SLOT(appendLog(int,int,int,QString,QString)),Qt::QueuedConnection);
@@ -76,6 +79,7 @@ void PluginManager::run()
                 plugproto->insert(protocols.value(x),pluglist->size());
                 ldr->setMaxSectionsOnTask(*max_threads);
                 ldr->setDownSpeed(*down_speed*1024/8);
+                ldr->setAttemptInterval(*attempt_interval);
             }
         }
     }
@@ -94,11 +98,12 @@ void PluginManager::run()
     exec();
 }
 
-void PluginManager::setDefaultSettings(const int &tasks, const int &threads, const qint64 &speed)
+void PluginManager::setDefaultSettings(const int &tasks, const int &threads, const qint64 &speed, const int &att_interval)
 {
     max_tasks = &tasks;
     max_threads = &threads;
     down_speed = &speed;
+    attempt_interval = &att_interval;
 }
 
 void PluginManager::startDownload(int id_task)
@@ -118,9 +123,11 @@ void PluginManager::exeQuery(const QString &query)
 
 void PluginManager::appendLog(int id_task, int id_sect, int ms_type, const QString &title, const QString &more)
 {
+    if(!tasklist) return;
     LoaderInterface *ldr = qobject_cast<LoaderInterface*>(sender());
     if(!ldr) return;
     int new_id = pluglist->key(ldr) * 100 + id_task;
+    new_id = tasklist->key(new_id);
     emit messageAvailable(new_id,id_sect,ms_type,title,more);
 }
 
