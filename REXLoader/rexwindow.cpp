@@ -134,7 +134,9 @@ void REXWindow::createInterface()
     ui->treeView->setExpanded(treemodel->index(1,0),true);
 
     //настраиваем лог
-
+    logmgr->setTabWidget(ui->tabWidget);
+    connect(plugmgr,SIGNAL(messageAvailable(int,int,int,QString,QString)),logmgr,SLOT(appendLog(int,int,int,QString,QString)));
+    connect(ui->tableView,SIGNAL(clicked(int)),logmgr,SLOT(manageTabs(int)));
 
 
     //настраиваем панель инструментов
@@ -805,9 +807,9 @@ void REXWindow::loadPlugins()
     QString dbfile = QDir::homePath()+"/.rexloader/tasks.db";
     plugmgr->setDatabaseFile(dbfile);
 
-    plugmgr->setDefaultSettings(max_tasks, max_threads, down_speed);
+    plugmgr->setDefaultSettings(max_tasks, max_threads, down_speed, settDlg->value("attempt_interval").toInt());
     plugmgr->setPlugDir(pluginDirs);
-    plugmgr->setPlugLists(&plugfiles, &pluglist, &plugproto);
+    plugmgr->setPlugLists(&plugfiles, &pluglist, &plugproto, &tasklist);
     plugmgr->start();
 }
 
@@ -1915,6 +1917,7 @@ void REXWindow::readSettings()
         plugins.value(i)->setRetryCriticalError(settDlg->value("enable_ignore_errors").toBool());
         plugins.value(i)->setMaxSectionsOnTask(max_threads);
         plugins.value(i)->setUserAgent(settDlg->value("user_agent").toString());
+        plugins.value(i)->setAttemptInterval(settDlg->value("attempt_interval").toInt());
     }
 
     model->setRowColor((int)LInterface::ON_PAUSE, settDlg->value("on_pause_color").value<QColor>());

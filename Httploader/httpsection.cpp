@@ -31,6 +31,8 @@ HttpSection::HttpSection(QObject *parent) : QObject(parent) /*:
     chunked_load = 0;
     decompressSize = 0;
     inbuf.clear();
+
+    emit sectionMessage(LInterface::MT_INFO,tr("Создана секция"),QString());
 }
 
 void HttpSection::clear()
@@ -98,9 +100,19 @@ void HttpSection::run()
     connect(s,SIGNAL(error(QAbstractSocket::SocketError)), this,SLOT(socketErrorSlot(QAbstractSocket::SocketError))/*, Qt::DirectConnection*/); //обрабатываем ошибки сокета
     watcher->start();
 
-    if(url.scheme().toLower() == "http") s->connectToHost(url.encodedHost(), (url.port() == -1 ? 80:url.port()), QTcpSocket::ReadWrite); //устанавливаем соединение
-    else s->connectToHostEncrypted(url.encodedHost(), (url.port() == -1 ? 443:url.port()), QTcpSocket::ReadWrite);
+    int port = 80;
+    if(url.scheme().toLower() == "http")
+    {
+        port = (url.port() == -1 ? 80:url.port());
+        s->connectToHost(url.encodedHost(), port, QTcpSocket::ReadWrite); //устанавливаем соединение
+    }
+    else
+    {
+        port = (url.port() == -1 ? 443:url.port());
+        s->connectToHostEncrypted(url.encodedHost(), port, QTcpSocket::ReadWrite);
+    }
     //exec();
+    emit sectionMessage(LInterface::MT_INFO,tr("Попытка соединения с %1 на порту %2").arg(url.host(),QString::number(port)),QString());
 }
 
 void HttpSection::setFileName(const QString &filenm, int offset)
@@ -123,6 +135,8 @@ void HttpSection::setSection(qint64 start, qint64 finish)
     if(finish < 0) finish_s = 0;
     else finish_s = finish;
     totalload = 0; //сбрасываем счетчик скачанных байт в секции, ибо границы секции были переопределены!!!
+
+    emit sectionMessage(LInterface::MT_INFO,tr("Установлены границы секции с %1 байта по %2 байт").arg(QString::number(start_s), QString::number(finish_s)),QString());
 }
 
 qint64 HttpSection::totalLoadOnSection() const
@@ -231,6 +245,7 @@ void HttpSection::stopDownloading()
     soc->deleteLater();
     soc = 0;
     //if(isRunning())quit();
+    emit sectionMessage(LInterface::MT_INFO,tr("Секция остановлена"),QString());
 }
 
 void HttpSection::pauseDownloading(bool pause)
@@ -248,6 +263,8 @@ void HttpSection::pauseDownloading(bool pause)
 void HttpSection::sendHeader()
 {
     if(!soc)return;
+    emit sectionMessage(LInterface::MT_INFO,tr("Соединение с узлом установлено"),QString());
+
     QString target = (proxytype != QNetworkProxy::NoProxy) ? url.toEncoded() : url.encodedPath();
     if(!url.encodedQuery().isEmpty()) target += "?" + url.encodedQuery();
     QString _header = QString("GET %1 HTTP/1.1\r\nHost: %2\r\nAccept: */*\r\nAccept-Encoding: gzip, deflate\r\nUser-Agent: %3\r\n").arg(target,url.host(),user_agent);
@@ -265,7 +282,7 @@ void HttpSection::sendHeader()
     if(!referer.isEmpty())_header += QString("Referer: http://%1/\r\n").arg(referer);
     _header += QString("Connection: Keep-Alive\r\n\r\n");
     soc->write(_header.toAscii().data());
-    emit sectionMessage(LInterface::MT_INFO,tr("Отправка HTTP заголовка"),_header);
+    emit sectionMessage(LInterface::MT_OUT,tr("Отправка HTTP заголовка"),_header);
 }
 
 void HttpSection::dataAnalising()
@@ -292,7 +309,7 @@ void HttpSection::dataAnalising()
             if(cur_str.at(cur_str.size()-2) != 0x0D) header[_tmp.value(0).toLower()].chop(1);
             else header[_tmp.value(0).toLower()].chop(2);
         }
-        emit sectionMessage(LInterface::MT_INFO,tr("Получен ответ %1").arg(header["HTTP"]),_request);
+        emit sectionMessage(LInterface::MT_IN,tr("Получен ответ %1").arg(header["HTTP"]),_request);
         if(_errno == QAbstractSocket::RemoteHostClosedError && mode != 1){_errno = HttpSection::SERV_CONNECT_ERROR;emit errorSignal(_errno); stopDownloading(); return;}
     }
     if(mode == 1)

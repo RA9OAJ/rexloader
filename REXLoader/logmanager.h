@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QObject>
 #include <QList>
 #include <QBoxLayout>
+#include <QHeaderView>
 #include <QTreeView>
 #include <QPointer>
 #include <QTableWidget>

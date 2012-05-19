@@ -837,8 +837,8 @@ void HttpLoader::acceptQuery()
 
 void HttpLoader::setAttemptInterval(const int sec)
 {
-    if(sec < 1) return;
-    attempt_interval = sec;
+    if(sec < 1000) return;
+    attempt_interval = sec*1000;
 }
 
 int HttpLoader::loadTaskFile(const QString &_path)
