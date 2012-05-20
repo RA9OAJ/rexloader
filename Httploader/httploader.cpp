@@ -311,6 +311,7 @@ void HttpLoader::startDownload(int id_task)
             if(end_s > tsk->map[2*i-2] + tsk->map[2*i-1])
             {
                 sect->setSection(tsk->map[2*i-2], (tsk->map[2*i] == 0 ? 0 : tsk->map[2*i]-1));
+
                 if(tsk->map[2*i-1])sect->setOffset(tsk->map[2*i-1]);
                 sect_id = i;
                 break;
@@ -323,6 +324,9 @@ void HttpLoader::startDownload(int id_task)
     tsk->sections.insert(sect_id,sect);
     sections->insert(sect, id_task);
     mathSpeed();
+    int task_id = sections->value(sect,0);
+    emit messageAvailable(task_id,sect_id,LInterface::MT_INFO,tr("Установлены границы секции с %1 байта по %2 байт").arg(QString::number(sect->startByte()),QString::number(sect->finishByte())),QString());
+
     if(!shedule_flag) //если шедулер не работает
     {
         shedule_flag = true; //разрешаем ему работу
@@ -440,6 +444,7 @@ void HttpLoader::sectionCompleted()
     sect = qobject_cast<HttpSection*>(_sender);
     if(!sect || !sections->contains(sect)) return;
     Task* tsk = getTaskSender(sender());
+    int task_id = sections->value(sect,0);
 
     if(!tsk) // если задание-владелец секции не найден, то секция тупо удаляется
     {
@@ -460,6 +465,8 @@ void HttpLoader::sectionCompleted()
         sect = 0;
         tsk->sections_cnt -= 1;
         if(tsk->status == LInterface::SEND_QUERY)tsk->status = LInterface::ON_LOAD;
+        if(task_id) emit messageAvailable(task_id, tsk->sections.key(sect),LInterface::MT_INFO,tr("Секция завершена"),QString());
+
         if(tsk->totalLoad() == tsk->size || (!tsk->size && tsk->MIME.split("/").value(0).toLower() == "text"))
         {
             QFile tmpfl(tsk->filepath);
@@ -467,6 +474,8 @@ void HttpLoader::sectionCompleted()
             tmpfl.resize(tsk->size);
             tsk->status = LInterface::FINISHED;
             mathSpeed();
+
+            if(task_id) emit messageAvailable(-1, 0,LInterface::MT_INFO,tr("Скачивание файла %1 завершено").arg(tsk->filepath),QString());
             return;
         }
         mathSpeed();
@@ -478,6 +487,7 @@ void HttpLoader::sectionCompleted()
             tsk->status = LInterface::FINISHED;
             tsk->size = tsk->totalLoad();
             mathSpeed();
+            if(task_id) emit messageAvailable(-1, 0,LInterface::MT_INFO,tr("Скачивание файла %1 завершено").arg(tsk->filepath),QString());
             return;
         }
         tsk->sections.remove(tsk->sections.key(sect));
@@ -488,6 +498,7 @@ void HttpLoader::sectionCompleted()
     }
     mathSpeed();
 
+    if(task_id) emit messageAvailable(task_id, tsk->sections.key(sect),LInterface::MT_INFO,tr("Проверка размера задания"),QString());
     if(tsk->status != LInterface::STOPPING) tsk->sections_cnt == 0 ? addSection(id_task) : QTimer::singleShot(1000,this,SLOT(addSection()));
 
 }
@@ -614,13 +625,13 @@ void HttpLoader::addSection(int id_task)
     connect(sect,SIGNAL(downloadingCompleted()),this,SLOT(sectionCompleted())/*, Qt::QueuedConnection*/);
     connect(sect,SIGNAL(sectionMessage(int,QString,QString)),this,SLOT(addMessage(int,QString,QString)));
 
-    sect->setSection(_task->map[2*cur_sect_id-2], (_task->map[2*cur_sect_id] == 0 ? 0 : _task->map[2*cur_sect_id]-1)); //устанавливаем границы секции
-
-    if(_task->map[2*cur_sect_id-1])sect->setOffset(_task->map[2*cur_sect_id-1]);
-
     _task->sections.insert(cur_sect_id, sect);
     ++_task->sections_cnt;
     sections->insert(sect,id_task);
+
+    sect->setSection(_task->map[2*cur_sect_id-2], (_task->map[2*cur_sect_id] == 0 ? 0 : _task->map[2*cur_sect_id]-1)); //устанавливаем границы секции
+
+    if(_task->map[2*cur_sect_id-1])sect->setOffset(_task->map[2*cur_sect_id-1]);
 
     if(!shedule_flag) //если шедулер не работает
     {
@@ -761,6 +772,7 @@ void HttpLoader::sectError(int _errno)
             --tsk->sections_cnt;
             sect = 0;
             tsk->status = LInterface::FINISHED;
+            emit messageAvailable(-1, 0,LInterface::MT_INFO,tr("Скачивание файла %1 завершено").arg(tsk->filepath),QString());
             break;
         }
 
@@ -837,7 +849,7 @@ void HttpLoader::acceptQuery()
 
 void HttpLoader::setAttemptInterval(const int sec)
 {
-    if(sec < 1000) return;
+    if(sec < 1) return;
     attempt_interval = sec*1000;
 }
 

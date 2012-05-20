@@ -36,9 +36,8 @@ QVariant LogTreeModel::data(const QModelIndex &index, int role) const
 {
     if(index.parent() == QModelIndex())
     {
-        switch(role)
-        {
-        case Qt::DisplayRole:
+
+        if(role == Qt::DisplayRole)
         {
             int id = root_nodes.value(index,-1);
             if(id < 0) return QVariant();
@@ -48,15 +47,28 @@ QVariant LogTreeModel::data(const QModelIndex &index, int role) const
 
             return root_values.value(id);
         }
-        case 100:
+
+        if(role == Qt::DecorationRole)
         {
-            int id = root_nodes.value(index,-1);
-            if(id < 0) return QVariant();
-            return root_values.value(id);
+            int id = root_nodes.value(LogTreeModel::index(index.row(),2));
+            int mtype = root_values.value(id).toInt();
+
+            switch(mtype)
+            {
+            case LInterface::MT_IN: return QIcon(":/appimages/in_arrow.png");
+            case LInterface::MT_OUT: return QIcon(":/appimages/out_arrow.png");
+            default: return QVariant();
+            }
         }
 
-        default: return QVariant();
+        if(role == 100)
+        {
+            int id = root_nodes.value(index);
+            return root_values.value(id,QVariant());
         }
+
+        return QVariant();
+
     }
     else
     {

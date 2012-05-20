@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QColor>
 #include <QFont>
 #include <QDebug>
+#include <QIcon>
 #include <QStringList>
 #include <QDateTime>
 

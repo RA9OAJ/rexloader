@@ -126,9 +126,13 @@ void PluginManager::appendLog(int id_task, int id_sect, int ms_type, const QStri
     if(!tasklist) return;
     LoaderInterface *ldr = qobject_cast<LoaderInterface*>(sender());
     if(!ldr) return;
-    int new_id = pluglist->key(ldr) * 100 + id_task;
-    new_id = tasklist->key(new_id);
-    emit messageAvailable(new_id,id_sect,ms_type,title,more);
+    if(id_task > 0)
+    {
+        int new_id = pluglist->key(ldr) * 100 + id_task;
+        new_id = tasklist->key(new_id);
+        emit messageAvailable(new_id,id_sect,ms_type,title,more);
+    }
+    else emit messageAvailable(id_task,id_sect,ms_type,title,more);
 }
 
 void PluginManager::setDatabaseFile(const QString &dbfile)

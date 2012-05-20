@@ -140,7 +140,7 @@ void LogManager::manageTabs(int table_id)
             view->hideColumn(1);
             view->hideColumn(2);
             view->hideColumn(3);
-            _tabwidget->addTab(wgt,tr("Поток %1").arg(QString::number(i)));
+            _tabwidget->addTab(wgt,tr("Секция %1").arg(QString::number(i)));
             ++i;
             continue;
         }

@@ -35,5 +35,7 @@
         <file alias="yes_24x24.png">images/yes_24x24.png</file>
         <file alias="no_16x16.png">images/no_16x16.png</file>
         <file alias="no_24x24.png">images/no_24x24.png</file>
+        <file alias="in_arrow.png">images/in_arrow.png</file>
+        <file alias="out_arrow.png">images/out_arrow.png</file>
     </qresource>
 </RCC>
