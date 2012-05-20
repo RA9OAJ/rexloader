@@ -353,7 +353,13 @@ void HttpSection::dataAnalising()
             totalsize = header["content-length"].toLongLong();
             emit totalSize(totalsize);
             emit fileType(header["content-type"]);
-            if(header.contains("accept-ranges") && !header.contains("transfer-encoding")) emit acceptRanges();
+            if(header.contains("accept-ranges") && !header.contains("transfer-encoding"))
+            {
+                emit acceptRanges();
+                emit sectionMessage(LInterface::MT_INFO,tr("Докачка поддерживается"),QString());
+            }
+            else emit sectionMessage(LInterface::MT_WARNING,tr("Докачка не поддерживается"),QString());
+
             if(lastmodified.isNull() && header.contains("last-modified"))
             {
                 QLocale locale(QLocale::C);
