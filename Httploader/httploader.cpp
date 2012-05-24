@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #define P_VERSION "0.1a.3"
-#define P_BUILD_DATE "2012-05-01"
+#define P_BUILD_DATE "2012-05-24"
 
 #include "httploader.h"
 
@@ -326,6 +326,7 @@ void HttpLoader::startDownload(int id_task)
     mathSpeed();
     int task_id = sections->value(sect,0);
     emit messageAvailable(task_id,sect_id,LInterface::MT_INFO,tr("Установлены границы секции с %1 байта по %2 байт").arg(QString::number(sect->startByte()),QString::number(sect->finishByte())),QString());
+    emit messageAvailable(task_id,sect_id,LInterface::MT_INFO,tr("Установлено смещение в секции на %1").arg(QString::number(sect->totalLoadOnSection())),QString());
 
     if(!shedule_flag) //если шедулер не работает
     {
@@ -475,7 +476,6 @@ void HttpLoader::sectionCompleted()
             tsk->status = LInterface::FINISHED;
             mathSpeed();
 
-            if(task_id) emit messageAvailable(-1, 0,LInterface::MT_INFO,tr("Скачивание файла %1 завершено").arg(tsk->filepath),QString());
             return;
         }
         mathSpeed();
@@ -487,7 +487,6 @@ void HttpLoader::sectionCompleted()
             tsk->status = LInterface::FINISHED;
             tsk->size = tsk->totalLoad();
             mathSpeed();
-            if(task_id) emit messageAvailable(-1, 0,LInterface::MT_INFO,tr("Скачивание файла %1 завершено").arg(tsk->filepath),QString());
             return;
         }
         tsk->sections.remove(tsk->sections.key(sect));
@@ -772,7 +771,6 @@ void HttpLoader::sectError(int _errno)
             --tsk->sections_cnt;
             sect = 0;
             tsk->status = LInterface::FINISHED;
-            emit messageAvailable(-1, 0,LInterface::MT_INFO,tr("Скачивание файла %1 завершено").arg(tsk->filepath),QString());
             break;
         }
 
