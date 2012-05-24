@@ -433,11 +433,13 @@ void REXWindow::setEnabledTaskMenu(bool stat)
         return;
     }
 
-    if(ui->tableView->selectionModel()->selectedRows().size() < 2 && model->index(ui->tableView->currentIndex().row(),9).data(100) == LInterface::FINISHED)
+    QModelIndex curIdx = sfmodel->index(ui->tableView->currentIndex().row(),9);
+    curIdx = sfmodel->mapToSource(curIdx);
+    if(ui->tableView->selectionModel()->selectedRows().size() < 2 && model->data(curIdx,100).toInt() == LInterface::FINISHED)
         ui->menu_7->setEnabled(false);
     else
         ui->menu_7->setEnabled(true);
-    if(ui->tableView->selectionModel()->selectedRows().size() < 2 && model->index(ui->tableView->currentIndex().row(),9).data(100) != LInterface::FINISHED)
+    if(ui->tableView->selectionModel()->selectedRows().size() < 2 && model->data(curIdx,100).toInt() != LInterface::FINISHED)
         ui->actionRedownload->setEnabled(false);
     else
         ui->actionRedownload->setEnabled(true);
