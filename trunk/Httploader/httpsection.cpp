@@ -126,6 +126,8 @@ void HttpSection::setOffset(qint64 offset)
 {
     if(offset < 0)return;
     totalload = offset;
+
+    emit sectionMessage(LInterface::MT_INFO,tr("Установлено смещение в секции на %1").arg(QString::number(offset)),QString());
 }
 
 void HttpSection::setSection(qint64 start, qint64 finish)
