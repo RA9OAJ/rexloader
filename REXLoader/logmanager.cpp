@@ -23,6 +23,7 @@ LogManager::LogManager(QObject *parent) :
 {
     _max_str_count = 1000;
     _tabwidget = 0;
+    _cur_table_id = -1;
     QList<LogTreeModel*> lst;
     lst << new LogTreeModel(this);
     lst.value(0)->setMaxStringsCount(_max_str_count);
@@ -69,7 +70,12 @@ void LogManager::appendLog(int table_id, int id_sect, int mtype, const QString &
     }
 
     LogTreeModel *mdl = model(table_id,id_sect);
-    if(mdl) mdl->appendLog(mtype,title,more);
+    if(mdl)
+    {
+        mdl->appendLog(mtype,title,more);
+        if(!(mdl->rowCount()-1))
+            manageTabs(table_id);
+    }
 }
 
 void LogManager::setMaxStringCount(int max)
@@ -92,8 +98,10 @@ void LogManager::clearLog(int table_id)
 
 void LogManager::manageTabs(int table_id)
 {
-    _cur_table_id = table_id;
     if(!_tabwidget) return;
+    if(_tabwidget->count() && table_id == -1) return;
+    _cur_table_id = table_id;
+
     if(!_tabwidget->count())
     {
         QWidget *wgt = createTabWidget();
@@ -129,8 +137,10 @@ void LogManager::manageTabs(int table_id)
     QList<LogTreeModel*> lst = loglist.value(table_id);
     LogTreeModel *mdl;
     int i = 1;
+    int vis_cnt = 1;
     foreach(mdl,lst)
     {
+        if(!mdl->rowCount()) continue;
         if(_tabwidget->count() < i+1)
         {
             QWidget *wgt = createTabWidget();
@@ -140,12 +150,13 @@ void LogManager::manageTabs(int table_id)
             view->hideColumn(1);
             view->hideColumn(2);
             view->hideColumn(3);
-            _tabwidget->addTab(wgt,tr("Секция %1").arg(QString::number(i)));
+            _tabwidget->addTab(wgt,tr("Секция %1").arg(QString::number(vis_cnt)));
             ++i;
+            ++vis_cnt;
             continue;
         }
 
-        QTreeView *view = getTreeView(_tabwidget->widget(i));
+        QTreeView *view = getTreeView(_tabwidget->widget(vis_cnt));
         if(view->model() != mdl)
         {
             view->setModel(mdl);
@@ -153,8 +164,10 @@ void LogManager::manageTabs(int table_id)
             view->hideColumn(1);
             view->hideColumn(2);
             view->hideColumn(3);
+            _tabwidget->setTabText(vis_cnt,tr("Секция %1").arg(QString::number(vis_cnt)));
         }
         ++i;
+        ++vis_cnt;
     }
 
     while(_tabwidget->count() > i)
