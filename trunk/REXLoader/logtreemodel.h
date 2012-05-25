@@ -77,7 +77,7 @@ private:
     QHash<QModelIndex, QVariant> sub_nodes; //дочерние узлы ветви дерева
     QHash<QModelIndex, int> links; //связи между дочерними и основными узлами (int - номер родительской строки)
 
-    QHash<int, QColor> string_color;
+    QHash<int, QColor> row_color;
     QHash<int, QFont> fonts;
     QHash<int, QColor> font_color;
 };

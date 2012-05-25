@@ -1007,7 +1007,7 @@ void REXWindow::deleteTask()
         dlg.setWindowTitle(tr("Что делать?"));
         dlg.setIcon(EMessageBox::Warning);
         dlg.setText(tr("Выбрано более одного задания."));
-        dlg.setInformativeText("Чтобы подтвердить удаление нескольких заданий нажмите <b>\"Ok\"</b> или <b>\"Отмена\"</b> для отмены удаления.");
+        dlg.setInformativeText(tr("Чтобы подтвердить удаление нескольких заданий нажмите <b>\"Ok\"</b> или <b>\"Отмена\"</b> для отмены удаления."));
         dlg.setStandardButtons(EMessageBox::Ok | EMessageBox::Cancel);
         dlg.setDefaultButton(EMessageBox::Cancel);
 
