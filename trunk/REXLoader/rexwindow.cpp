@@ -59,10 +59,10 @@ REXWindow::REXWindow(QWidget *parent) :
 
     apphomedir = QDir::homePath()+"/.rexloader";
 
+    logmgr = new LogManager(this);
     lockProcess();
     openDataBase();
 
-    logmgr = new LogManager(this);
     plugmgr = new PluginManager(this);
     connect(plugmgr,SIGNAL(pluginStatus(bool)),this,SLOT(pluginStatus(bool)));
     connect(qApp,SIGNAL(aboutToQuit()),this,SLOT(prepareToQuit()));
@@ -514,7 +514,10 @@ void REXWindow::setTaskPriority()
     qr.bindValue("priority",newprior);
     if(!qr.exec())
     {
-        //записываем ошибку в журнал
+        logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                          tr("Ошибка выполнения SQL запроса"),
+                          tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
+                          );
         qDebug()<<"void REXWindow::setTaskPriority(1)" + qr.executedQuery() + " Error:" + qr.lastError().text();
     }
     updateTaskSheet();
@@ -528,7 +531,10 @@ void REXWindow::setTaskPriority(int id, int prior)
     qr.bindValue("id",id);
     if(!qr.exec())
     {
-        //записываем ошибку в журнал
+        logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                          tr("Ошибка выполнения SQL запроса"),
+                          tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
+                          );
         qDebug()<<"void REXWindow::setTaskPriority(1)" + qr.executedQuery() + " Error:" + qr.lastError().text();
     }
     updateTaskSheet();
@@ -679,7 +685,10 @@ void REXWindow::openDataBase()
 
     if(!qr.exec())
     {
-        //записываем ошибку в журнал
+        logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                          tr("Ошибка выполнения SQL запроса"),
+                          tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
+                          );
         qDebug()<<"void REXWindow::openDataBase(1)" + qr.executedQuery() + " Error:" + qr.lastError().text();
     }
 
@@ -691,7 +700,10 @@ void REXWindow::scanNewTaskQueue()
     QSqlQuery qr;
     if(!qr.exec("SELECT * FROM newtasks;"))
     {
-        // запись в журнал ошибок
+        logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                          tr("Ошибка выполнения SQL запроса"),
+                          tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
+                          );
         qDebug()<<"Error: void REXWindow::scanNewTaskQueue(): "<<qr.lastError().text();
         return;
     }
@@ -797,7 +809,10 @@ void REXWindow::scanNewTaskQueue()
 
         if(!qr1.exec())
         {
-            //запись в журнал ошибок
+            logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                              tr("Ошибка выполнения SQL запроса"),
+                              tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
+                              );
             qDebug()<<"Error: void REXWindow::scanNewTaskQueue(): "<<qr.lastError().text();
             return;
         }
@@ -960,7 +975,10 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
     qr.bindValue("id",id_row);
     if(!qr.exec())
     {
-        //запись в журнал ошибок
+        logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                          tr("Ошибка выполнения SQL запроса"),
+                          tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
+                          );
         qDebug()<<"void REXWindow::startTaskNumber(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
     }
     updateTaskSheet();
@@ -1037,7 +1055,10 @@ void REXWindow::deleteTask()
 
     if(!qr.exec())
     {
-        //запись в журнал ошибок
+        logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                          tr("Ошибка выполнения SQL запроса"),
+                          tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
+                          );
         qDebug()<<"void REXWindow::deleteTask(): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
     }
 
@@ -1096,7 +1117,10 @@ void REXWindow::startTask(int id)
 
     if(!qr.exec())
     {
-        //запись в журнал ошибок
+        logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                          tr("Ошибка выполнения SQL запроса"),
+                          tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
+                          );
         qDebug()<<"void REXWindow::startTask(2): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
         return;
     }
@@ -1157,7 +1181,10 @@ void REXWindow::redownloadTask()
     qr.bindValue("datecreate",QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:ss"));
     if(!qr.exec())
     {
-        //запись в журнал ошибок
+        logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                          tr("Ошибка выполнения SQL запроса"),
+                          tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
+                          );
         qDebug()<<"void REXWindow::redownloadTask(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
         return;
     }
@@ -1205,7 +1232,10 @@ void REXWindow::stopTask()
 
         if(!qr.exec())
         {
-            //запись в журнал ошибок
+            logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                              tr("Ошибка выполнения SQL запроса"),
+                              tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
+                              );
             qDebug()<<"void REXWindow::stopTask(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
         }
     }
@@ -1234,7 +1264,10 @@ void REXWindow::stopTask(int id)
 
     if(!qr.exec())
     {
-        //запись в журнал ошибок
+        logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                          tr("Ошибка выполнения SQL запроса"),
+                          tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
+                          );
         qDebug()<<"void REXWindow::stopTask(2): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
         return;
     }
@@ -1297,7 +1330,10 @@ void REXWindow::stopAllTasks()
         qr.prepare("UPDATE tasks SET tstatus=0 WHERE tstatus BETWEEN 1 AND 4 OR tstatus=-100");
         if(!qr.exec())
         {
-            //запись в журнал ошибок
+            logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                              tr("Ошибка выполнения SQL запроса"),
+                              tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
+                              );
             qDebug()<<"void REXWindow::startAllTasks(3): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
             return;
         }
@@ -1331,7 +1367,10 @@ void REXWindow::syncTaskData()
 
             if(!qr.exec())
             {
-                //запись в журнал ошибок
+                logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                                  tr("Ошибка выполнения SQL запроса"),
+                                  tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
+                                  );
                 qDebug()<<"void REXWindow::syncTaskData(3): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
             }
             else tasklist.remove(id_row);
@@ -1519,6 +1558,8 @@ void REXWindow::manageTaskQueue()
     for(; tasklist.size() < max_tasks && i < select.rowCount(); ++i)
     {
         int id_row = select.data(select.index(i,0),100).toInt();
+        QString flname = select.data(select.index(i,3),Qt::DisplayRole).toString();
+
         QUrl _url = QUrl::fromEncoded(select.data(select.index(i,1),100).toByteArray());
         if(!plugproto.contains(_url.scheme().toLower()))
         {
@@ -1537,6 +1578,10 @@ void REXWindow::manageTaskQueue()
             continue;
         }
 
+        logmgr->appendLog(-1,0,
+                          LInterface::MT_INFO,
+                          tr("Загрузка файла %1 начинается").arg(flname),
+                          QString());
         startTaskNumber(id_row,_url,select.data(select.index(i,3),100).toString(),select.data(select.index(i,4),100).toLongLong());
     }
 
@@ -1564,6 +1609,7 @@ void REXWindow::manageTaskQueue()
         else
         {
             int id_row = select1.data(select1.index(y,0),100).toInt();
+            QString flname = select1.data(select1.index(y,3),Qt::DisplayRole).toString();
             int id_task = tasklist.value(id_row)%100;
             int id_proto = tasklist.value(id_row)/100;
 
@@ -1571,6 +1617,10 @@ void REXWindow::manageTaskQueue()
 
             //останавливаем найденную задачу, удаляем её из менеджера закачек
             ldr->stopDownload(id_task);
+            logmgr->appendLog(-1,0,
+                              LInterface::MT_INFO,
+                              tr("Загрузка файла %1 приостановлена").arg(flname),
+                              QString());
             QString query = QString("UPDATE tasks SET tstatus=-100 WHERE id=%1").arg(QString::number(id_row));
             emit needExecQuery(query);
             QModelIndex srcIdx = select1.mapToSource(select1.index(y,9));
@@ -1583,6 +1633,7 @@ void REXWindow::manageTaskQueue()
 
             QUrl _url(select.data(select.index(i,1),100).toString());
             id_row = select.data(select.index(i,0),100).toInt();
+            flname = select.data(select.index(i,4),Qt::DisplayRole).toString();
 
             if(!plugproto.contains(_url.scheme().toLower())) //если протокол не поддерживается, то пропускаем эту задачу в очереди, поменяв её статус на ошибку
             {
@@ -1602,6 +1653,10 @@ void REXWindow::manageTaskQueue()
                 continue;
             }
 
+            logmgr->appendLog(-1,0,
+                              LInterface::MT_INFO,
+                              tr("Загрузка файла %1 начинается").arg(flname),
+                              QString());
             startTaskNumber(id_row,_url,select.data(select.index(i,3),100).toString(),select.data(select.index(i,4),100).toLongLong());
         }
     }
@@ -1857,7 +1912,10 @@ void REXWindow::acceptQAction(QAbstractButton *btn)
         qr.bindValue("id",params.value("id"));
         if(!qr.exec())
         {
-            ///запись в журнал ошибок
+            logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                              tr("Ошибка выполнения SQL запроса"),
+                              tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
+                              );
             qDebug()<<"void REXWindow::acceptQAction(1): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
         }
         updateTaskSheet();
@@ -1880,7 +1938,10 @@ void REXWindow::scanTasksOnStart()
     QSqlQuery qr("SELECT COUNT(*) FROM tasks WHERE tstatus=0");
     if(!qr.exec())
     {
-        ///запись в журнал ошибок
+        logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                          tr("Ошибка выполнения SQL запроса"),
+                          tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
+                          );
         qDebug()<<"void REXWindow::scanTasksOnStart(1): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
     }
     qr.next();
@@ -2033,7 +2094,10 @@ void REXWindow::deleteCategory()
     qr.bindValue("id",id);
     if(!qr.exec())
     {
-        ///запись в журнал ошибок
+        logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                          tr("Ошибка выполнения SQL запроса"),
+                          tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
+                          );
         qDebug()<<"void REXWindow::deleteCategory(1): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
     }
 
@@ -2043,7 +2107,10 @@ void REXWindow::deleteCategory()
     qr.bindValue("id",id);
     if(!qr.exec())
     {
-        ///запись в журнал ошибок
+        logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                          tr("Ошибка выполнения SQL запроса"),
+                          tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
+                          );
         qDebug()<<"void REXWindow::deleteCategory(2): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
     }
 
@@ -2053,7 +2120,10 @@ void REXWindow::deleteCategory()
     qr.bindValue("id",id);
     if(!qr.exec())
     {
-        ///запись в журнал ошибок
+        logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                          tr("Ошибка выполнения SQL запроса"),
+                          tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
+                          );
         qDebug()<<"void REXWindow::deleteCategory(3): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
     }
     model->silentUpdateModel();
@@ -2096,7 +2166,10 @@ void REXWindow::updateTreeModel(const QString cat_name, int row, int parent_id, 
 
         if(!qr.exec())
         {
-            //запись в журнал ошибок
+            logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                              tr("Ошибка выполнения SQL запроса"),
+                              tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
+                              );
             qDebug()<<"void REXWindow::updateTreeModel(1): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
             treemodel->updateModel();
         }
@@ -2109,7 +2182,10 @@ void REXWindow::updateTreeModel(const QString cat_name, int row, int parent_id, 
 
         if(!qr.exec())
         {
-            //запись в журнал ошибок
+            logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                              tr("Ошибка выполнения SQL запроса"),
+                              tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
+                              );
             qDebug()<<"void REXWindow::updateTreeModel(2): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
             treemodel->updateModel();
         }
