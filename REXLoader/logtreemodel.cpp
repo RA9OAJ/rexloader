@@ -26,6 +26,12 @@ LogTreeModel::LogTreeModel(QObject *parent) :
     column_cnt = 4;
     max_rows = 1000;
     maxinternalid = -1;
+
+    row_color.insert(LInterface::MT_INFO,QColor("#dbe8f1"));
+    row_color.insert(LInterface::MT_WARNING,QColor("#f8ffaf"));
+    row_color.insert(LInterface::MT_ERROR,QColor("#ffd6d6"));
+    row_color.insert(LInterface::MT_IN,QColor("#c8ffc8"));
+    row_color.insert(LInterface::MT_OUT,QColor("#e5eefd"));
 }
 
 LogTreeModel::~LogTreeModel()
@@ -34,8 +40,11 @@ LogTreeModel::~LogTreeModel()
 
 QVariant LogTreeModel::data(const QModelIndex &index, int role) const
 {
+    int mtype = 0;
     if(index.parent() == QModelIndex())
     {
+        int id = root_nodes.value(LogTreeModel::index(index.row(),2));
+        mtype = root_values.value(id).toInt();
 
         if(role == Qt::DisplayRole)
         {
@@ -50,16 +59,19 @@ QVariant LogTreeModel::data(const QModelIndex &index, int role) const
 
         if(role == Qt::DecorationRole)
         {
-            int id = root_nodes.value(LogTreeModel::index(index.row(),2));
-            int mtype = root_values.value(id).toInt();
-
             switch(mtype)
             {
+            case LInterface::MT_INFO: return QIcon(":/appimages/log_info.png");
+            case LInterface::MT_WARNING: return QIcon(":/appimages/log_warning.png");
+            case LInterface::MT_ERROR: return QIcon(":/appimages/error_24x24.png");
             case LInterface::MT_IN: return QIcon(":/appimages/in_arrow.png");
             case LInterface::MT_OUT: return QIcon(":/appimages/out_arrow.png");
             default: return QVariant();
             }
         }
+
+        if(role == Qt::BackgroundColorRole)
+            return row_color.value(mtype,QColor());
 
         if(role == 100)
         {
@@ -72,9 +84,13 @@ QVariant LogTreeModel::data(const QModelIndex &index, int role) const
     }
     else
     {
+        int id = root_nodes.value(LogTreeModel::index(index.parent().row(),2));
+        mtype = root_values.value(id).toInt();
+
         switch(role)
         {
         case Qt::DisplayRole: return sub_nodes.value(index);
+        case Qt::BackgroundColorRole: return row_color.value(mtype,QColor());
 
         default: return QVariant();
         }
@@ -312,7 +328,7 @@ void LogTreeModel::appendLog(int ms_type, const QString &title, const QString &m
 
 void LogTreeModel::setLogColor(int m_type, const QColor &color)
 {
-    string_color.insert(m_type,color);
+    row_color.insert(m_type,color);
 }
 
 void LogTreeModel::setFont(int m_type, const QFont &font)

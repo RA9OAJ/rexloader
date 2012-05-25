@@ -37,5 +37,7 @@
         <file alias="no_24x24.png">images/no_24x24.png</file>
         <file alias="in_arrow.png">images/in_arrow.png</file>
         <file alias="out_arrow.png">images/out_arrow.png</file>
+        <file alias="log_warning.png">images/log_warning.png</file>
+        <file alias="log_info.png">images/log_info.png</file>
     </qresource>
 </RCC>
