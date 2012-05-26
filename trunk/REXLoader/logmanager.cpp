@@ -24,6 +24,7 @@ LogManager::LogManager(QObject *parent) :
     _max_str_count = 1000;
     _tabwidget = 0;
     _cur_table_id = -1;
+    setDeleteInterval(60);
     QList<LogTreeModel*> lst;
     lst << new LogTreeModel(this);
     lst.value(0)->setMaxStringsCount(_max_str_count);
@@ -73,7 +74,7 @@ void LogManager::appendLog(int table_id, int id_sect, int mtype, const QString &
     if(mdl)
     {
         mdl->appendLog(mtype,title,more);
-        if(!(mdl->rowCount()-1))
+        if(!(mdl->rowCount()-1) && table_id == _cur_table_id)
             manageTabs(table_id);
     }
 }
@@ -177,6 +178,59 @@ void LogManager::manageTabs(int table_id)
     }
 }
 
+void LogManager::setDeleteInterval(int sec)
+{
+    if(sec <= 0) return;
+    _del_interval = sec;
+}
+
+void LogManager::deleteTaskLog(int table_id)
+{
+    if(!loglist.contains(table_id) || table_id < 0)
+        return;
+
+    if(timers.contains(table_id))
+    {
+        disconnect(timers.value(table_id),SIGNAL(timeout()),this,SLOT(timerManager()));
+        timers.value(table_id)->stop();
+        timers.value(table_id)->deleteLater();
+        timers.remove(table_id);
+    }
+
+    if(_tabwidget && _cur_table_id == table_id)
+    {
+        while(_tabwidget->count() > 1)
+        {
+            _tabwidget->widget(1)->deleteLater();
+            _tabwidget->removeTab(1);
+        }
+    }
+
+    QList<LogTreeModel*> list = loglist.value(table_id);
+    LogTreeModel *mdl;
+    foreach(mdl,list)
+    {
+        mdl->clearLog();
+        mdl->deleteLater();
+    }
+    loglist.remove(table_id);
+}
+
+void LogManager::deleteTaskLogLater(int table_id)
+{
+    if(timers.contains(table_id))
+        timers.value(table_id)->start(_del_interval*1000);
+    else
+    {
+        QTimer *tmr = new QTimer(this);
+        tmr->setSingleShot(true);
+        tmr->setInterval(_del_interval*1000);
+        connect(tmr,SIGNAL(timeout()),this,SLOT(timerManager()));
+        timers.insert(table_id,tmr);
+        tmr->start();
+    }
+}
+
 QWidget *LogManager::createTabWidget()
 {
     QWidget *wgt = new QWidget();
@@ -190,4 +244,15 @@ QWidget *LogManager::createTabWidget()
 QTreeView *LogManager::getTreeView(QWidget *wgt)
 {
     return wgt->findChild<QTreeView*>("_LogView_");
+}
+
+void LogManager::timerManager()
+{
+    QTimer *tmr = qobject_cast<QTimer*>(sender());
+    if(!tmr) return;
+
+    int table_id = timers.key(tmr,-1);
+    if(table_id < 0) return;
+
+    deleteTaskLog(table_id);
 }

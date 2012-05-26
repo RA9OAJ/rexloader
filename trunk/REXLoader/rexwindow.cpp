@@ -52,6 +52,7 @@ REXWindow::REXWindow(QWidget *parent) :
     trayicon->show();
     movie = new QMovie(this);
     movie->setFileName(":/appimages/onload.gif");
+    movie->setCacheMode(QMovie::CacheAll);
     connect(movie,SIGNAL(updated(QRect)),this,SLOT(updateTrayIcon()));
 
     settDlg = new SettingsDialog(this);
@@ -118,6 +119,7 @@ void REXWindow::createInterface()
     ui->tableView->horizontalHeader()->moveSection(2,3);
     ui->tableView->horizontalHeader()->moveSection(14,11);
     ui->tableView->horizontalHeader()->moveSection(15,12);
+    ui->tableView->scrollToBottom();
 
     //настраиваем информационную модель
     treemodel = new TreeItemModel(this);
@@ -1500,6 +1502,9 @@ void REXWindow::syncTaskData()
                 {
                     fl.rename(newFilename);
                     filepath = newFilename;
+                    QFileInfo flinfo(filepath);
+                    logmgr->appendLog(-1,0,LInterface::MT_INFO,tr("Скачивание файла %1 завершено").arg(flinfo.fileName()),QString());
+                    logmgr->deleteTaskLogLater(id_row);
                 }
 
                 if(dlglist.contains(id_row)) dlglist.value(id_row)->close();
@@ -1899,12 +1904,23 @@ void REXWindow::acceptQAction(QAbstractButton *btn)
     case EMessageBox::AT_RENAME:
     {
         QFile file(params.value("curname"));
+        QFileInfo flinfo;
         if(dlg->buttonRole(qobject_cast<QPushButton*>(btn)) == EMessageBox::ApplyRole)
         {
+            flinfo.setFile(params.value("newname"));
+            logmgr->appendLog(-1,0,LInterface::MT_INFO,tr("Замена файла %1").arg(flinfo.fileName()),QString());
             file.remove(params.value("newname"));
             file.rename(params.value("newname"));
+            logmgr->appendLog(-1,0,LInterface::MT_INFO,tr("Скачивание файла %1 завершено").arg(flinfo.fileName()),QString());
         }
-        else file.rename(params.value("rename"));
+        else
+        {
+            QFileInfo oldfl(params.value("rename"));
+            file.rename(params.value("rename"));
+            flinfo.setFile(params.value("newname"));
+            logmgr->appendLog(-1,0,LInterface::MT_INFO,tr("Файл %1 сохранен как %2").arg(oldfl.fileName(),flinfo.fileName()),QString());
+            logmgr->appendLog(-1,0,LInterface::MT_INFO,tr("Скачивание файла %1 завершено").arg(flinfo.fileName()),QString());
+        }
 
         QSqlQuery qr;
         qr.prepare("UPDATE tasks SET filename=:filename WHERE id=:id");
@@ -1918,6 +1934,7 @@ void REXWindow::acceptQAction(QAbstractButton *btn)
                               );
             qDebug()<<"void REXWindow::acceptQAction(1): SQL:" + qr.executedQuery() + " Error: " + qr.lastError().text();
         }
+        logmgr->deleteTaskLogLater(params.value("id").toInt());
         updateTaskSheet();
         break;
     }
