@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QTreeView>
 #include <QPointer>
 #include <QTableWidget>
+#include <QTimer>
 #include "logtreemodel.h"
 
 class LogManager : public QObject
@@ -45,16 +46,26 @@ public slots:
     void loadLogFromFile(const QString &file); //загружает лог из файла
     void clearLog(int table_id = -1); //очищает лог для задания table_id, если table_id == -1, то очищаются все логи
     void manageTabs(int table_id); //метод управляет добавлением вкладок
+    void setDeleteInterval(int sec); //устанавливает интервал до удаления после неактивного поведения лога секции
+    void deleteTaskLog(int table_id); //немедленно удаляет логи секций для задания table_id
+    void deleteTaskLogLater(int table_id); //удаляет логи секций для задания table_id через интервал, установленный в setDeleteInterval()
 
 protected:
     QWidget* createTabWidget();
     QTreeView* getTreeView(QWidget *wgt);
+
+protected slots:
+    void timerManager();
 
 private:
     QHash<int, QList<LogTreeModel*> > loglist; //хэш списков моделей по table_id
     QPointer<QTabWidget> _tabwidget;
     int _max_str_count; //максимальное количество строк в логах
     int _cur_table_id;
+    int _del_interval; //интервал до удаления логов по таймеру
+
+    QHash<int,QTimer*> timers;
+
 };
 
 #endif // LOGMANAGER_H
