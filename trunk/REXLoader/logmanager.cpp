@@ -65,6 +65,9 @@ void LogManager::appendLog(int table_id, int id_sect, int mtype, const QString &
     {
         LogTreeModel *mdl = new LogTreeModel(this);
         mdl->setMaxStringsCount(_max_str_count);
+        mdl->setLogColor(row_color);
+        mdl->setFont(fonts);
+        mdl->setFontColor(font_color);
         loglist[table_id].append(mdl);
         if(_cur_table_id == table_id && table_id > -1)
             manageTabs(table_id);
@@ -113,6 +116,9 @@ void LogManager::manageTabs(int table_id)
             QList<LogTreeModel*> lst;
             LogTreeModel *mdl = new LogTreeModel(this);
             mdl->setMaxStringsCount(_max_str_count);
+            mdl->setLogColor(row_color);
+            mdl->setFont(fonts);
+            mdl->setFontColor(font_color);
             lst << mdl;
             loglist.insert(-1,lst);
         }
@@ -141,7 +147,7 @@ void LogManager::manageTabs(int table_id)
     int vis_cnt = 1;
     foreach(mdl,lst)
     {
-        if(!mdl->rowCount()) continue;
+        if(!(mdl->rowCount())) continue;
         if(_tabwidget->count() < i+1)
         {
             QWidget *wgt = createTabWidget();
@@ -228,6 +234,72 @@ void LogManager::deleteTaskLogLater(int table_id)
         connect(tmr,SIGNAL(timeout()),this,SLOT(timerManager()));
         timers.insert(table_id,tmr);
         tmr->start();
+    }
+}
+
+void LogManager::setLogColor(int m_type, const QColor &color)
+{
+    row_color.insert(m_type,color);
+
+    QList<int> keys = loglist.keys();
+    int cur_task;
+    foreach(cur_task,keys)
+    {
+        QList<LogTreeModel*> models = loglist.value(cur_task);
+        LogTreeModel *mdl;
+        foreach(mdl,models)
+            mdl->setLogColor(m_type,color);
+    }
+
+    if(_tabwidget)
+    {
+        QTreeView *view = getTreeView(_tabwidget->currentWidget());
+        view->scroll(0,1);
+        view->scroll(0,-1);
+    }
+}
+
+void LogManager::setLogFont(int m_type, const QFont &font)
+{
+    fonts.insert(m_type,font);
+
+    QList<int> keys = loglist.keys();
+    int cur_task;
+    foreach(cur_task,keys)
+    {
+        QList<LogTreeModel*> models = loglist.value(cur_task);
+        LogTreeModel *mdl;
+        foreach(mdl,models)
+            mdl->setFont(m_type,font);
+    }
+
+    if(_tabwidget)
+    {
+        QTreeView *view = getTreeView(_tabwidget->currentWidget());
+        view->scroll(0,1);
+        view->scroll(0,-1);
+    }
+}
+
+void LogManager::setLogFontColor(int m_type, const QColor &color)
+{
+    font_color.insert(m_type,color);
+
+    QList<int> keys = loglist.keys();
+    int cur_task;
+    foreach(cur_task,keys)
+    {
+        QList<LogTreeModel*> models = loglist.value(cur_task);
+        LogTreeModel *mdl;
+        foreach(mdl,models)
+            mdl->setFontColor(m_type,color);
+    }
+
+    if(_tabwidget)
+    {
+        QTreeView *view = getTreeView(_tabwidget->currentWidget());
+        view->scroll(0,1);
+        view->scroll(0,-1);
     }
 }
 

@@ -49,6 +49,9 @@ public slots:
     void setDeleteInterval(int sec); //устанавливает интервал до удаления после неактивного поведения лога секции
     void deleteTaskLog(int table_id); //немедленно удаляет логи секций для задания table_id
     void deleteTaskLogLater(int table_id); //удаляет логи секций для задания table_id через интервал, установленный в setDeleteInterval()
+    void setLogColor(int m_type, const QColor &color);
+    void setLogFont(int m_type, const QFont &font);
+    void setLogFontColor(int m_type, const QColor &color);
 
 protected:
     QWidget* createTabWidget();
@@ -66,6 +69,9 @@ private:
 
     QHash<int,QTimer*> timers;
 
+    QHash<int, QColor> row_color;
+    QHash<int, QFont> fonts;
+    QHash<int, QColor> font_color;
 };
 
 #endif // LOGMANAGER_H

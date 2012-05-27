@@ -75,8 +75,18 @@ QVariant LogTreeModel::data(const QModelIndex &index, int role) const
 
         if(role == Qt::TextColorRole)
         {
+            if(font_color.contains(mtype))
+                return font_color.value(mtype);
+
             return QColor("#111111");
         }
+
+        if(role == Qt::FontRole && fonts.contains(mtype))
+                        return fonts.value(mtype);
+
+        if(role == Qt::DecorationRole && font_color.contains(mtype))
+            return font_color.value(mtype);
+
 
         if(role == 100)
         {
@@ -96,7 +106,22 @@ QVariant LogTreeModel::data(const QModelIndex &index, int role) const
         {
         case Qt::DisplayRole: return sub_nodes.value(index);
         case Qt::BackgroundColorRole: return row_color.value(mtype,QColor());
-        case Qt::TextColorRole: return QColor("#111111");
+        case Qt::TextColorRole:
+        {
+            if(font_color.contains(mtype))
+                return font_color.value(mtype);
+
+            return QColor("#111111");
+        }
+        case Qt::FontRole:
+            if(fonts.contains(mtype))
+                return fonts.value(mtype);
+            return QVariant();
+
+        case Qt::DecorationRole:
+            if(font_color.contains(mtype))
+                return font_color.value(mtype);
+            return QVariant();
 
         default: return QVariant();
         }
@@ -337,14 +362,29 @@ void LogTreeModel::setLogColor(int m_type, const QColor &color)
     row_color.insert(m_type,color);
 }
 
+void LogTreeModel::setLogColor(const QHash<int,QColor> &colors)
+{
+    row_color = colors;
+}
+
 void LogTreeModel::setFont(int m_type, const QFont &font)
 {
     fonts.insert(m_type,font);
 }
 
-void LogTreeModel::setFont(int m_type, const QColor &color)
+void LogTreeModel::setFont(const QHash<int,QFont> &_fonts)
+{
+    fonts = _fonts;
+}
+
+void LogTreeModel::setFontColor(int m_type, const QColor &color)
 {
     font_color.insert(m_type, color);
+}
+
+void LogTreeModel::setFontColor(const QHash<int,QColor> &colors)
+{
+    font_color = colors;
 }
 
 QString LogTreeModel::getTitle(const QModelIndex &index) const

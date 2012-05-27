@@ -2022,6 +2022,28 @@ void REXWindow::readSettings()
     ui->tableView->resizeRowsToContents();
     ui->tableView->scroll(0,1); // прокручиваем на 1 пиксел вниз для того, чтобы заставить вьюшку перерисовать строки
     ui->tableView->scroll(0,-1); // возвращаем скроллер на место
+
+    logmgr->setDeleteInterval(settDlg->value("log_life_time").toInt());
+    logmgr->setLogColor((int)LInterface::MT_INFO,settDlg->value("log_info_color").value<QColor>());
+    logmgr->setLogFont((int)LInterface::MT_INFO,settDlg->value("log_info_font").value<QFont>());
+    logmgr->setLogFontColor((int)LInterface::MT_INFO,settDlg->value("log_info_font_color").value<QColor>());
+
+    logmgr->setLogColor((int)LInterface::MT_WARNING,settDlg->value("log_warning_color").value<QColor>());
+    logmgr->setLogFont((int)LInterface::MT_WARNING,settDlg->value("log_warning_font").value<QFont>());
+    logmgr->setLogFontColor((int)LInterface::MT_WARNING,settDlg->value("log_warning_font_color").value<QColor>());
+
+    logmgr->setLogColor((int)LInterface::MT_ERROR,settDlg->value("log_error_color").value<QColor>());
+    logmgr->setLogFont((int)LInterface::MT_ERROR,settDlg->value("log_error_font").value<QFont>());
+    logmgr->setLogFontColor((int)LInterface::MT_ERROR,settDlg->value("log_error_font_color").value<QColor>());
+
+    logmgr->setLogColor((int)LInterface::MT_OUT,settDlg->value("log_out_color").value<QColor>());
+    logmgr->setLogFont((int)LInterface::MT_OUT,settDlg->value("log_out_font").value<QFont>());
+    logmgr->setLogFontColor((int)LInterface::MT_OUT,settDlg->value("log_out_font_color").value<QColor>());
+
+    logmgr->setLogColor((int)LInterface::MT_IN,settDlg->value("log_in_color").value<QColor>());
+    logmgr->setLogFont((int)LInterface::MT_IN,settDlg->value("log_in_font").value<QFont>());
+    logmgr->setLogFontColor((int)LInterface::MT_IN,settDlg->value("log_in_font_color").value<QColor>());
+
     setTaskCnt();
     calculateSpeed();
 }
