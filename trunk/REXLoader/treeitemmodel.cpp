@@ -72,6 +72,20 @@ QVariant TreeItemModel::data(const QModelIndex &index, int role) const
 
     case Qt::EditRole:
     case 100: return nodes.value(index);
+    case 101:
+        if(!index.column())
+        {
+            QString nodename;
+            if(nodes.value(index).toString() == "#downloads") nodename = tr("Все закачки");
+            else if(nodes.value(index).toString() == "#archives") nodename = tr("Архивы");
+            else if(nodes.value(index).toString() == "#apps") nodename = tr("Приложения");
+            else if(nodes.value(index).toString() == "#audio") nodename = tr("Аудио");
+            else if(nodes.value(index).toString() == "#video") nodename = tr("Видео");
+            else if(nodes.value(index).toString() == "#other") nodename = tr("Другое");
+            else nodename = nodes.value(index).toString();
+
+            return nodename;
+        }
 
     default: return QVariant();
     }

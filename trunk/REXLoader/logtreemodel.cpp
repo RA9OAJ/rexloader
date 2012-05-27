@@ -73,6 +73,11 @@ QVariant LogTreeModel::data(const QModelIndex &index, int role) const
         if(role == Qt::BackgroundColorRole)
             return row_color.value(mtype,QColor());
 
+        if(role == Qt::TextColorRole)
+        {
+            return QColor("#111111");
+        }
+
         if(role == 100)
         {
             int id = root_nodes.value(index);
@@ -91,6 +96,7 @@ QVariant LogTreeModel::data(const QModelIndex &index, int role) const
         {
         case Qt::DisplayRole: return sub_nodes.value(index);
         case Qt::BackgroundColorRole: return row_color.value(mtype,QColor());
+        case Qt::TextColorRole: return QColor("#111111");
 
         default: return QVariant();
         }
