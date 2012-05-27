@@ -32,7 +32,8 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     sz << 50 << 200;
     ui->splitter->setSizes(sz);
     last_row = 0;
-    ui->downDir->setText(QDir::home().path()+"/"+tr("Закачки"));
+    ui->downDir->setText(QDir::home().path()+"/"+tr("Загрузки"));
+    ui->logDir->setText(QDir::home().path()+"./rexloader/logs");
 
     connect(ui->listWidget,SIGNAL(clicked(QModelIndex)),this,SLOT(selectSubSettings()));
     connect(ui->proxyCheckBox,SIGNAL(toggled(bool)),ui->groupBox,SLOT(setEnabled(bool)));
@@ -40,6 +41,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel),SIGNAL(released()),this,SLOT(close()));
     connect(ui->buttonBox->button(QDialogButtonBox::Ok),SIGNAL(released()),this,SLOT(applyAndClose()));
     connect(ui->browseButton,SIGNAL(released()),this,SLOT(showFileDialog()));
+    connect(ui->logBrowseButton,SIGNAL(released()),this,SLOT(showFileDialog()));
 
     connect(ui->onPauseColor,SIGNAL(colorSelected(QColor)),ui->onPauseFont,SLOT(setBackgroundColor(QColor)));
     connect(ui->onPauseFontColor,SIGNAL(colorSelected(QColor)),ui->onPauseFont,SLOT(setFontColor(QColor)));
@@ -52,11 +54,25 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     connect(ui->onFinishColor,SIGNAL(colorSelected(QColor)),ui->onFinishFont,SLOT(setBackgroundColor(QColor)));
     connect(ui->onFinishFontColor,SIGNAL(colorSelected(QColor)),ui->onFinishFont,SLOT(setFontColor(QColor)));
     connect(ui->fontsColorsReset,SIGNAL(released()),this,SLOT(resetFontsColors()));
+
+    connect(ui->infoColor,SIGNAL(colorSelected(QColor)),ui->infoFont,SLOT(setBackgroundColor(QColor)));
+    connect(ui->infoFontColor,SIGNAL(colorSelected(QColor)),ui->infoFont,SLOT(setFontColor(QColor)));
+    connect(ui->warningColor,SIGNAL(colorSelected(QColor)),ui->warningFont,SLOT(setBackgroundColor(QColor)));
+    connect(ui->warningFontColor,SIGNAL(colorSelected(QColor)),ui->warningFont,SLOT(setFontColor(QColor)));
+    connect(ui->errorColor,SIGNAL(colorSelected(QColor)),ui->errorFont,SLOT(setBackgroundColor(QColor)));
+    connect(ui->errorFontColor,SIGNAL(colorSelected(QColor)),ui->errorFont,SLOT(setFontColor(QColor)));
+    connect(ui->outColor,SIGNAL(colorSelected(QColor)),ui->outFont,SLOT(setBackgroundColor(QColor)));
+    connect(ui->outFontColor,SIGNAL(colorSelected(QColor)),ui->outFont,SLOT(setFontColor(QColor)));
+    connect(ui->inColor,SIGNAL(colorSelected(QColor)),ui->inFont,SLOT(setBackgroundColor(QColor)));
+    connect(ui->inFontColor,SIGNAL(colorSelected(QColor)),ui->inFont,SLOT(setFontColor(QColor)));
+    connect(ui->logFontColorReset,SIGNAL(released()),this,SLOT(resetFontsColors()));
+
     resetFontsColors();
 
     ui->networkBox->setVisible(false);
     ui->downloadsBox->setVisible(false);
     ui->interfaceBox->setVisible(false);
+    ui->logBox->setVisible(false);
     resize(size().width(),220);
     applySets();
 }
@@ -80,24 +96,36 @@ void SettingsDialog::selectSubSettings()
         ui->networkBox->setVisible(false);
         ui->generalBox->setVisible(true);
         ui->interfaceBox->setVisible(false);
+        ui->logBox->setVisible(false);
         break;
     case 1:
         ui->downloadsBox->setVisible(false);
         ui->generalBox->setVisible(false);
         ui->networkBox->setVisible(true);
         ui->interfaceBox->setVisible(false);
+        ui->logBox->setVisible(false);
         break;
     case 2:
         ui->networkBox->setVisible(false);
         ui->generalBox->setVisible(false);
         ui->downloadsBox->setVisible(true);
         ui->interfaceBox->setVisible(false);
+        ui->logBox->setVisible(false);
         break;
     case 3:
         ui->networkBox->setVisible(false);
         ui->generalBox->setVisible(false);
         ui->downloadsBox->setVisible(false);
         ui->interfaceBox->setVisible(true);
+        ui->logBox->setVisible(false);
+        break;
+    case 5:
+        ui->networkBox->setVisible(false);
+        ui->generalBox->setVisible(false);
+        ui->downloadsBox->setVisible(false);
+        ui->interfaceBox->setVisible(false);
+        ui->logBox->setVisible(true);
+        break;
 
     default: ui->generalBox->setVisible(false); break;
     }
@@ -173,6 +201,25 @@ void SettingsDialog::applySets()
     sets.insert("on_finish_font_color",ui->onFinishFontColor->currentColor());
     sets.insert("table_word_wrap",ui->tableWordWrap->isChecked());
 
+    sets.insert("log_dir",ui->logDir->text());
+    sets.insert("log_autosave",ui->logAutisave->isChecked());
+    sets.insert("log_life_time",ui->logLifeTime->value());
+    sets.insert("log_info_color",ui->infoColor->currentColor());
+    sets.insert("log_info_font",ui->infoFont->font());
+    sets.insert("log_info_font_color",ui->infoFontColor->currentColor());
+    sets.insert("log_warning_color",ui->warningColor->currentColor());
+    sets.insert("log_warning_font",ui->warningFont->font());
+    sets.insert("log_warning_font_color",ui->warningFontColor->currentColor());
+    sets.insert("log_error_color",ui->errorColor->currentColor());
+    sets.insert("log_error_font",ui->errorFont->font());
+    sets.insert("log_error_font_color",ui->errorFontColor->currentColor());
+    sets.insert("log_out_color",ui->outColor->currentColor());
+    sets.insert("log_out_font",ui->outFont->font());
+    sets.insert("log_out_fonst_color",ui->outFontColor->currentColor());
+    sets.insert("log_in_color",ui->inColor->currentColor());
+    sets.insert("log_in_font",ui->inFont->font());
+    sets.insert("log_in_font_color",ui->inFontColor->currentColor());
+
     emit newSettings();
 }
 
@@ -225,6 +272,27 @@ void SettingsDialog::cancelSets()
     ui->onFinishFont->setFont(sets.value("on_finish_font").value<QFont>());
     ui->onFinishFontColor->setColor(sets.value("on_finish_font_color").value<QColor>());
     ui->tableWordWrap->setChecked(sets.value("table_word_wrap").toBool());
+
+    ui->logDir->setText(sets.value("log_dir").toString());
+    ui->logAutisave->setChecked(sets.value("log_autosave").toBool());
+    ui->logLifeTime->setValue(sets.value("log_life_time").toInt());
+
+    ui->infoColor->setColor(sets.value("log_info_color").value<QColor>());
+    ui->infoFont->setFont(sets.value("log_info_font").value<QFont>());
+    ui->infoFontColor->setColor(sets.value("log_info_font_color").value<QColor>());
+    ui->warningColor->setColor(sets.value("log_warning_color").value<QColor>());
+    ui->warningFont->setFont(sets.value("log_warning_font").value<QFont>());
+    ui->warningFontColor->setColor(sets.value("log_warning_font_color").value<QColor>());
+    ui->errorColor->setColor(sets.value("log_error_color").value<QColor>());
+    ui->errorFont->setFont(sets.value("log_error_font").value<QFont>());
+    ui->errorFontColor->setColor(sets.value("log_error_font_color").value<QColor>());
+    ui->outColor->setColor(sets.value("log_out_color").value<QColor>());
+    ui->outFont->setFont(sets.value("log_out_font").value<QFont>());
+    ui->outFontColor->setColor(sets.value("log_out_font_color").value<QColor>());
+    ui->inColor->setColor(sets.value("log_in_color").value<QColor>());
+    ui->inFont->setFont(sets.value("log_in_font").value<QFont>());
+    ui->inFontColor->setColor(sets.value("log_in_font_color").value<QColor>());
+
 }
 
 QList<QString> SettingsDialog::keys() const
@@ -256,14 +324,33 @@ void SettingsDialog::setDownDir(const QString &dir)
 
 void SettingsDialog::showFileDialog()
 {
+    QToolButton *btn = qobject_cast<QToolButton*>(sender());
+    if(!btn) return;
+
     QFileDialog *dlg = new QFileDialog(this);
+
+    if(ui->browseButton == btn)
+    {
+        dlg->setDirectory(ui->downDir->text());
+        connect(dlg,SIGNAL(fileSelected(QString)),this,SLOT(setDownDir(QString)));
+    }
+    else if(ui->logBrowseButton == btn)
+    {
+        dlg->setDirectory(ui->logDir->text());
+        connect(dlg,SIGNAL(fileSelected(QString)),ui->logDir,SLOT(setText(QString)));
+    }
+    else
+    {
+        delete(dlg);
+        return;
+    }
     dlg->setDirectory(ui->downDir->text());
     dlg->setAttribute(Qt::WA_DeleteOnClose);
     dlg->setFileMode(QFileDialog::DirectoryOnly);
     dlg->setWindowTitle(tr("Выбор директории"));
     dlg->setOption(QFileDialog::DontUseNativeDialog);
     dlg->setModal(true);
-    connect(dlg,SIGNAL(fileSelected(QString)),this,SLOT(setDownDir(QString)));
+
     dlg->show();
 }
 
@@ -281,23 +368,53 @@ void SettingsDialog::updateInterface()
 
 void SettingsDialog::resetFontsColors()
 {
-    ui->onPauseColor->setColor(QColor("#fff3a4"));
-    ui->onPauseFont->setFont(QApplication::font());
-    ui->onPauseFontColor->setColor(QColor("#111111"));
+    QPushButton *btn = qobject_cast<QPushButton*>(sender());
+    bool all = false;
+    if(!btn) all = true;
 
-    ui->onQueueColor->setColor(QColor("#ffbdbd"));
-    ui->onQueueFont->setFont(QApplication::font());
-    ui->onQueueFontColor->setColor(QColor("#111111"));
+    if(all || btn == ui->fontsColorsReset)
+    {
+        ui->onPauseColor->setColor(QColor("#fff3a4"));
+        ui->onPauseFont->setFont(QApplication::font());
+        ui->onPauseFontColor->setColor(QColor("#111111"));
 
-    ui->onLoadColor->setColor(QColor("#b4e1b4"));
-    ui->onLoadFont->setFont(QApplication::font());
-    ui->onLoadFontColor->setColor(QColor("#111111"));
+        ui->onQueueColor->setColor(QColor("#ffbdbd"));
+        ui->onQueueFont->setFont(QApplication::font());
+        ui->onQueueFontColor->setColor(QColor("#111111"));
 
-    ui->onErrorColor->setColor(QColor("#ff5757"));
-    ui->onErrorFont->setFont(QApplication::font());
-    ui->onErrorFontColor->setColor(QColor("#111111"));
+        ui->onLoadColor->setColor(QColor("#b4e1b4"));
+        ui->onLoadFont->setFont(QApplication::font());
+        ui->onLoadFontColor->setColor(QColor("#111111"));
 
-    ui->onFinishColor->setColor(QColor("#abc2c8"));
-    ui->onFinishFont->setFont(QApplication::font());
-    ui->onFinishFontColor->setColor(QColor("#111111"));
+        ui->onErrorColor->setColor(QColor("#ff5757"));
+        ui->onErrorFont->setFont(QApplication::font());
+        ui->onErrorFontColor->setColor(QColor("#111111"));
+
+        ui->onFinishColor->setColor(QColor("#abc2c8"));
+        ui->onFinishFont->setFont(QApplication::font());
+        ui->onFinishFontColor->setColor(QColor("#111111"));
+    }
+
+    if(all || btn == ui->logFontColorReset)
+    {
+        ui->infoColor->setColor(QColor("#dbe8f1"));
+        ui->infoFont->setFont(QApplication::font());
+        ui->infoFontColor->setColor(QColor("#111111"));
+
+        ui->warningColor->setColor(QColor("#f8ffaf"));
+        ui->warningFont->setFont(QApplication::font());
+        ui->warningFontColor->setColor(QColor("#111111"));
+
+        ui->errorColor->setColor(QColor("#ffd6d6"));
+        ui->errorFont->setFont(QApplication::font());
+        ui->errorFontColor->setColor(QColor("#111111"));
+
+        ui->outColor->setColor(QColor("#c8ffc8"));
+        ui->outFont->setFont(QApplication::font());
+        ui->outFontColor->setColor(QColor("#111111"));
+
+        ui->inColor->setColor(QColor("#e5eefd"));
+        ui->inFont->setFont(QApplication::font());
+        ui->inFontColor->setColor(QColor("#111111"));
+    }
 }

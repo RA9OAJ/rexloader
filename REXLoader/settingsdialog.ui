@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>505</width>
-    <height>1135</height>
+    <width>500</width>
+    <height>1489</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -107,7 +107,7 @@
       </item>
       <item>
        <property name="text">
-        <string>Отчеты</string>
+        <string>События</string>
        </property>
        <property name="font">
         <font>
@@ -668,6 +668,9 @@
             </item>
             <item>
              <widget class="QLineEdit" name="downDir">
+              <property name="text">
+               <string notr="true"/>
+              </property>
               <property name="readOnly">
                <bool>true</bool>
               </property>
@@ -1200,6 +1203,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="fontsColorsReset">
+                  <property name="toolTip">
+                   <string>Сбросить настройки цвета/шрифта</string>
+                  </property>
                   <property name="text">
                    <string>Сбросить</string>
                   </property>
@@ -1245,6 +1251,464 @@
           </item>
           <item>
            <spacer name="verticalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="logBox">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>350</height>
+          </size>
+         </property>
+         <property name="title">
+          <string>События приложения</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_11">
+          <item>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_25">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>24</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>27</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Входящие сообщения</string>
+              </property>
+              <property name="text">
+               <string comment="Входящие сообщения"/>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="resources.qrc">:/appimages/in_arrow.png</pixmap>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="ColorButton" name="inColor">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="toolTip">
+               <string>Цвет строки</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="2">
+             <widget class="FontSelectButton" name="inFont">
+              <property name="toolTip">
+               <string>Шрифт текста</string>
+              </property>
+              <property name="text">
+               <string>Шрифт</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="3">
+             <widget class="ColorButton" name="inFontColor">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="toolTip">
+               <string>Цвет шрифта</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <widget class="FontSelectButton" name="errorFont">
+              <property name="toolTip">
+               <string>Шрифт текста</string>
+              </property>
+              <property name="text">
+               <string>Шрифт</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="3">
+             <widget class="ColorButton" name="errorFontColor">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="toolTip">
+               <string>Цвет шрифта</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_24">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>24</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>24</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Исходящие сообщения</string>
+              </property>
+              <property name="text">
+               <string comment="Исходящие сообщения"/>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="resources.qrc">:/appimages/out_arrow.png</pixmap>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="ColorButton" name="outColor">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="toolTip">
+               <string>Цвет строки</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="2">
+             <widget class="FontSelectButton" name="outFont">
+              <property name="toolTip">
+               <string>Шрифт текста</string>
+              </property>
+              <property name="text">
+               <string>Шрифт</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="3">
+             <widget class="ColorButton" name="outFontColor">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="toolTip">
+               <string>Цвет шрифта</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="FontSelectButton" name="warningFont">
+              <property name="toolTip">
+               <string>Шрифт текста</string>
+              </property>
+              <property name="text">
+               <string>Шрифт</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="ColorButton" name="errorColor">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="toolTip">
+               <string>Цвет строки</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="3">
+             <widget class="ColorButton" name="warningFontColor">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="toolTip">
+               <string>Цвет шрифта</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_23">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>24</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>24</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Сообщения об ошибках</string>
+              </property>
+              <property name="text">
+               <string comment="Сообщения об ошибках"/>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="resources.qrc">:/appimages/error_24x24.png</pixmap>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_21">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>24</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>24</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Информационные сообщения</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="resources.qrc">:/appimages/log_info.png</pixmap>
+              </property>
+              <property name="margin">
+               <number>0</number>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="ColorButton" name="infoColor">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="toolTip">
+               <string>Цвет строки</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="FontSelectButton" name="infoFont">
+              <property name="toolTip">
+               <string>Шрифт текста</string>
+              </property>
+              <property name="text">
+               <string>Шрифт</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3">
+             <widget class="ColorButton" name="infoFontColor">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="toolTip">
+               <string>Цвет шрифта</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_22">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>24</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>24</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Предупреждающие сообщения</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="resources.qrc">:/appimages/log_warning.png</pixmap>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="ColorButton" name="warningColor">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="toolTip">
+               <string>Цвет строки</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_21">
+            <item>
+             <spacer name="horizontalSpacer_11">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="logFontColorReset">
+              <property name="toolTip">
+               <string>Сбросить настройки цвета/шрифта</string>
+              </property>
+              <property name="text">
+               <string>Сбросить</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="Line" name="line_8">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="logAutisave">
+            <property name="text">
+             <string>Автоматически сохранять сообщения приложения</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_20">
+            <item>
+             <widget class="QLabel" name="label_27">
+              <property name="text">
+               <string>Директория</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="logDir">
+              <property name="text">
+               <string notr="true"/>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="logBrowseButton">
+              <property name="maximumSize">
+               <size>
+                <width>40</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Выбрать папку</string>
+              </property>
+              <property name="text">
+               <string>...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_19">
+            <item>
+             <widget class="QLabel" name="label_26">
+              <property name="text">
+               <string comment="Время отсчета начинается только после завершения задания">Врмя хранения сообщений заданий</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="logLifeTime">
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="suffix">
+               <string comment="Время жизни в секундах">с</string>
+              </property>
+              <property name="minimum">
+               <number>10</number>
+              </property>
+              <property name="maximum">
+               <number>999999</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_10">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_6">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -1309,6 +1773,8 @@
   <tabstop>proxyCheckBox</tabstop>
   <tabstop>proxyAddress</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

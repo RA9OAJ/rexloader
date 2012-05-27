@@ -59,8 +59,11 @@ public slots:
     void clearLog();
     void appendLog(int ms_type, const QString &title, const QString &more);
     void setLogColor(int m_type, const QColor &color);
+    void setLogColor(const QHash<int,QColor> &colors);
     void setFont(int m_type, const QFont &font);
-    void setFont(int m_type, const QColor &color);
+    void setFont(const QHash<int, QFont> &_fonts);
+    void setFontColor(int m_type, const QColor &color);
+    void setFontColor(const QHash<int,QColor> &colors);
 
 protected:
     QString getTitle(const QModelIndex &index) const;
