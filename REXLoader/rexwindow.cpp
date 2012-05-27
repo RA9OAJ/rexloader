@@ -1638,7 +1638,7 @@ void REXWindow::manageTaskQueue()
 
             QUrl _url(select.data(select.index(i,1),100).toString());
             id_row = select.data(select.index(i,0),100).toInt();
-            flname = select.data(select.index(i,4),Qt::DisplayRole).toString();
+            flname = select.data(select.index(i,3),Qt::DisplayRole).toString();
 
             if(!plugproto.contains(_url.scheme().toLower())) //если протокол не поддерживается, то пропускаем эту задачу в очереди, поменяв её статус на ошибку
             {
@@ -2226,7 +2226,7 @@ void REXWindow::categorySettings()
     parent = treemodel->data(treemodel->index(index.row(),4,index.parent()),100).toInt();
     QString catDir = treemodel->data(treemodel->index(index.row(),2,index.parent()),100).toString();
     QString ext = treemodel->data(treemodel->index(index.row(),3,index.parent()),100).toString();
-    QString catTitle = treemodel->data(treemodel->index(index.row(),0,index.parent())).toString();
+    QString catTitle = treemodel->data(treemodel->index(index.row(),0,index.parent()),101).toString();
     if(catDir.isEmpty())
     {
         catDir = downDir;
