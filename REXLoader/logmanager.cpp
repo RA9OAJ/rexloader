@@ -29,10 +29,18 @@ LogManager::LogManager(QObject *parent) :
     lst << new LogTreeModel(this);
     lst.value(0)->setMaxStringsCount(_max_str_count);
     loglist.insert(-1, lst);
+    fl = 0;
+
 }
 
 LogManager::~LogManager()
 {
+    if(fl)
+    {
+        fl->close();
+        fl->deleteLater();
+        fl = 0;
+    }
 }
 
 LogTreeModel *LogManager::model(int table_id, int id_sect) const
@@ -77,6 +85,22 @@ void LogManager::appendLog(int table_id, int id_sect, int mtype, const QString &
     if(mdl)
     {
         mdl->appendLog(mtype,title,more);
+
+        if(fl && table_id == -1) //если выставлено автосохранение лога приложения в файл
+        {
+            QModelIndex idx = mdl->index(mdl->rowCount()-1,0);
+            fl->write(mdl->data(idx).toByteArray());
+            fl->write("\r\n");
+            if(mdl->hasChildren(idx))
+            {
+                idx = mdl->index(0,0,idx);
+                fl->write("+");
+                fl->write(mdl->data(idx).toByteArray());
+                fl->write("\r\n");
+                fl->flush();
+            }
+        }
+
         if(!(mdl->rowCount()-1) && table_id == _cur_table_id)
             manageTabs(table_id);
     }
@@ -158,9 +182,9 @@ void LogManager::manageTabs(int table_id)
             view->hideColumn(2);
             view->hideColumn(3);
             _tabwidget->addTab(wgt,tr("Секция %1").arg(QString::number(vis_cnt)));
-            ++i;
+            /*++i;
             ++vis_cnt;
-            continue;
+            continue;*/
         }
 
         QTreeView *view = getTreeView(_tabwidget->widget(vis_cnt));
@@ -300,6 +324,47 @@ void LogManager::setLogFontColor(int m_type, const QColor &color)
         QTreeView *view = getTreeView(_tabwidget->currentWidget());
         view->scroll(0,1);
         view->scroll(0,-1);
+    }
+}
+
+void LogManager::setLogAutoSave(bool autosave, const QString &log_dir)
+{
+    QFileInfo flinfo;
+    if(fl) flinfo.setFile(fl->fileName());
+    if(!fl && autosave && !log_dir.isEmpty())
+    {
+        fl = new QFile(log_dir + QString("/log-%1").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss")));
+        if(!fl->open(QFile::WriteOnly | QFile::Text))
+        {
+            appendLog(-1,0,LInterface::MT_WARNING,
+                      tr("Невозможно создать файл журнала - директория для файлов журнала '%1' не существует или нет прав на запись").arg(log_dir),
+                      tr("Для исправления ситуации проверьте права на запись в указанную директорию, либо выберете другую директорию в настройках программы (пункт 'События')"));
+            fl->deleteLater();
+            fl = 0;
+        }
+    }
+    else if(fl && !autosave)
+    {
+        fl->close();
+        fl->deleteLater();
+        fl = 0;
+    }
+    else if(fl && autosave && log_dir != flinfo.absolutePath())
+    {
+        fl->close();
+        fl->copy(fl->fileName(),log_dir + "/" + flinfo.fileName());
+        fl->setFileName(log_dir + "/" + flinfo.fileName());
+        if(!fl->open(QFile::ReadWrite | QFile::Text))
+        {
+            appendLog(-1,0,LInterface::MT_WARNING,
+                      tr("Невозможно создать файл журнала - директория для файлов журнала '%1' не существует или нет прав на запись").arg(log_dir),
+                      tr("Для исправления ситуации проверьте права на запись в указанную директорию, либо выберете другую директорию в настройках программы (пункт 'События')"));
+            fl->deleteLater();
+            fl = 0;
+            return;
+        }
+        appendLog(-1,0,LInterface::MT_INFO,tr("Выбрана новая директория ('%1') для журналов событий программы").arg(log_dir),QString());
+        fl->seek(fl->size());
     }
 }
 

@@ -33,7 +33,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui->splitter->setSizes(sz);
     last_row = 0;
     ui->downDir->setText(QDir::home().path()+"/"+tr("Загрузки"));
-    ui->logDir->setText(QDir::home().path()+"./rexloader/logs");
+    ui->logDir->setText(QDir::home().path()+"/.rexloader/logs");
 
     connect(ui->listWidget,SIGNAL(clicked(QModelIndex)),this,SLOT(selectSubSettings()));
     connect(ui->proxyCheckBox,SIGNAL(toggled(bool)),ui->groupBox,SLOT(setEnabled(bool)));
@@ -344,7 +344,6 @@ void SettingsDialog::showFileDialog()
         delete(dlg);
         return;
     }
-    dlg->setDirectory(ui->downDir->text());
     dlg->setAttribute(Qt::WA_DeleteOnClose);
     dlg->setFileMode(QFileDialog::DirectoryOnly);
     dlg->setWindowTitle(tr("Выбор директории"));

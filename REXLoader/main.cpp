@@ -37,6 +37,8 @@ void checkDatabase()
             homeapp.mkpath(homedir+"/.rexloader/plugins");
         }
         homeapp.cd(homedir+"/.rexloader");
+        if(!homeapp.exists(homeapp.path()+"/logs"))
+            homeapp.mkpath(homeapp.path()+"/logs");
 
         bool dbfile = true;
         if(!QFile::exists(homeapp.path()+"/tasks.db"))dbfile = false;
