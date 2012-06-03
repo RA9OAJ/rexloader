@@ -719,7 +719,7 @@ void HttpLoader::sectError(int _errno)
     case QAbstractSocket::ProxyAuthenticationRequiredError:
     case QAbstractSocket::ProxyProtocolError:
     case 404:
-        if(!ignore_critical && tsk->sections_cnt < 2)
+        if(tsk->sections_cnt < 2)
         {
             tsk->status = LInterface::ERROR_TASK; //в случае критичных ошибок
             stopDownload(id_task);

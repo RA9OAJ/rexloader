@@ -2044,6 +2044,8 @@ void REXWindow::readSettings()
     logmgr->setLogFont((int)LInterface::MT_IN,settDlg->value("log_in_font").value<QFont>());
     logmgr->setLogFontColor((int)LInterface::MT_IN,settDlg->value("log_in_font_color").value<QColor>());
 
+    logmgr->setLogAutoSave(settDlg->value("log_autosave").toBool(),settDlg->value("log_dir").toString());
+
     setTaskCnt();
     calculateSpeed();
 }

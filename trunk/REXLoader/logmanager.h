@@ -27,6 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPointer>
 #include <QTableWidget>
 #include <QTimer>
+#include <QFile>
+#include <QFileInfo>
 #include "logtreemodel.h"
 
 class LogManager : public QObject
@@ -52,6 +54,7 @@ public slots:
     void setLogColor(int m_type, const QColor &color);
     void setLogFont(int m_type, const QFont &font);
     void setLogFontColor(int m_type, const QColor &color);
+    void setLogAutoSave(bool autosave, const QString &log_dir = QString());
 
 protected:
     QWidget* createTabWidget();
@@ -66,6 +69,7 @@ private:
     int _max_str_count; //максимальное количество строк в логах
     int _cur_table_id;
     int _del_interval; //интервал до удаления логов по таймеру
+    QFile *fl;
 
     QHash<int,QTimer*> timers;
 

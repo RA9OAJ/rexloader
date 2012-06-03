@@ -84,10 +84,6 @@ QVariant LogTreeModel::data(const QModelIndex &index, int role) const
         if(role == Qt::FontRole && fonts.contains(mtype))
                         return fonts.value(mtype);
 
-        if(role == Qt::DecorationRole && font_color.contains(mtype))
-            return font_color.value(mtype);
-
-
         if(role == 100)
         {
             int id = root_nodes.value(index);
@@ -116,11 +112,6 @@ QVariant LogTreeModel::data(const QModelIndex &index, int role) const
         case Qt::FontRole:
             if(fonts.contains(mtype))
                 return fonts.value(mtype);
-            return QVariant();
-
-        case Qt::DecorationRole:
-            if(font_color.contains(mtype))
-                return font_color.value(mtype);
             return QVariant();
 
         default: return QVariant();
