@@ -219,6 +219,7 @@ void SettingsDialog::applySets()
     sets.insert("log_in_color",ui->inColor->currentColor());
     sets.insert("log_in_font",ui->inFont->font());
     sets.insert("log_in_font_color",ui->inFontColor->currentColor());
+    sets.insert("log_max_strings",ui->logMaxStrings->value());
 
     emit newSettings();
 }
@@ -292,6 +293,7 @@ void SettingsDialog::cancelSets()
     ui->inColor->setColor(sets.value("log_in_color").value<QColor>());
     ui->inFont->setFont(sets.value("log_in_font").value<QFont>());
     ui->inFontColor->setColor(sets.value("log_in_font_color").value<QColor>());
+    ui->logMaxStrings->setValue(sets.value("log_max_strings").toInt());
 
 }
 

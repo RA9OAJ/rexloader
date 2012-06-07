@@ -1631,6 +1631,52 @@
            </widget>
           </item>
           <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_22">
+            <item>
+             <widget class="QLabel" name="label_28">
+              <property name="toolTip">
+               <string>Максимальное число видимых строк в журнале событий приложения и секций</string>
+              </property>
+              <property name="text">
+               <string>Макс. число видимых строк событий</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_12">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="logMaxStrings">
+              <property name="toolTip">
+               <string>Максимальное число видимых строк в журнале событий приложения и секций</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="minimum">
+               <number>100</number>
+              </property>
+              <property name="maximum">
+               <number>9999</number>
+              </property>
+              <property name="value">
+               <number>1000</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
            <layout class="QHBoxLayout" name="horizontalLayout_20">
             <item>
              <widget class="QLabel" name="label_27">
@@ -1671,6 +1717,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_19">
             <item>
              <widget class="QLabel" name="label_26">
+              <property name="toolTip">
+               <string>Время отсчета начинается только после завершения задания</string>
+              </property>
               <property name="text">
                <string comment="Время отсчета начинается только после завершения задания">Врмя хранения событий заданий</string>
               </property>
@@ -1678,6 +1727,9 @@
             </item>
             <item>
              <widget class="QSpinBox" name="logLifeTime">
+              <property name="toolTip">
+               <string>Время отсчета начинается только после завершения задания</string>
+              </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>

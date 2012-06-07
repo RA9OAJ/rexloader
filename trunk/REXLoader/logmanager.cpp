@@ -110,6 +110,16 @@ void LogManager::setMaxStringCount(int max)
 {
     if(max <= 0) return;
     _max_str_count = max;
+
+    QList<int> keys = loglist.keys();
+    int key;
+    foreach(key,keys)
+    {
+        QList<LogTreeModel*> logs = loglist.value(key);
+        LogTreeModel *cur;
+        foreach(cur,logs)
+            cur->setMaxStringsCount(_max_str_count);
+    }
 }
 
 void LogManager::saveLogToFile(const QString &filename, int table_id)

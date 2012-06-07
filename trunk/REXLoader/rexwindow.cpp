@@ -1166,35 +1166,25 @@ void REXWindow::redownloadTask()
 {
     QItemSelectionModel *select = ui->tableView->selectionModel();
     if(!select->hasSelection())return; //если ничего не выделено, то выходим
-    QSqlQuery qr(QSqlDatabase::database());
     QString where;
 
     for(int i=0; i < select->selectedRows().length(); i++)
     {
         if(select->selectedRows(9).value(i).data(100).toInt() != LInterface::FINISHED)continue;
         if(where.isEmpty())
-        {
             where = QString("id=%1").arg(QString::number(select->selectedRows(0).value(i).data(100).toInt()));
-            continue;
-        }
-        where += QString(" OR id=%1").arg(QString::number(select->selectedRows(0).value(i).data(100).toInt()));
-    }
-    qr.prepare("UPDATE tasks SET tstatus=-100, currentsize=NULL, totalsize=NULL, speed_avg=NULL, downtime=NULL, datecreate=:datecreate WHERE "+where);
-    qr.bindValue("datecreate",QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:ss"));
-    if(!qr.exec())
-    {
-        logmgr->appendLog(-1,0,LInterface::MT_ERROR,
-                          tr("Ошибка выполнения SQL запроса"),
-                          tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
-                          );
-        qDebug()<<"void REXWindow::redownloadTask(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
-        return;
-    }
+        else where += QString(" OR id=%1").arg(QString::number(select->selectedRows(0).value(i).data(100).toInt()));
 
-    updateTaskSheet();
+        QModelIndex index = sfmodel->mapToSource(select->selectedRows(9).value(i));
+        model->addToCache(index.row(),9,-100);
+        model->updateRow(index.row());
+    }
+    QString query = QString("UPDATE tasks SET tstatus=-100, currentsize=NULL, totalsize=NULL, speed_avg=NULL, downtime=NULL, datecreate='%1' WHERE %2").arg(
+                QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:ss"),
+                where);
+
+    emit needExecQuery(query);
     manageTaskQueue();
-    syncTaskData();
-
 }
 
 void REXWindow::stopTask()
@@ -1458,6 +1448,9 @@ void REXWindow::syncTaskData()
             model->addToCache(index.row(),9,tstatus);
             model->addToCache(index.row(),11,speedAvg);
             model->addToCache(index.row(),7,QString("%1 (%2)").arg(errStr,QString::number(errno_)));
+            logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                              tr("Ошибка при скачивании файла '%1': %2 (Код ошибки: %3)").arg(model->data(model->index(index.row(),3),Qt::DisplayRole).toString(),errStr,QString::number(errno_)),
+                              QString());
 
             ldr->deleteTask(id_task);
             if(dlglist.contains(id_row)) dlglist.value(id_row)->close();
@@ -2045,6 +2038,7 @@ void REXWindow::readSettings()
     logmgr->setLogFontColor((int)LInterface::MT_IN,settDlg->value("log_in_font_color").value<QColor>());
 
     logmgr->setLogAutoSave(settDlg->value("log_autosave").toBool(),settDlg->value("log_dir").toString());
+    logmgr->setMaxStringCount(settDlg->value("log_max_strings").toInt());
 
     setTaskCnt();
     calculateSpeed();

@@ -309,6 +309,9 @@ bool LogTreeModel::removeRows(int row, int count, const QModelIndex &parent)
 void LogTreeModel::setMaxStringsCount(int max_cnt)
 {
     max_rows = max_cnt;
+
+    if(rows_cnt <= max_rows) return;
+    removeRows(0,rows_cnt-max_cnt);
 }
 
 void LogTreeModel::clearLog()
