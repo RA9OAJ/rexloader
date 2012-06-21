@@ -161,6 +161,7 @@ void SettingsDialog::applySets()
     sets.insert("scan_clipboard",ui->scanClipboard->isChecked());
     sets.insert("notshow_adding",ui->notShowAddingDialog->isChecked());
     sets.insert("user_agent",ui->userAgent->text());
+    sets.insert("noadd_unsupported",ui->notAddTaskUnsupported->isChecked());
 
     sets.insert("s_hight",(qint64)ui->spinHight->value());
     sets.insert("s_normal",(qint64)ui->spinNormal->value());
