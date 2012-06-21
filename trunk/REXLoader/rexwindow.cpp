@@ -793,7 +793,7 @@ void REXWindow::scanNewTaskQueue()
                 default: break;
                 }
             }
-            else if(plugproto.contains(url.scheme().toLower()))
+            else if(!settDlg->value("noadd_unsupported").toBool() || plugproto.contains(url.scheme().toLower()))
             {
                 dlg = new AddTaskDialog(downDir, this);
                 connect(dlg,SIGNAL(addedNewTask()),this,SLOT(updateTaskSheet()));
