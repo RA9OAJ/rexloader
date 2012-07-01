@@ -799,6 +799,7 @@ void REXWindow::scanNewTaskQueue()
                 connect(dlg,SIGNAL(addedNewTask()),this,SLOT(updateTaskSheet()));
                 dlg->setValidProtocols(plugproto);
                 dlg->setNewUrl(qr.value(1).toString());
+                dlg->setParams(qr.value(3).toString());
                 dlg->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
                 dlg->show();
                 dlg->activateWindow();
@@ -972,18 +973,21 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
         return;
     }
 
-    QSqlQuery qr(QSqlDatabase::database());
-    qr.prepare("UPDATE tasks SET downtime='', lasterror='', speed_avg='' WHERE id=:id");
-    qr.bindValue("id",id_row);
-    if(!qr.exec())
-    {
-        logmgr->appendLog(-1,0,LInterface::MT_ERROR,
-                          tr("Ошибка выполнения SQL запроса"),
-                          tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
-                          );
-        qDebug()<<"void REXWindow::startTaskNumber(1): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
-    }
-    updateTaskSheet();
+    QString qr = QString("UPDATE tasks SET downtime='', lasterror='', speed_avg='' WHERE id=%1").arg(QString::number(id_row));
+    emit needExecQuery(qr);
+
+    QSortFilterProxyModel select;
+    select.setSourceModel(model);
+    select.setFilterKeyColumn(0);
+    select.setFilterRole(100);
+    select.setFilterFixedString(QString::number(id_row));
+    QModelIndex srcIdx = select.mapToSource(select.index(0,0));
+    model->addToCache(srcIdx.row(),6,QString());
+    model->addToCache(srcIdx.row(),7,QString());
+    model->addToCache(srcIdx.row(),11,QString());
+    model->addToCache(srcIdx.row(),9,LInterface::ON_LOAD);
+    model->updateRow(srcIdx.row());
+
     QString fldir = (flinfo.isDir() || flinfo.fileName() == "noname.html") ? flinfo.absolutePath():flinfo.absoluteFilePath();
     flinfo.setFile(fldir);
     if(!flinfo.isDir() && fldir.right(5) != ".rldr") fldir += "." + QDateTime::currentDateTime().toString("yyyyMMddhhmmss") + ".rldr";
@@ -1107,7 +1111,6 @@ void REXWindow::startTask()
         model->updateRow(index.row());
     }
     manageTaskQueue();
-    syncTaskData();
 }
 
 void REXWindow::startTask(int id)
@@ -1138,7 +1141,6 @@ void REXWindow::startTask(int id)
     model->updateRow(idx.row());
 
     manageTaskQueue();
-    syncTaskData();
 }
 
 void REXWindow::startAllTasks()
@@ -1159,7 +1161,6 @@ void REXWindow::startAllTasks()
     }
 
     manageTaskQueue();
-    syncTaskData();
 }
 
 void REXWindow::redownloadTask()

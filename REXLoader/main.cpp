@@ -69,7 +69,8 @@ void checkDatabase()
                 "categoryid TEXT,"
                 "speed_avg TEXT,"
                 "note TEXT,"
-                "priority INTEGER);");
+                "priority INTEGER,"
+                "params TEXT);");
 
             if(!flag)
             {
@@ -81,7 +82,8 @@ void checkDatabase()
             flag = qr->exec("CREATE TABLE newtasks ("
                             "id INTEGER PRIMARY KEY,"
                             "url TEXT,"
-                            "filename TEXT);");
+                            "filename TEXT,"
+                            "params TEXT);");
 
             if(!flag)
             {
@@ -157,31 +159,55 @@ void addURL(const QStringList &_argv)
 
         QUrl url;
         QSqlQuery qr;
+        int par_id = 0;
+        QString params,address;
         for(int i=1; i<_argv.size(); i++)
         {
-            url.clear();
-            url = QUrl::fromEncoded(_argv.value(i).toUtf8());
-
-            if((url.isValid() && !url.scheme().isEmpty()) || QFile::exists(_argv.value(i)))
+            if(_argv.value(i) == "-c" || _argv.value(i) == "--cookies")
             {
-                qr.prepare("INSERT INTO newtasks (url) VALUES (:url)");
-                if(url.scheme() == "file") qr.bindValue(":url",_argv.value(i).right(_argv.value(i).size()-7));
-                else qr.bindValue(":url",url.toString()/*_argv.value(i)*/);
-                if(!qr.exec())
-                {
-                    //тут записываем сообщение об ошибке в error.log
-                    return;
-                }
+                par_id = 1;
+                continue;
             }
-            else if(QFile::exists(_argv.value(i)))
+
+            switch(par_id)
             {
-                qr.prepare("INSERT INTO newtasks SET filename=%1;");
-                qr.bindValue(1,url.toString());
-                if(!qr.exec())
-                {
-                    //тут записываем сообщение об ошибке в error.log
-                    return;
-                }
+            case 0:
+                address = _argv.value(i);
+                break;
+            case 1:
+                params += _argv.value(i);
+                break;
+            default:
+                continue;
+            }
+        }
+
+        if(address.isEmpty())
+            return;
+
+        url.clear();
+        url = QUrl::fromEncoded(address.toUtf8());
+
+        if((url.isValid() && !url.scheme().isEmpty()) || QFile::exists(address))
+        {
+            qr.prepare("INSERT INTO newtasks (url, params) VALUES (:url, :params)");
+            if(url.scheme() == "file") qr.bindValue(":url",address.right(address.size()-7));
+            else qr.bindValue(":url",url.toString()/*_argv.value(i)*/);
+            qr.bindValue(":params",params);
+            if(!qr.exec())
+            {
+                //тут записываем сообщение об ошибке в error.log
+                return;
+            }
+        }
+        else if(QFile::exists(address))
+        {
+            qr.prepare("INSERT INTO newtasks SET filename=%1;");
+            qr.bindValue(1,url.toString());
+            if(!qr.exec())
+            {
+                //тут записываем сообщение об ошибке в error.log
+                return;
             }
         }
     }

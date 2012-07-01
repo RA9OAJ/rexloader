@@ -89,6 +89,11 @@ void AddTaskDialog::setNewUrl(const QString &url)
     urlValidator();
 }
 
+void AddTaskDialog::setParams(const QString &params)
+{
+    dop_params = params;
+}
+
 void AddTaskDialog::setValidProtocols(const QHash<QString, int> &schemes)
 {
     protocols = schemes.keys();
@@ -286,7 +291,7 @@ void AddTaskDialog::addTask()
     qr.clear();
     if(additional_flag && gui->urlBox->currentText() == defUrl)
     {
-        qr.prepare("INSERT INTO tasks(url,datecreate,filename,currentsize,totalsize,mime,tstatus,categoryid,priority,note) VALUES(:url,:datecreate,:filename,:currentsize,:totalsize,:mime,:tstatus,:categoryid,:priority,:note)");
+        qr.prepare("INSERT INTO tasks(url,datecreate,filename,currentsize,totalsize,mime,tstatus,categoryid,priority,note, params) VALUES(:url,:datecreate,:filename,:currentsize,:totalsize,:mime,:tstatus,:categoryid,:priority,:note,:params)");
         qr.bindValue("url", gui->urlBox->currentText());
         qr.bindValue("datecreate",dtime.toString("yyyy-MM-ddThh:mm:ss"));
         qr.bindValue("filename",myfilename);
@@ -298,11 +303,12 @@ void AddTaskDialog::addTask()
         qr.bindValue("categoryid",catId);
         qr.bindValue("priority",2);
         qr.bindValue("note",gui->textEdit->document()->toPlainText());
+        qr.bindValue("params",dop_params);
 
     }
     else
     {
-        qr.prepare("INSERT INTO tasks(url,filename,datecreate,tstatus,categoryid,priority,note) VALUES(:url,:filename,:datecreate,:tstatus,:categoryid,:priority,:note);");
+        qr.prepare("INSERT INTO tasks(url,filename,datecreate,tstatus,categoryid,priority,note,params) VALUES(:url,:filename,:datecreate,:tstatus,:categoryid,:priority,:note,:params);");
         qr.bindValue("url", gui->urlBox->currentText());
         qr.bindValue("filename",flname);
         qr.bindValue("datecreate",dtime.toString("yyyy-MM-ddThh:mm:ss"));
@@ -311,6 +317,7 @@ void AddTaskDialog::addTask()
         qr.bindValue("categoryid",catId);
         qr.bindValue("priority",2);
         qr.bindValue("note",gui->textEdit->document()->toPlainText());
+        qr.bindValue("params",dop_params);
     }
     if(!qr.exec())
     {
