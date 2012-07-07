@@ -116,6 +116,7 @@ void REXWindow::createInterface()
     ui->tableView->hideColumn(10);
     ui->tableView->hideColumn(11);
     ui->tableView->hideColumn(13);
+    ui->tableView->hideColumn(14);
     ui->tableView->horizontalHeader()->moveSection(2,3);
     ui->tableView->horizontalHeader()->moveSection(14,11);
     ui->tableView->horizontalHeader()->moveSection(15,12);
@@ -643,6 +644,16 @@ void REXWindow::loadSettings()
     settings.beginGroup("State Plugins");
     plug_state = settings.value("EnablePlugins").toByteArray();
     settings.endGroup();
+
+    ui->tableView->hideColumn(0);
+    ui->tableView->hideColumn(1);
+    ui->tableView->hideColumn(4);
+    ui->tableView->hideColumn(7);
+    ui->tableView->hideColumn(8);
+    ui->tableView->hideColumn(10);
+    ui->tableView->hideColumn(11);
+    ui->tableView->hideColumn(13);
+    ui->tableView->hideColumn(14);
 }
 
 void REXWindow::scanClipboard()
@@ -938,6 +949,13 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
     int id_proto = plugproto.value(url.scheme().toLower());
     int id_task = 0;
 
+    QSortFilterProxyModel select;
+    select.setSourceModel(model);
+    select.setFilterKeyColumn(0);
+    select.setFilterRole(100);
+    select.setFilterFixedString(QString::number(id_row));
+    QModelIndex srcIdx = select.mapToSource(select.index(0,0));
+
     if(totalload > 0) //если файл на докачке, а не новый
     {
         if(QFile::exists(filename) && flinfo.isFile()) //если локальный файл существует
@@ -950,6 +968,7 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
 
                 setProxy(id_task, id_proto);
 
+                pluglist.value(id_proto)->setAdvancedOptions(id_task,model->data(model->index(srcIdx.row(),14),100).toString());
                 plugmgr->startDownload(id_task + id_proto*100);
                 if(settDlg->value("show_taskdialog").toBool()) showTaskDialog(id_row);
                 updateTaskSheet();
@@ -976,12 +995,6 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
     QString qr = QString("UPDATE tasks SET downtime='', lasterror='', speed_avg='' WHERE id=%1").arg(QString::number(id_row));
     emit needExecQuery(qr);
 
-    QSortFilterProxyModel select;
-    select.setSourceModel(model);
-    select.setFilterKeyColumn(0);
-    select.setFilterRole(100);
-    select.setFilterFixedString(QString::number(id_row));
-    QModelIndex srcIdx = select.mapToSource(select.index(0,0));
     model->addToCache(srcIdx.row(),6,QString());
     model->addToCache(srcIdx.row(),7,QString());
     model->addToCache(srcIdx.row(),11,QString());
@@ -993,6 +1006,7 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
     if(!flinfo.isDir() && fldir.right(5) != ".rldr") fldir += "." + QDateTime::currentDateTime().toString("yyyyMMddhhmmss") + ".rldr";
     tasklist.insert(id_row, id_task + id_proto*100);
     pluglist.value(id_proto)->setTaskFilePath(id_task,fldir);
+    pluglist.value(id_proto)->setAdvancedOptions(id_task,model->data(model->index(srcIdx.row(),14),100).toString());
     calculateSpeed();
     //pluglist.value(id_proto)->startDownload(id_task);
     setProxy(id_task, id_proto);

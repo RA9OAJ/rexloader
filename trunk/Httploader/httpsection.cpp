@@ -282,6 +282,8 @@ void HttpSection::sendHeader()
         _header += QString("Authorization: Basic %1\r\n").arg(authorization);
 
     if(!referer.isEmpty())_header += QString("Referer: http://%1/\r\n").arg(referer);
+    if(!cookie_string.isEmpty())
+        _header += QString("Cookie: %1\r\n").arg(cookie_string);
     _header += QString("Connection: Keep-Alive\r\n\r\n");
     soc->write(_header.toAscii().data());
     emit sectionMessage(LInterface::MT_OUT,tr("Отправка HTTP заголовка"),_header);
@@ -565,6 +567,16 @@ qint64 HttpSection::realSpeed() const
         return (qint64)((double)last_buf_size/(double)watcher->elapsed()*1000.0);
 
     return real_speed;
+}
+
+void HttpSection::setCookie(const QString &cookie)
+{
+    cookie_string = cookie;
+}
+
+QString HttpSection::getCookie() const
+{
+    return cookie_string;
 }
 
 bool HttpSection::freedMemory() const

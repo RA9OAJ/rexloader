@@ -25,6 +25,7 @@ HttpLoader::HttpLoader(QObject *parent)
 {
     task_list = new QHash<int, Task*>;
     sections = new QHash<HttpSection*, int>;
+    cookies = new QHash<int, QString>;
     squeue = new QList<int>;
     dqueue = new QList<int>;
     del_queue = new QList<HttpSection*>;
@@ -44,13 +45,14 @@ HttpLoader::~HttpLoader()
     sections->clear();
     squeue->clear();
     aqueue->clear();
+    cookies->clear();
     while(!del_queue->isEmpty())scanDelQueue();
-    delete(task_list);
-    delete(sections);
-    delete(squeue);
-    delete(dqueue);
-    delete(del_queue);
-    delete(aqueue);
+    delete task_list;
+    delete sections;
+    delete squeue;
+    delete dqueue;
+    delete del_queue;
+    delete aqueue;
 }
 
 QStringList HttpLoader::protocols() const
@@ -335,6 +337,7 @@ void HttpLoader::startDownload(int id_task)
     }
     tsk->watcher.start();
     tsk->status = LInterface::SEND_QUERY;
+    sect->setCookie(cookies->value(id_task,QString()));
     sect->startDownloading(); //запускаем секцию
 }
 
@@ -638,6 +641,7 @@ void HttpLoader::addSection(int id_task)
         sheduler(); //запускаем шедулер
     }
     mathSpeed();
+    sect->setCookie(cookies->value(id_task,QString()));
     sect->startDownloading(); //запускаем секцию
 
 }
@@ -1047,6 +1051,21 @@ void HttpLoader::setProxy(int id_task, const QUrl &_proxy, LInterface::ProxyType
     tsk->proxy = _proxy;
     tsk->proxy_type = _ptype;
     tsk->proxy_auth = data_base64;
+}
+
+void HttpLoader::setAdvancedOptions(int id_task, const QString &options)
+{
+    if(!task_list->contains(id_task))return;
+    QStringList opts = options.split("\r\n\r\n");
+    QString par;
+    foreach(par,opts)
+    {
+        QStringList curopt = par.split("cookie:");
+        if(!curopt.size())
+            continue;
+
+        cookies->insert(id_task,curopt.value(0));
+    }
 }
 
 void HttpLoader::addInAQueue()

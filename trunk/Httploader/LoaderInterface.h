@@ -116,6 +116,7 @@ public:
     virtual QString errorString(int _err) const =0; //возвращает строку по заданному коду ошибки
     virtual QString statusString(int _stat) const =0; //возвращает строку статуса по заданному коду
     virtual void setProxy(int id_task, const QUrl &_proxy, LInterface::ProxyType _ptype, const QString &data_base64)=0; //устанавливает прокси
+    virtual void setAdvancedOptions(int id_task, const QString &options)=0; //передает загрузчику дополнительные параметры
     virtual QTranslator* getTranslator(const QLocale &locale) =0; //возвращает указатель на транслятор для указанной локали, либо 0 при отсутствии транслятора
 
 signals:
