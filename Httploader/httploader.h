@@ -135,6 +135,7 @@ public:
     QString errorString(int _err) const; //возвращает строку по заданному коду ошибки
     QString statusString(int _stat) const; //возвращает строку статуса по заданному коду
     void setProxy(int id_task, const QUrl &_proxy, LInterface::ProxyType _ptype, const QString &data_base64); //устанавливает прокси
+    void setAdvancedOptions(int id_task, const QString &options); //передает загрузчику дополнительные параметры
     QTranslator* getTranslator(const QLocale &locale); //возвращает указатель на транслятор для указанной локали, либо 0 при отсутствии транслятора
 
 signals:
@@ -170,6 +171,7 @@ protected slots:
 private:
     QHash<int, Task*> *task_list; //хэш заданий по ключам
     QHash<HttpSection*, int> *sections; //хэш ключей заданий по ссылкам на секции
+    QHash<int, QString> *cookies; //хэш cookies по id задания
     QList<int> *squeue; //очередь на создание нового потока
     QList<int> *dqueue; //очередь на удаление задачи
     QList<HttpSection*> *del_queue; //очередь на удаление отработанных секций

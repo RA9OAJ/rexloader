@@ -70,6 +70,8 @@ public:
     void clear(); //сбрасывает все настройки и данные секции;
     int socketError() const; //возвращает ошибки сокета
     qint64 realSpeed() const; //возвращает реальную возможную скорость скачивания
+    void setCookie(const QString &cookie);
+    QString getCookie() const;
     bool freedMemory()const;
     void setProxy(const QUrl &_proxy, QNetworkProxy::ProxyType _ptype, const QString &base64_userdata);
 
@@ -141,6 +143,8 @@ private:
     QNetworkProxy::ProxyType proxytype; //тип прокси сервера
     QString proxy_auth; //данны для аутентификации на прокси сервере
     QNetworkProxy *myproxy;
+
+    QString cookie_string;
 };
 
 #endif // HTTPSECTION_H

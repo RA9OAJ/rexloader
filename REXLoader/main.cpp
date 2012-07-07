@@ -163,7 +163,7 @@ void addURL(const QStringList &_argv)
         QString params,address;
         for(int i=1; i<_argv.size(); i++)
         {
-            if(_argv.value(i) == "-c" || _argv.value(i) == "--cookies")
+            if(_argv.value(i) == "-o" || _argv.value(i) == "--options")
             {
                 par_id = 1;
                 continue;
@@ -175,7 +175,10 @@ void addURL(const QStringList &_argv)
                 address = _argv.value(i);
                 break;
             case 1:
-                params += _argv.value(i);
+                if(params.isEmpty())
+                    params += _argv.value(i);
+                else
+                    params += QString("\r\n\r\n%1").arg(_argv.value(i));
                 break;
             default:
                 continue;
