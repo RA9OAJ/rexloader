@@ -49,6 +49,10 @@
          <bold>true</bold>
         </font>
        </property>
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/appimages/settings.png</normaloff>:/appimages/settings.png</iconset>
+       </property>
        <property name="flags">
         <set>ItemIsEnabled</set>
        </property>

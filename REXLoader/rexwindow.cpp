@@ -1787,11 +1787,11 @@ void REXWindow::updateStatusBar()
         progress->setMaximum(100);
         int curVal = model->index(row_id,5).data(100).toLongLong() > 0 ? ((qint64)100*model->index(row_id,4).data(100).toLongLong()/model->index(row_id,5).data(100).toLongLong()) : 0;
         progress->setValue(curVal);
-        lefttime->setText(model->index(row_id,15).data(Qt::DisplayRole).toString());
+        lefttime->setText(tr("Осталось: %1").arg(model->index(row_id,16).data(Qt::DisplayRole).toString()));
         lefttime->setVisible(true);
         lasterror->setText(model->index(row_id,7).data(100).toString());
         lasterror->setVisible(true);
-        if(!model->index(row_id,14).data().toString().isEmpty()) speed->setText(tr("Скорость: %1").arg(model->index(row_id,14).data().toString()));
+        if(!model->index(row_id,15).data().toString().isEmpty()) speed->setText(tr("Скорость: %1").arg(model->index(row_id,15).data().toString()));
         else speed->hide();
     }
 

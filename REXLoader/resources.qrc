@@ -39,5 +39,6 @@
         <file alias="out_arrow.png">images/out_arrow.png</file>
         <file alias="log_warning.png">images/log_warning.png</file>
         <file alias="log_info.png">images/log_info.png</file>
+        <file alias="settings.png">images/settings.png</file>
     </qresource>
 </RCC>

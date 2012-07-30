@@ -301,6 +301,10 @@ margin: 3px;
    </property>
   </action>
   <action name="actionAppSettings">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/appimages/settings.png</normaloff>:/appimages/settings.png</iconset>
+   </property>
    <property name="text">
     <string>Настройки приложения</string>
    </property>
