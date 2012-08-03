@@ -70,6 +70,11 @@ QVariant TreeItemModel::data(const QModelIndex &index, int role) const
         }
         return QFont();
 
+    case Qt::DecorationRole:
+        if(!index.column())
+            return iconByIndex(index);
+        return QVariant();
+
     case Qt::EditRole:
     case 100: return nodes.value(index);
     case 101:
@@ -540,4 +545,26 @@ int TreeItemModel::taskCount(const QModelIndex &index,  bool incomplete) const
     cnt += query.value(0).toInt();
 
     return cnt;
+}
+
+QVariant TreeItemModel::iconByIndex(const QModelIndex &idx) const
+{
+    QModelIndex id = index(idx.row(),1,idx.parent());
+
+    switch(data(id,100).toInt())
+    {
+    case -2:
+        return QIcon(":/appimages/start_24x24.png");
+    case -3:
+        return QIcon(":/appimages/queue_24x24.png");
+    case -4:
+        return QIcon(":/appimages/pause_24x24.png");
+    case -5:
+        return QIcon(":/appimages/finish_24x24.png");
+    case -6:
+        return QIcon(":/appimages/error_24x24.png");
+
+    default: return QVariant();
+    }
+
 }

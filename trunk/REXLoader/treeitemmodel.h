@@ -59,6 +59,7 @@ public slots:
 
 protected:
     int taskCount(const QModelIndex &index, bool incomplete = false) const;
+    QVariant iconByIndex(const QModelIndex &idx) const;
 
 private:
     void addFiltersSubtree();
