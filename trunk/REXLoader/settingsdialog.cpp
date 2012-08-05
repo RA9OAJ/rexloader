@@ -73,6 +73,10 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui->downloadsBox->setVisible(false);
     ui->interfaceBox->setVisible(false);
     ui->logBox->setVisible(false);
+    ui->pluginBox->setVisible(false);
+
+    ui->pluginTableWidget->setColumnCount(4);
+    ui->pluginTableWidget->setRowCount(2);
     resize(size().width(),220);
     applySets();
 }
@@ -96,6 +100,7 @@ void SettingsDialog::selectSubSettings()
         ui->networkBox->setVisible(false);
         ui->generalBox->setVisible(true);
         ui->interfaceBox->setVisible(false);
+        ui->pluginBox->setVisible(false);
         ui->logBox->setVisible(false);
         break;
     case 1:
@@ -103,6 +108,7 @@ void SettingsDialog::selectSubSettings()
         ui->generalBox->setVisible(false);
         ui->networkBox->setVisible(true);
         ui->interfaceBox->setVisible(false);
+        ui->pluginBox->setVisible(false);
         ui->logBox->setVisible(false);
         break;
     case 2:
@@ -110,6 +116,7 @@ void SettingsDialog::selectSubSettings()
         ui->generalBox->setVisible(false);
         ui->downloadsBox->setVisible(true);
         ui->interfaceBox->setVisible(false);
+        ui->pluginBox->setVisible(false);
         ui->logBox->setVisible(false);
         break;
     case 3:
@@ -117,6 +124,15 @@ void SettingsDialog::selectSubSettings()
         ui->generalBox->setVisible(false);
         ui->downloadsBox->setVisible(false);
         ui->interfaceBox->setVisible(true);
+        ui->pluginBox->setVisible(false);
+        ui->logBox->setVisible(false);
+        break;
+    case 4:
+        ui->networkBox->setVisible(false);
+        ui->generalBox->setVisible(false);
+        ui->downloadsBox->setVisible(false);
+        ui->interfaceBox->setVisible(false);
+        ui->pluginBox->setVisible(true);
         ui->logBox->setVisible(false);
         break;
     case 5:
@@ -124,6 +140,7 @@ void SettingsDialog::selectSubSettings()
         ui->generalBox->setVisible(false);
         ui->downloadsBox->setVisible(false);
         ui->interfaceBox->setVisible(false);
+        ui->pluginBox->setVisible(false);
         ui->logBox->setVisible(true);
         break;
 
