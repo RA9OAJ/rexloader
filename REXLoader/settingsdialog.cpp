@@ -75,8 +75,6 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui->logBox->setVisible(false);
     ui->pluginBox->setVisible(false);
 
-    ui->pluginTableWidget->setColumnCount(4);
-    ui->pluginTableWidget->setRowCount(2);
     resize(size().width(),220);
     applySets();
 }

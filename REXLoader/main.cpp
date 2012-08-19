@@ -170,6 +170,11 @@ void addURL(const QStringList &_argv)
                 par_id = 1;
                 continue;
             }
+            else if(_argv.value(i) == "-u" || _argv.value(i) == "--url")
+            {
+                par_id = 0;
+                continue;
+            }
 
             switch(par_id)
             {
@@ -180,7 +185,7 @@ void addURL(const QStringList &_argv)
                 if(params.isEmpty())
                     params += _argv.value(i);
                 else
-                    params += QString("\r\n\r\n%1").arg(_argv.value(i));
+                    params += QString("\n\n%1").arg(_argv.value(i));
                 break;
             default:
                 continue;

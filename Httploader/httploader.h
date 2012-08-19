@@ -76,6 +76,7 @@ public:
     QString filepath; //путь к локальному файлу
     QString authData; //данные авторизации
     QString referer;
+    QString cookie;
     qint64 size; //размер задания
     QDateTime last_modif; //дата прошлой модификации
     QDateTime err_modif; //текущая дата модификации файла на удаленном сервере
@@ -171,7 +172,7 @@ protected slots:
 private:
     QHash<int, Task*> *task_list; //хэш заданий по ключам
     QHash<HttpSection*, int> *sections; //хэш ключей заданий по ссылкам на секции
-    QHash<int, QString> *cookies; //хэш cookies по id задания
+    //QHash<int, QString> *cookies; //хэш cookies по id задания
     QList<int> *squeue; //очередь на создание нового потока
     QList<int> *dqueue; //очередь на удаление задачи
     QList<HttpSection*> *del_queue; //очередь на удаление отработанных секций

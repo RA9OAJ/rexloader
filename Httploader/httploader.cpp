@@ -25,7 +25,6 @@ HttpLoader::HttpLoader(QObject *parent)
 {
     task_list = new QHash<int, Task*>;
     sections = new QHash<HttpSection*, int>;
-    cookies = new QHash<int, QString>;
     squeue = new QList<int>;
     dqueue = new QList<int>;
     del_queue = new QList<HttpSection*>;
@@ -45,7 +44,6 @@ HttpLoader::~HttpLoader()
     sections->clear();
     squeue->clear();
     aqueue->clear();
-    cookies->clear();
     while(!del_queue->isEmpty())scanDelQueue();
     delete task_list;
     delete sections;
@@ -337,7 +335,7 @@ void HttpLoader::startDownload(int id_task)
     }
     tsk->watcher.start();
     tsk->status = LInterface::SEND_QUERY;
-    sect->setCookie(cookies->value(id_task,QString()));
+    sect->setCookie(tsk->cookie);
     sect->startDownloading(); //запускаем секцию
 }
 
@@ -641,7 +639,7 @@ void HttpLoader::addSection(int id_task)
         sheduler(); //запускаем шедулер
     }
     mathSpeed();
-    sect->setCookie(cookies->value(id_task,QString()));
+    sect->setCookie(_task->cookie);
     sect->startDownloading(); //запускаем секцию
 
 }
@@ -1056,15 +1054,28 @@ void HttpLoader::setProxy(int id_task, const QUrl &_proxy, LInterface::ProxyType
 void HttpLoader::setAdvancedOptions(int id_task, const QString &options)
 {
     if(!task_list->contains(id_task))return;
-    QStringList opts = options.split("\r\n\r\n");
+    qDebug()<<options;
+    QStringList opts = options.split("\n\n");
+    qDebug()<<opts;
     QString par;
     foreach(par,opts)
     {
+        qDebug()<<par;
         QStringList curopt = par.split("cookie:");
-        if(!curopt.size())
+        if(curopt.size() > 1)
+        {
+            qDebug()<<curopt;
+            task_list->value(id_task)->cookie = curopt.value(1);
             continue;
+        }
 
-        cookies->insert(id_task,curopt.value(0));
+        curopt.clear();
+        curopt = par.split("referer:");
+        if(curopt.size() > 1)
+        {   qDebug()<<curopt;
+            task_list->value(id_task)->referer = curopt.value(1);
+            continue;
+        }
     }
 }
 
