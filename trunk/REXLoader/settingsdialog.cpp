@@ -96,42 +96,42 @@ void SettingsDialog::selectSubSettings()
     case 0:
         ui->downloadsBox->setVisible(false);
         ui->networkBox->setVisible(false);
-        ui->generalBox->setVisible(true);
         ui->interfaceBox->setVisible(false);
         ui->pluginBox->setVisible(false);
         ui->logBox->setVisible(false);
+        ui->generalBox->setVisible(true);
         break;
     case 1:
         ui->downloadsBox->setVisible(false);
         ui->generalBox->setVisible(false);
-        ui->networkBox->setVisible(true);
         ui->interfaceBox->setVisible(false);
         ui->pluginBox->setVisible(false);
         ui->logBox->setVisible(false);
+        ui->networkBox->setVisible(true);
         break;
     case 2:
         ui->networkBox->setVisible(false);
         ui->generalBox->setVisible(false);
-        ui->downloadsBox->setVisible(true);
         ui->interfaceBox->setVisible(false);
         ui->pluginBox->setVisible(false);
         ui->logBox->setVisible(false);
+        ui->downloadsBox->setVisible(true);
         break;
     case 3:
         ui->networkBox->setVisible(false);
         ui->generalBox->setVisible(false);
         ui->downloadsBox->setVisible(false);
-        ui->interfaceBox->setVisible(true);
         ui->pluginBox->setVisible(false);
         ui->logBox->setVisible(false);
+        ui->interfaceBox->setVisible(true);
         break;
     case 4:
         ui->networkBox->setVisible(false);
         ui->generalBox->setVisible(false);
         ui->downloadsBox->setVisible(false);
         ui->interfaceBox->setVisible(false);
-        ui->pluginBox->setVisible(true);
         ui->logBox->setVisible(false);
+        ui->pluginBox->setVisible(true);
         break;
     case 5:
         ui->networkBox->setVisible(false);

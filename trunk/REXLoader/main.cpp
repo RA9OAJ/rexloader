@@ -247,6 +247,41 @@ bool firstProcess()
     return true;
 }
 
+void setAppLanguage(QApplication *app)
+{
+    QString homedir = QDir::homePath()+"/locales";
+    QDir libdir(QApplication::applicationDirPath());
+    libdir.cdUp();
+
+    QString systransfile = "qt_"+QLocale::system().name().split("_").value(0)+".qm";
+    QString apptransfile = QLocale::system().name()+".qm";
+
+    QTranslator *translator = new QTranslator(app);
+    if(translator->load(systransfile,QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
+        app->installTranslator(translator);
+    else if(translator->load(systransfile,homedir))
+        app->installTranslator(translator);
+    else delete translator;
+
+    translator = new QTranslator(app);
+    if(translator->load(apptransfile,homedir))
+        app->installTranslator(translator);
+    else if(translator->load(apptransfile,libdir.absolutePath()+"/share/rexloader/locales"))
+        app->installTranslator(translator);
+    else
+    {
+        if(apptransfile == "ru_RU.qm")
+        {
+            delete translator;
+            return;
+        }
+
+        if(translator->load("en_US.qm",libdir.absolutePath()+"/share/rexloader/locales"))
+            app->installTranslator(translator);
+        else delete translator;
+    }
+}
+
 int main(int argc, char *argv[])
 {
     QCoreApplication::setOrganizationName("Sarvaritdinov Ravil");
@@ -264,9 +299,11 @@ int main(int argc, char *argv[])
     addURL(a.arguments());
     if(firstProcess())
     {
-        QTranslator qt_translator;
+        /*QTranslator qt_translator;
         QString trans_file = "qt_"+QLocale::system().name().split("_").value(0)+".qm";
         if(qt_translator.load(trans_file,QLibraryInfo::location(QLibraryInfo::TranslationsPath))) a.installTranslator(&qt_translator);
+        */
+        setAppLanguage(&a);
 
         REXWindow w;
 
