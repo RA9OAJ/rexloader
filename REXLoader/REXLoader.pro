@@ -53,9 +53,8 @@ FORMS    += rexwindow.ui \
     categorydialog.ui \
     taskdialog.ui
 
-TRANSLATIONS += lang/ru_RU.ts
-
 RESOURCES += \
     resources.qrc
 
+include(locales/locales.pri)
 
