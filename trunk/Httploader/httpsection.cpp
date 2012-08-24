@@ -280,7 +280,6 @@ void HttpSection::sendHeader()
     }
     if(!authorization.isEmpty())
         _header += QString("Authorization: Basic %1\r\n").arg(authorization);
-    qDebug()<<referer;
     if(!referer.isEmpty())_header += QString("Referer: %1\r\n").arg(referer);
     if(!cookie_string.isEmpty())
         _header += QString("Cookie: %1\r\n").arg(cookie_string);

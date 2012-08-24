@@ -1054,17 +1054,13 @@ void HttpLoader::setProxy(int id_task, const QUrl &_proxy, LInterface::ProxyType
 void HttpLoader::setAdvancedOptions(int id_task, const QString &options)
 {
     if(!task_list->contains(id_task))return;
-    qDebug()<<options;
     QStringList opts = options.split("\n\n");
-    qDebug()<<opts;
     QString par;
     foreach(par,opts)
     {
-        qDebug()<<par;
         QStringList curopt = par.split("cookie:");
         if(curopt.size() > 1)
         {
-            qDebug()<<curopt;
             task_list->value(id_task)->cookie = curopt.value(1);
             continue;
         }
@@ -1072,7 +1068,7 @@ void HttpLoader::setAdvancedOptions(int id_task, const QString &options)
         curopt.clear();
         curopt = par.split("referer:");
         if(curopt.size() > 1)
-        {   qDebug()<<curopt;
+        {
             task_list->value(id_task)->referer = curopt.value(1);
             continue;
         }
