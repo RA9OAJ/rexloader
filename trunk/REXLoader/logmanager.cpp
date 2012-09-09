@@ -160,6 +160,8 @@ void LogManager::manageTabs(int table_id)
         QTreeView *view = getTreeView(wgt);
         view->setModel(model());
         view->header()->hide();
+        view->header()->setResizeMode(0, QHeaderView::ResizeToContents);
+        view->header()->setStretchLastSection(false);
         view->hideColumn(1);
         view->hideColumn(2);
         view->hideColumn(3);
@@ -188,6 +190,8 @@ void LogManager::manageTabs(int table_id)
             QTreeView *view = getTreeView(wgt);
             view->setModel(model(table_id,i));
             view->header()->hide();
+            view->header()->setResizeMode(0, QHeaderView::ResizeToContents);
+            view->header()->setStretchLastSection(false);
             view->hideColumn(1);
             view->hideColumn(2);
             view->hideColumn(3);
@@ -202,6 +206,8 @@ void LogManager::manageTabs(int table_id)
         {
             view->setModel(mdl);
             view->header()->hide();
+            view->header()->setResizeMode(0, QHeaderView::ResizeToContents);
+            view->header()->setStretchLastSection(false);
             view->hideColumn(1);
             view->hideColumn(2);
             view->hideColumn(3);
@@ -383,6 +389,12 @@ QWidget *LogManager::createTabWidget()
     QWidget *wgt = new QWidget();
     QBoxLayout *layout = new QBoxLayout(QBoxLayout::TopToBottom,wgt);
     QTreeView *tree = new QTreeView(wgt);
+    tree->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    tree->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+    tree->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    tree->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    tree->setAutoScroll(true);
+    tree->setTextElideMode(Qt::ElideNone);
     tree->setObjectName("_LogView_");
     layout->addWidget(tree);
     return wgt;

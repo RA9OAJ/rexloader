@@ -41,6 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "pluginmanager.h"
 #include "tableview.h"
 #include "logmanager.h"
+#include "pluginlistmodel.h"
 
 #include "../Httploader/LoaderInterface.h"
 
@@ -148,6 +149,7 @@ private:
     TItemModel *model; //модель для работы с данными БД задач
     TreeItemModel *treemodel; //модель информационного дерева
     QSortFilterProxyModel *sfmodel; //прокси-модель для сортировки
+    PluginListModel *plugmodel; //модель отображения списка плагинов
 
     QToolButton *spdbtn; //кнопка выбора скорости загрузки
     QToolButton *taskbtn;
