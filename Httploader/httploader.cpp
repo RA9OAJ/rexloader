@@ -67,8 +67,8 @@ QStringList HttpLoader::pluginInfo() const
     pinfo << QString("Build date: ") + QString(P_BUILD_DATE);
     pinfo << QString("Version: ") + QString(P_VERSION);
     pinfo << QString("Copyright: ") + tr("© 2011 Сарваритдинов Равиль");
-    pinfo << QString("Lic: ") + tr("GNU LGPL v2.1");
-    pinfo << QString("Description: ") + tr("Плагин для скачивания файлов по протоколу HTTP.");
+    pinfo << QString("Lic: ") + tr("GNU/LGPL v2.1");
+    pinfo << QString("Description: ") + tr("Плагин для скачивания файлов по протоколу HTTP/S.");
     return pinfo;
 }
 

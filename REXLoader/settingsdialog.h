@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDesktopWidget>
 #include <QTimer>
 #include <QFileDialog>
+#include "pluginlistmodel.h"
 
 namespace Ui {
     class SettingsDialog;
@@ -38,6 +39,7 @@ public:
     ~SettingsDialog();
     QList<QString> keys() const;
     QVariant value(const QString &key) const;
+    void setPlugListModel(PluginListModel* model);
 
 signals:
     void newSettings();

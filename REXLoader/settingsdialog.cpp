@@ -323,6 +323,11 @@ QVariant SettingsDialog::value(const QString &key) const
     return sets.value(key);
 }
 
+void SettingsDialog::setPlugListModel(PluginListModel *model)
+{
+    ui->pluginListView->setModel(model);
+}
+
 void SettingsDialog::closeEvent(QCloseEvent *event)
 {
     cancelSets();

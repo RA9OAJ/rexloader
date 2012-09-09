@@ -136,6 +136,11 @@ void REXWindow::createInterface()
     ui->treeView->setExpanded(treemodel->index(0,0),true);
     ui->treeView->setExpanded(treemodel->index(1,0),true);
 
+    //настраиваем модель отображения списка плагинов
+    plugmodel = new PluginListModel(this);
+    plugmodel->setSorces(&plugfiles,&pluglist,&plugproto);
+    settDlg->setPlugListModel(plugmodel);
+
     //настраиваем лог
     logmgr->setTabWidget(ui->tabWidget);
     connect(plugmgr,SIGNAL(messageAvailable(int,int,int,QString,QString)),logmgr,SLOT(appendLog(int,int,int,QString,QString)));
