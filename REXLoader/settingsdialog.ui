@@ -1303,12 +1303,15 @@
             <item>
              <widget class="QLabel" name="label_29">
               <property name="text">
-               <string>Активный плагин</string>
+               <string>Активировать плагин</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QComboBox" name="pluginComboBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="minimumSize">
                <size>
                 <width>200</width>

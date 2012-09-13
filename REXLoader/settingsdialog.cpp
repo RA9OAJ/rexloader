@@ -67,6 +67,9 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     connect(ui->inFontColor,SIGNAL(colorSelected(QColor)),ui->inFont,SLOT(setFontColor(QColor)));
     connect(ui->logFontColorReset,SIGNAL(released()),this,SLOT(resetFontsColors()));
 
+    connect(ui->pluginListView,SIGNAL(clicked(QModelIndex)),this,SLOT(updatePluginListBox(QModelIndex)));
+    connect(ui->pluginComboBox,SIGNAL(activated(int)),this,SLOT(updatePluginStatus(int)));
+
     resetFontsColors();
 
     ui->networkBox->setVisible(false);
@@ -74,6 +77,10 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui->interfaceBox->setVisible(false);
     ui->logBox->setVisible(false);
     ui->pluginBox->setVisible(false);
+
+    delegate = new PluginItemDelegate(this);
+    ui->pluginListView->setItemDelegate(delegate);
+    mdl = 0;
 
     resize(size().width(),220);
     applySets();
@@ -237,6 +244,21 @@ void SettingsDialog::applySets()
     sets.insert("log_in_font_color",ui->inFontColor->currentColor());
     sets.insert("log_max_strings",ui->logMaxStrings->value());
 
+    if(mdl)
+    {
+        for(int i = 0; i < mdl->rowCount(); ++i)
+        {
+            QModelIndex cur = mdl->index(i,0);
+
+            int plugin = plugproto.value(cur.data(PluginListModel::ProtocolName).toString().toLower(),-1);
+            if(plugin != -1)
+                mdl->setData(cur,plugin);
+        }
+        ui->pluginListView->scroll(0,1);
+        ui->pluginListView->scroll(0,-1);
+        plugproto.clear();
+    }
+
     emit newSettings();
 }
 
@@ -311,6 +333,8 @@ void SettingsDialog::cancelSets()
     ui->inFontColor->setColor(sets.value("log_in_font_color").value<QColor>());
     ui->logMaxStrings->setValue(sets.value("log_max_strings").toInt());
 
+    plugproto.clear();
+
 }
 
 QList<QString> SettingsDialog::keys() const
@@ -326,6 +350,7 @@ QVariant SettingsDialog::value(const QString &key) const
 void SettingsDialog::setPlugListModel(PluginListModel *model)
 {
     ui->pluginListView->setModel(model);
+    mdl = model;
 }
 
 void SettingsDialog::closeEvent(QCloseEvent *event)
@@ -439,4 +464,49 @@ void SettingsDialog::resetFontsColors()
         ui->inFont->setFont(QApplication::font());
         ui->inFontColor->setColor(QColor("#111111"));
     }
+}
+
+void SettingsDialog::updatePluginListBox(const QModelIndex &index)
+{
+    if(!ui->pluginComboBox->isEnabled())
+    {
+        ui->pluginComboBox->setEnabled(true);
+        ui->pluginComboBox->insertItem(0,tr("отключено"),0);
+    }
+
+    QList<QPair<QString,int> > lst = mdl->pluginsList(index);
+    QPair<QString, int> cur;
+    int idx = 1;
+
+    foreach(cur,lst)
+    {
+        ui->pluginComboBox->insertItem(idx,cur.first,cur.second);
+        ++idx;
+    }
+
+    for(int i = idx; i < ui->pluginComboBox->count(); ++i)
+        ui->pluginComboBox->removeItem(i);
+
+    if(index.data(PluginListModel::PlugId).toInt())
+    {
+        if(plugproto.contains(index.data(PluginListModel::ProtocolName).toString().toLower()))
+            ui->pluginComboBox->setCurrentIndex(ui->pluginComboBox->findData(plugproto.value(index.data(PluginListModel::ProtocolName).toString().toLower())));
+        else
+            ui->pluginComboBox->setCurrentIndex(ui->pluginComboBox->findText(index.data(PluginListModel::PlugName).toString()));
+    }
+    else ui->pluginComboBox->setCurrentIndex(0);
+}
+
+void SettingsDialog::updatePluginStatus(int index)
+{
+    int newplugin = ui->pluginComboBox->itemData(index).toInt();
+    QItemSelectionModel *selection = ui->pluginListView->selectionModel();
+    QModelIndex curIndex = selection->selectedIndexes().value(0);
+    QString protocol = curIndex.data(PluginListModel::ProtocolName).toString().toLower();
+    int curplugin = curIndex.data(PluginListModel::PlugId).toInt();
+
+    if(curplugin == newplugin)
+        return;
+
+    plugproto.insert(protocol,newplugin);
 }

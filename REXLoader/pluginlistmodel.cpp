@@ -46,10 +46,38 @@ QVariant PluginListModel::data(const QModelIndex &index, int role) const
     {
     case Qt::DisplayRole:
     {
+        QStringList out;
         QStringList protolist = plugproto->keys();
-        QStringList pluginfo = pluglist->value(plugproto->value(protolist.value(index.row())))->pluginInfo();
-        QString out = tr("Протокол %1 Плагин %2 версия %3\nАвтор: %4, (лицензия %5)").arg(protolist.value(index.row()).toUpper());
+        out << protolist.value(index.row()).toUpper();
+
+        if(plugproto->value(protolist.value(index.row())))
+        {
+            PluginInfo pluginfo(pluglist->value(plugproto->value(protolist.value(index.row())))->pluginInfo());
+            out << pluginfo.name << pluginfo.version << pluginfo.authors << pluginfo.license;
+        }
+        else out << tr("отключено") << "" << "-" << "-" << "-";
         return out;
+    }
+    case PluginListModel::PlugName:
+    {
+        QStringList protolist = plugproto->keys();
+
+        if(plugproto->value(protolist.value(index.row())))
+        {
+            PluginInfo pluginfo(pluglist->value(plugproto->value(protolist.value(index.row())))->pluginInfo());
+            return pluginfo.name;
+        }
+        else return QVariant();
+    }
+    case PluginListModel::ProtocolName:
+    {
+        QStringList protolist = plugproto->keys();
+        return protolist.value(index.row());
+    }
+    case PluginListModel::PlugId:
+    {
+        QStringList protolist = plugproto->keys();
+        return plugproto->value(protolist.value(index.row()));
     }
 
     default: return QVariant();
@@ -67,11 +95,36 @@ int PluginListModel::columnCount(const QModelIndex &parent) const
     return 1;
 }
 
+bool PluginListModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    plugproto->insert(index.data(ProtocolName).toString().toLower(),value.toInt());
+    return true;
+}
+
 void PluginListModel::setSorces(QHash<int, QString> *plugdirs, QHash<int, LoaderInterface *> *plglst, QHash<QString, int> *plgproto)
 {
     plugfiles = plugdirs;
     pluglist = plglst;
     plugproto = plgproto;
+}
+
+QList<QPair<QString, int> > PluginListModel::pluginsList(const QModelIndex &index)
+{
+    QList<QPair<QString, int> > lst;
+    QList<int> keys = pluglist->keys();
+    int key;
+
+    foreach(key,keys)
+    {
+        LoaderInterface *plg = pluglist->value(key);
+        if(plg->protocols().contains(index.data(PluginListModel::ProtocolName).toString(),Qt::CaseInsensitive))
+        {
+            PluginInfo plginfo(plg->pluginInfo());
+            lst << QPair<QString,int>(plginfo.name,key);
+        }
+    }
+
+    return lst;
 }
 
 void PluginListModel::addPluginCategory(const QString &name)
@@ -80,4 +133,34 @@ void PluginListModel::addPluginCategory(const QString &name)
         return;
 
     categories.insert(name,categories.size()+1);
+}
+
+PluginInfo::PluginInfo(const QStringList &params)
+{
+    QString cur;
+    foreach(cur,params)
+    {
+        QStringList pair = cur.split(": ");
+        if(pair.size() < 2)
+            continue;
+
+        if(pair.value(0).toLower() == "plugin")
+            name = pair.value(1);
+        else if(pair.value(0).toLower() == "authors")
+            authors = pair.value(1).replace(QRegExp("[\r\n]+"),", ");
+        else if(pair.value(0).toLower() == "place")
+            place = pair.value(1);
+        else if(pair.value(0).toLower() == "build date")
+            builddate = pair.value(1);
+        else if(pair.value(0).toLower() == "version")
+            version = pair.value(1);
+        else if(pair.value(0).toLower() == "lic")
+            license = pair.value(1);
+        else if(pair.value(0).toLower() == "description")
+            description = pair.value(1);
+    }
+}
+
+PluginInfo::~PluginInfo()
+{
 }

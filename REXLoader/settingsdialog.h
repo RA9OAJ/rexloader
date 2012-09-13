@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QTimer>
 #include <QFileDialog>
 #include "pluginlistmodel.h"
+#include "pluginitemdelegate.h"
 
 namespace Ui {
     class SettingsDialog;
@@ -60,11 +61,16 @@ protected slots:
     void setDownDir(const QString &dir);
     void showFileDialog();
     void resetFontsColors();
+    void updatePluginListBox(const QModelIndex &index);
+    void updatePluginStatus(int index);
 
 private:
     Ui::SettingsDialog *ui;
     int last_row;
+    PluginListModel *mdl;
+    PluginItemDelegate *delegate;
 
+    QHash<QString, int> plugproto;
     QHash<QString,QVariant> sets;
 };
 
