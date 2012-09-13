@@ -222,6 +222,7 @@ void PluginManager::restorePluginsState(const QByteArray &stat)
         if(!len) break;
         if(len == -1)
         {
+            in >> len;
             plugproto->insert(proto,0);
             continue;
         }
