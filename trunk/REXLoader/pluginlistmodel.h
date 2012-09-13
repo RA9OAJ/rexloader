@@ -23,19 +23,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QStringList>
 #include "../Httploader/LoaderInterface.h"
 
+class PluginInfo
+{
+public:
+    PluginInfo(const QStringList &params);
+    ~PluginInfo();
+
+    QString name;
+    QString authors;
+    QString place;
+    QString builddate;
+    QString version;
+    QString license;
+    QString description;
+};
+
 class PluginListModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
+    enum DataType{
+        PlugName = 100,
+        PlugId = 101,
+        ProtocolName = 102
+    };
+
     explicit PluginListModel(QObject *parent = 0);
-    virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex & parent);
+    virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex & parent = QModelIndex());
     virtual QModelIndex	index (int row, int column = 0, const QModelIndex & parent = QModelIndex()) const;
     virtual QVariant data(const QModelIndex &index, int role) const;
-    virtual int rowCount(const QModelIndex &parent) const;
-    virtual int columnCount(const QModelIndex &parent) const;
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
+    virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::UserRole);
     void addPluginCategory(const QString &name);
     void setSorces(QHash<int,QString> *plugdirs, QHash<int,LoaderInterface*> *plglst, QHash<QString,int> *plgproto);
-    
+    QList<QPair<QString, int> > pluginsList(const QModelIndex &index);
 signals:
     
 public slots:

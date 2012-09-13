@@ -1579,14 +1579,19 @@ void REXWindow::manageTaskQueue()
         QString flname = select.data(select.index(i,3),Qt::DisplayRole).toString();
 
         QUrl _url = QUrl::fromEncoded(select.data(select.index(i,1),100).toByteArray());
-        if(!plugproto.contains(_url.scheme().toLower()))
+        if(/*!plugproto.contains(_url.scheme().toLower()) || */!plugproto.value(_url.scheme().toLower(),0))
         {
-            QString err = tr("Этот протокол не поддерживается. Проверьте наличие соответствующего плагина и его состояние.");
+            QString err = tr("Протокол '%1' не поддерживается. Проверьте наличие соответствующего плагина и его состояние.")
+                    .arg(_url.scheme().toUpper());
             QString query = QString("UPDATE tasks SET tstatus=%1, lasterror='%2' WHERE id=%3").arg(
                         QString::number((int)LInterface::ERROR_TASK),
-                        err,
+                        err.replace("'","''"),
                         QString::number(id_row));
             emit needExecQuery(query);
+
+            logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                              tr("Ошибка при загрузке файла %1").arg(flname),
+                              err);
 
             QModelIndex srcIdx = select.mapToSource(select.index(i,9));
             model->addToCache(srcIdx.row(),srcIdx.column(),(int)LInterface::ERROR_TASK);

@@ -220,11 +220,18 @@ void PluginManager::restorePluginsState(const QByteArray &stat)
 
         in >> len; //считываем размер строки пути до файла плагина
         if(!len) break;
+        if(len == -1)
+        {
+            plugproto->insert(proto,0);
+            continue;
+        }
+
         inbuf.clear();
         inbuf.resize(len);
         in.readRawData(inbuf.data(),len); //считываем строку пути до файла плагина
         QString filepath = inbuf;
-        if(filepath == "") break; //если не удалось считать, то выходим
+        if(filepath == "") //если не удалось считать
+            break;
 
         in >> len;
         int id = plugfiles->key(filepath);
@@ -262,10 +269,11 @@ QByteArray PluginManager::pluginsState() const
         stat << proto.toAscii().size(); //размерность строки с названием протокола
         stat.writeRawData(proto.toAscii().data(),proto.toAscii().size()); //строка с названием протокола
         int id = plugproto->value(proto); //id плагина
-        QString filepath = plugfiles->value(id); //путь до плагина
+        QString filepath = plugfiles->value(id,QString()); //путь до плагина
+
+        stat << ((filepath.toAscii().size() > 0) ? filepath.toAscii().size() : -1); //размер строки пути файла плагина
         if(filepath == "") continue;
 
-        stat << filepath.toAscii().size(); //размер строки пути файла плагина
         stat.writeRawData(filepath.toAscii().data(),filepath.toAscii().size()); //путь до файла плагина
     }
     stat << (int) 0;

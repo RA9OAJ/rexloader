@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     fontselectbutton.cpp \
     logtreemodel.cpp \
     logmanager.cpp \
-    pluginlistmodel.cpp
+    pluginlistmodel.cpp \
+    pluginitemdelegate.cpp
 
 HEADERS  += rexwindow.h \
     titemmodel.h \
@@ -46,7 +47,8 @@ HEADERS  += rexwindow.h \
     fontselectbutton.h \
     logtreemodel.h \
     logmanager.h \
-    pluginlistmodel.h
+    pluginlistmodel.h \
+    pluginitemdelegate.h
 
 FORMS    += rexwindow.ui \
     addtaskdialog.ui \
@@ -57,6 +59,9 @@ FORMS    += rexwindow.ui \
 
 RESOURCES += \
     resources.qrc
+
+CODECFORTR = UTF-8
+CODECFORSRC = UTF-8
 
 include(locales/locales.pri)
 

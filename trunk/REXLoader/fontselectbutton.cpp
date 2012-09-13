@@ -22,7 +22,7 @@ FontSelectButton::FontSelectButton(QWidget *parent) :
     QPushButton(parent)
 {
     QPushButton::setText("");
-    setText(tr("AaBbYyZz"));
+    setText(tr("АаБбВвГг"));
 
     _flg = NoResize;
     _dlg = 0;
