@@ -164,6 +164,8 @@ margin: 3px;
       <string>По завершении заданий</string>
      </property>
      <addaction name="actionPoweroff"/>
+     <addaction name="actionHibernate"/>
+     <addaction name="actionSuspend"/>
     </widget>
     <addaction name="actionSchedule"/>
     <addaction name="menu_3"/>
@@ -300,6 +302,9 @@ margin: 3px;
    </property>
   </action>
   <action name="actionPoweroff">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Выключить компьютер</string>
    </property>
@@ -520,6 +525,22 @@ margin: 3px;
    </property>
    <property name="text">
     <string>5</string>
+   </property>
+  </action>
+  <action name="actionHibernate">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Гибернация</string>
+   </property>
+  </action>
+  <action name="actionSuspend">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Ждущий режим</string>
    </property>
   </action>
  </widget>

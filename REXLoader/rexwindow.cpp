@@ -261,6 +261,9 @@ void REXWindow::createInterface()
     connect(ui->actionFiveTasks,SIGNAL(triggered()),this,SLOT(setTaskCnt()));
     connect(ui->actionTaskPropert,SIGNAL(triggered()),this,SLOT(showTaskDialog()));
     connect(ui->tableView,SIGNAL(showTaskProp()),this,SLOT(showTaskDialog()));
+    connect(ui->actionPoweroff,SIGNAL(triggered()),this,SLOT(setPostActionMode()));
+    connect(ui->actionHibernate,SIGNAL(triggered()),this,SLOT(setPostActionMode()));
+    connect(ui->actionSuspend,SIGNAL(triggered()),this,SLOT(setPostActionMode()));
     connect(qApp->clipboard(),SIGNAL(dataChanged()),this,SLOT(scanClipboard()));
 
     //кнопка-меню для выбора скорости
@@ -1556,7 +1559,23 @@ void REXWindow::syncTaskData()
     select.setFilterRole(100);
     select.setFilterRegExp("(^-100$)|(^-2$)|(^0$)");
     if(!tasklist.size() && !select.rowCount())
+    {
         trayicon->showMessage(tr("REXLoader"),tr("Все задания завершены."));
+
+        EMessageBox *question = new EMessageBox(this);
+        question->setWindowTitle(tr("Завершить работу ПК?"));
+        question->setIcon(EMessageBox::Question);
+        QPushButton *btn1 = question->addButton(tr("Выключить ПК"),EMessageBox::ApplyRole);
+        question->addButton(tr("Отмена"),EMessageBox::RejectRole);
+        question->setDefaultButton(btn1);
+        question->setText(tr("Выключить ПК после завершения всех заданий?"));
+        question->setInformativeText(tr("Для завершения работы ПК нажмите \"Выключить ПК\", для отмены - \"Отмена\""));
+        question->setActionType(EMessageBox::AT_SHUTDOWN);
+        connect(question,SIGNAL(buttonClicked(QAbstractButton*)),this,SLOT(acceptQAction(QAbstractButton*)));
+        question->setModal(true);
+        if(!isVisible()) question->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
+        question->show();
+    }
 }
 
 void REXWindow::manageTaskQueue()
@@ -1962,6 +1981,12 @@ void REXWindow::acceptQAction(QAbstractButton *btn)
             startAllTasks();
         break;
     }
+    case EMessageBox::AT_SHUTDOWN:
+    {
+        if(dlg->buttonRole(qobject_cast<QPushButton*>(btn)) == EMessageBox::ApplyRole)
+            QTimer::singleShot(0,this,SLOT(shutDownPC()));
+        break;
+    }
     case EMessageBox::AT_NONE:
     default: return;
     }
@@ -2064,6 +2089,10 @@ void REXWindow::readSettings()
 
     logmgr->setLogAutoSave(settDlg->value("log_autosave").toBool(),settDlg->value("log_dir").toString());
     logmgr->setMaxStringCount(settDlg->value("log_max_strings").toInt());
+
+    ui->actionPoweroff->setChecked(settDlg->value("poweroff").toBool());
+    ui->actionHibernate->setChecked(settDlg->value("hibernate").toBool());
+    ui->actionSuspend->setChecked(settDlg->value("suspend").toBool());
 
     setTaskCnt();
     calculateSpeed();
@@ -2405,6 +2434,101 @@ void REXWindow::closeTaskDialog()
 
     int key = dlglist.key(dlg);
     dlglist.remove(key);
+}
+
+void REXWindow::setPostActionMode()
+{
+    QAction *act = qobject_cast<QAction*>(sender());
+
+    if(act)
+    {
+        if(act == ui->actionPoweroff)
+        {
+            if(act->isChecked())
+            {
+                ui->actionHibernate->setChecked(false);
+                ui->actionSuspend->setChecked(false);
+                settDlg->setSettingAttribute("suspend",ui->actionSuspend->isChecked());
+                settDlg->setSettingAttribute("hibernate",ui->actionHibernate->isChecked());
+            }
+            else
+            {
+                settDlg->setSettingAttribute("poweroff",false);
+                return;
+            }
+        }
+        else if(act == ui->actionSuspend)
+        {
+            if(act->isChecked())
+            {
+                ui->actionHibernate->setChecked(false);
+                ui->actionPoweroff->setChecked(false);
+                settDlg->setSettingAttribute("poweroff",ui->actionPoweroff->isChecked());
+                settDlg->setSettingAttribute("hibernate",ui->actionHibernate->isChecked());
+            }
+            else
+            {
+                settDlg->setSettingAttribute("suspend",false);
+                return;
+            }
+        }
+        else if(act == ui->actionHibernate)
+        {
+            if(act->isChecked())
+            {
+                ui->actionPoweroff->setChecked(false);
+                ui->actionSuspend->setChecked(false);
+                settDlg->setSettingAttribute("poweroff",ui->actionPoweroff->isChecked());
+                settDlg->setSettingAttribute("suspend",ui->actionSuspend->isChecked());
+            }
+            else
+            {
+                settDlg->setSettingAttribute("hibernate",false);
+                return;
+            }
+        }
+
+        QMessageBox *dlg = new QMessageBox(this);
+        dlg->setAttribute(Qt::WA_DeleteOnClose);
+        dlg->setIcon(QMessageBox::Question);
+        dlg->setWindowTitle(tr("Повторять действие завершения работы ПК?"));
+        dlg->setText(tr("Вы установили опцию автоматического завершения работы ПК по завершению всех заданий. "
+                        "Хотите чтобы программа всегда выполняла данное действие автоматизации?"));
+        dlg->addButton(tr("Да, всегда выключать ПК"),QMessageBox::AcceptRole);
+        QPushButton *defBtn = dlg->addButton(tr("Нет, выключить единоразово"),QMessageBox::RejectRole);
+        dlg->setDefaultButton(defBtn);
+        connect(dlg,SIGNAL(buttonClicked(QAbstractButton*)),this,SLOT(setPostActionMode()));
+        dlg->show();
+        return;
+    }
+
+    QMessageBox *dlg = qobject_cast<QMessageBox*>(sender());
+
+    if(dlg)
+    {
+        if(dlg->buttonRole(dlg->clickedButton()) == QMessageBox::AcceptRole)
+        {
+            settDlg->setSettingAttribute("poweroff",ui->actionPoweroff->isChecked());
+            settDlg->setSettingAttribute("suspend",ui->actionSuspend->isChecked());
+            settDlg->setSettingAttribute("hibernate",ui->actionHibernate->isChecked());
+        }
+    }
+}
+
+void REXWindow::shutDownPC()
+{
+    bool appQuit = false;
+    if(ui->actionPoweroff->isChecked())
+        appQuit = ShutdownManager::shutdownPC();
+    else if(ui->actionHibernate->isChecked())
+        ShutdownManager::hibernatePC();
+    else if(ui->actionSuspend->isChecked())
+        ShutdownManager::suspendPC();
+    else
+        return;
+
+    if(appQuit)
+        qApp->quit();
 }
 
 void REXWindow::prepareToQuit()

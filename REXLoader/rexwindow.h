@@ -42,6 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "tableview.h"
 #include "logmanager.h"
 #include "pluginlistmodel.h"
+#include "shutdownmanager.h"
 
 #include "../Httploader/LoaderInterface.h"
 
@@ -118,6 +119,8 @@ protected slots:
     void showTaskDialog(); //показывает диалог состояния выделенного задания
     void showTaskDialog(int id_row); //переопределение метода
     void closeTaskDialog(); //удаляет закрытый диалог состояния задания
+    void setPostActionMode(); //определяет режим отключения ПК при завершении всех закачек
+    void shutDownPC(); //завершает работу ПК в установленном режиме
 
 signals:
     void transAct();

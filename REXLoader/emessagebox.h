@@ -36,6 +36,7 @@ public:
         AT_RENAME,
         AT_REDOWNLOAD,
         AT_DOWNLOAD_ON_START,
+        AT_SHUTDOWN,
         AT_NONE
     };
 
