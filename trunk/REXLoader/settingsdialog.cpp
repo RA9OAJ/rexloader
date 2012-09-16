@@ -82,6 +82,10 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui->pluginListView->setItemDelegate(delegate);
     mdl = 0;
 
+    sets.insert("poweroff",false);
+    sets.insert("hibernate",false);
+    sets.insert("suspend",false);
+
     resize(size().width(),220);
     applySets();
 }
