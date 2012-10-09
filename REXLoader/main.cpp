@@ -72,7 +72,8 @@ void checkDatabase()
                 "speed_avg TEXT,"
                 "note TEXT,"
                 "priority INTEGER,"
-                "params TEXT);");
+                "params TEXT,"
+                "plane_id INTEGER);");
 
             if(!flag)
             {
@@ -127,8 +128,62 @@ void checkDatabase()
                 //записываем ошибку в error.log
             }
 
-            delete(qr);
+            qr->clear();
+            flag = qr->exec("CREATE TABLE planes ("
+                            "id INTEGER PRIMARY KEY,"
+                            "title TEXT,"
+                            "startdatetime TEXT,"
+                            "enddatetime TEXT);");
+
+                        if(!flag)
+                        {
+                            qDebug()<<"5. "<<qr->lastError().text()<<qr->lastQuery()<<querstr;
+                            //записываем ошибку в error.log
+                        }
+
+            delete qr;
         }
+
+        { // секция кода для обновления БД с предыдущей версии программы
+            QSqlQuery *qr = new QSqlQuery;
+
+            //если нет таблицы с планами, то создаем её
+            bool flag = qr->exec("CREATE TABLE IF NOT EXISTS planes ("
+                "id INTEGER PRIMARY KEY,"
+                "title TEXT,"
+                "startdatetime TEXT,"
+                "enddatetime TEXT);");
+
+            if(!flag)
+            {
+                qDebug()<<"5. "<<qr->lastError().text()<<qr->lastQuery();
+                //записываем ошибку в error.log
+            }
+
+            //если в таблице tasks < 16 полей, то добавляем 16 поле - plane_id
+            qr->clear();
+            flag = qr->exec("SELECT * FROM tasks");
+
+            if(!flag)
+            {
+                qDebug()<<"6. "<<qr->lastError().text()<<qr->lastQuery();
+                //записываем ошибку в error.log
+            }
+            else if(qr->record().count() < 16)
+            {
+                qr->clear();
+                flag = qr->exec("ALTER TABLE tasks ADD COLUMN plane_id INTEGER");
+
+                if(!flag)
+                {
+                    qDebug()<<"7. "<<qr->lastError().text()<<qr->lastQuery();
+                    //записываем ошибку в error.log
+                }
+            }
+
+            delete qr;
+        }
+
         db.close();
     }
     QSqlDatabase::removeDatabase(dbname);
