@@ -117,6 +117,7 @@ void REXWindow::createInterface()
     ui->tableView->hideColumn(11);
     ui->tableView->hideColumn(13);
     ui->tableView->hideColumn(14);
+    ui->tableView->hideColumn(15);
     ui->tableView->horizontalHeader()->moveSection(2,3);
     ui->tableView->horizontalHeader()->moveSection(14,11);
     ui->tableView->horizontalHeader()->moveSection(15,12);
@@ -662,6 +663,7 @@ void REXWindow::loadSettings()
     ui->tableView->hideColumn(11);
     ui->tableView->hideColumn(13);
     ui->tableView->hideColumn(14);
+    ui->tableView->hideColumn(15);
 }
 
 void REXWindow::scanClipboard()
@@ -966,7 +968,7 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
 
     if(totalload > 0) //если файл на докачке, а не новый
     {
-        if(QFile::exists(filename) && flinfo.isFile()) //если локальный файл существует
+        if(QFile::exists(filename) && flinfo.isFile() && filename.right(5) == ".rldr") //если локальный файл существует
         {
             id_task = pluglist.value(id_proto)->loadTaskFile(filename); // id задачи
             if(id_task) //если плагин удачно прочитал метаданные и добавил задачу
@@ -1562,19 +1564,23 @@ void REXWindow::syncTaskData()
     {
         trayicon->showMessage(tr("REXLoader"),tr("Все задания завершены."));
 
-        EMessageBox *question = new EMessageBox(this);
-        question->setWindowTitle(tr("Завершить работу ПК?"));
-        question->setIcon(EMessageBox::Question);
-        QPushButton *btn1 = question->addButton(tr("Выключить ПК"),EMessageBox::ApplyRole);
-        question->addButton(tr("Отмена"),EMessageBox::RejectRole);
-        question->setDefaultButton(btn1);
-        question->setText(tr("Выключить ПК после завершения всех заданий?"));
-        question->setInformativeText(tr("Для завершения работы ПК нажмите \"Выключить ПК\", для отмены - \"Отмена\""));
-        question->setActionType(EMessageBox::AT_SHUTDOWN);
-        connect(question,SIGNAL(buttonClicked(QAbstractButton*)),this,SLOT(acceptQAction(QAbstractButton*)));
-        question->setModal(true);
-        if(!isVisible()) question->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
-        question->show();
+        if(ui->actionPoweroff->isChecked() || ui->actionHibernate->isChecked() || ui->actionSuspend->isChecked())
+        {
+            EMessageBox *question = new EMessageBox(this);
+            question->setWindowTitle(tr("Завершить работу ПК?"));
+            question->setIcon(EMessageBox::Question);
+            QPushButton *btn1 = question->addButton(tr("Выключить ПК"),EMessageBox::ApplyRole);
+            question->addButton(tr("Отмена"),EMessageBox::RejectRole);
+            question->setDefaultButton(btn1);
+            question->setText(tr("Выключить ПК после завершения всех заданий?"));
+            question->setInformativeText(tr("Для завершения работы ПК нажмите \"Выключить ПК\", для отмены - \"Отмена\""));
+            question->setActionType(EMessageBox::AT_SHUTDOWN);
+            connect(question,SIGNAL(buttonClicked(QAbstractButton*)),this,SLOT(acceptQAction(QAbstractButton*)));
+            question->setModal(false);
+            question->setDefaultTimeout(50);
+            if(!isVisible()) question->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
+            question->show();
+        }
     }
 }
 

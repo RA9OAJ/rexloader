@@ -88,7 +88,8 @@ bool ShutdownManager::suspendPC()
     return true;
 #endif
 
-    return false;
+    QProcess::startDetached("shutdown /h /f");
+    return true;
 }
 
 bool ShutdownManager::hibernatePC()

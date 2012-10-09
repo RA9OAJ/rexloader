@@ -4,7 +4,11 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql dbus
+QT       += core gui sql
+
+unix{
+QT += dbus
+}
 
 TARGET = REXLoader
 TEMPLATE = app
@@ -30,7 +34,8 @@ SOURCES += main.cpp\
     logmanager.cpp \
     pluginlistmodel.cpp \
     pluginitemdelegate.cpp \
-    shutdownmanager.cpp
+    shutdownmanager.cpp \
+    taskscheduler.cpp
 
 HEADERS  += rexwindow.h \
     titemmodel.h \
@@ -50,7 +55,8 @@ HEADERS  += rexwindow.h \
     logmanager.h \
     pluginlistmodel.h \
     pluginitemdelegate.h \
-    shutdownmanager.h
+    shutdownmanager.h \
+    taskscheduler.h
 
 FORMS    += rexwindow.ui \
     addtaskdialog.ui \
