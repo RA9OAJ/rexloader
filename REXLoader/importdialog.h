@@ -21,6 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QDialog>
 #include <QtSql/QtSql>
+#include <QTableWidgetSelectionRange>
+
+#include "importmaster.h"
 
 namespace Ui {
     class ImportDialog;
@@ -31,12 +34,25 @@ class ImportDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ImportDialog(const QString &dir, QWidget *parent = 0);
-    explicit ImportDialog(const QString &dir, QSqlDatabase &db_, QWidget *parent = 0);
+    explicit ImportDialog(const QStringList &files, QWidget *parent = 0);
+    explicit ImportDialog(const QStringList &files, QSqlDatabase &db_, QWidget *parent = 0);
     ~ImportDialog();
+
+    void setDownDir(const QString &dir);
+
+public slots:
+    void import();
+    void addUrl(const QString &url);
+    void readNewLine(qint64 cnt);
 
 protected:
     void loadDatabaseData();
+
+protected slots:
+    void selectAll();
+    void deselectAll();
+    void invertSelection();
+    void locationSelected(int id);
 
 private:
     void initialize();
@@ -46,6 +62,8 @@ private:
 
     QString downDir;
     QMap<int, QString> dirs;
+    QStringList imp_files;
+    qint64 fndurl;
 };
 
 #endif // IMPORTDIALOG_H

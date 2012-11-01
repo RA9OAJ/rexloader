@@ -197,108 +197,108 @@
 <context>
     <name>ImportDialog</name>
     <message>
-        <location filename="../importdialog.ui" line="14"/>
-        <source>Import URL&apos;s</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../importdialog.ui" line="35"/>
+        <location filename="../importdialog.ui" line="28"/>
         <source>Строки</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../importdialog.ui" line="42"/>
-        <location filename="../importdialog.ui" line="62"/>
+        <location filename="../importdialog.ui" line="35"/>
+        <location filename="../importdialog.ui" line="55"/>
         <source>0</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../importdialog.ui" line="55"/>
+        <location filename="../importdialog.ui" line="48"/>
         <source>Найдено</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../importdialog.ui" line="89"/>
-        <source>Select all</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../importdialog.ui" line="97"/>
+        <location filename="../importdialog.ui" line="103"/>
         <source>+</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../importdialog.ui" line="104"/>
-        <source>Deselect</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../importdialog.ui" line="114"/>
+        <location filename="../importdialog.ui" line="120"/>
         <source>-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../importdialog.ui" line="121"/>
-        <source>Invert Selection</source>
+        <location filename="../importdialog.ui" line="14"/>
+        <source>Импорт URL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../importdialog.ui" line="130"/>
+        <location filename="../importdialog.ui" line="95"/>
+        <source>Выделить всё</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../importdialog.ui" line="110"/>
+        <source>Снять все выделения</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../importdialog.ui" line="127"/>
+        <source>Инвертировать выделения</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../importdialog.ui" line="136"/>
         <source>*</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../importdialog.ui" line="156"/>
+        <location filename="../importdialog.ui" line="162"/>
         <source>Категория</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../importdialog.ui" line="189"/>
+        <location filename="../importdialog.ui" line="195"/>
         <source>Директория</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../importdialog.ui" line="216"/>
+        <location filename="../importdialog.ui" line="226"/>
         <source>Закачать потом</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../importdialog.ui" line="239"/>
+        <location filename="../importdialog.ui" line="249"/>
         <source>Добавить</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../importdialog.ui" line="246"/>
+        <location filename="../importdialog.ui" line="256"/>
         <source>Добав. и выход</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../importdialog.ui" line="253"/>
+        <location filename="../importdialog.ui" line="263"/>
         <source>Отмена</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../importdialog.cpp" line="59"/>
+        <location filename="../importdialog.cpp" line="76"/>
         <source>Архивы</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../importdialog.cpp" line="60"/>
+        <location filename="../importdialog.cpp" line="81"/>
         <source>Приложения</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../importdialog.cpp" line="61"/>
+        <location filename="../importdialog.cpp" line="86"/>
         <source>Аудио</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../importdialog.cpp" line="62"/>
+        <location filename="../importdialog.cpp" line="91"/>
         <source>Видео</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../importdialog.cpp" line="63"/>
+        <location filename="../importdialog.cpp" line="96"/>
         <source>Другое</source>
         <translation type="unfinished"></translation>
     </message>
@@ -337,28 +337,36 @@
 <context>
     <name>PluginItemDelegate</name>
     <message>
-        <location filename="../pluginitemdelegate.cpp" line="75"/>
+        <location filename="../pluginitemdelegate.cpp" line="78"/>
         <source> (версия %1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pluginitemdelegate.cpp" line="122"/>
+        <location filename="../pluginitemdelegate.cpp" line="126"/>
         <source>Протокол: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pluginitemdelegate.cpp" line="123"/>
+        <location filename="../pluginitemdelegate.cpp" line="127"/>
         <source>Плагин: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pluginitemdelegate.cpp" line="124"/>
+        <location filename="../pluginitemdelegate.cpp" line="128"/>
         <source>Автор: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../pluginitemdelegate.cpp" line="125"/>
+        <location filename="../pluginitemdelegate.cpp" line="129"/>
         <source>Лицензия: </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PluginListModel</name>
+    <message>
+        <location filename="../pluginlistmodel.cpp" line="58"/>
+        <source>отключено</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -374,7 +382,7 @@
     <name>REXWindow</name>
     <message>
         <location filename="../rexwindow.ui" line="14"/>
-        <location filename="../rexwindow.cpp" line="1559"/>
+        <location filename="../rexwindow.cpp" line="1566"/>
         <source>REXLoader</source>
         <translation type="unfinished"></translation>
     </message>
@@ -409,233 +417,243 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="173"/>
+        <location filename="../rexwindow.ui" line="175"/>
         <source>&amp;Приложение</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="181"/>
+        <location filename="../rexwindow.ui" line="183"/>
         <source>П&amp;омощь</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="203"/>
+        <location filename="../rexwindow.ui" line="205"/>
         <source>Панель инструментов</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="238"/>
+        <location filename="../rexwindow.ui" line="240"/>
         <source>Добавить URL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="241"/>
+        <location filename="../rexwindow.ui" line="243"/>
         <source>Ins</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="250"/>
+        <location filename="../rexwindow.ui" line="252"/>
         <source>Удалить URL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="253"/>
+        <location filename="../rexwindow.ui" line="255"/>
         <source>Del</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="262"/>
+        <location filename="../rexwindow.ui" line="264"/>
         <source>Запустить</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="271"/>
+        <location filename="../rexwindow.ui" line="273"/>
         <source>Приостановить</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="280"/>
+        <location filename="../rexwindow.ui" line="282"/>
         <source>Запустить все</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="289"/>
+        <location filename="../rexwindow.ui" line="291"/>
         <source>Приостановить все</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="294"/>
+        <location filename="../rexwindow.ui" line="296"/>
         <source>Свойства задания</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="299"/>
+        <location filename="../rexwindow.ui" line="301"/>
         <source>Расписание</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="304"/>
+        <location filename="../rexwindow.ui" line="309"/>
         <source>Выключить компьютер</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="309"/>
+        <location filename="../rexwindow.ui" line="314"/>
         <source>Плагины</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="318"/>
+        <location filename="../rexwindow.ui" line="323"/>
         <source>Настройки приложения</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="323"/>
+        <location filename="../rexwindow.ui" line="328"/>
         <source>Помощь по программе</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="326"/>
+        <location filename="../rexwindow.ui" line="331"/>
         <source>F1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="331"/>
+        <location filename="../rexwindow.ui" line="336"/>
         <source>On-line руководства</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="336"/>
+        <location filename="../rexwindow.ui" line="341"/>
         <source>О программе</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="341"/>
+        <location filename="../rexwindow.ui" line="346"/>
         <source>О Qt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="346"/>
+        <location filename="../rexwindow.ui" line="351"/>
         <source>Удалить URL и файл</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="349"/>
+        <location filename="../rexwindow.ui" line="354"/>
         <source>Shift+Del</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="357"/>
+        <location filename="../rexwindow.ui" line="362"/>
         <source>Очень низкая</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="365"/>
+        <location filename="../rexwindow.ui" line="370"/>
         <source>Низкая</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="373"/>
+        <location filename="../rexwindow.ui" line="378"/>
         <source>Средняя</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="381"/>
+        <location filename="../rexwindow.ui" line="386"/>
         <source>Высокая</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="386"/>
+        <location filename="../rexwindow.ui" line="391"/>
         <source>Открыть папку</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="389"/>
+        <location filename="../rexwindow.ui" line="394"/>
         <source>Открывает папку, в которой сохранен данный объект</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="394"/>
+        <location filename="../rexwindow.ui" line="399"/>
         <source>Открыть/Запустить</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="397"/>
+        <location filename="../rexwindow.ui" line="402"/>
         <source>Открывает или запускает скачанный файл средствами операционной системы</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="409"/>
+        <location filename="../rexwindow.ui" line="414"/>
         <source>Самый низкий</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="421"/>
+        <location filename="../rexwindow.ui" line="426"/>
         <source>Низкий</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="433"/>
+        <location filename="../rexwindow.ui" line="438"/>
         <source>Средний</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="445"/>
+        <location filename="../rexwindow.ui" line="450"/>
         <source>Высокий</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="457"/>
+        <location filename="../rexwindow.ui" line="462"/>
         <source>Очень высокий</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="462"/>
+        <location filename="../rexwindow.ui" line="467"/>
         <source>Перезакачать</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="467"/>
+        <location filename="../rexwindow.ui" line="472"/>
         <source>Импорт URL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="472"/>
+        <location filename="../rexwindow.ui" line="477"/>
         <source>Создать категорию</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="477"/>
+        <location filename="../rexwindow.ui" line="482"/>
         <source>Удалить категорию</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="482"/>
+        <location filename="../rexwindow.ui" line="487"/>
         <source>Свойства</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="490"/>
+        <location filename="../rexwindow.ui" line="495"/>
         <source>1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="498"/>
+        <location filename="../rexwindow.ui" line="503"/>
         <source>2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="506"/>
+        <location filename="../rexwindow.ui" line="511"/>
         <source>3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="514"/>
+        <location filename="../rexwindow.ui" line="519"/>
         <source>4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.ui" line="522"/>
+        <location filename="../rexwindow.ui" line="527"/>
         <source>5</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.ui" line="535"/>
+        <source>Гибернация</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.ui" line="543"/>
+        <source>Ждущий режим</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -645,8 +663,278 @@
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="85"/>
-        <location filename="../rexwindow.cpp" line="695"/>
+        <location filename="../rexwindow.cpp" line="701"/>
         <source>Критическая ошибка</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="284"/>
+        <source>Одновременные скачивания</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="299"/>
+        <location filename="../rexwindow.cpp" line="951"/>
+        <source>Скрыть</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="315"/>
+        <source>Выход</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="531"/>
+        <location filename="../rexwindow.cpp" line="548"/>
+        <location filename="../rexwindow.cpp" line="713"/>
+        <location filename="../rexwindow.cpp" line="728"/>
+        <location filename="../rexwindow.cpp" line="838"/>
+        <location filename="../rexwindow.cpp" line="1090"/>
+        <location filename="../rexwindow.cpp" line="1151"/>
+        <location filename="../rexwindow.cpp" line="1254"/>
+        <location filename="../rexwindow.cpp" line="1286"/>
+        <location filename="../rexwindow.cpp" line="1352"/>
+        <location filename="../rexwindow.cpp" line="1389"/>
+        <location filename="../rexwindow.cpp" line="1978"/>
+        <location filename="../rexwindow.cpp" line="2011"/>
+        <location filename="../rexwindow.cpp" line="2196"/>
+        <location filename="../rexwindow.cpp" line="2209"/>
+        <location filename="../rexwindow.cpp" line="2222"/>
+        <location filename="../rexwindow.cpp" line="2268"/>
+        <location filename="../rexwindow.cpp" line="2284"/>
+        <source>Ошибка выполнения SQL запроса</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="532"/>
+        <location filename="../rexwindow.cpp" line="549"/>
+        <location filename="../rexwindow.cpp" line="714"/>
+        <location filename="../rexwindow.cpp" line="729"/>
+        <location filename="../rexwindow.cpp" line="839"/>
+        <location filename="../rexwindow.cpp" line="1091"/>
+        <location filename="../rexwindow.cpp" line="1152"/>
+        <location filename="../rexwindow.cpp" line="1255"/>
+        <location filename="../rexwindow.cpp" line="1287"/>
+        <location filename="../rexwindow.cpp" line="1353"/>
+        <location filename="../rexwindow.cpp" line="1390"/>
+        <location filename="../rexwindow.cpp" line="1979"/>
+        <location filename="../rexwindow.cpp" line="2012"/>
+        <location filename="../rexwindow.cpp" line="2197"/>
+        <location filename="../rexwindow.cpp" line="2210"/>
+        <location filename="../rexwindow.cpp" line="2223"/>
+        <location filename="../rexwindow.cpp" line="2269"/>
+        <location filename="../rexwindow.cpp" line="2285"/>
+        <source>Запрос: %1
+Ошибка: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="944"/>
+        <location filename="../rexwindow.cpp" line="1909"/>
+        <source>Восстановить</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1038"/>
+        <source>Что делать?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1040"/>
+        <source>Выбрано более одного задания.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1041"/>
+        <source>Чтобы подтвердить удаление нескольких заданий нажмите &lt;b&gt;&quot;Ok&quot;&lt;/b&gt; или &lt;b&gt;&quot;Отмена&quot;&lt;/b&gt; для отмены удаления.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1438"/>
+        <source>Файл не найден.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1439"/>
+        <source>Файл на стороне сервера был изменён.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1440"/>
+        <source>Размер файла на сервере отличается от размера задания.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1441"/>
+        <source>Невозможно создать файл на локальном диске.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1442"/>
+        <source>Невозможно записать в локальный файл.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1443"/>
+        <source>Невозможно прочитать локальный файл.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1444"/>
+        <source>Удаленнй сервер не найден.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1445"/>
+        <source>Ошибка подключения к удалённому серверу.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1446"/>
+        <source>Подключение к удаленному серверу потеряно.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1447"/>
+        <source>Сервер отклонил запрос на соединение.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1448"/>
+        <source>Прокси не найден.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1449"/>
+        <source>Не удалось пройти аутентификацию на прокси.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1450"/>
+        <source>Ошибка протокола прокси.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1451"/>
+        <source>Прокси неожиданно разорвал соединение.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1452"/>
+        <source>Прокси отверг попытку подключения.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1453"/>
+        <source>Таймаут прокси.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1454"/>
+        <source>Достигнуто максимальное количество ошибок.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1466"/>
+        <source>%1 (Код ошибки: %2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1478"/>
+        <source>Ошибка при скачивании файла &apos;%1&apos;: %2 (Код ошибки: %3)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1497"/>
+        <source>Заменить</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1498"/>
+        <source>Переименовать</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1500"/>
+        <source>Файл &lt;b&gt;%1&lt;/b&gt; уже существет.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1501"/>
+        <source>Для замены существующего файла нажмите &quot;Заменить&quot;. Для переименования нажмите &quot;Переименовать&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1525"/>
+        <location filename="../rexwindow.cpp" line="1960"/>
+        <location filename="../rexwindow.cpp" line="1968"/>
+        <source>Скачивание файла %1 завершено</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1566"/>
+        <source>Все задания завершены.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1571"/>
+        <source>Завершить работу ПК?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1573"/>
+        <source>Выключить ПК</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1576"/>
+        <source>Выключить ПК после завершения всех заданий?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1577"/>
+        <source>Для завершения работы ПК нажмите &quot;Выключить ПК&quot;, для отмены - &quot;Отмена&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1610"/>
+        <source>Протокол &apos;%1&apos; не поддерживается. Проверьте наличие соответствующего плагина и его состояние.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1619"/>
+        <source>Ошибка при загрузке файла %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1689"/>
+        <source>Этот протокол не поддерживается. Проверьте наличие соответствующего плагина и его состояние.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="2503"/>
+        <source>Повторять действие завершения работы ПК?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="2504"/>
+        <source>Вы установили опцию автоматического завершения работы ПК по завершению всех заданий. Хотите чтобы программа всегда выполняла данное действие автоматизации?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="2506"/>
+        <source>Да, всегда выключать ПК</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="2507"/>
+        <source>Нет, выключить единоразово</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1632"/>
+        <location filename="../rexwindow.cpp" line="1707"/>
+        <source>Загрузка файла %1 начинается</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -656,286 +944,66 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.cpp" line="280"/>
-        <source>Одновременные скачивания</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="295"/>
-        <location filename="../rexwindow.cpp" line="945"/>
-        <source>Скрыть</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="310"/>
-        <source>Выход</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="526"/>
-        <location filename="../rexwindow.cpp" line="543"/>
-        <location filename="../rexwindow.cpp" line="707"/>
-        <location filename="../rexwindow.cpp" line="722"/>
-        <location filename="../rexwindow.cpp" line="832"/>
-        <location filename="../rexwindow.cpp" line="1084"/>
-        <location filename="../rexwindow.cpp" line="1145"/>
-        <location filename="../rexwindow.cpp" line="1248"/>
-        <location filename="../rexwindow.cpp" line="1280"/>
-        <location filename="../rexwindow.cpp" line="1346"/>
-        <location filename="../rexwindow.cpp" line="1383"/>
-        <location filename="../rexwindow.cpp" line="1945"/>
-        <location filename="../rexwindow.cpp" line="1972"/>
-        <location filename="../rexwindow.cpp" line="2153"/>
-        <location filename="../rexwindow.cpp" line="2166"/>
-        <location filename="../rexwindow.cpp" line="2179"/>
-        <location filename="../rexwindow.cpp" line="2225"/>
-        <location filename="../rexwindow.cpp" line="2241"/>
-        <source>Ошибка выполнения SQL запроса</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="527"/>
-        <location filename="../rexwindow.cpp" line="544"/>
-        <location filename="../rexwindow.cpp" line="708"/>
-        <location filename="../rexwindow.cpp" line="723"/>
-        <location filename="../rexwindow.cpp" line="833"/>
-        <location filename="../rexwindow.cpp" line="1085"/>
-        <location filename="../rexwindow.cpp" line="1146"/>
-        <location filename="../rexwindow.cpp" line="1249"/>
-        <location filename="../rexwindow.cpp" line="1281"/>
-        <location filename="../rexwindow.cpp" line="1347"/>
-        <location filename="../rexwindow.cpp" line="1384"/>
-        <location filename="../rexwindow.cpp" line="1946"/>
-        <location filename="../rexwindow.cpp" line="1973"/>
-        <location filename="../rexwindow.cpp" line="2154"/>
-        <location filename="../rexwindow.cpp" line="2167"/>
-        <location filename="../rexwindow.cpp" line="2180"/>
-        <location filename="../rexwindow.cpp" line="2226"/>
-        <location filename="../rexwindow.cpp" line="2242"/>
-        <source>Запрос: %1
-Ошибка: %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="695"/>
+        <location filename="../rexwindow.cpp" line="701"/>
         <source>Невозможно открыть файл базы данных.
  Это критическая ошибка, приложение будет закрыто.
  Проверьте свои права доступа к директории &apos;.rexloader&apos;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.cpp" line="938"/>
-        <location filename="../rexwindow.cpp" line="1876"/>
-        <source>Восстановить</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1032"/>
-        <source>Что делать?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1034"/>
-        <source>Выбрано более одного задания.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1035"/>
-        <source>Чтобы подтвердить удаление нескольких заданий нажмите &lt;b&gt;&quot;Ok&quot;&lt;/b&gt; или &lt;b&gt;&quot;Отмена&quot;&lt;/b&gt; для отмены удаления.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1432"/>
-        <source>Файл не найден.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1433"/>
-        <source>Файл на стороне сервера был изменён.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1434"/>
-        <source>Размер файла на сервере отличается от размера задания.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1435"/>
-        <source>Невозможно создать файл на локальном диске.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1436"/>
-        <source>Невозможно записать в локальный файл.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1437"/>
-        <source>Невозможно прочитать локальный файл.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1438"/>
-        <source>Удаленнй сервер не найден.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1439"/>
-        <source>Ошибка подключения к удалённому серверу.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1440"/>
-        <source>Подключение к удаленному серверу потеряно.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1441"/>
-        <source>Сервер отклонил запрос на соединение.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1442"/>
-        <source>Прокси не найден.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1443"/>
-        <source>Не удалось пройти аутентификацию на прокси.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1444"/>
-        <source>Ошибка протокола прокси.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1445"/>
-        <source>Прокси неожиданно разорвал соединение.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1446"/>
-        <source>Прокси отверг попытку подключения.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1447"/>
-        <source>Таймаут прокси.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1448"/>
-        <source>Достигнуто максимальное количество ошибок.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1460"/>
-        <source>%1 (Код ошибки: %2)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1472"/>
-        <source>Ошибка при скачивании файла &apos;%1&apos;: %2 (Код ошибки: %3)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1491"/>
-        <source>Заменить</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1492"/>
-        <source>Переименовать</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1494"/>
-        <source>Файл &lt;b&gt;%1&lt;/b&gt; уже существет.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1495"/>
-        <source>Для замены существующего файла нажмите &quot;Заменить&quot;. Для переименования нажмите &quot;Переименовать&quot;.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1519"/>
-        <location filename="../rexwindow.cpp" line="1927"/>
-        <location filename="../rexwindow.cpp" line="1935"/>
-        <source>Скачивание файла %1 завершено</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1559"/>
-        <source>Все задания завершены.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1584"/>
-        <location filename="../rexwindow.cpp" line="1658"/>
-        <source>Этот протокол не поддерживается. Проверьте наличие соответствующего плагина и его состояние.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1601"/>
-        <location filename="../rexwindow.cpp" line="1676"/>
-        <source>Загрузка файла %1 начинается</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="1640"/>
+        <location filename="../rexwindow.cpp" line="1671"/>
         <source>Загрузка файла %1 приостановлена</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.cpp" line="1740"/>
-        <location filename="../rexwindow.cpp" line="1799"/>
+        <location filename="../rexwindow.cpp" line="1771"/>
+        <location filename="../rexwindow.cpp" line="1830"/>
         <source>Скорость: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.cpp" line="1795"/>
+        <location filename="../rexwindow.cpp" line="1826"/>
         <source>Осталось: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.cpp" line="1843"/>
+        <location filename="../rexwindow.cpp" line="1876"/>
         <source>Файл для импорта</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.cpp" line="1924"/>
+        <location filename="../rexwindow.cpp" line="1957"/>
         <source>Замена файла %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.cpp" line="1934"/>
+        <location filename="../rexwindow.cpp" line="1967"/>
         <source>Файл %1 сохранен как %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.cpp" line="1980"/>
+        <location filename="../rexwindow.cpp" line="2019"/>
         <source>Продолжить закачку?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.cpp" line="1982"/>
+        <location filename="../rexwindow.cpp" line="2021"/>
         <source>Продолжить все</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.cpp" line="1983"/>
+        <location filename="../rexwindow.cpp" line="1574"/>
+        <location filename="../rexwindow.cpp" line="2022"/>
         <source>Отмена</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.cpp" line="1985"/>
+        <location filename="../rexwindow.cpp" line="2024"/>
         <source>Есть незавершённые задания.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rexwindow.cpp" line="1986"/>
+        <location filename="../rexwindow.cpp" line="2025"/>
         <source>Для продолжения выполнения заданий нажмите &quot;Продолжить все&quot;, для отмены - &quot;Отмена&quot;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1034,7 +1102,7 @@
     <message>
         <location filename="../settingsdialog.ui" line="281"/>
         <location filename="../settingsdialog.ui" line="1218"/>
-        <location filename="../settingsdialog.ui" line="1683"/>
+        <location filename="../settingsdialog.ui" line="1686"/>
         <source>Сбросить</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1133,13 +1201,13 @@
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="696"/>
-        <location filename="../settingsdialog.ui" line="1777"/>
+        <location filename="../settingsdialog.ui" line="1780"/>
         <source>Выбрать папку</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="699"/>
-        <location filename="../settingsdialog.ui" line="1780"/>
+        <location filename="../settingsdialog.ui" line="1783"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1219,11 +1287,11 @@
         <location filename="../settingsdialog.ui" line="1072"/>
         <location filename="../settingsdialog.ui" line="1115"/>
         <location filename="../settingsdialog.ui" line="1158"/>
-        <location filename="../settingsdialog.ui" line="1383"/>
-        <location filename="../settingsdialog.ui" line="1467"/>
-        <location filename="../settingsdialog.ui" line="1513"/>
-        <location filename="../settingsdialog.ui" line="1592"/>
-        <location filename="../settingsdialog.ui" line="1653"/>
+        <location filename="../settingsdialog.ui" line="1386"/>
+        <location filename="../settingsdialog.ui" line="1470"/>
+        <location filename="../settingsdialog.ui" line="1516"/>
+        <location filename="../settingsdialog.ui" line="1595"/>
+        <location filename="../settingsdialog.ui" line="1656"/>
         <source>Цвет строки</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1233,11 +1301,11 @@
         <location filename="../settingsdialog.ui" line="1082"/>
         <location filename="../settingsdialog.ui" line="1125"/>
         <location filename="../settingsdialog.ui" line="1168"/>
-        <location filename="../settingsdialog.ui" line="1393"/>
-        <location filename="../settingsdialog.ui" line="1416"/>
-        <location filename="../settingsdialog.ui" line="1477"/>
-        <location filename="../settingsdialog.ui" line="1500"/>
-        <location filename="../settingsdialog.ui" line="1602"/>
+        <location filename="../settingsdialog.ui" line="1396"/>
+        <location filename="../settingsdialog.ui" line="1419"/>
+        <location filename="../settingsdialog.ui" line="1480"/>
+        <location filename="../settingsdialog.ui" line="1503"/>
+        <location filename="../settingsdialog.ui" line="1605"/>
         <source>Шрифт текста</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1247,11 +1315,11 @@
         <location filename="../settingsdialog.ui" line="1085"/>
         <location filename="../settingsdialog.ui" line="1128"/>
         <location filename="../settingsdialog.ui" line="1171"/>
-        <location filename="../settingsdialog.ui" line="1396"/>
-        <location filename="../settingsdialog.ui" line="1419"/>
-        <location filename="../settingsdialog.ui" line="1480"/>
-        <location filename="../settingsdialog.ui" line="1503"/>
-        <location filename="../settingsdialog.ui" line="1605"/>
+        <location filename="../settingsdialog.ui" line="1399"/>
+        <location filename="../settingsdialog.ui" line="1422"/>
+        <location filename="../settingsdialog.ui" line="1483"/>
+        <location filename="../settingsdialog.ui" line="1506"/>
+        <location filename="../settingsdialog.ui" line="1608"/>
         <source>Шрифт</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1261,11 +1329,11 @@
         <location filename="../settingsdialog.ui" line="1095"/>
         <location filename="../settingsdialog.ui" line="1138"/>
         <location filename="../settingsdialog.ui" line="1181"/>
-        <location filename="../settingsdialog.ui" line="1406"/>
-        <location filename="../settingsdialog.ui" line="1429"/>
-        <location filename="../settingsdialog.ui" line="1490"/>
-        <location filename="../settingsdialog.ui" line="1526"/>
-        <location filename="../settingsdialog.ui" line="1615"/>
+        <location filename="../settingsdialog.ui" line="1409"/>
+        <location filename="../settingsdialog.ui" line="1432"/>
+        <location filename="../settingsdialog.ui" line="1493"/>
+        <location filename="../settingsdialog.ui" line="1529"/>
+        <location filename="../settingsdialog.ui" line="1618"/>
         <source>Цвет шрифта</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1296,7 +1364,7 @@
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1215"/>
-        <location filename="../settingsdialog.ui" line="1680"/>
+        <location filename="../settingsdialog.ui" line="1683"/>
         <source>Сбросить настройки цвета/шрифта</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1317,74 +1385,74 @@
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1306"/>
-        <source>Активный плагин</source>
+        <source>Активировать плагин</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1347"/>
+        <location filename="../settingsdialog.ui" line="1350"/>
         <source>События приложения</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1367"/>
+        <location filename="../settingsdialog.ui" line="1370"/>
         <source>Входящие сообщения</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1451"/>
+        <location filename="../settingsdialog.ui" line="1454"/>
         <source>Исходящие сообщения</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1548"/>
+        <location filename="../settingsdialog.ui" line="1551"/>
         <source>Сообщения об ошибках</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1573"/>
+        <location filename="../settingsdialog.ui" line="1576"/>
         <source>Информационные сообщения</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1637"/>
+        <location filename="../settingsdialog.ui" line="1640"/>
         <source>Предупреждающие сообщения</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1699"/>
+        <location filename="../settingsdialog.ui" line="1702"/>
         <source>Автоматически сохранять сообщения приложения</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1708"/>
-        <location filename="../settingsdialog.ui" line="1731"/>
+        <location filename="../settingsdialog.ui" line="1711"/>
+        <location filename="../settingsdialog.ui" line="1734"/>
         <source>Максимальное число видимых строк в журнале событий приложения и секций</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1711"/>
+        <location filename="../settingsdialog.ui" line="1714"/>
         <source>Макс. число видимых строк событий</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1754"/>
+        <location filename="../settingsdialog.ui" line="1757"/>
         <source>Директория</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1791"/>
-        <location filename="../settingsdialog.ui" line="1801"/>
+        <location filename="../settingsdialog.ui" line="1794"/>
+        <location filename="../settingsdialog.ui" line="1804"/>
         <source>Время отсчета начинается только после завершения задания</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1794"/>
+        <location filename="../settingsdialog.ui" line="1797"/>
         <source>Врмя хранения событий заданий</source>
         <comment>Время отсчета начинается только после завершения задания</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1807"/>
+        <location filename="../settingsdialog.ui" line="1810"/>
         <source>с</source>
         <comment>Время жизни в секундах</comment>
         <translation type="unfinished"></translation>
@@ -1400,8 +1468,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="375"/>
+        <location filename="../settingsdialog.cpp" line="401"/>
         <source>Выбор директории</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog.cpp" line="478"/>
+        <source>отключено</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

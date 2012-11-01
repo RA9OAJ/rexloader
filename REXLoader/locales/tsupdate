@@ -4,6 +4,6 @@ for filename in *.*
 do
   if [ -f "$filename" ]
   then
-    lupdate-qt4 -codecfortr utf8 -pro "../REXLoader.pro" -ts "locales/$filename"
+    lupdate-qt4 -codecfortr utf8 -pro "../REXLoader.pro" -ts "$filename"
   fi
 done

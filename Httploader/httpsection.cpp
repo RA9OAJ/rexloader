@@ -596,6 +596,7 @@ QString HttpSection::attachedFileName(const QString &cont_dispos) const
     {
         if(words.value(i).indexOf("filename")<0)continue;
         QString str = words.value(i).split("=\"").value(1);
+        str = str.replace(QRegExp("[\r\n;]$"),"");
         str.chop(1);
         return str;
     }

@@ -35,7 +35,8 @@ SOURCES += main.cpp\
     pluginlistmodel.cpp \
     pluginitemdelegate.cpp \
     shutdownmanager.cpp \
-    taskscheduler.cpp
+    taskscheduler.cpp \
+    importmaster.cpp
 
 HEADERS  += rexwindow.h \
     titemmodel.h \
@@ -56,7 +57,8 @@ HEADERS  += rexwindow.h \
     pluginlistmodel.h \
     pluginitemdelegate.h \
     shutdownmanager.h \
-    taskscheduler.h
+    taskscheduler.h \
+    importmaster.h
 
 FORMS    += rexwindow.ui \
     addtaskdialog.ui \

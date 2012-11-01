@@ -299,6 +299,7 @@ void REXWindow::createInterface()
     trayact->setText(tr("Скрыть"));
     connect(trayact,SIGNAL(triggered()),this,SLOT(showHideSlot()));
     traymenu->addAction(ui->actionAdd_URL);
+    traymenu->addAction(ui->actionImportURL);
     traymenu->addSeparator();
     traymenu->addAction(ui->actionStartAll);
     traymenu->addAction(ui->actionStopAll);
@@ -1858,7 +1859,9 @@ REXWindow::~REXWindow()
 
 void REXWindow::importUrlFromFile(const QStringList &files)
 {
-    ImportDialog *dlg = new ImportDialog(downDir,this);
+    ImportDialog *dlg = new ImportDialog(files,this);
+    dlg->setDownDir(settDlg->value("down_dir").toString());
+    dlg->import();
     QTimer::singleShot(0,dlg,SLOT(show()));
 }
 
