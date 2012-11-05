@@ -204,7 +204,7 @@ font: 10pt &quot;Ubuntu&quot; bold;
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_4">
+      <widget class="QPushButton" name="dirButton">
        <property name="maximumSize">
         <size>
          <width>35</width>
@@ -212,7 +212,7 @@ font: 10pt &quot;Ubuntu&quot; bold;
         </size>
        </property>
        <property name="text">
-        <string/>
+        <string>...</string>
        </property>
       </widget>
      </item>
@@ -275,7 +275,7 @@ font: 10pt &quot;Ubuntu&quot; bold;
   <tabstop>invertSelectionButton</tabstop>
   <tabstop>categoryBox</tabstop>
   <tabstop>locationEdit</tabstop>
-  <tabstop>pushButton_4</tabstop>
+  <tabstop>dirButton</tabstop>
   <tabstop>pushButton</tabstop>
   <tabstop>pushButton_2</tabstop>
   <tabstop>pushButton_3</tabstop>

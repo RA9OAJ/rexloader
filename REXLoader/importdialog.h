@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QDialog>
 #include <QtSql/QtSql>
+#include <QFileDialog>
 #include <QTableWidgetSelectionRange>
 
 #include "importmaster.h"
@@ -40,6 +41,9 @@ public:
 
     void setDownDir(const QString &dir);
 
+signals:
+    void addedNewTask();
+
 public slots:
     void import();
     void addUrl(const QString &url);
@@ -47,12 +51,19 @@ public slots:
 
 protected:
     void loadDatabaseData();
+    int getCategory(const QString &file);
 
 protected slots:
     void selectAll();
     void deselectAll();
     void invertSelection();
     void locationSelected(int id);
+    void selectionChanged();
+    void setCategory(int id);
+    void setDownloadLater();
+    void showDirDialog();
+    void addTasks();
+    bool addTask(QTableWidgetItem *itm);
 
 private:
     void initialize();
@@ -64,6 +75,7 @@ private:
     QMap<int, QString> dirs;
     QStringList imp_files;
     qint64 fndurl;
+    QStringList tasks_exists;
 };
 
 #endif // IMPORTDIALOG_H
