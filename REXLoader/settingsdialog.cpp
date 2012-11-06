@@ -66,6 +66,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     connect(ui->inColor,SIGNAL(colorSelected(QColor)),ui->inFont,SLOT(setBackgroundColor(QColor)));
     connect(ui->inFontColor,SIGNAL(colorSelected(QColor)),ui->inFont,SLOT(setFontColor(QColor)));
     connect(ui->logFontColorReset,SIGNAL(released()),this,SLOT(resetFontsColors()));
+    connect(ui->logSysColor,SIGNAL(toggled(bool)),this,SLOT(disableLogUserFonColorStyle(bool)));
 
     connect(ui->pluginListView,SIGNAL(clicked(QModelIndex)),this,SLOT(updatePluginListBox(QModelIndex)));
     connect(ui->pluginComboBox,SIGNAL(activated(int)),this,SLOT(updatePluginStatus(int)));
@@ -247,6 +248,7 @@ void SettingsDialog::applySets()
     sets.insert("log_in_font",ui->inFont->font());
     sets.insert("log_in_font_color",ui->inFontColor->currentColor());
     sets.insert("log_max_strings",ui->logMaxStrings->value());
+    sets.insert("log_use_system_style",ui->logSysColor->isChecked());
 
     if(mdl)
     {
@@ -336,6 +338,7 @@ void SettingsDialog::cancelSets()
     ui->inFont->setFont(sets.value("log_in_font").value<QFont>());
     ui->inFontColor->setColor(sets.value("log_in_font_color").value<QColor>());
     ui->logMaxStrings->setValue(sets.value("log_max_strings").toInt());
+    ui->logSysColor->setChecked(sets.value("log_use_system_style").toBool());
 
     plugproto.clear();
 
@@ -513,4 +516,29 @@ void SettingsDialog::updatePluginStatus(int index)
         return;
 
     plugproto.insert(protocol,newplugin);
+}
+
+void SettingsDialog::disableLogUserFonColorStyle(bool flag)
+{
+    ui->logFontColorReset->setEnabled(!flag);
+    ui->infoColor->setEnabled(!flag);
+    ui->infoFont->setEnabled(!flag);
+    ui->infoFontColor->setEnabled(!flag);
+    ui->warningColor->setEnabled(!flag);
+    ui->warningFont->setEnabled(!flag);
+    ui->warningFontColor->setEnabled(!flag);
+    ui->errorColor->setEnabled(!flag);
+    ui->errorFont->setEnabled(!flag);
+    ui->errorFontColor->setEnabled(!flag);
+    ui->outColor->setEnabled(!flag);
+    ui->outFont->setEnabled(!flag);
+    ui->outFontColor->setEnabled(!flag);
+    ui->inColor->setEnabled(!flag);
+    ui->inFont->setEnabled(!flag);
+    ui->inFontColor->setEnabled(!flag);
+    ui->label_21->setEnabled(!flag);
+    ui->label_22->setEnabled(!flag);
+    ui->label_23->setEnabled(!flag);
+    ui->label_24->setEnabled(!flag);
+    ui->label_25->setEnabled(!flag);
 }

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
+    <width>518</width>
     <height>1793</height>
    </rect>
   </property>
@@ -1664,6 +1664,16 @@
           </item>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_21">
+            <item>
+             <widget class="QCheckBox" name="logSysColor">
+              <property name="toolTip">
+               <string>Использовать шрифты и цветовое оформление системы</string>
+              </property>
+              <property name="text">
+               <string>Офомление системы</string>
+              </property>
+             </widget>
+            </item>
             <item>
              <spacer name="horizontalSpacer_11">
               <property name="orientation">
