@@ -96,14 +96,13 @@
      <x>0</x>
      <y>0</y>
      <width>687</width>
-     <height>28</height>
+     <height>22</height>
     </rect>
    </property>
    <property name="styleSheet">
     <string notr="true">QMenuBar 
 {
 Font-size: 13px;
-margin: 3px;
 }</string>
    </property>
    <widget class="QMenu" name="menuURL">

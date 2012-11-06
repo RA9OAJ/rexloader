@@ -2099,6 +2099,7 @@ void REXWindow::readSettings()
 
     logmgr->setLogAutoSave(settDlg->value("log_autosave").toBool(),settDlg->value("log_dir").toString());
     logmgr->setMaxStringCount(settDlg->value("log_max_strings").toInt());
+    LogTreeModel::setColorsFontStylesEnabled(!settDlg->value("log_use_system_style").toBool());
 
     ui->actionPoweroff->setChecked(settDlg->value("poweroff").toBool());
     ui->actionHibernate->setChecked(settDlg->value("hibernate").toBool());

@@ -51,6 +51,7 @@ public:
     virtual QMimeData* mimeData(const QModelIndexList & indexes)const;
     QStringList mimeTypes()const;
     virtual bool removeRows(int row, int count, const QModelIndex & parent = QModelIndex());
+    static void setColorsFontStylesEnabled(bool enabled);
 
 signals:
 
@@ -74,6 +75,7 @@ private:
     int column_cnt;
     int diff;
     int maxinternalid;
+    static bool fontcolor_enabled;
 
     QHash<QModelIndex, int> root_nodes; //основные узлы дерева
     QList<QVariant> root_values; //значения узлов

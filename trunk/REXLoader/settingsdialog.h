@@ -63,6 +63,7 @@ protected slots:
     void resetFontsColors();
     void updatePluginListBox(const QModelIndex &index);
     void updatePluginStatus(int index);
+    void disableLogUserFonColorStyle(bool flag = true);
 
 private:
     Ui::SettingsDialog *ui;

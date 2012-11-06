@@ -34,6 +34,8 @@ LogTreeModel::LogTreeModel(QObject *parent) :
     row_color.insert(LInterface::MT_OUT,QColor("#e5eefd"));
 }
 
+bool LogTreeModel::fontcolor_enabled = true;
+
 LogTreeModel::~LogTreeModel()
 {
 }
@@ -70,19 +72,22 @@ QVariant LogTreeModel::data(const QModelIndex &index, int role) const
             }
         }
 
-        if(role == Qt::BackgroundColorRole)
-            return row_color.value(mtype,QColor());
-
-        if(role == Qt::TextColorRole)
+        if(LogTreeModel::fontcolor_enabled)
         {
-            if(font_color.contains(mtype))
-                return font_color.value(mtype);
+            if(role == Qt::BackgroundColorRole)
+                return row_color.value(mtype,QColor());
 
-            return QColor("#111111");
+            if(role == Qt::TextColorRole)
+            {
+                if(font_color.contains(mtype))
+                    return font_color.value(mtype);
+
+                return QColor("#111111");
+            }
+
+            if(role == Qt::FontRole && fonts.contains(mtype))
+                            return fonts.value(mtype);
         }
-
-        if(role == Qt::FontRole && fonts.contains(mtype))
-                        return fonts.value(mtype);
 
         if(role == 100)
         {
@@ -304,6 +309,11 @@ bool LogTreeModel::removeRows(int row, int count, const QModelIndex &parent)
     endRemoveRows();
 
     return true;
+}
+
+void LogTreeModel::setColorsFontStylesEnabled(bool enabled)
+{
+    fontcolor_enabled = enabled;
 }
 
 void LogTreeModel::setMaxStringsCount(int max_cnt)
