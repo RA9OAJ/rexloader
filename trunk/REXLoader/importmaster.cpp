@@ -75,7 +75,9 @@ void ImportMaster::run()
             int startpos = str.indexOf(pattern);
             while(startpos >= 0)
             {
-                int endpos = str.indexOf(QRegExp("[ \"\\r\\n\\0]"),startpos);
+                int endpos = -1;
+                if(fl.atEnd()) endpos = str.size() - 1;
+                else endpos = str.indexOf(QRegExp("[ \"\\r\\n]"),startpos);
                 if(endpos >= 0)
                 {
                     emit foundString(str.mid(startpos,endpos-startpos));

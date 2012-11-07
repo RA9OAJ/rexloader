@@ -1424,7 +1424,7 @@ void REXWindow::syncTaskData()
         downtimeId = mdl->mapToSource(downtimeId);
         speedAvgId = mdl->mapToSource(speedAvgId);
         int downtime = model->data(downtimeId,100).toInt();
-        int speedAvg = downtime ? (model->data(speedAvgId,100).toLongLong()*downtime + speed)/(downtime+1) : 0;
+        qint64 speedAvg = downtime ? (model->data(speedAvgId,100).toLongLong()*downtime + speed)/(downtime+1) : 0;
         ++downtime;
         delete(mdl);
 
