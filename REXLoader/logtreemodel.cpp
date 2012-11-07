@@ -106,18 +106,29 @@ QVariant LogTreeModel::data(const QModelIndex &index, int role) const
         switch(role)
         {
         case Qt::DisplayRole: return sub_nodes.value(index);
-        case Qt::BackgroundColorRole: return row_color.value(mtype,QColor());
+        case Qt::BackgroundColorRole:
+        {
+            if(LogTreeModel::fontcolor_enabled)
+                return row_color.value(mtype,QColor());
+            return QVariant();
+        }
         case Qt::TextColorRole:
         {
-            if(font_color.contains(mtype))
-                return font_color.value(mtype);
+            if(LogTreeModel::fontcolor_enabled)
+            {
+                if(font_color.contains(mtype))
+                    return font_color.value(mtype);
 
-            return QColor("#111111");
+                return QColor("#111111");
+            }
+            return QVariant();
         }
         case Qt::FontRole:
-            if(fonts.contains(mtype))
+        {
+            if(fonts.contains(mtype) && LogTreeModel::fontcolor_enabled)
                 return fonts.value(mtype);
             return QVariant();
+        }
 
         default: return QVariant();
         }
