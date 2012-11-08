@@ -1862,6 +1862,11 @@ void REXWindow::importUrlFromFile(const QStringList &files)
     ImportDialog *dlg = new ImportDialog(files,this);
     connect(dlg,SIGNAL(addedNewTask()),this,SLOT(updateTaskSheet()));
     dlg->setDownDir(settDlg->value("down_dir").toString());
+    QStringList protocols = plugproto.keys();
+    QString proto;
+    foreach(proto,protocols)
+        dlg->addProtocol(proto);
+
     dlg->import();
     QTimer::singleShot(0,dlg,SLOT(show()));
 }
