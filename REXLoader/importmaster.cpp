@@ -35,6 +35,13 @@ ImportMaster::~ImportMaster()
     }
 }
 
+void ImportMaster::addProtocol(const QString &proto)
+{
+    if(protocols.isEmpty())
+        protocols = proto;
+    else protocols += QString("|%1").arg(proto);
+}
+
 void ImportMaster::stopImport()
 {
     stopflag = true;
@@ -69,7 +76,7 @@ void ImportMaster::run()
             ++totalstr;
             emit totalStringLoaded(totalstr);
             QString str(buf);
-            QRegExp pattern(QRegExp("(?:)(http|https|ftp):(?://)?"));
+            QRegExp pattern(QRegExp(QString("(?:)(%1):(?://)?").arg(protocols)));
             pattern.setPatternSyntax(QRegExp::RegExp2);
             //pattern.setMinimal(true);
             int startpos = str.indexOf(pattern);

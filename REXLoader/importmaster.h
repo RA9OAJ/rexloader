@@ -31,6 +31,7 @@ class ImportMaster : public QThread
 public:
     explicit ImportMaster(QObject *parent = 0);
     ~ImportMaster();
+    void addProtocol(const QString &proto);
     
 signals:
     void foundString(const QString &str);
@@ -49,6 +50,7 @@ private:
     bool stopflag;
     QStringList filelist;
     qint64 totalstr;
+    QString protocols;
 };
 
 #endif // IMPORTMASTER_H

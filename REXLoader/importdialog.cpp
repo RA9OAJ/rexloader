@@ -68,6 +68,13 @@ void ImportDialog::setDownDir(const QString &dir)
     loadDatabaseData();
 }
 
+void ImportDialog::addProtocol(const QString &proto)
+{
+    if(protocols.contains(proto))
+        return;
+    protocols.append(proto);
+}
+
 void ImportDialog::loadDatabaseData()
 {
     QSqlQuery qr(mydb);
@@ -163,6 +170,17 @@ int ImportDialog::getCategory(const QString &file)
         catId = qr.value(0).toInt();
 
     return catId;
+}
+
+bool ImportDialog::contains(const QString &url) const
+{
+    int rows = ui->tableWidget->rowCount();
+    for(int i = 0; i < rows; ++i)
+        if(QTableWidgetItem *itm = ui->tableWidget->item(i,0))
+            if(itm->text() == url)
+                return true;
+
+    return false;
 }
 
 void ImportDialog::selectAll()
@@ -304,7 +322,7 @@ void ImportDialog::addTasks()
             qApp->processEvents(QEventLoop::AllEvents,40);
         }
     emit addedNewTask();
-
+    showWarning();
 
     QPushButton *btn = qobject_cast<QPushButton*>(sender());
     if(!btn || btn == ui->pushButton)
@@ -329,7 +347,10 @@ bool ImportDialog::addTask(QTableWidgetItem *itm)
 
     if(qr.value(0).toInt() > 0)
     {
-        tasks_exists.append(itm->text());
+        if(tasks_exists.isEmpty())
+            tasks_exists= itm->text();
+        else tasks_exists += QString("\n\n%1").arg(itm->text());
+
         return false;
     }
 
@@ -365,17 +386,42 @@ bool ImportDialog::addTask(QTableWidgetItem *itm)
     return true;
 }
 
+void ImportDialog::showWarning() const
+{
+    if(tasks_exists.isEmpty())
+        return;
+
+    QMessageBox *dlg = new QMessageBox((QWidget*)parent());
+    dlg->setAttribute(Qt::WA_DeleteOnClose);
+    dlg->setIcon(QMessageBox::Warning);
+    dlg->setModal(true);
+    dlg->setWindowTitle(tr("Предупреждение"));
+    dlg->setText(tr("Некоторые URL уже присутствуют в списке заданий.\nДля уточнения списка совпавших URL кликните по кнопке \"Показать подробности...\""));
+    dlg->setDetailedText(tasks_exists);
+    dlg->show();
+}
+
 void ImportDialog::import()
 {
+    if(protocols.isEmpty())
+        return;
+
     ImportMaster *importmaster = new ImportMaster(this);
     connect(importmaster,SIGNAL(finished()),importmaster,SLOT(deleteLater()));
     connect(importmaster,SIGNAL(foundString(QString)),this,SLOT(addUrl(QString)));
     connect(importmaster,SIGNAL(totalStringLoaded(qint64)),this,SLOT(readNewLine(qint64)));
+    QString proto;
+    foreach(proto,protocols)
+        importmaster->addProtocol(proto);
+
     importmaster->import(imp_files);
 }
 
 void ImportDialog::addUrl(const QString &url)
 {
+    if(contains(url))
+        return;
+
     ui->tableWidget->setRowCount(ui->tableWidget->rowCount()+1);
     QTableWidgetItem *itm = new QTableWidgetItem(url);
     itm->setData(Qt::ToolTipRole,url);
