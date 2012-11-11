@@ -43,6 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "logmanager.h"
 #include "pluginlistmodel.h"
 #include "shutdownmanager.h"
+#include "floating_window/floatingwindow.h"
 
 #include "../Httploader/LoaderInterface.h"
 

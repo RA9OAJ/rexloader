@@ -349,6 +349,9 @@ void REXWindow::createInterface()
     connect(ui->actionDeleteCategory,SIGNAL(triggered()),this,SLOT(deleteCategory()));
     connect(ui->actionAddCategory,SIGNAL(triggered()),this,SLOT(addCategory()));
     connect(ui->actionCatProperties,SIGNAL(triggered()),this,SLOT(categorySettings()));
+
+    /*FloatingWindow *wnd = new FloatingWindow(this);
+    wnd->show();*/
 }
 
 void REXWindow::showTableContextMenu(const QPoint &pos)
