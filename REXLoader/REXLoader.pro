@@ -8,6 +8,7 @@ QT       += core gui sql
 
 unix{
 QT += dbus
+LIBS += -L/usr/lib64 -L/usr/lib -lX11
 }
 
 TARGET = REXLoader
@@ -36,7 +37,10 @@ SOURCES += main.cpp\
     pluginitemdelegate.cpp \
     shutdownmanager.cpp \
     taskscheduler.cpp \
-    importmaster.cpp
+    importmaster.cpp \
+    floating_window/floatingwindow.cpp \
+    floating_window/progressbar.cpp \
+    floating_window/graphwidget.cpp
 
 HEADERS  += rexwindow.h \
     titemmodel.h \
@@ -58,7 +62,10 @@ HEADERS  += rexwindow.h \
     pluginitemdelegate.h \
     shutdownmanager.h \
     taskscheduler.h \
-    importmaster.h
+    importmaster.h \
+    floating_window/floatingwindow.h \
+    floating_window/progressbar.h \
+    floating_window/graphwidget.h
 
 FORMS    += rexwindow.ui \
     addtaskdialog.ui \
