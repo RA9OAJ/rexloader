@@ -211,6 +211,7 @@ void SettingsDialog::applySets()
     sets.insert("attempt_interval",ui->spinBoxAttemptInterval->value());
 
     sets.insert("show_taskdialog",ui->showTaskDialog->isChecked());
+    sets.insert("show_float_window",ui->floatWindowCheckBox->isChecked());
 
     sets.insert("on_pause_color",ui->onPauseColor->currentColor());
     sets.insert("on_pause_font",ui->onPauseFont->font());
@@ -300,6 +301,7 @@ void SettingsDialog::cancelSets()
     ui->spinBoxAttemptInterval->setValue(sets.value("attempt_interval").toInt());
 
     ui->showTaskDialog->setChecked(sets.value("show_taskdialog").toBool());
+    ui->floatWindowCheckBox->setChecked(sets.value("show_float_window").toBool());
 
     ui->onPauseColor->setColor(sets.value("on_pause_color").value<QColor>());
     ui->onPauseFont->setFont(sets.value("on_pause_font").value<QFont>());

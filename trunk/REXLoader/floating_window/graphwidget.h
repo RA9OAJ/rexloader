@@ -1,6 +1,6 @@
 /*
 Project: REXLoader (Downloader), Source file: graphwidget.h
-Copyright (C) <year>  <name of author>
+Copyright (C) 2012  Sarvaritdinov R.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -20,21 +20,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define GRAPHWIDGET_H
 
 #include <QWidget>
+#include <QPainter>
+#include <QTimer>
+#include <QPaintEvent>
+#include <QDebug>
 
 class GraphWidget : public QWidget
 {
     Q_OBJECT
 public:
+    enum RenderStyle{
+        RS_Graph,
+        RS_Diagram
+    };
+
     explicit GraphWidget(QWidget *parent = 0);
     ~GraphWidget();
     
 signals:
     
 public slots:
+    void addPoint(qint64 val);
+    void setRenderStyle(int style);
 
 protected:
     virtual void paintEvent(QPaintEvent *e);
-    
+    void renderGraph(QPainter *p);
+    void renderDiagram(QPainter *p);
+    QStringList speedForHumans(qint64 sp, bool in_bytes = true, bool out_bytes = false);
+
+protected slots:
+    void schedule();
+
+private:
+    QList<qint64> points;
+    RenderStyle rstyle;
+    qint64 max;
+    bool pub;
+    bool schedule_enable;
 };
 
 #endif // GRAPHWIDGET_H

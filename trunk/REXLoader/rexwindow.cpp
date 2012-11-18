@@ -350,8 +350,14 @@ void REXWindow::createInterface()
     connect(ui->actionAddCategory,SIGNAL(triggered()),this,SLOT(addCategory()));
     connect(ui->actionCatProperties,SIGNAL(triggered()),this,SLOT(categorySettings()));
 
-    /*FloatingWindow *wnd = new FloatingWindow(this);
-    wnd->show();*/
+    //создаем и настраиваем плавающее окошко
+    fwnd = new FloatingWindow(this);
+    connect(this,SIGNAL(taskStarted(int)),fwnd,SLOT(startTask(int)));
+    connect(this,SIGNAL(taskStopped(int)),fwnd,SLOT(stopTask(int)));
+    connect(this,SIGNAL(taskData(int,qint64,qint64)),fwnd,SLOT(taskData(int,qint64,qint64)));
+    connect(this,SIGNAL(TotalDowSpeed(qint64)),fwnd,SLOT(currentSpeed(qint64)));
+
+    if(settDlg->value("show_float_window").toBool())fwnd->show();
 }
 
 void REXWindow::showTableContextMenu(const QPoint &pos)
@@ -602,6 +608,11 @@ void REXWindow::saveSettings()
     settings.beginGroup("State Plugins");
     settings.setValue("EnablePlugins",plugmgr->pluginsState());
     settings.endGroup();
+
+    settings.beginGroup("Floating Window");
+    settings.setValue("Position",fwnd->pos());
+    settings.setValue("Geometry",fwnd->saveGeometry());
+    settings.endGroup();
     settings.sync();
 }
 
@@ -656,6 +667,11 @@ void REXWindow::loadSettings()
 
     settings.beginGroup("State Plugins");
     plug_state = settings.value("EnablePlugins").toByteArray();
+    settings.endGroup();
+
+    settings.beginGroup("Floating Window");
+    fwnd->move(settings.value("Position",QPoint()).toPoint());
+    fwnd->restoreGeometry(settings.value("Geometry",QByteArray()).toByteArray());
     settings.endGroup();
 
     ui->tableView->hideColumn(0);
@@ -984,6 +1000,7 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
 
                 pluglist.value(id_proto)->setAdvancedOptions(id_task,model->data(model->index(srcIdx.row(),14),100).toString());
                 plugmgr->startDownload(id_task + id_proto*100);
+                emit taskStarted(id_task);
                 if(settDlg->value("show_taskdialog").toBool()) showTaskDialog(id_row);
                 updateTaskSheet();
                 return;
@@ -1025,6 +1042,7 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
     //pluglist.value(id_proto)->startDownload(id_task);
     setProxy(id_task, id_proto);
     plugmgr->startDownload(id_task + id_proto*100);
+    emit taskStarted(id_task);
     if(settDlg->value("show_taskdialog").toBool()) showTaskDialog(id_row);
 }
 
@@ -1484,6 +1502,7 @@ void REXWindow::syncTaskData()
             ldr->deleteTask(id_task);
             if(dlglist.contains(id_row)) dlglist.value(id_row)->close();
             tasklist.remove(id_row);
+            emit taskStopped(id_task);
             calculateSpeed();
         }
         else
@@ -1547,6 +1566,8 @@ void REXWindow::syncTaskData()
             model->addToCache(index.row(),3,filepath);
             model->addToCache(index.row(),9,tstatus);
             model->addToCache(index.row(),11,speedAvg);
+
+            emit taskData(id_task, totalsize, totalload);
         }
 
         if(tstatus == LInterface::ON_PAUSE || tstatus == LInterface::FINISHED)
@@ -1554,6 +1575,7 @@ void REXWindow::syncTaskData()
             ldr->deleteTask(id_task);
             tasklist.remove(id_row);
             calculateSpeed();
+            emit taskStopped(id_task);
         }
         model->addToUpdateRowQueue(index.row());
         QTimer::singleShot(0,model,SLOT(updateRow()));
@@ -1737,6 +1759,12 @@ void REXWindow::updateStatusBar()
     onerror = findChild<QLabel*>("onerror");
     progress = findChild<QProgressBar*>("prgBar");
 
+    qint64 total_speed = 0;
+    QList<int>plug_keys = pluglist.keys();
+    for(int y = 0; y < plug_keys.size(); y++) //обходим список плагинов, суммируем общие скорости скачивания
+        total_speed += pluglist.value(plug_keys.value(y))->totalDownSpeed();
+    emit TotalDowSpeed(total_speed);
+
     if(!selection->hasSelection()) // в случае, если ни одно определенное задание не выделено
     {
         status->hide();
@@ -1766,9 +1794,6 @@ void REXWindow::updateStatusBar()
             total_s += model->data(cur_index,100).toLongLong();
             cur_index = model->index(row,5);
         }
-        QList<int>plug_keys = pluglist.keys();
-        for(int y = 0; y < plug_keys.size(); y++) //обходим список плагинов, суммируем общие скорости скачивания
-            total_speed += pluglist.value(plug_keys.value(y))->totalDownSpeed();
 
         QStringList spd_ = TItemModel::speedForHumans(total_speed);
         speed->setText(tr("Скорость: %1").arg(spd_.value(0)+spd_.value(1)));
@@ -2112,6 +2137,17 @@ void REXWindow::readSettings()
     ui->actionPoweroff->setChecked(settDlg->value("poweroff").toBool());
     ui->actionHibernate->setChecked(settDlg->value("hibernate").toBool());
     ui->actionSuspend->setChecked(settDlg->value("suspend").toBool());
+
+    if(settDlg->value("show_float_window").toBool())
+    {
+        fwnd->disableWindow(false);
+        fwnd->show();
+    }
+    else
+    {
+        fwnd->disableWindow(true);
+        fwnd->hide();
+    }
 
     setTaskCnt();
     calculateSpeed();

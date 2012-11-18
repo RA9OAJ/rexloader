@@ -126,6 +126,10 @@ protected slots:
 signals:
     void transAct();
     void needExecQuery(const QString &query);
+    void taskStarted(int id);
+    void taskStopped(int id);
+    void taskData(int id, qint64 total, qint64 load);
+    void TotalDowSpeed(qint64 spd);
 
 private:
     void lockProcess(bool flag=true); //позволяет создать/удалить файл блокировки процесса
@@ -168,6 +172,8 @@ private:
     bool stop_flag; //флаг остановки всех заданий при завершении работы программы
 
     QByteArray plug_state;
+
+    FloatingWindow *fwnd;
 };
 
 #endif // REXWINDOW_H

@@ -1,6 +1,6 @@
 /*
 Project: REXLoader (Downloader), Source file: floatingwindow.h
-Copyright (C) <year>  <name of author>
+Copyright (C) 2012  Sarvaritdinov R.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,6 +24,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QEvent>
 #include <QMouseEvent>
 #include <QVBoxLayout>
+#include <QHash>
+#include <QMenu>
+#include <QAction>
+
+#include "graphwidget.h"
 #include "progressbar.h"
 
 #ifdef Q_WS_X11
@@ -41,6 +46,12 @@ public:
 
 public slots:
     void moveToAllDesktops(bool _flag = true);
+    void currentSpeed(qint64 spd);
+    void startTask(int id);
+    void stopTask(int id);
+    void taskData(int id, qint64 total, qint64 load);
+    void show();
+    void disableWindow(bool dis);
     
 signals:
     
@@ -52,13 +63,23 @@ protected:
 
 protected slots:
     void fadeAction();
+    void showContextMenu(const QPoint &pos);
+    void setRenderMode(bool checked);
+    void setShowMode(bool checked);
     
 private:
     float opacity;
     float minimumOpacity;
+    float maximumOpacity;
     QTimer *optimer;
     QPoint startPos;
     bool moveFlag;
+    bool _disable;
+
+    GraphWidget *graph;
+    GraphWidget::RenderStyle renderstyle;
+    QHash<int, ProgressBar*> tasksbars;
+    QMenu *menu;
 };
 
 #endif // FLOATINGWINDOW_H
