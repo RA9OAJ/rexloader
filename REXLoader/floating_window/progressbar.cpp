@@ -1,6 +1,6 @@
 /*
 Project: REXLoader (Downloader), Source file: progressbar.cpp
-Copyright (C) <year>  <name of author>
+Copyright (C) 2012  Sarvaritdinov R.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ProgressBar::ProgressBar(QWidget *parent) :
     QWidget(parent)
 {
+    setMinimumHeight(5);
     maxval = 100;
     setValue(0);
 }
@@ -51,8 +52,6 @@ void ProgressBar::setMaxValue(int max)
     if(arg > 1.0)
         arg = 1.0;
 
-    QString out = toolout.replace("%v",QString("%1%").arg(_value));
-    setToolTip(out);
     repaint();
 }
 
@@ -62,16 +61,17 @@ void ProgressBar::setValue(int val)
     arg = (float)val/(float)maxval;
     if(arg > 1.0)
         arg = 1.0;
+
     repaint();
 }
 
 void ProgressBar::paintEvent(QPaintEvent *e)
 {
     QPainter *p = new QPainter(this);
-    p->setPen(QColor("#006e8e"));
+    p->setPen(QColor("#abc6cb")); //abc6cb b4d0d5 006e8e
     p->drawRect(QRect(0,0,size().width()-1,size().height()-1));
     p->fillRect(QRectF(arg*(size().width()-2)+1,1,size().width()-arg*(size().width()-2)-2,size().height()-2),QColor("#b9d3dc"));
-    p->fillRect(QRectF(1,1,arg*(size().width()-2),size().height()-2),QColor("#0191ba"));
+    p->fillRect(QRectF(1,1,arg*(size().width()-2),size().height()-2),QColor("#2ac2de")); //0191ba
     p->end();
 
     e->accept();

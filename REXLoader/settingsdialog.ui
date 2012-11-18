@@ -1248,10 +1248,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBox">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
+           <widget class="QCheckBox" name="floatWindowCheckBox">
             <property name="text">
              <string>Показывать плавающее окно</string>
             </property>

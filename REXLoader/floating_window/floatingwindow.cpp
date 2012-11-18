@@ -1,6 +1,6 @@
 /*
 Project: REXLoader (Downloader), Source file: floatingwindow.cpp
-Copyright (C) <year>  <name of author>
+Copyright (C) 2012  Sarvaritdinov R.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,19 +22,61 @@ FloatingWindow::FloatingWindow(QWidget *parent) :
     QDialog(parent)
 {
     setWindowFlags(Qt::Tool | Qt::WindowTitleHint | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    setWindowTitle("FloatingWindow");
     moveToAllDesktops();
     moveFlag = false;
+    renderstyle = GraphWidget::RS_Graph;
+
+    menu = new QMenu(this);
+    QAction* act = new QAction(tr("Диаграмма"),menu);
+    act->setCheckable(true);
+    act->setChecked(false);
+    act->setObjectName("Diagramm");
+    connect(act,SIGNAL(triggered(bool)),SLOT(setRenderMode(bool)));
+    menu->addAction(act);
+    act = new QAction(tr("График"),menu);
+    act->setCheckable(true);
+    act->setChecked(true);
+    act->setObjectName("Graphic");
+    connect(act,SIGNAL(triggered(bool)),SLOT(setRenderMode(bool)));
+    menu->addAction(act);
+    menu->addSeparator();
+    QMenu *submnu = new QMenu(tr("Отображать"),menu);
+    menu->addMenu(submnu);
+    act = new QAction(tr("Всегда"),submnu);
+    act->setCheckable(true);
+    act->setChecked(true);
+    connect(act,SIGNAL(triggered(bool)),SLOT(setShowMode(bool)));
+    act->setObjectName("ShowAlways");
+    submnu->addAction(act);
+    act = new QAction(tr("Во время закачки"),submnu);
+    act->setCheckable(true);
+    act->setChecked(false);
+    act->setObjectName("ShowDownloadOnly");
+    submnu->addAction(act);
+    connect(act,SIGNAL(triggered(bool)),SLOT(setShowMode(bool)));
+    menu->addSeparator();
+    act = new QAction(tr("Скрыть"),menu);
+    connect(act,SIGNAL(triggered()),this,SLOT(hide()));
+    menu->addAction(act);
 
     optimer = new QTimer(this);
     optimer->setInterval(13);
     connect(optimer,SIGNAL(timeout()),this,SLOT(fadeAction()));
+    connect(this,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(showContextMenu(QPoint)));
 
-    opacity = 1.0;
+    maximumOpacity = opacity = 0.9;
     minimumOpacity = 0.35;
     setWindowOpacity(minimumOpacity);
     setLayout(new QVBoxLayout(this));
     layout()->setMargin(3);
-    resize(150,75);
+    layout()->setSpacing(1);
+    resize(125,65);
+
+    graph = new GraphWidget(this);
+    graph->setMinimumHeight(50);
+    layout()->addWidget(graph);
 }
 
 FloatingWindow::~FloatingWindow()
@@ -53,6 +95,70 @@ void FloatingWindow::moveToAllDesktops(bool _flag)
         XChangeProperty(QX11Info::display(), this->winId(), atom, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)&val, 1);
     }
 #endif
+}
+
+void FloatingWindow::currentSpeed(qint64 spd)
+{
+    graph->addPoint(spd);
+}
+
+void FloatingWindow::startTask(int id)
+{
+    if(tasksbars.contains(id))
+        return;
+
+    ProgressBar *bar = new ProgressBar(this);
+    bar->setMaximumHeight(5);
+    bar->setMaxValue(100);
+    bar->setValue(0);
+    bar->setToolTipFormat(tr("Выполнено на %v"));
+    tasksbars.insert(id,bar);
+    layout()->addWidget(bar);
+
+    if((menu->findChild<QAction*>("ShowDownloadOnly"))->isChecked() && isHidden())
+        show();
+}
+
+void FloatingWindow::stopTask(int id)
+{
+    if(!tasksbars.contains(id))
+        return;
+
+    ProgressBar *bar = tasksbars.value(id);
+    layout()->removeWidget(bar);
+    bar->hide();
+    resize(size().width(),size().height()-6);
+    bar->deleteLater();
+    tasksbars.remove(id);
+
+    if((menu->findChild<QAction*>("ShowDownloadOnly"))->isChecked() && !isHidden() && !tasksbars.count())
+        hide();
+}
+
+void FloatingWindow::taskData(int id, qint64 total, qint64 load)
+{
+    if(!tasksbars.contains(id))
+        return;
+
+    ProgressBar *bar = tasksbars.value(id);
+    if(bar->maximumValue() != total)
+        bar->setMaxValue(total);
+
+    bar->setValue(load);
+}
+
+void FloatingWindow::show()
+{
+    if(_disable)
+        return;
+
+    if(((menu->findChild<QAction*>("ShowDownloadOnly"))->isChecked() && tasksbars.count()) || (menu->findChild<QAction*>("ShowAlways"))->isChecked())
+        QDialog::show();
+}
+
+void FloatingWindow::disableWindow(bool dis)
+{
+    _disable = dis;
 }
 
 bool FloatingWindow::event(QEvent *event)
@@ -97,11 +203,56 @@ void FloatingWindow::fadeAction()
         opacity += 0.05;
     else opacity -= 0.05;
 
-    if(opacity <= minimumOpacity || opacity >= 1.0)
+    if(opacity <= minimumOpacity || opacity >= maximumOpacity)
     {
         optimer->stop();
-        opacity = opacity >= 1.0 ? 1.0 : minimumOpacity;
+        opacity = opacity >= maximumOpacity ? maximumOpacity : minimumOpacity;
     }
 
     setWindowOpacity(opacity);
+}
+
+void FloatingWindow::showContextMenu(const QPoint &pos)
+{
+    menu->popup(mapToGlobal(pos));
+}
+
+void FloatingWindow::setRenderMode(bool checked)
+{
+    QAction *act = qobject_cast<QAction*>(sender());
+    if(!act)
+        return;
+    if(!checked)
+        act->setChecked(true);
+
+    if(act == menu->findChild<QAction*>("Diagramm"))
+    {
+        act->setChecked(true);
+        (menu->findChild<QAction*>("Graphic"))->setChecked(false);
+        graph->setRenderStyle(GraphWidget::RS_Diagram);
+    }
+    else
+    {
+        act->setChecked(true);
+        (menu->findChild<QAction*>("Diagramm"))->setChecked(false);
+        graph->setRenderStyle(GraphWidget::RS_Graph);
+    }
+}
+
+void FloatingWindow::setShowMode(bool checked)
+{
+    QAction *act = qobject_cast<QAction*>(sender());
+    if(!act)
+        return;
+    if(!checked)
+        act->setChecked(true);
+
+    if(act == menu->findChild<QAction*>("ShowAlways"))
+        (menu->findChild<QAction*>("ShowDownloadOnly"))->setChecked(false);
+    else
+    {
+        (menu->findChild<QAction*>("ShowAlways"))->setChecked(false);
+        if(!tasksbars.count())
+            hide();
+    }
 }
