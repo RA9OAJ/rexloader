@@ -612,6 +612,8 @@ void REXWindow::saveSettings()
     settings.beginGroup("Floating Window");
     settings.setValue("Position",fwnd->pos());
     settings.setValue("Geometry",fwnd->saveGeometry());
+    settings.setValue("ShowAlways",fwnd->showWindowsMode());
+    settings.setValue("GraphMode",fwnd->renderGraphMode());
     settings.endGroup();
     settings.sync();
 }
@@ -672,6 +674,8 @@ void REXWindow::loadSettings()
     settings.beginGroup("Floating Window");
     fwnd->move(settings.value("Position",QPoint()).toPoint());
     fwnd->restoreGeometry(settings.value("Geometry",QByteArray()).toByteArray());
+    fwnd->setRenderGraphMode(settings.value("GraphMode",1).toInt());
+    fwnd->setShowWindowMode(settings.value("ShowAlways",true).toBool());
     settings.endGroup();
 
     ui->tableView->hideColumn(0);

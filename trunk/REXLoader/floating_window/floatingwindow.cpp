@@ -141,10 +141,9 @@ void FloatingWindow::taskData(int id, qint64 total, qint64 load)
         return;
 
     ProgressBar *bar = tasksbars.value(id);
-    if(bar->maximumValue() != total)
-        bar->setMaxValue(total);
-
-    bar->setValue(load);
+    bar->setMaxValue(100);
+    int cur = load*100/total;
+    bar->setValue(cur);
 }
 
 void FloatingWindow::show()
@@ -159,6 +158,52 @@ void FloatingWindow::show()
 void FloatingWindow::disableWindow(bool dis)
 {
     _disable = dis;
+}
+
+void FloatingWindow::setRenderGraphMode(int md)
+{
+    if(md == GraphWidget::RS_Diagram)
+    {
+        (menu->findChild<QAction*>("Graphic"))->setChecked(false);
+        (menu->findChild<QAction*>("Diagramm"))->setChecked(true);
+        graph->setRenderStyle(GraphWidget::RS_Diagram);
+        renderstyle = GraphWidget::RS_Diagram;
+    }
+    else
+    {
+        (menu->findChild<QAction*>("Diagramm"))->setChecked(false);
+        (menu->findChild<QAction*>("Graphic"))->setChecked(true);
+        graph->setRenderStyle(GraphWidget::RS_Graph);
+        renderstyle = GraphWidget::RS_Graph;
+    }
+}
+
+void FloatingWindow::setShowWindowMode(bool md)
+{
+    if(md)
+    {
+        (menu->findChild<QAction*>("ShowDownloadOnly"))->setChecked(false);
+        (menu->findChild<QAction*>("ShowAlways"))->setChecked(true);
+        show_always = true;
+    }
+    else
+    {
+        show_always = false;
+        (menu->findChild<QAction*>("ShowAlways"))->setChecked(false);
+        (menu->findChild<QAction*>("ShowDownloadOnly"))->setChecked(true);
+        if(!tasksbars.count())
+            hide();
+    }
+}
+
+int FloatingWindow::renderGraphMode()
+{
+    return renderstyle;
+}
+
+bool FloatingWindow::showWindowsMode()
+{
+    return show_always;
 }
 
 bool FloatingWindow::event(QEvent *event)
@@ -230,12 +275,14 @@ void FloatingWindow::setRenderMode(bool checked)
         act->setChecked(true);
         (menu->findChild<QAction*>("Graphic"))->setChecked(false);
         graph->setRenderStyle(GraphWidget::RS_Diagram);
+        renderstyle = GraphWidget::RS_Diagram;
     }
     else
     {
         act->setChecked(true);
         (menu->findChild<QAction*>("Diagramm"))->setChecked(false);
         graph->setRenderStyle(GraphWidget::RS_Graph);
+        renderstyle = GraphWidget::RS_Graph;
     }
 }
 
@@ -248,9 +295,13 @@ void FloatingWindow::setShowMode(bool checked)
         act->setChecked(true);
 
     if(act == menu->findChild<QAction*>("ShowAlways"))
+    {
         (menu->findChild<QAction*>("ShowDownloadOnly"))->setChecked(false);
+        show_always = true;
+    }
     else
     {
+        show_always = false;
         (menu->findChild<QAction*>("ShowAlways"))->setChecked(false);
         if(!tasksbars.count())
             hide();
