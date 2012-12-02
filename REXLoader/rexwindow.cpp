@@ -291,6 +291,19 @@ void REXWindow::createInterface()
     taskbtn->setPopupMode(QToolButton::InstantPopup);
     ui->mainToolBar->addWidget(taskbtn);
 
+    //создаем и настраиваем плавающее окошко
+#ifdef Q_WS_WIN
+    fwnd = new FloatingWindow();
+#else
+    fwnd = new FloatingWindow(this);
+#endif
+    connect(this,SIGNAL(taskStarted(int)),fwnd,SLOT(startTask(int)));
+    connect(this,SIGNAL(taskStopped(int)),fwnd,SLOT(stopTask(int)));
+    connect(this,SIGNAL(taskData(int,qint64,qint64)),fwnd,SLOT(taskData(int,qint64,qint64)));
+    connect(this,SIGNAL(TotalDowSpeed(qint64)),fwnd,SLOT(currentSpeed(qint64)));
+
+    if(settDlg->value("show_float_window").toBool())fwnd->show();
+
     //настроиваем значок в трее
     QMenu *traymenu = new QMenu(this);
     traymenu->setObjectName("traymenu");
@@ -308,6 +321,9 @@ void REXWindow::createInterface()
     traymenu->addMenu(taskmenu);
     traymenu->addSeparator();
     traymenu->addAction(ui->actionAppSettings);
+    QMenu *submnu = traymenu->addMenu(tr("Плавающее окно"));
+    submnu->addAction(fwnd->findChild<QAction*>("ShowAlways"));
+    submnu->addAction(fwnd->findChild<QAction*>("ShowDownloadOnly"));
     traymenu->addSeparator();
     traymenu->addAction(trayact);
     trayact = new QAction(this);
@@ -350,14 +366,6 @@ void REXWindow::createInterface()
     connect(ui->actionAddCategory,SIGNAL(triggered()),this,SLOT(addCategory()));
     connect(ui->actionCatProperties,SIGNAL(triggered()),this,SLOT(categorySettings()));
 
-    //создаем и настраиваем плавающее окошко
-    fwnd = new FloatingWindow(this);
-    connect(this,SIGNAL(taskStarted(int)),fwnd,SLOT(startTask(int)));
-    connect(this,SIGNAL(taskStopped(int)),fwnd,SLOT(stopTask(int)));
-    connect(this,SIGNAL(taskData(int,qint64,qint64)),fwnd,SLOT(taskData(int,qint64,qint64)));
-    connect(this,SIGNAL(TotalDowSpeed(qint64)),fwnd,SLOT(currentSpeed(qint64)));
-
-    if(settDlg->value("show_float_window").toBool())fwnd->show();
 }
 
 void REXWindow::showTableContextMenu(const QPoint &pos)
@@ -1885,6 +1893,11 @@ REXWindow::~REXWindow()
     sched_flag = false;
     plugmgr->quit();
     plugmgr->wait(3000);
+
+#ifdef Q_WS_WIN
+    fwnd->close();
+    delete fwnd;
+#endif
 
     lockProcess(false);
 }

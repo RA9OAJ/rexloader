@@ -21,7 +21,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 FloatingWindow::FloatingWindow(QWidget *parent) :
     QDialog(parent)
 {
+#ifdef Q_WS_WIN
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+#else
     setWindowFlags(Qt::Tool | Qt::WindowTitleHint | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+#endif
     setContextMenuPolicy(Qt::CustomContextMenu);
     setWindowTitle("FloatingWindow");
     moveToAllDesktops();
@@ -43,6 +47,7 @@ FloatingWindow::FloatingWindow(QWidget *parent) :
     menu->addAction(act);
     menu->addSeparator();
     QMenu *submnu = new QMenu(tr("Отображать"),menu);
+    submnu->setObjectName("SubMenu");
     menu->addMenu(submnu);
     act = new QAction(tr("Всегда"),submnu);
     act->setCheckable(true);
@@ -140,6 +145,9 @@ void FloatingWindow::taskData(int id, qint64 total, qint64 load)
     if(!tasksbars.contains(id))
         return;
 
+    if(!total)
+        return;
+
     ProgressBar *bar = tasksbars.value(id);
     bar->setMaxValue(100);
     int cur = load*100/total;
@@ -204,6 +212,11 @@ int FloatingWindow::renderGraphMode()
 bool FloatingWindow::showWindowsMode()
 {
     return show_always;
+}
+
+QMenu *FloatingWindow::subMenu()
+{
+    return menu->findChild<QMenu*>("SubMenu");
 }
 
 bool FloatingWindow::event(QEvent *event)
@@ -298,6 +311,7 @@ void FloatingWindow::setShowMode(bool checked)
     {
         (menu->findChild<QAction*>("ShowDownloadOnly"))->setChecked(false);
         show_always = true;
+        show();
     }
     else
     {
