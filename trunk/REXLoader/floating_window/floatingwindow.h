@@ -56,6 +56,7 @@ public slots:
     void setShowWindowMode(bool md);
     int renderGraphMode();
     bool showWindowsMode();
+    QMenu* subMenu();
     
 signals:
     
