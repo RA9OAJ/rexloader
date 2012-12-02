@@ -52,6 +52,10 @@ public slots:
     void taskData(int id, qint64 total, qint64 load);
     void show();
     void disableWindow(bool dis);
+    void setRenderGraphMode(int md);
+    void setShowWindowMode(bool md);
+    int renderGraphMode();
+    bool showWindowsMode();
     
 signals:
     
@@ -75,6 +79,7 @@ private:
     QPoint startPos;
     bool moveFlag;
     bool _disable;
+    bool show_always;
 
     GraphWidget *graph;
     GraphWidget::RenderStyle renderstyle;
