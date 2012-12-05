@@ -22,7 +22,7 @@ FloatingWindow::FloatingWindow(QWidget *parent) :
     QDialog(parent)
 {
 #ifdef Q_WS_WIN
-    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    setWindowFlags(Qt::Tool | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 #else
     setWindowFlags(Qt::Tool | Qt::WindowTitleHint | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 #endif
