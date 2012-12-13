@@ -89,6 +89,11 @@ void REXWindow::pluginStatus(bool stat)
     plugmgr->loadLocale(QLocale::system());
 
     readSettings();
+
+    plugmgr->notify(tr("REXLoader"),tr("<center>Приложение успешно запущено</center>"),5);
+    if(ui->actionPoweroff->isChecked() || ui->actionHibernate->isChecked() || ui->actionSuspend->isChecked())
+        plugmgr->notify(tr("Внимание!"),tr("Активирован режим <b>автоматического выключения ПК</b> по завершении всех заданий"),20);
+
     scanTasksOnStart();
 }
 
@@ -1510,6 +1515,8 @@ void REXWindow::syncTaskData()
             logmgr->appendLog(-1,0,LInterface::MT_ERROR,
                               tr("Ошибка при скачивании файла '%1': %2 (Код ошибки: %3)").arg(model->data(model->index(index.row(),3),Qt::DisplayRole).toString(),errStr,QString::number(errno_)),
                               QString());
+            plugmgr->notify(tr("Ошибка"),
+                            tr("Ошибка при скачивании файла <b>%1</b>: <b>%2</b>").arg(model->data(model->index(index.row(),3),Qt::DisplayRole).toString(),errStr,QString::number(errno_)));
 
             ldr->deleteTask(id_task);
             if(dlglist.contains(id_row)) dlglist.value(id_row)->close();
@@ -1558,6 +1565,7 @@ void REXWindow::syncTaskData()
                     QFileInfo flinfo(filepath);
                     logmgr->appendLog(-1,0,LInterface::MT_INFO,tr("Скачивание файла %1 завершено").arg(flinfo.fileName()),QString());
                     logmgr->deleteTaskLogLater(id_row);
+                    plugmgr->notify(tr("Задание завершено"),tr("Скачивание файла <b>%1</b> завершено").arg(flinfo.fileName()));
                 }
 
                 if(dlglist.contains(id_row)) dlglist.value(id_row)->close();
@@ -1655,6 +1663,7 @@ void REXWindow::manageTaskQueue()
             logmgr->appendLog(-1,0,LInterface::MT_ERROR,
                               tr("Ошибка при загрузке файла %1").arg(flname),
                               err);
+            plugmgr->notify(tr("Ошибка"),tr("Ошибка при загрузке файла <b>%1</b>").arg(flname));
 
             QModelIndex srcIdx = select.mapToSource(select.index(i,9));
             model->addToCache(srcIdx.row(),srcIdx.column(),(int)LInterface::ERROR_TASK);
@@ -2009,14 +2018,16 @@ void REXWindow::acceptQAction(QAbstractButton *btn)
             file.remove(params.value("newname"));
             file.rename(params.value("newname"));
             logmgr->appendLog(-1,0,LInterface::MT_INFO,tr("Скачивание файла %1 завершено").arg(flinfo.fileName()),QString());
+            plugmgr->notify(tr("Задание завершено"),tr("Скачивание файла <b>%1</b> завершено").arg(flinfo.fileName()),10);
         }
         else
         {
             QFileInfo oldfl(params.value("rename"));
             file.rename(params.value("rename"));
             flinfo.setFile(params.value("newname"));
-            logmgr->appendLog(-1,0,LInterface::MT_INFO,tr("Файл %1 сохранен как %2").arg(oldfl.fileName(),flinfo.fileName()),QString());
-            logmgr->appendLog(-1,0,LInterface::MT_INFO,tr("Скачивание файла %1 завершено").arg(flinfo.fileName()),QString());
+            logmgr->appendLog(-1,0,LInterface::MT_INFO,tr("Файл %1 сохранен как %2").arg(flinfo.fileName(),oldfl.fileName()),QString());
+            logmgr->appendLog(-1,0,LInterface::MT_INFO,tr("Скачивание файла %1 завершено").arg(oldfl.fileName()),QString());
+            plugmgr->notify(tr("Задание завершено"),tr("Файл <b>%1</b> скачан, переименован и сохранен как <b>%2</b>").arg(flinfo.fileName(),oldfl.fileName()),10);
         }
 
         QSqlQuery qr;

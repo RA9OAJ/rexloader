@@ -1,5 +1,5 @@
 /*
-Project: REXLoader (Downloader, interface for plugins-downloaders), Source file: NotifInterface.h
+Project: REXLoader (Downloader, interface for notification plugins), Source file: NotifInterface.h
 Copyright (C) 2012  Sarvaritdinov R.
 
 This program is free software: you can redistribute it and/or modify
@@ -40,7 +40,7 @@ public:
     virtual ~NotifInterface(){}
 
     virtual QStringList pluginInfo() const = 0; //возвращает данные о плагине и его авторах
-    virtual void notify(QString app, QString title, QString msg, unsigned int timeout, int type = INFO, QStringList actions = QStringList(), QImage *image=0)=0; //выводит уведомление
+    virtual void notify(const QString &app, const QString &title, const QString &msg, int timeout, int type = INFO, const QStringList &actions = QStringList(), QImage *image=0)=0; //выводит уведомление
     virtual void setImage(int type, QImage *img)=0;
     virtual void resetImage(int type = -1)=0;
 

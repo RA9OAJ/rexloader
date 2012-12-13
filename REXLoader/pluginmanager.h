@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtSql/QtSql>
 
 #include "../plugins/LoaderInterface.h"
+#include "../plugins/NotifInterface.h"
 #include "titemmodel.h"
 #include "logtreemodel.h"
 
@@ -82,12 +83,14 @@ signals:
     void stopTask(int id_task);
     void needExecQuery(const QString &query);
     void messageAvailable(int id_task, int id_sect, int ms_type, const QString &title, const QString &more);
+    void notifActionInvoked(const QString &act);
 
 public slots:
     void startDownload(int id_task);
     void stopDownload(int id_tsk);
     void exeQuery(const QString &query);
     void appendLog(int id_task, int id_sect, int ms_type, const QString &title, const QString &more);
+    void notify(const QString &title, const QString &msg, int timeout = 10, const QStringList &actions = QStringList(), int type = NotifInterface::INFO, QImage* img=0);
 
 protected:
     void run();
@@ -99,11 +102,14 @@ private:
     QHash<QString,int> *plugproto; //хэш дескрипторов плагинов с соответствующими протоколами
     QHash<int,int> *tasklist;
     QHash<int,QTranslator*> translators;
+    QHash<int,QStringList> notifplugins; //данные о доступных плагинах уведомлений
+    QPair<NotifInterface*,int> notifplugin; //активный плагин уведомления
 
     const int *max_tasks; //максимальное количество одновременных закачек
     const int *max_threads; //максимальное кол-во потоков при скачивании
     const qint64 *down_speed; //максимальная скорость скачивания
     const int *attempt_interval; //интервал между посылами запроса потоков
+    QImage *appIcon;
 
     LogTreeModel *logmodel;
 
