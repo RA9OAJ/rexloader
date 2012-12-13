@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QTranslator>
 #include <QtSql/QtSql>
 
-#include "../Httploader/LoaderInterface.h"
+#include "../plugins/LoaderInterface.h"
 #include "titemmodel.h"
 #include "logtreemodel.h"
 

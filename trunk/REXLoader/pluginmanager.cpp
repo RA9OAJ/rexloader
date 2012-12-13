@@ -67,6 +67,7 @@ void PluginManager::run()
             QPluginLoader plug(pluginDirs->value(i)+"/"+plg.value(y));
             if(!plug.load())continue;
             LoaderInterface *ldr = qobject_cast<LoaderInterface*>(plug.instance());
+            if(!ldr)continue;
             emit messageAvailable(-1,0,LInterface::MT_INFO,tr("Плагин %1 версия %2-%3 ('%4') загружен.").arg(pluginInfo(ldr,"Plugin"),pluginInfo(ldr,"Version"),pluginInfo(ldr,"Build date"),pluginDirs->value(i)+"/"+plg.value(y)),QString());
             pluglist->insert(pluglist->size()+1,ldr);
             plugfiles->insert(pluglist->size(),pluginDirs->value(i)+"/"+plg.value(y));

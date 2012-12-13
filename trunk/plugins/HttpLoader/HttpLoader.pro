@@ -8,14 +8,13 @@ CODECFORTR = UTF-8
 unix: {
     LIBS += -lz
 }
-DESTDIR = ../usr/lib/rexloader/plugins
+DESTDIR = ../../usr/lib/rexloader/plugins
 
 SOURCES = httploader.cpp \
     httpsection.cpp \
     gtcpsocket.cpp
 
 HEADERS = httploader.h \
-    LoaderInterface.h \
     httpsection.h \
     gtcpsocket.h
 

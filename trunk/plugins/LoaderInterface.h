@@ -82,7 +82,7 @@ enum MessageType{
 
 class LoaderInterface : public QObject {
 public:
-    virtual ~LoaderInterface(){};
+    virtual ~LoaderInterface(){}
 
     virtual QStringList protocols() const = 0; //возвращает список поддерживаемых протоколов
     virtual QStringList pluginInfo() const = 0; //возвращает данные о плагине и его авторах
@@ -125,5 +125,5 @@ signals:
 };
 
 
-Q_DECLARE_INTERFACE(LoaderInterface,"local.rav.RExLoader/0.1a")
+Q_DECLARE_INTERFACE(LoaderInterface,"local.rav.RExLoader.LoaderInterface/0.1a")
 #endif // LOADERINTERFACE_H

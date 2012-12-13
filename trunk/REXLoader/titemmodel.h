@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QAbstractItemModel>
 #include <QtSql/QtSql>
-#include "../Httploader/LoaderInterface.h"
+#include "../plugins/LoaderInterface.h"
 
 class TItemModel : public QAbstractItemModel
 {
