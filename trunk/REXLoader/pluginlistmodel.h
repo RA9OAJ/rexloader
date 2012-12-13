@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QAbstractListModel>
 #include <QStringList>
 #include "../plugins/LoaderInterface.h"
+#include "../plugins/NotifInterface.h"
 
 class PluginInfo
 {

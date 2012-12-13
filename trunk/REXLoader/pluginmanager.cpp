@@ -28,12 +28,17 @@ PluginManager::PluginManager(QObject *parent) :
     max_threads = 0;
     tasklist = 0;
     attempt_interval = 0;
+    notifplugin.first = 0;
+    notifplugin.second = 0;
+    appIcon = new QImage(":/appimages/trayicon.png");
+    *appIcon = appIcon->scaledToWidth(64,Qt::SmoothTransformation).rgbSwapped();
 
     updOper = 0;
 }
 
 PluginManager::~PluginManager()
 {
+    delete appIcon;
 }
 
 void PluginManager::setPlugDir(const QStringList &dir)
@@ -67,7 +72,21 @@ void PluginManager::run()
             QPluginLoader plug(pluginDirs->value(i)+"/"+plg.value(y));
             if(!plug.load())continue;
             LoaderInterface *ldr = qobject_cast<LoaderInterface*>(plug.instance());
-            if(!ldr)continue;
+            if(!ldr)
+            {
+                NotifInterface *nldr = qobject_cast<NotifInterface*>(plug.instance());
+                if(!nldr) continue;
+                QStringList pluginfo = nldr->pluginInfo();
+                pluginfo << QString("Filepath: ")+pluginDirs->value(i)+"/"+plg.value(y);
+                notifplugins.insert(notifplugins.size()+1,pluginfo);
+                if(!notifplugin.first)
+                {
+                    notifplugin.first = nldr;
+                    notifplugin.second = notifplugins.size();
+                }
+                else plug.unload();
+                continue;
+            }
             emit messageAvailable(-1,0,LInterface::MT_INFO,tr("Плагин %1 версия %2-%3 ('%4') загружен.").arg(pluginInfo(ldr,"Plugin"),pluginInfo(ldr,"Version"),pluginInfo(ldr,"Build date"),pluginDirs->value(i)+"/"+plg.value(y)),QString());
             pluglist->insert(pluglist->size()+1,ldr);
             plugfiles->insert(pluglist->size(),pluginDirs->value(i)+"/"+plg.value(y));
@@ -134,6 +153,21 @@ void PluginManager::appendLog(int id_task, int id_sect, int ms_type, const QStri
         emit messageAvailable(new_id,id_sect,ms_type,title,more);
     }
     else emit messageAvailable(id_task,id_sect,ms_type,title,more);
+}
+
+void PluginManager::notify(const QString &title, const QString &msg, int timeout, const QStringList &actions, int type, QImage *img)
+{
+    if(!notifplugin.first)
+        return;
+
+    QImage *image = appIcon;
+    if(img)
+    {
+        image = img;
+        *image = image->scaledToWidth(64,Qt::SmoothTransformation).rgbSwapped();
+    }
+
+    notifplugin.first->notify(qApp->applicationName(),title,msg,timeout,type,actions,image);
 }
 
 void PluginManager::setDatabaseFile(const QString &dbfile)
@@ -218,6 +252,40 @@ void PluginManager::restorePluginsState(const QByteArray &stat)
         in.readRawData(inbuf.data(),len); //считываем строку с названием протокола
         QString proto = inbuf;
         if(proto == "")break; //если не удалось считать, то выходим
+        if(proto == "NOTIF")
+        {
+            in >> len; //размер строки пути до файла NOTIF плагина
+            if(!len)
+            {
+                notifplugin.first = 0;
+                notifplugin.second = 0;
+                break;
+            }
+            inbuf.clear();
+            inbuf.resize(len);
+            in.readRawData(inbuf.data(),len); //считываем путь до NOTIF плагина
+
+            QString filepath = inbuf;
+            for(int i = 1; i < notifplugins.size(); ++i)
+                if(notifplugins.value(i).last() == QString("Filepath: ")+filepath && notifplugin.second != i)
+                {
+                    QPluginLoader ldr(notifplugins.value(i).last());
+                    if(ldr.isLoaded())
+                        ldr.unload();
+                    ldr.setFileName(notifplugins.value(i).last());
+                    if(!ldr.load()) break;
+
+                    notifplugin.first = qobject_cast<NotifInterface*>(ldr.instance());
+                    if(!notifplugin.first)
+                        break;
+
+                    notifplugin.second = i;
+                    break;
+                }
+
+            in >> len;
+            continue;
+        }
 
         in >> len; //считываем размер строки пути до файла плагина
         if(!len) break;
@@ -278,6 +346,20 @@ QByteArray PluginManager::pluginsState() const
 
         stat.writeRawData(filepath.toAscii().data(),filepath.toAscii().size()); //путь до файла плагина
     }
+
+    QString notif = "NOTIF";
+    stat << notif.toAscii().size();
+    stat.writeRawData(notif.toAscii().data(),notif.toAscii().size());
+    if(!notifplugin.second)
+        stat << (int) 0;
+    else
+    {
+        QString filepath = notifplugins.value(notifplugin.second).last();
+        filepath = filepath.replace("Filepath: ","");
+        stat << filepath.toAscii().size();
+        stat.writeRawData(filepath.toAscii().data(),filepath.toAscii().size());
+    }
+
     stat << (int) 0;
 
     return out;
