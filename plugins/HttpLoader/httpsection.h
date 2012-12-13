@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QLocale>
 #include <QPointer>
 #include <QNetworkProxy>
-#include "LoaderInterface.h"
+#include "../LoaderInterface.h"
 #include "zlib.h"
 #include "gtcpsocket.h"
 

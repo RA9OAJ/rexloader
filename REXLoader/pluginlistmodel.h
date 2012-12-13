@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QAbstractListModel>
 #include <QStringList>
-#include "../Httploader/LoaderInterface.h"
+#include "../plugins/LoaderInterface.h"
 
 class PluginInfo
 {

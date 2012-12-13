@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "shutdownmanager.h"
 #include "floating_window/floatingwindow.h"
 
-#include "../Httploader/LoaderInterface.h"
+#include "../plugins/LoaderInterface.h"
 
 namespace Ui {
     class REXWindow;
