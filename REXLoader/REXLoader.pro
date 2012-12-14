@@ -11,7 +11,7 @@ QT += dbus
 LIBS += -L/usr/lib64 -L/usr/lib -lX11
 }
 
-TARGET = REXLoader
+TARGET = rexloader
 TEMPLATE = app
 
 DESTDIR = ../usr/bin
