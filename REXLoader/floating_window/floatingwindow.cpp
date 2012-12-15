@@ -21,13 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 FloatingWindow::FloatingWindow(QWidget *parent) :
     QDialog(parent)
 {
-#ifdef Q_WS_WIN
     setWindowFlags(Qt::Tool | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-#else
-    setWindowFlags(Qt::Tool | Qt::WindowTitleHint | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-#endif
+
     setContextMenuPolicy(Qt::CustomContextMenu);
-    setWindowTitle("FloatingWindow");
+    setWindowTitle("");
     moveToAllDesktops();
     moveFlag = false;
     renderstyle = GraphWidget::RS_Graph;
@@ -72,7 +69,7 @@ FloatingWindow::FloatingWindow(QWidget *parent) :
     connect(this,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(showContextMenu(QPoint)));
 
     maximumOpacity = opacity = 0.9;
-    minimumOpacity = 0.35;
+    minimumOpacity = 0.45;
     setWindowOpacity(minimumOpacity);
     setLayout(new QVBoxLayout(this));
     layout()->setMargin(3);
@@ -161,6 +158,7 @@ void FloatingWindow::show()
 
     if(((menu->findChild<QAction*>("ShowDownloadOnly"))->isChecked() && tasksbars.count()) || (menu->findChild<QAction*>("ShowAlways"))->isChecked())
         QDialog::show();
+
 }
 
 void FloatingWindow::disableWindow(bool dis)

@@ -28,10 +28,17 @@ NixNotifyPlugin::NixNotifyPlugin()
                                           "org.freedesktop.Notifications",
                                           "ActionInvoked",
                                           this,SLOT(sendActData(uint,QString)));
+
+    QDBusConnection::sessionBus().connect("org.freedesktop.Notifications",
+                                          "/org/freedesktop/Notifications",
+                                          "org.freedesktop.Notifications",
+                                          "NotificationClosed",
+                                          this,SLOT(notifIsClosed(uint)));
 }
 
 NixNotifyPlugin::~NixNotifyPlugin()
 {
+    closeNotify(-1);
 }
 
 QStringList NixNotifyPlugin::pluginInfo() const
@@ -60,7 +67,9 @@ void NixNotifyPlugin::notify(const QString &app, const QString &title, const QSt
 
     args << (timeout != 0 ? timeout * 1000 : 5000);
 
-    dbusNotification.callWithArgumentList(QDBus::AutoDetect, "Notify", args);
+    QDBusMessage ret = dbusNotification.callWithArgumentList(QDBus::AutoDetect, "Notify", args);
+    if(ret.arguments().size())
+        nlist.append(ret.arguments().value(0).toUInt());
 }
 
 void NixNotifyPlugin::setImage(int type, QImage *img)
@@ -80,7 +89,26 @@ void NixNotifyPlugin::resetImage(int type)
 void NixNotifyPlugin::sendActData(unsigned int id, const QString &act)
 {
     emit notifyActionData(id, act);
-    qDebug()<<id<<act;
+    closeNotify(id);
+}
+
+void NixNotifyPlugin::closeNotify(unsigned int id)
+{
+    if(id == 0 && nlist.size())
+    {
+        unsigned int cid = 0;
+        foreach(cid,nlist)
+            closeNotify(cid);
+        return;
+    }
+    QVariantList args;
+    args << id;
+    dbusNotification.callWithArgumentList(QDBus::AutoDetect, "CloseNotification", args);
+}
+
+void NixNotifyPlugin::notifIsClosed(unsigned int id)
+{
+    nlist.removeAll(id);
 }
 
 const int iiibiiay::tid = qDBusRegisterMetaType<iiibiiay>();

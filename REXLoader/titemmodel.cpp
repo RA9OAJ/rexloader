@@ -174,7 +174,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
 
             default:
                 if(myData(row,11).toLongLong() == 0 || myData(row,5).toLongLong() == 0)return QVariant();
-                int secToLeft = (myData(row,5).toLongLong()-myData(row,4).toLongLong())/myData(row,11).toLongLong();
+                int secToLeft = (myData(row,5).toLongLong()-myData(row,4).toLongLong())/1024/myData(row,11).toLongLong();
                 return secForHumans(secToLeft);
             }
         }
