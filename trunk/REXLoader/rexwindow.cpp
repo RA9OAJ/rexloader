@@ -68,6 +68,7 @@ REXWindow::REXWindow(QWidget *parent) :
     connect(plugmgr,SIGNAL(pluginStatus(bool)),this,SLOT(pluginStatus(bool)));
     connect(qApp,SIGNAL(aboutToQuit()),this,SLOT(prepareToQuit()));
     connect(this,SIGNAL(needExecQuery(QString)),plugmgr,SLOT(exeQuery(QString)));
+    connect(plugmgr,SIGNAL(notifActionInvoked(QString)),this,SLOT(notifActAnalyzer(QString)));
 
     createInterface();
 
@@ -92,7 +93,7 @@ void REXWindow::pluginStatus(bool stat)
 
     plugmgr->notify(tr("REXLoader"),tr("<center>Приложение успешно запущено</center>"),5);
     if(ui->actionPoweroff->isChecked() || ui->actionHibernate->isChecked() || ui->actionSuspend->isChecked())
-        plugmgr->notify(tr("Внимание!"),tr("Активирован режим <b>автоматического выключения ПК</b> по завершении всех заданий"),20);
+        plugmgr->notify(tr("Внимание!"),tr("Активирован режим <b>автоматического выключения ПК</b> по завершении всех заданий"),13);
 
     scanTasksOnStart();
 }
@@ -271,6 +272,7 @@ void REXWindow::createInterface()
     connect(ui->actionHibernate,SIGNAL(triggered()),this,SLOT(setPostActionMode()));
     connect(ui->actionSuspend,SIGNAL(triggered()),this,SLOT(setPostActionMode()));
     connect(qApp->clipboard(),SIGNAL(dataChanged()),this,SLOT(scanClipboard()));
+    connect(ui->actionAbout,SIGNAL(triggered()),this,SLOT(showAbout()));
 
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);
@@ -297,11 +299,7 @@ void REXWindow::createInterface()
     ui->mainToolBar->addWidget(taskbtn);
 
     //создаем и настраиваем плавающее окошко
-#ifdef Q_WS_WIN
     fwnd = new FloatingWindow();
-#else
-    fwnd = new FloatingWindow(this);
-#endif
     connect(this,SIGNAL(taskStarted(int)),fwnd,SLOT(startTask(int)));
     connect(this,SIGNAL(taskStopped(int)),fwnd,SLOT(stopTask(int)));
     connect(this,SIGNAL(taskData(int,qint64,qint64)),fwnd,SLOT(taskData(int,qint64,qint64)));
@@ -439,6 +437,11 @@ void REXWindow::openTask()
     }
 }
 
+void REXWindow::openTask(const QString &path)
+{
+    QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+}
+
 void REXWindow::openTaskDir()
 {
     QItemSelectionModel *selected = ui->tableView->selectionModel();
@@ -454,6 +457,14 @@ void REXWindow::openTaskDir()
         if(!flinfo.isDir())path = flinfo.absolutePath();
         QDesktopServices::openUrl(QUrl::fromLocalFile(path));
     }
+}
+
+void REXWindow::openTaskDir(const QString &path)
+{
+    QFileInfo flinfo(path);
+    QString pth = path;
+    if(!flinfo.isDir())pth = flinfo.absolutePath();
+    QDesktopServices::openUrl(QUrl::fromLocalFile(pth));
 }
 
 void REXWindow::setEnabledTaskMenu(bool stat)
@@ -481,6 +492,28 @@ void REXWindow::setEnabledTaskMenu(bool stat)
     ui->actionOpenDir->setEnabled(true);
     ui->actionOpenTask->setEnabled(true);
     ui->actionTaskPropert->setEnabled(true);
+}
+
+QStringList REXWindow::getActionMap(int type, const QString &opt) const
+{
+    QStringList acts;
+    if(type & AB_OPENDIR)
+    {
+        acts << QString("#OpenDir:") + opt;
+        acts << tr("Открыть папку");
+    }
+    if(type & AB_OPENFILE)
+    {
+        acts << QString("#OpenFile:") + opt;
+        acts << tr("Открыть файл");
+    }
+    if(type & AB_RETRY)
+    {
+        acts << QString("#Retry:") + opt;
+        acts << tr("Повторить попытку");
+    }
+
+    return acts;
 }
 
 void REXWindow::setTaskPriority()
@@ -1462,7 +1495,7 @@ void REXWindow::syncTaskData()
         downtimeId = mdl->mapToSource(downtimeId);
         speedAvgId = mdl->mapToSource(speedAvgId);
         int downtime = model->data(downtimeId,100).toInt();
-        qint64 speedAvg = downtime ? (model->data(speedAvgId,100).toLongLong()*downtime + speed)/(downtime+1) : 0;
+        qint64 speedAvg = downtime ? (model->data(speedAvgId,100).toLongLong()*downtime + speed/1024)/(downtime+1) : 0;
         ++downtime;
         delete(mdl);
 
@@ -1565,7 +1598,9 @@ void REXWindow::syncTaskData()
                     QFileInfo flinfo(filepath);
                     logmgr->appendLog(-1,0,LInterface::MT_INFO,tr("Скачивание файла %1 завершено").arg(flinfo.fileName()),QString());
                     logmgr->deleteTaskLogLater(id_row);
-                    plugmgr->notify(tr("Задание завершено"),tr("Скачивание файла <b>%1</b> завершено").arg(flinfo.fileName()));
+
+                    plugmgr->notify(tr("Задание завершено"),tr("Скачивание файла <b>%1</b> завершено").arg(flinfo.fileName()),10,
+                                    getActionMap(AB_OPENDIR | AB_OPENFILE, filepath));
                 }
 
                 if(dlglist.contains(id_row)) dlglist.value(id_row)->close();
@@ -1903,10 +1938,8 @@ REXWindow::~REXWindow()
     plugmgr->quit();
     plugmgr->wait(3000);
 
-#ifdef Q_WS_WIN
     fwnd->close();
     delete fwnd;
-#endif
 
     lockProcess(false);
 }
@@ -2018,7 +2051,8 @@ void REXWindow::acceptQAction(QAbstractButton *btn)
             file.remove(params.value("newname"));
             file.rename(params.value("newname"));
             logmgr->appendLog(-1,0,LInterface::MT_INFO,tr("Скачивание файла %1 завершено").arg(flinfo.fileName()),QString());
-            plugmgr->notify(tr("Задание завершено"),tr("Скачивание файла <b>%1</b> завершено").arg(flinfo.fileName()),10);
+            plugmgr->notify(tr("Задание завершено"),tr("Скачивание файла <b>%1</b> завершено").arg(flinfo.fileName()),10,
+                            getActionMap(AB_OPENDIR | AB_OPENFILE, params.value("newname")));
         }
         else
         {
@@ -2027,7 +2061,8 @@ void REXWindow::acceptQAction(QAbstractButton *btn)
             flinfo.setFile(params.value("newname"));
             logmgr->appendLog(-1,0,LInterface::MT_INFO,tr("Файл %1 сохранен как %2").arg(flinfo.fileName(),oldfl.fileName()),QString());
             logmgr->appendLog(-1,0,LInterface::MT_INFO,tr("Скачивание файла %1 завершено").arg(oldfl.fileName()),QString());
-            plugmgr->notify(tr("Задание завершено"),tr("Файл <b>%1</b> скачан, переименован и сохранен как <b>%2</b>").arg(flinfo.fileName(),oldfl.fileName()),10);
+            plugmgr->notify(tr("Задание завершено"),tr("Файл <b>%1</b> скачан, переименован и сохранен как <b>%2</b>").arg(flinfo.fileName(),oldfl.fileName()),10,
+                            getActionMap(AB_OPENDIR | AB_OPENFILE, params.value("rename")));
         }
 
         QSqlQuery qr;
@@ -2170,6 +2205,7 @@ void REXWindow::readSettings()
     {
         fwnd->disableWindow(false);
         fwnd->show();
+        fwnd->moveToAllDesktops(true);
     }
     else
     {
@@ -2612,6 +2648,29 @@ void REXWindow::shutDownPC()
 
     if(appQuit)
         qApp->quit();
+}
+
+void REXWindow::showAbout()
+{
+    QString text = QString("<h2>REXLoader<br><small>%1<br>by Sarvaritdinov Ravil (aka RA9OAJ)<small></h2>").arg(APP_VERSION) + tr(
+                "Это приложение - свободное программное обеспечение и распространяется по лицензии GNU/GPL-3. "
+                "Разработка идет при участии <a href='http://kubuntu.ru/'>Русского сообщества Kubuntu</a>, "
+                "сайт разработчика - <a href='http://spolab.ru/'>Лаборатория Свободного программного обеспечения (Лаборатория СПО)</a>."
+                "<hr>Уважаемые пользователи! Я приглашаю принять участие всех заинтересовавшихся данной программой в её дальнейшей разработке. "
+                "Для этого вам достаточно связаться со мной по электронной почте <a href='mailto:ra9oaj@gmail.com'>ra9oaj@gmail.com</a>, "
+                "либо зарегистрироваться на сайте <a href='http://spolab.ru/'>Лаборатория СПО</a> и связаться с помощью личного сообщения.<br>"
+                "Выражаю особую благодарность активному пользователю Русского сообщества Kubuntu - <b>Дмитрию Перлову (aka DarkneSS)</b>, ставшему первым Maintainer'ом "
+                "этого ПО в различных дистрибутивах GNU/Linux."
+                );
+    QMessageBox::about(this,tr("О программе"),text);
+}
+
+void REXWindow::notifActAnalyzer(const QString &act)
+{
+    if(!act.indexOf("#OpenDir:"))
+        openTaskDir(act.split("#OpenDir:").value(1));
+    else if(!act.indexOf("#OpenFile"))
+        openTask(act.split("#OpenFile:").value(1));
 }
 
 void REXWindow::prepareToQuit()

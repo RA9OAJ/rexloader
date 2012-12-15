@@ -47,6 +47,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "../plugins/LoaderInterface.h"
 
+#define MAJOR_VERSION 0
+#define MINOR_VERSION 1
+#define DEV_STAGE "alpha"
+#define APP_VERSION QString("%1.%2%3").arg(QString::number(MAJOR_VERSION),QString::number(MINOR_VERSION),DEV_STAGE)
+
 namespace Ui {
     class REXWindow;
 }
@@ -56,6 +61,13 @@ class REXWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    enum ACTIONBUTTON_TYPE
+    {
+        AB_OPENFILE = 0x1,
+        AB_OPENDIR = 0x2,
+        AB_RETRY = 0x4
+    };
+
     explicit REXWindow(QWidget *parent = 0);
     virtual ~REXWindow();
 
@@ -103,7 +115,9 @@ protected slots:
     void setProxy(int id_task, int id_proto, bool global = true); //настраивает задание на скачивание через прокси
     void showTableContextMenu(const QPoint &pos); //отображает контекстное меню в таблице
     void openTask(); //отображает окно свойств задачи, если оно не закачано, или же пытается открыть файл стандартными программами
+    void openTask(const QString &path); //отображает окно свойств задачи, если оно не закачано, или же пытается открыть файл стандартными программами
     void openTaskDir(); //открывает в файловом менеджере папку куда сохраняется/сохранен целевой файл
+    void openTaskDir(const QString &path); //открывает в файловом менеджере папку куда сохраняется/сохранен целевой файл
     void setTaskPriority(); //устанавливает выбранный приоритет всем выделенным задачам
     void setTaskPriority(int id, int prior); //устанавливает выбранный приоритет указанному заданию по id в таблице заданий
     void setTaskFilter(const QModelIndex &index); //устанавливает фильтр на выводимые в таблице задачи в зависимости от выделенной категории
@@ -122,6 +136,8 @@ protected slots:
     void closeTaskDialog(); //удаляет закрытый диалог состояния задания
     void setPostActionMode(); //определяет режим отключения ПК при завершении всех закачек
     void shutDownPC(); //завершает работу ПК в установленном режиме
+    void showAbout(); //отображает диалоговое окно с данными о версии программы
+    void notifActAnalyzer(const QString &act); //анализирует нажатие кнопки уведомления
 
 signals:
     void transAct();
@@ -135,6 +151,7 @@ private:
     void lockProcess(bool flag=true); //позволяет создать/удалить файл блокировки процесса
     void createInterface(); //настраивает элемкнты графического интерфейса
     void setEnabledTaskMenu(bool stat=false); //активирует/деактивирует меню для выделенных задач
+    QStringList getActionMap(int type, const QString &opt) const;
 
     Ui::REXWindow *ui;
     QSystemTrayIcon *trayicon; //объект системного лотка

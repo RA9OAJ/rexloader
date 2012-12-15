@@ -90,7 +90,8 @@ public slots:
     void stopDownload(int id_tsk);
     void exeQuery(const QString &query);
     void appendLog(int id_task, int id_sect, int ms_type, const QString &title, const QString &more);
-    void notify(const QString &title, const QString &msg, int timeout = 10, const QStringList &actions = QStringList(), int type = NotifInterface::INFO, QImage* img=0);
+    void notify(const QString &title, const QString &msg, int timeout = 10, const QStringList &acts = QStringList(), int type = NotifInterface::INFO, QImage* img=0);
+    void notifActRecv(unsigned int, const QString &act);
 
 protected:
     void run();

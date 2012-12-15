@@ -62,10 +62,13 @@ signals:
 
 protected slots:
     void sendActData(unsigned int id, const QString &act);
+    void closeNotify(unsigned int id);
+    void notifIsClosed(unsigned int id);
 
 private:
     static QDBusInterface dbusNotification;
     QMap<int, iiibiiay> images;
+    QList<unsigned int> nlist;
 };
 
 #endif // NIXNOTIFYPLUGIN_H

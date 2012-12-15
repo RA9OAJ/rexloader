@@ -82,6 +82,7 @@ void PluginManager::run()
                 if(!notifplugin.first)
                 {
                     notifplugin.first = nldr;
+                    connect(nldr,SIGNAL(notifyActionData(uint,QString)),this,SLOT(notifActRecv(uint,QString)));
                     notifplugin.second = notifplugins.size();
                 }
                 else plug.unload();
@@ -155,7 +156,7 @@ void PluginManager::appendLog(int id_task, int id_sect, int ms_type, const QStri
     else emit messageAvailable(id_task,id_sect,ms_type,title,more);
 }
 
-void PluginManager::notify(const QString &title, const QString &msg, int timeout, const QStringList &actions, int type, QImage *img)
+void PluginManager::notify(const QString &title, const QString &msg, int timeout, const QStringList &acts, int type, QImage *img)
 {
     if(!notifplugin.first)
         return;
@@ -167,7 +168,12 @@ void PluginManager::notify(const QString &title, const QString &msg, int timeout
         *image = image->scaledToWidth(64,Qt::SmoothTransformation).rgbSwapped();
     }
 
-    notifplugin.first->notify(qApp->applicationName(),title,msg,timeout,type,actions,image);
+    notifplugin.first->notify(qApp->applicationName(),title,msg,timeout,type,acts,image);
+}
+
+void PluginManager::notifActRecv(unsigned int, const QString &act)
+{
+    emit notifActionInvoked(act);
 }
 
 void PluginManager::setDatabaseFile(const QString &dbfile)
@@ -269,6 +275,7 @@ void PluginManager::restorePluginsState(const QByteArray &stat)
             for(int i = 1; i < notifplugins.size(); ++i)
                 if(notifplugins.value(i).last() == QString("Filepath: ")+filepath && notifplugin.second != i)
                 {
+                    disconnect(notifplugin.first,SIGNAL(notifyActionData(uint,QString)),this,SLOT(notifActRecv(uint,QString)));
                     QPluginLoader ldr(notifplugins.value(i).last());
                     if(ldr.isLoaded())
                         ldr.unload();
@@ -279,6 +286,7 @@ void PluginManager::restorePluginsState(const QByteArray &stat)
                     if(!notifplugin.first)
                         break;
 
+                    connect(notifplugin.first,SIGNAL(notifyActionData(uint,QString)),this,SLOT(notifActRecv(uint,QString)));
                     notifplugin.second = i;
                     break;
                 }

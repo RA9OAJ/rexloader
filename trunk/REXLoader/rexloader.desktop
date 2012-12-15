@@ -1,8 +1,4 @@
 [Desktop Entry]
-Categories=Qt;Network;FileTransfer;
-Type=Application
-Exec=rexloader
-Icon=rexloader
 Name=REXLoader
 Name[x-test]=xxREXLoaderxx
 GenericName=Download Manager
@@ -80,4 +76,7 @@ GenericName[x-test]=xxDownload Managerxx
 GenericName[zh_CN]=下载管理器
 GenericName[zh_HK]=下載管理員
 GenericName[zh_TW]=下載管理員
-
+Exec=rexloader
+Icon=rexloader
+Categories=Network;Qt;FileTransfer;
+Type=Application
