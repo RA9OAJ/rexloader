@@ -997,7 +997,8 @@ void REXWindow::showAddTaskDialog()
 
 void REXWindow::showHideSlot(QSystemTrayIcon::ActivationReason type)
 {
-    if(type == QSystemTrayIcon::DoubleClick) showHideSlot();
+    if(type == QSystemTrayIcon::DoubleClick && settDlg->value("tray_doubleclick").toBool()) showHideSlot();
+    else if(type == QSystemTrayIcon::Trigger && !settDlg->value("tray_doubleclick").toBool()) showHideSlot();
 }
 
 void REXWindow::showHideSlot()

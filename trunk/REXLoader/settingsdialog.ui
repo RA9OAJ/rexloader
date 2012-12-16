@@ -159,6 +159,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="doubleClickBox">
+            <property name="text">
+             <string>Вызывать основное окно из трея двойным кликом</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QCheckBox" name="animateTrayBox">
             <property name="text">
              <string>Анимировать значёк в трее (повышает нагрузку)</string>
