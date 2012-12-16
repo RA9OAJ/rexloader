@@ -189,6 +189,7 @@ void SettingsDialog::applySets()
     sets.insert("notshow_adding",ui->notShowAddingDialog->isChecked());
     sets.insert("user_agent",ui->userAgent->text());
     sets.insert("noadd_unsupported",ui->notAddTaskUnsupported->isChecked());
+    sets.insert("tray_doubleclick",ui->doubleClickBox->isChecked());
 
     sets.insert("s_hight",(qint64)ui->spinHight->value());
     sets.insert("s_normal",(qint64)ui->spinNormal->value());
@@ -279,6 +280,7 @@ void SettingsDialog::cancelSets()
     ui->scanClipboard->setChecked(sets.value("scan_clipboard").toBool());
     ui->notShowAddingDialog->setChecked(sets.value("notshow_adding").toBool());
     ui->userAgent->setText(sets.value("user_agent").toString());
+    ui->doubleClickBox->setChecked(sets.value("tray_doubleclick",false).toBool());
 
     ui->spinHight->setValue(sets.value("s_hight").toLongLong());
     ui->spinNormal->setValue(sets.value("s_normal").toLongLong());
