@@ -296,6 +296,10 @@ Font-size: 13px;
    </property>
   </action>
   <action name="actionSchedule">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/appimages/schedule.png</normaloff>:/appimages/schedule.png</iconset>
+   </property>
    <property name="text">
     <string>Расписание</string>
    </property>
@@ -304,11 +308,19 @@ Font-size: 13px;
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/appimages/shutdown.png</normaloff>:/appimages/shutdown.png</iconset>
+   </property>
    <property name="text">
     <string>Выключить компьютер</string>
    </property>
   </action>
   <action name="actionpluginsShow">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/appimages/plugins.png</normaloff>:/appimages/plugins.png</iconset>
+   </property>
    <property name="text">
     <string>Плагины</string>
    </property>
@@ -350,6 +362,10 @@ Font-size: 13px;
    </property>
   </action>
   <action name="actionDelURLFiles">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/appimages/delete_all._48x48png</normaloff>:/appimages/delete_all._48x48png</iconset>
+   </property>
    <property name="text">
     <string>Удалить URL и файл</string>
    </property>
@@ -390,6 +406,10 @@ Font-size: 13px;
    </property>
   </action>
   <action name="actionOpenDir">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/appimages/open_folder.png</normaloff>:/appimages/open_folder.png</iconset>
+   </property>
    <property name="text">
     <string>Открыть папку</string>
    </property>
@@ -398,6 +418,10 @@ Font-size: 13px;
    </property>
   </action>
   <action name="actionOpenTask">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/appimages/open_task.png</normaloff>:/appimages/open_task.png</iconset>
+   </property>
    <property name="text">
     <string>Открыть/Запустить</string>
    </property>
@@ -466,11 +490,19 @@ Font-size: 13px;
    </property>
   </action>
   <action name="actionRedownload">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/appimages/redownload.png</normaloff>:/appimages/redownload.png</iconset>
+   </property>
    <property name="text">
     <string>Перезакачать</string>
    </property>
   </action>
   <action name="actionImportURL">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/appimages/import.png</normaloff>:/appimages/import.png</iconset>
+   </property>
    <property name="text">
     <string>Импорт URL</string>
    </property>
@@ -534,6 +566,10 @@ Font-size: 13px;
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/appimages/hibernate.png</normaloff>:/appimages/hibernate.png</iconset>
+   </property>
    <property name="text">
     <string>Гибернация</string>
    </property>
@@ -541,6 +577,10 @@ Font-size: 13px;
   <action name="actionSuspend">
    <property name="checkable">
     <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/appimages/suspend.png</normaloff>:/appimages/suspend.png</iconset>
    </property>
    <property name="text">
     <string>Ждущий режим</string>

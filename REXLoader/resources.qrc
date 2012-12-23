@@ -2,19 +2,11 @@
     <qresource prefix="/appimages">
         <file alias="trayicon.png">images/RExLoader_64x64.png</file>
         <file alias="start_24x24.png">images/start_24x24.png</file>
-        <file alias="start_32x32.png">images/start_32x32.png</file>
         <file alias="start_48x48.png">images/start_48x48.png</file>
-        <file alias="finish_48x48.png">images/finish_48x48.png</file>
         <file alias="pause_24x24.png">images/pause_24x24.png</file>
-        <file alias="pause_32x32.png">images/pause_32x32.png</file>
         <file alias="pause_48x48.png">images/pause_48x48.png</file>
-        <file alias="finish_32x32.png">images/finish_32x32.png</file>
         <file alias="finish_24x24.png">images/finish_24x24.png</file>
         <file alias="error_24x24.png">images/error_24x24.png</file>
-        <file alias="error_32x32.png">images/error_32x32.png</file>
-        <file alias="error_48x48.png">images/error_48x48.png</file>
-        <file alias="queue_48x48.png">images/queue_48x48.png</file>
-        <file alias="queue_32x32.png">images/queue_32x32.png</file>
         <file alias="queue_24x24.png">images/queue_24x24.png</file>
         <file alias="start_16x16.png">images/start_16x16.png</file>
         <file alias="pause_16x16.png">images/pause_16x16.png</file>
@@ -40,5 +32,19 @@
         <file alias="log_warning.png">images/log_warning.png</file>
         <file alias="log_info.png">images/log_info.png</file>
         <file alias="settings.png">images/settings.png</file>
+        <file alias="shutdown.png">images/system-shutdown.png</file>
+        <file alias="hibernate.png">images/system-suspend-hibernate.png</file>
+        <file alias="suspend.png">images/system-suspend.png</file>
+        <file alias="plugins.png">images/plugins.png</file>
+        <file alias="network.png">images/network.png</file>
+        <file alias="downloads.png">images/download.png</file>
+        <file alias="gui.png">images/gui.png</file>
+        <file alias="delete_all._48x48png">images/delete_all_48x48.png</file>
+        <file alias="redownload.png">images/redownload.png</file>
+        <file alias="open_folder.png">images/open_folder.png</file>
+        <file alias="exit.png">images/exit.png</file>
+        <file alias="import.png">images/import.png</file>
+        <file alias="schedule.png">images/schedule.png</file>
+        <file alias="open_task.png">images/open_task.png</file>
     </qresource>
 </RCC>

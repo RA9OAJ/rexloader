@@ -125,8 +125,8 @@ void REXWindow::createInterface()
     ui->tableView->hideColumn(14);
     ui->tableView->hideColumn(15);
     ui->tableView->horizontalHeader()->moveSection(2,3);
-    ui->tableView->horizontalHeader()->moveSection(14,11);
-    ui->tableView->horizontalHeader()->moveSection(15,12);
+    ui->tableView->horizontalHeader()->moveSection(16,11);
+    ui->tableView->horizontalHeader()->moveSection(17,12);
     ui->tableView->scrollToBottom();
 
     //настраиваем информационную модель
@@ -332,6 +332,7 @@ void REXWindow::createInterface()
     trayact = new QAction(this);
     trayact->setObjectName("exitAct");
     trayact->setText(tr("Выход"));
+    trayact->setIcon(QIcon(":/appimages/exit.png"));
     connect(trayact,SIGNAL(triggered()),this,SLOT(close()));
     traymenu->addAction(trayact);
     ui->menu_4->addSeparator();
