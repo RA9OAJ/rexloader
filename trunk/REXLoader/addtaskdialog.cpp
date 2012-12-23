@@ -129,7 +129,7 @@ void AddTaskDialog::urlValidator()
     QUrl url(gui->urlBox->currentText());
     QString errorStr;
 
-    if(!url.isValid())errorStr = tr("URL не корректен. Введите другой URL или справьте этот.");
+    if(!url.isValid())errorStr = tr("URL не корректен. Введите другой URL или исправьте этот.");
     else if(!protocols.contains(url.scheme().toLower()))errorStr = tr("Этот протокол не поддерживается. Проверьте наличие соответствующего плагина и его состояние.");
 
     if(errorStr.isEmpty())
