@@ -1,0 +1,31 @@
+#ifndef LINKEXTRACTOR_H
+#define LINKEXTRACTOR_H
+
+#include <QObject>
+
+
+class ResourceLink{
+public:
+    enum LinkType {A, ARBITRARY, IMG, CSS, JAVASCRIPT};
+    LinkType type;
+    QString name;
+    QString url;
+};
+
+
+class LinkExtractor : public QObject
+{
+    Q_OBJECT
+public:
+    explicit LinkExtractor(QObject *parent = 0);
+    void setText(const QString &text);
+    QList<ResourceLink> extract();
+private:
+    QString m_text;
+    QList<ResourceLink> m_link_list;
+    // добавляем в список ссылок найденую ссылку A
+    void addALink(const QString &name, const QString &url);
+    void addArbitraryLink(const QString &url);
+};
+
+#endif // LINKEXTRACTOR_H
