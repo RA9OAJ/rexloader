@@ -40,7 +40,8 @@ SOURCES += main.cpp\
     importmaster.cpp \
     floating_window/floatingwindow.cpp \
     floating_window/progressbar.cpp \
-    floating_window/graphwidget.cpp
+    floating_window/graphwidget.cpp \
+    linkextractor.cpp
 
 HEADERS  += rexwindow.h \
     titemmodel.h \
@@ -65,7 +66,8 @@ HEADERS  += rexwindow.h \
     importmaster.h \
     floating_window/floatingwindow.h \
     floating_window/progressbar.h \
-    floating_window/graphwidget.h
+    floating_window/graphwidget.h \
+    linkextractor.h
 
 FORMS    += rexwindow.ui \
     addtaskdialog.ui \
