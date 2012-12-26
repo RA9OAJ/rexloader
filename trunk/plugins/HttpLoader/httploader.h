@@ -41,8 +41,7 @@ public:
         referer.clear();
         size = 0;
         sections_cnt = 0;
-        for(int i=0; i<14; i++)
-            map[i]=0;
+        clearMap();
         accept_ranges=false;
         status = LInterface::ON_PAUSE;
         errors_cnt = 0;
@@ -54,6 +53,12 @@ public:
         proxy_auth.clear();
         proxy.clear();
         proxy_type = LInterface::PROXY_NOPROXY;
+    }
+
+    void clearMap()
+    {
+        for(int i=0; i<14; i++)
+            map[i]=0;
     }
 
     ~Task()

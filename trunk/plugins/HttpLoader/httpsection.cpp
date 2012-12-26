@@ -322,7 +322,7 @@ void HttpSection::dataAnalising()
 
         //--Определяем имя файла---
         QFileInfo flinfo(flname);
-        if(flinfo.isDir() || (!flinfo.exists() && header.contains("content-disposition")))
+        if(flinfo.isDir() || (!flinfo.exists() && (header.contains("content-disposition"))))
         {
             if(flname[flname.size()-1]!='/' && flinfo.isDir())flname += "/";
             if(flname[flname.size()-1]!='/' && header.contains("content-disposition")) flname = flinfo.absolutePath() + "/";
@@ -344,7 +344,22 @@ void HttpSection::dataAnalising()
         case 200:
             if(start_s || finish_s)
             {
-                _errno = FILE_NOT_AVAILABLE;
+                // Исправлени по ISS#15
+                if(totalsize && totalsize == header["content-length"].toLongLong())
+                {
+                    if(header.contains("last-modified"))
+                    {
+                        QLocale locale(QLocale::C);
+                        QDateTime dtime = locale.toDateTime(header["last-modified"], "ddd, dd MMM yyyy hh:mm:ss 'GMT'");
+
+                        if(!dtime.isNull() && dtime == lastmodified)
+                            _errno = RANGES_NOT_ACCEPTED;
+                    }
+                    else _errno = RANGES_NOT_ACCEPTED;
+                }
+
+                //---------------------
+                else _errno = FILE_NOT_AVAILABLE;
                 emit errorSignal(_errno);
 
                 stopDownloading();
@@ -383,7 +398,7 @@ void HttpSection::dataAnalising()
             totalsize = header["content-range"].split("/").value(1).toLongLong();
             emit totalSize(totalsize);
             emit fileType(header["content-type"]);
-            if(header.contains("accept-ranges") || header.contains("content-range")) emit acceptRanges();
+            if(header.contains("accept-ranges") || header.contains("content-range")) emit rangeAccepted();
 
             if(lastmodified.isNull() && header.contains("last-modified"))
             {

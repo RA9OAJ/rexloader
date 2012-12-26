@@ -223,7 +223,8 @@ bool HttpLoader::acceptRanges(int id_task) const
 {
     if(!task_list->contains(id_task))return false;
     if(!task_list->value(id_task))return false;
-    return task_list->value(id_task)->accept_ranges;
+    //Доработка ISS#15
+    return (task_list->value(id_task)->accept_ranges);
 }
 
 int HttpLoader::errorNo(int id_task) const
@@ -411,6 +412,12 @@ void HttpLoader::redirectToUrl(const QString &_url)
 
     Task *tsk = getTaskSender(sender());
     tsk->mirrors.insert(-1, QUrl::fromEncoded(_url.toAscii()));
+    // Исправление ошибки с именем файла при редиректе
+    QFileInfo flinfo(tsk->filepath);
+    if(!flinfo.isDir() && flinfo.absoluteDir().exists())
+        sect->setFileName(flinfo.absoluteDir().absolutePath());
+    //------------------------------
+
     sect->setUrlToDownload(_url);
     sect->startDownloading();
 }
@@ -565,6 +572,8 @@ void HttpLoader::addSection()
     Task* tsk = task_list->value(id_task);
     if(!tsk) return;
 
+    if(!tsk->accept_ranges)
+        tsk->accept_ranges = true;
     addSection(id_task);
 }
 
@@ -691,6 +700,15 @@ void HttpLoader::sectError(int _errno)
     case HttpSection::DATE_ERROR: tsk->error_number = LInterface::FILE_DATETIME_ERROR; break;
     case HttpSection::WRITE_ERROR: tsk->error_number = LInterface::FILE_WRITE_ERROR; break;
     case HttpSection::FILE_NOT_AVAILABLE: tsk->error_number = HttpSection::FILE_NOT_AVAILABLE; break;
+    case HttpSection::RANGES_NOT_ACCEPTED:
+        {
+            stopDownload(id_task);
+            tsk->accept_ranges = false;
+            tsk->clearMap();
+            tsk->_maxSections = 1;
+            startDownload(id_task);
+            return;
+        }
     case QAbstractSocket::HostNotFoundError: tsk->error_number = LInterface::HOST_NOT_FOUND; break;
     case QAbstractSocket::NetworkError: tsk->error_number = LInterface::CONNECT_LOST; break;
     case QAbstractSocket::ProxyNotFoundError: tsk->error_number = LInterface::PROXY_NOT_FOUND; break;
@@ -952,7 +970,12 @@ void HttpLoader::acceptRang()
     if(!id_task)return;
 
     //---Тут анализ и разбивка общего объема на секции---
-    if(!sect->totalFileSize() || tsk->map[2] != 0){tsk->status=LInterface::ON_LOAD; addSection(id_task); return;}
+    if(!sect->totalFileSize() || tsk->map[2] != 0)
+    {
+        tsk->status=LInterface::ON_LOAD;
+        addSection(id_task);
+        return;
+    }
 
     disconnect(sect,SIGNAL(acceptRanges()),this,SLOT(addInAQueue()));
     if(100*tsk->totalLoad()/tsk->size >= 50 && (tsk->map[2]+tsk->map[4]+tsk->map[6]+tsk->map[8]+tsk->map[10]==0))
@@ -980,7 +1003,7 @@ void HttpLoader::acceptRang()
     sect->setUrlToDownload(QString(_url.toEncoded()));
     sect->setSection(tsk->map[0], tsk->map[2]-1);
     sect->setOffset(tsk->map[1]);
-    connect(sect, SIGNAL(acceptQuery()),this,SLOT(acceptQuery()));
+    connect(sect, SIGNAL(rangeAccepted()),this,SLOT(acceptQuery()));
     mathSpeed();
     sect->startDownloading();
 }
@@ -1081,7 +1104,7 @@ void HttpLoader::addInAQueue()
 
     Task* tsk = getTaskSender(sender());
     if(!tsk)return;
-    tsk->accept_ranges = true;
+    //tsk->accept_ranges = true;
     HttpSection* sect = qobject_cast<HttpSection*>(sender());
     if(!sect)return;
     int sect_id = tsk->sections.key(sect);
