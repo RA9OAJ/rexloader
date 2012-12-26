@@ -342,47 +342,22 @@ void HttpSection::dataAnalising()
         switch(reqid)
         {
         case 200:
-            if(start_s || finish_s)
-            {
-                // Исправлени по ISS#15
-                if(totalsize && totalsize == header["content-length"].toLongLong())
-                {
-                    if(header.contains("last-modified"))
-                    {
-                        QLocale locale(QLocale::C);
-                        QDateTime dtime = locale.toDateTime(header["last-modified"], "ddd, dd MMM yyyy hh:mm:ss 'GMT'");
-
-                        if(!dtime.isNull() && dtime == lastmodified)
-                            _errno = RANGES_NOT_ACCEPTED;
-                    }
-                    else _errno = RANGES_NOT_ACCEPTED;
-                }
-
-                //---------------------
-                else _errno = FILE_NOT_AVAILABLE;
-                emit errorSignal(_errno);
-
-                stopDownloading();
-                return;
-            }
-
-            emit acceptQuery();
-
             totalsize = header["content-length"].toLongLong();
             emit totalSize(totalsize);
             emit fileType(header["content-type"]);
-            if(header.contains("accept-ranges") && !header.contains("transfer-encoding"))
-            {
-                emit acceptRanges();
-                emit sectionMessage(LInterface::MT_INFO,tr("Докачка поддерживается"),QString());
-            }
-            else emit sectionMessage(LInterface::MT_WARNING,tr("Докачка не поддерживается"),QString());
 
             if(lastmodified.isNull() && header.contains("last-modified"))
             {
                 QLocale locale(QLocale::C);
                 lastmodified = locale.toDateTime(header["last-modified"], "ddd, dd MMM yyyy hh:mm:ss 'GMT'");
             }
+
+            if(start_s || finish_s)
+            {
+                emit sectionMessage(LInterface::MT_WARNING,tr("Докачка не поддерживается"),QString());
+                emit rangeNotAccepted();
+            }
+            else emit acceptQuery();
             break;
         case 206:
             emit acceptQuery();
@@ -398,7 +373,11 @@ void HttpSection::dataAnalising()
             totalsize = header["content-range"].split("/").value(1).toLongLong();
             emit totalSize(totalsize);
             emit fileType(header["content-type"]);
-            if(header.contains("accept-ranges") || header.contains("content-range")) emit rangeAccepted();
+            if(header.contains("accept-ranges") || header.contains("content-range"))
+            {
+                emit acceptRanges();
+                emit sectionMessage(LInterface::MT_INFO,tr("Докачка поддерживается"),QString());
+            }
 
             if(lastmodified.isNull() && header.contains("last-modified"))
             {

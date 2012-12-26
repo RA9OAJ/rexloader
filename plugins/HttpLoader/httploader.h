@@ -166,10 +166,11 @@ protected slots:
     void mismatchOfDates(const QDateTime &_last, const QDateTime &_cur); //уточняет различие в датах модификации
     void sectionCompleted(); //анализирует результат работы секции и удаляет завершенную секцию
     void syncFileMap(Task* _task); //записывает данные о задании в файл
-    void acceptQuery();
-    void acceptRang();
+    void acceptQuery(); //инициализирует добавление новой секции
+    void acceptRang(); //делит задачу на секции
     void addInAQueue(); //распознает задачу-источник и ставит в очередь на анализ прогресса закачки
     void addRetSection();
+    void makeSingleSection(); //запускает полное скачивание файла в 1 поток для вызвавшей секции
     void addMessage(int ms_type,const QString &message, const QString &more); //слот для приема сообщений о событиях от секций заданий
 
     Task* getTaskSender(QObject* _sender) const;
