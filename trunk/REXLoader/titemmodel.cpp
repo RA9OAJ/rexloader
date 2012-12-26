@@ -82,12 +82,14 @@ bool TItemModel::silentUpdateModel(const QSqlDatabase &db)
 
 int TItemModel::rowCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent)
     if(!qr)return 0;
     return grow;
 }
 
 int TItemModel::columnCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent)
     if(!qr)return 0;
     return gcolumn+2;
 }
@@ -390,11 +392,13 @@ QVariant TItemModel::headerData(int section, Qt::Orientation orientation, int ro
 
 QModelIndex TItemModel::parent(const QModelIndex &child) const
 {
+    Q_UNUSED(child)
     return QModelIndex();
 }
 
 QModelIndex TItemModel::index(int row, int column, const QModelIndex &parent) const
 {
+    Q_UNUSED(parent)
     if(row > grow || column > gcolumn+1 || !qr) return QModelIndex();
     qr->seek(row);
 

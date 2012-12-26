@@ -34,11 +34,13 @@ ColorButton::~ColorButton()
 
 void ColorButton::setText(const QString &text)
 {
+    Q_UNUSED(text)
     return;
 }
 
 void ColorButton::setMenu(QMenu *menu)
 {
+    Q_UNUSED(menu)
     return;
 }
 

@@ -124,14 +124,18 @@ void LogManager::setMaxStringCount(int max)
 
 void LogManager::saveLogToFile(const QString &filename, int table_id)
 {
+    Q_UNUSED(filename)
+    Q_UNUSED(table_id)
 }
 
 void LogManager::loadLogFromFile(const QString &file)
 {
+    Q_UNUSED(file)
 }
 
 void LogManager::clearLog(int table_id)
 {
+    Q_UNUSED(table_id)
 }
 
 void LogManager::manageTabs(int table_id)

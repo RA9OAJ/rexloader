@@ -249,6 +249,7 @@ bool LogTreeModel::insertRows(int row, int count, const QModelIndex &parent)
 
 bool LogTreeModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
+    Q_UNUSED(role)
     if(!hasIndex(index.row(),index.column(),index.parent())) return false;
 
     if(index.parent() == QModelIndex())
