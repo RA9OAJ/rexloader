@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 HttpLoader::HttpLoader(QObject *parent)
 {
+    Q_UNUSED(parent)
     task_list = new QHash<int, Task*>;
     sections = new QHash<HttpSection*, int>;
     squeue = new QList<int>;
@@ -1069,7 +1070,8 @@ QString HttpLoader::errorString(int _err) const
 
 QString HttpLoader::statusString(int _stat) const
 {
-    _stat = 0;
+    //_stat = 0;
+    Q_UNUSED(_stat)
     return "";
 }
 

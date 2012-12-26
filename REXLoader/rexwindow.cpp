@@ -374,6 +374,7 @@ void REXWindow::createInterface()
 
 void REXWindow::showTableContextMenu(const QPoint &pos)
 {
+    Q_UNUSED(pos)
     QItemSelectionModel *selected = ui->tableView->selectionModel();
     if(!selected->selectedRows().size())
     {
@@ -611,7 +612,9 @@ void REXWindow::setTaskPriority(int id, int prior)
 
 void REXWindow::showNotice(const QString &title, const QString &text, int type)
 {
-
+    Q_UNUSED(title)
+    Q_UNUSED(text)
+    Q_UNUSED(type)
 }
 
 void REXWindow::saveSettings()
@@ -2684,6 +2687,7 @@ void REXWindow::prepareToQuit()
 
 void REXWindow::setProxy(int id_task, int id_proto, bool global)
 {
+    Q_UNUSED(global)
     if(settDlg->value("proxy_enable").toBool())
     {
         QUrl addr;

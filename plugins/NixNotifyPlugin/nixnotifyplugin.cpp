@@ -48,6 +48,7 @@ QStringList NixNotifyPlugin::pluginInfo() const
 
 void NixNotifyPlugin::notify(const QString &app, const QString &title, const QString &msg, int timeout, int type, const QStringList &actions, QImage *image)
 {
+    Q_UNUSED(type)
     QVariantList args;
     args << app;
     args << QVariant(QVariant::UInt);
@@ -83,6 +84,7 @@ void NixNotifyPlugin::setImage(int type, QImage *img)
 
 void NixNotifyPlugin::resetImage(int type)
 {
+    Q_UNUSED(type)
     return;
 }
 

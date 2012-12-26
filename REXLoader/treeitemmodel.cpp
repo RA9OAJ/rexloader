@@ -291,7 +291,8 @@ bool TreeItemModel::silentUpdate(const QSqlDatabase &db)
 
 void TreeItemModel::updateRow(int row, const QModelIndex &parent)
 {
-
+    Q_UNUSED(row)
+    Q_UNUSED(parent)
 }
 
 void TreeItemModel::updateRow(const QModelIndex &index)
@@ -441,6 +442,7 @@ Qt::DropActions TreeItemModel::supportedDropActions() const
 
 bool TreeItemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
 {
+    Q_UNUSED(row)
     if(action == Qt::IgnoreAction)
         return false;
 

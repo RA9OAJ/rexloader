@@ -28,11 +28,17 @@ PluginListModel::PluginListModel(QObject *parent) :
 
 bool PluginListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
 {
+    Q_UNUSED(data)
+    Q_UNUSED(action)
+    Q_UNUSED(row)
+    Q_UNUSED(column)
+    Q_UNUSED(parent)
     return false;
 }
 
 QModelIndex PluginListModel::index(int row, int column, const QModelIndex &parent) const
 {
+    Q_UNUSED(parent)
     QModelIndex idx = createIndex(row,column,row);
     return idx;
 }
@@ -86,17 +92,20 @@ QVariant PluginListModel::data(const QModelIndex &index, int role) const
 
 int PluginListModel::rowCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent)
     int sz = (plugproto ? plugproto->size(): 0);
     return sz;
 }
 
 int PluginListModel::columnCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent)
     return 1;
 }
 
 bool PluginListModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
+    Q_UNUSED(role)
     plugproto->insert(index.data(ProtocolName).toString().toLower(),value.toInt());
     return true;
 }
