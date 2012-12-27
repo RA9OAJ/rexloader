@@ -2,7 +2,7 @@
 #define LINKEXTRACTOR_H
 
 #include <QObject>
-
+#include <QWebView>
 
 class ResourceLink{
 public:
@@ -18,11 +18,13 @@ class LinkExtractor : public QObject
     Q_OBJECT
 public:
     explicit LinkExtractor(QObject *parent = 0);
+    ~LinkExtractor();
     void setText(const QString &text);
     QList<ResourceLink> extract();
 private:
     QString m_text;
     QList<ResourceLink> m_link_list;
+    QWebView *mp_web_view;
     // добавляем в список ссылок найденую ссылку A
     void addALink(const QString &name, const QString &url);
     void addArbitraryLink(const QString &url);
