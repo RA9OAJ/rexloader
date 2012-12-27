@@ -38,9 +38,10 @@ ImportMaster::~ImportMaster()
 
 void ImportMaster::addProtocol(const QString &proto)
 {
-    if(protocols.isEmpty())
-        protocols = proto;
-    else protocols += QString("|%1").arg(proto);
+//    if(protocols.isEmpty())
+//        protocols = proto;
+//    else protocols += QString("|%1").arg(proto);
+    protocols << proto;
 }
 
 void ImportMaster::stopImport()
@@ -79,9 +80,12 @@ void ImportMaster::run()
         ResourceLink link;
         foreach(link, link_list)
         {
-            emit foundString(link.url);
+            // проверяем наличие протокола из ссылки
+            // среди доступных для скачивания
+            QStringList list = link.url.split(":");
+            if (protocols.indexOf(list[0]) != -1)
+                emit foundString(link.url);
         }
-
 
 
 //        while(!fl.atEnd())

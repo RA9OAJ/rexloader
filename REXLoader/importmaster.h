@@ -50,7 +50,8 @@ private:
     bool stopflag;
     QStringList filelist;
     qint64 totalstr;
-    QString protocols;
+    //QString protocols;
+    QStringList protocols;
 };
 
 #endif // IMPORTMASTER_H

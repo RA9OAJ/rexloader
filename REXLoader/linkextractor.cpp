@@ -19,7 +19,8 @@ LinkExtractor::~LinkExtractor()
 
 void LinkExtractor::setText(const QString &text)
 {
-    m_text = text;
+    //m_text = text;
+    mp_web_view->setHtml(text);
     m_link_list.clear();
 }
 
@@ -53,7 +54,7 @@ QList<ResourceLink> LinkExtractor::extract()
 //    }
 
 
-    mp_web_view->setHtml(m_text);
+    //mp_web_view->setHtml(m_text);
     QWebElementCollection elements = mp_web_view->page()->mainFrame()->findAllElements("a");
     foreach (QWebElement e, elements) {
         addALink(e.attribute(QString::fromUtf8("href")),e.attribute(QString::fromUtf8("href")));
