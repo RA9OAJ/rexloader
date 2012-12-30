@@ -23,7 +23,6 @@ public:
     void setText(const QString &text);
     QList<ResourceLink> extract();
 private:
-    //QString m_text;
     QList<ResourceLink> m_link_list;
     QWebView *mp_web_view;
     // добавляем в список ссылок найденую ссылку A
