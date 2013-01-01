@@ -44,6 +44,11 @@ void EMessageBox::setDefaultTimeout(int sec)
 {
     if(sec < 0)return;
     timeout = sec;
+    if(!sec)
+    {
+        timer->stop();
+        return;
+    }
     timer->start(1000);
 
     if(defBtn) defBtn->setText(btntext + QString(" (%1)").arg(QString::number(timeout)));
@@ -53,9 +58,12 @@ void EMessageBox::setDefaultButton(QPushButton *button)
 {
     defBtn = button;
     if(!defBtn)return;
-    btntext = defBtn->text();
-    defBtn->setText(btntext + QString(" (%1)").arg(QString::number(timeout)));
-    QMessageBox::setWindowTitle(wtitle + QString(" (%1)").arg(QString::number(timeout)));
+    if(timeout)
+    {
+        btntext = defBtn->text();
+        defBtn->setText(btntext + QString(" (%1)").arg(QString::number(timeout)));
+        QMessageBox::setWindowTitle(wtitle + QString(" (%1)").arg(QString::number(timeout)));
+    }
 
     QMessageBox::setDefaultButton(button);
 }
@@ -64,16 +72,19 @@ void EMessageBox::setDefaultButton(StandardButton button)
 {
     QMessageBox::setDefaultButton(button);
 
-    defBtn = defaultButton();
-    if(!defBtn)return;
-    btntext = defBtn->text();
-    defBtn->setText(btntext + QString(" (%1)").arg(QString::number(timeout)));
-    QMessageBox::setWindowTitle(wtitle + QString(" (%1)").arg(QString::number(timeout)));
+    if(timeout)
+    {
+        defBtn = defaultButton();
+        if(!defBtn)return;
+        btntext = defBtn->text();
+        defBtn->setText(btntext + QString(" (%1)").arg(QString::number(timeout)));
+        QMessageBox::setWindowTitle(wtitle + QString(" (%1)").arg(QString::number(timeout)));
+    }
 }
 
 void EMessageBox::tickTimer()
 {
-    if(!defBtn)return;
+    if(!defBtn || !timeout)return;
 
     --timeout;
 

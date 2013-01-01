@@ -112,6 +112,7 @@ public:
     virtual int countSectionTask(int id_task) const =0; //возвращает количество активных секций в задании
     virtual int countTask() const = 0; //возвращает количество назначенных заданий
     virtual bool acceptRanges(int id_task) const = 0; //возвращает true, если возможна докачка задания id_task, иначе false
+    virtual QString mimeType(int id_task) const =0; //возвращает mime тип задачи
     virtual QString taskFilePath(int id_task) const =0; //вохвращает полный путь к локальному файлу
     virtual QString errorString(int _err) const =0; //возвращает строку по заданному коду ошибки
     virtual QString statusString(int _stat) const =0; //возвращает строку статуса по заданному коду

@@ -1275,6 +1275,9 @@
             <property name="text">
              <string>Показывать плавающее окно</string>
             </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item>
