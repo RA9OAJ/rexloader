@@ -138,6 +138,7 @@ protected slots:
     void shutDownPC(); //завершает работу ПК в установленном режиме
     void showAbout(); //отображает диалоговое окно с данными о версии программы
     void notifActAnalyzer(const QString &act); //анализирует нажатие кнопки уведомления
+    void checkFileType(const QString &mime, const QString &filepath); //проверяет mime файла и вызывает определенное действие для этого типа файлов
 
 signals:
     void transAct();

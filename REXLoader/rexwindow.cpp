@@ -1568,6 +1568,8 @@ void REXWindow::syncTaskData()
             {
                 QString newFilename = filepath.right(5) == ".rldr" ? filepath.left(filepath.size()-20) : filepath;
                 QFile fl(filepath);
+                int id_proto = tasklist.value(id_row)/100;
+
                 if(fl.exists(newFilename))
                 {
                     EMessageBox *question = new EMessageBox(this);
@@ -1589,7 +1591,13 @@ void REXWindow::syncTaskData()
                         reFilename = newFilename;
                         reFilename = reFilename.insert(index,QDateTime::currentDateTime().toString("_dd-MM-yyyy_hh-mm-ss-z"));
                     }
-                    QString params = QString("curname:%1\r\nnewname:%2\r\nrename:%3\r\nid:%4").arg(filepath,newFilename,reFilename,QString::number(id_row));
+                    QString params = QString("curname:%1\r\nnewname:%2\r\nrename:%3\r\nid:%4\r\nmime:%5").arg(
+                                filepath,
+                                newFilename,
+                                reFilename,
+                                QString::number(id_row),
+                                pluglist.value(id_proto)->mimeType(id_task)
+                                );
                     question->setParams(params);
                     question->setModal(false);
                     if(!isVisible())question->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
@@ -1606,6 +1614,8 @@ void REXWindow::syncTaskData()
 
                     plugmgr->notify(tr("Задание завершено"),tr("Скачивание файла <b>%1</b> завершено").arg(flinfo.fileName()),10,
                                     getActionMap(AB_OPENDIR | AB_OPENFILE, filepath));
+
+                    checkFileType(pluglist.value(id_proto)->mimeType(id_task),filepath);
                 }
 
                 if(dlglist.contains(id_row)) dlglist.value(id_row)->close();
@@ -2084,6 +2094,7 @@ void REXWindow::acceptQAction(QAbstractButton *btn)
         }
         logmgr->deleteTaskLogLater(params.value("id").toInt());
         updateTaskSheet();
+        checkFileType(params.value("mime"),file.fileName());
         break;
     }
     case EMessageBox::AT_DOWNLOAD_ON_START:
@@ -2096,6 +2107,12 @@ void REXWindow::acceptQAction(QAbstractButton *btn)
     {
         if(dlg->buttonRole(qobject_cast<QPushButton*>(btn)) == EMessageBox::ApplyRole)
             QTimer::singleShot(0,this,SLOT(shutDownPC()));
+        break;
+    }
+    case EMessageBox::AT_URL_IMPORT:
+    {
+        if(dlg->buttonRole(qobject_cast<QPushButton*>(btn)) == EMessageBox::ApplyRole)
+            importUrlFromFile(QStringList(params.value("file")));
         break;
     }
     case EMessageBox::AT_NONE:
@@ -2676,6 +2693,29 @@ void REXWindow::notifActAnalyzer(const QString &act)
         openTaskDir(act.split("#OpenDir:").value(1));
     else if(!act.indexOf("#OpenFile"))
         openTask(act.split("#OpenFile:").value(1));
+}
+
+void REXWindow::checkFileType(const QString &mime, const QString &filepath)
+{
+    if(mime.indexOf(QRegExp("(text)|(html)")) != -1)
+    {
+        EMessageBox *question = new EMessageBox(this);
+        question->setIcon(EMessageBox::Question);
+        question->setDefaultTimeout(0);
+        QPushButton *btn1 = question->addButton(tr("Импортировать"),EMessageBox::ApplyRole);
+        question->addButton(tr("Отмена"),EMessageBox::RejectRole);
+        question->setDefaultButton(btn1);
+        QFileInfo flinfo(filepath);
+        question->setText(tr("Файл <b>%1</b> является текстовым/html, вы можете импортировать URL из файла").arg(flinfo.fileName()));
+        question->setInformativeText(tr("Для импорта нажмите \"Импортировать\", для отмены - \"Отмена\"."));
+        question->setActionType(EMessageBox::AT_URL_IMPORT);
+        question->setParams(QString("file:%1").arg(filepath));
+        connect(question,SIGNAL(buttonClicked(QAbstractButton*)),this,SLOT(acceptQAction(QAbstractButton*)));
+        question->setModal(false);
+        if(!isVisible())question->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
+        question->show();
+        question->activateWindow();
+    }
 }
 
 void REXWindow::prepareToQuit()

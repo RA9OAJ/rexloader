@@ -228,6 +228,13 @@ bool HttpLoader::acceptRanges(int id_task) const
     return (task_list->value(id_task)->accept_ranges);
 }
 
+QString HttpLoader::mimeType(int id_task) const
+{
+    if(!task_list->contains(id_task))return false;
+    if(!task_list->value(id_task))return false;
+    return (task_list->value(id_task)->MIME);
+}
+
 int HttpLoader::errorNo(int id_task) const
 {
     if(!task_list->contains(id_task))return LInterface::NO_TASK;

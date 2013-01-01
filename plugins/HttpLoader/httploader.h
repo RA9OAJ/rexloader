@@ -137,6 +137,7 @@ public:
     int countSectionTask(int id_task) const; //возвращает количество активных секций в задании
     int countTask() const; //возвращает количество назначенных заданий
     bool acceptRanges(int id_task) const; //возвращает true, если возможна докачка задания id_task, иначе false
+    QString mimeType(int id_task) const; //возвращает mime тип задачи
     QString taskFilePath(int id_task) const; //вохвращает полный путь к локальному файлу
     QString errorString(int _err) const; //возвращает строку по заданному коду ошибки
     QString statusString(int _stat) const; //возвращает строку статуса по заданному коду
