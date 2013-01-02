@@ -21,10 +21,12 @@ public:
     explicit LinkExtractor(QObject *parent = 0);
     ~LinkExtractor();
     void setText(const QString &text);
-    QList<ResourceLink> extract();
+    QList<ResourceLink> extract_html();
+    QList<ResourceLink> extract_txt();
 private:
     QList<ResourceLink> m_link_list;
     QWebView *mp_web_view;
+    QString m_text;
     // добавляем в список ссылок найденую ссылку A
     void addALink(const QString &name, const QString &url);
     void addArbitraryLink(const QString &url);

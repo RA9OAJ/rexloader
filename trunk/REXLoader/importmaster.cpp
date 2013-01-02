@@ -75,8 +75,21 @@ void ImportMaster::run()
         if (buf.isEmpty())
             continue;
 
+        QList<ResourceLink> link_list;
         le.setText(QString(buf));
-        QList<ResourceLink> link_list = le.extract();
+        QStringList name_ext = file.split(".");
+        qDebug() << name_ext;
+        // если файл без расширения то считаем его текстовым
+        if (name_ext.length() == 1)
+            link_list = le.extract_txt();
+        // иначе смотрим на расширение
+        else
+        {
+            if ((name_ext[1] == QString::fromUtf8("html")) || (name_ext[1] == QString::fromUtf8("htm")))
+                link_list = le.extract_html();
+            else
+                link_list = le.extract_txt();
+        }
         ResourceLink link;
         foreach(link, link_list)
         {
