@@ -404,7 +404,7 @@
                 <item>
                  <widget class="QLabel" name="label_4">
                   <property name="text">
-                   <string>Низка скорость</string>
+                   <string>Низкая скорость</string>
                   </property>
                  </widget>
                 </item>
