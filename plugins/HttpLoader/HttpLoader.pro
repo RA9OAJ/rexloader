@@ -28,3 +28,5 @@ OBJECTS_DIR    = build/obj_dir
 UI_HEADERS_DIR = build/ui/h
 UI_SOURCES_DIR = build/ui/cpp
 RCC_DIR        = build/res
+
+include (lang/locales.pri)
