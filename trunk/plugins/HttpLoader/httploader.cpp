@@ -230,8 +230,8 @@ bool HttpLoader::acceptRanges(int id_task) const
 
 QString HttpLoader::mimeType(int id_task) const
 {
-    if(!task_list->contains(id_task))return false;
-    if(!task_list->value(id_task))return false;
+    if(!task_list->contains(id_task))return QString();
+    if(!task_list->value(id_task))return QString();
     return (task_list->value(id_task)->MIME);
 }
 

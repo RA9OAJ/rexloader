@@ -1,11 +1,11 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="en_US" sourcelanguage="ru_RU" version="2.0">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="uk_UA" sourcelanguage="ru_RU" version="2.0">
 <defaultcodec>UTF-8</defaultcodec>
 <context>
     <name>AddTaskDialog</name>
     <message>
         <location filename="../addtaskdialog.ui" line="14"/>
         <source>REXLoader - </source>
-        <translation>REXLoader - </translation>
+        <translation>REXLoader -</translation>
     </message>
     <message>
         <location filename="../addtaskdialog.ui" line="34"/>
@@ -15,12 +15,12 @@
     <message>
         <location filename="../addtaskdialog.ui" line="76"/>
         <source>Категория</source>
-        <translation>Category</translation>
+        <translation>Категорія</translation>
     </message>
     <message>
         <location filename="../addtaskdialog.ui" line="116"/>
         <source>Директория</source>
-        <translation>Directory</translation>
+        <translation>Директорія</translation>
     </message>
     <message>
         <location filename="../addtaskdialog.ui" line="139"/>
@@ -30,12 +30,12 @@
     <message>
         <location filename="../addtaskdialog.ui" line="150"/>
         <source>Имя файла</source>
-        <translation>Filename</translation>
+        <translation>Імя файлу</translation>
     </message>
     <message>
         <location filename="../addtaskdialog.ui" line="173"/>
         <source>Примечание</source>
-        <translation>Comment</translation>
+        <translation>Коментар</translation>
     </message>
     <message>
         <location filename="../addtaskdialog.ui" line="236"/>
@@ -45,82 +45,82 @@
     <message>
         <location filename="../addtaskdialog.ui" line="267"/>
         <source>Закачать сейчас</source>
-        <translation>Download now</translation>
+        <translation>Завантажити зараз</translation>
     </message>
     <message>
         <location filename="../addtaskdialog.ui" line="274"/>
         <source>Закачать потом</source>
-        <translation>Download later</translation>
+        <translation>Завантажити пізніше</translation>
     </message>
     <message>
         <location filename="../addtaskdialog.cpp" line="57"/>
         <source>Новое задание</source>
-        <translation>New task</translation>
+        <translation>Нове завдання</translation>
     </message>
     <message>
         <location filename="../addtaskdialog.cpp" line="112"/>
         <source>Выбор директории</source>
-        <translation>Choose directory</translation>
+        <translation>Вибір директорії</translation>
     </message>
     <message>
         <location filename="../addtaskdialog.cpp" line="132"/>
         <source>URL не корректен. Введите другой URL или справьте этот.</source>
-        <translation>URL is incorrect. Enter another URL or correct it.</translation>
+        <translation>Некоректна адреса. Ведить іншу або виправте цю.</translation>
     </message>
     <message>
         <location filename="../addtaskdialog.cpp" line="133"/>
         <source>Этот протокол не поддерживается. Проверьте наличие соответствующего плагина и его состояние.</source>
-        <translation>This protocol is not supported. Check the appropriate plugin and its state.</translation>
+        <translation>Цей протокол не підтримується. Перевірте наявність та стан відповідного плагіну.</translation>
     </message>
     <message>
         <location filename="../addtaskdialog.cpp" line="174"/>
         <source>Архивы</source>
-        <translation>Archives</translation>
+        <translation>Архіви</translation>
     </message>
     <message>
         <location filename="../addtaskdialog.cpp" line="175"/>
         <source>Приложения</source>
-        <translation>Applications</translation>
+        <translation>Програми</translation>
     </message>
     <message>
         <location filename="../addtaskdialog.cpp" line="176"/>
         <source>Аудио</source>
-        <translation>Audio</translation>
+        <translation>Аудіо</translation>
     </message>
     <message>
         <location filename="../addtaskdialog.cpp" line="177"/>
         <source>Видео</source>
-        <translation>Video</translation>
+        <translation>Відео</translation>
     </message>
     <message>
         <location filename="../addtaskdialog.cpp" line="178"/>
         <source>Другое</source>
-        <translation>Other</translation>
+        <translation>Інше</translation>
     </message>
     <message>
         <location filename="../addtaskdialog.cpp" line="234"/>
         <source>URL уже существует</source>
-        <translation>URL already exists</translation>
+        <translation>Цей URL вже існує</translation>
     </message>
     <message>
         <location filename="../addtaskdialog.cpp" line="235"/>
         <source>Перезакачать</source>
-        <translation>Redownload</translation>
+        <translation>Перезавантажити</translation>
     </message>
     <message>
         <location filename="../addtaskdialog.cpp" line="236"/>
         <source>Отмена</source>
-        <translation>Cancel</translation>
+        <translation>Відміна</translation>
     </message>
     <message>
         <location filename="../addtaskdialog.cpp" line="238"/>
         <source>Этот URL &lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt; уже присутствует в списке заданий.</source>
-        <translation>This URL &lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt; is already present in task list.</translation>
+        <translation>Цей URL &lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt; вже присутній в списку завдань.</translation>
     </message>
     <message>
         <location filename="../addtaskdialog.cpp" line="239"/>
         <source>Нажмите &lt;b&gt;&quot;Перезакачать&quot;&lt;/b&gt; для продолжения или &lt;b&gt;&quot;Отмена&quot;&lt;/b&gt; для отмены действия.</source>
-        <translation>Click &lt;b&gt;&quot;Redownload&quot;&lt;/b&gt; to continue or &lt;b&gt;&quot;Cancel&quot;&lt;/b&gt; to cancel action.</translation>
+        <translation>Щоб продовжити натисніть &lt;b&gt;&quot;Перезавантажити&quot;&lt;/ b&gt; або &lt;b&gt;&quot;Відміна&quot;&lt;/ b&gt; щоб скасувати дію.</translation>
     </message>
 </context>
 <context>
@@ -128,17 +128,17 @@
     <message>
         <location filename="../categorydialog.ui" line="14"/>
         <source>Свойства категории</source>
-        <translation>Category properties</translation>
+        <translation>Властивості категорії</translation>
     </message>
     <message>
         <location filename="../categorydialog.ui" line="48"/>
         <source>Название</source>
-        <translation>Name</translation>
+        <translation>Назва</translation>
     </message>
     <message>
         <location filename="../categorydialog.ui" line="71"/>
         <source>Путь</source>
-        <translation>Path</translation>
+        <translation>Шлях</translation>
     </message>
     <message>
         <location filename="../categorydialog.ui" line="85"/>
@@ -148,12 +148,12 @@
     <message>
         <location filename="../categorydialog.ui" line="108"/>
         <source>Список атрибутов</source>
-        <translation>Attribute list</translation>
+        <translation>Список атрибутів</translation>
     </message>
     <message>
         <location filename="../categorydialog.ui" line="132"/>
         <source>Родительская категория</source>
-        <translation>Parent category</translation>
+        <translation>Коренева директорія</translation>
     </message>
     <message>
         <location filename="../categorydialog.ui" line="175"/>
@@ -163,17 +163,17 @@
     <message>
         <location filename="../categorydialog.cpp" line="175"/>
         <source>Выбор директории</source>
-        <translation>Select directory</translation>
+        <translation>Вибір директорії</translation>
     </message>
     <message>
         <location filename="../categorydialog.cpp" line="207"/>
         <source>Внутренняя ошибка SQL.</source>
-        <translation>SQL internal error</translation>
+        <translation>Внутрішня помилка SQL.</translation>
     </message>
     <message>
         <location filename="../categorydialog.cpp" line="223"/>
         <source>Категория с таким именем уже сущетвует.</source>
-        <translation>Category with same name already exists.</translation>
+        <translation>Категорія з таким іменем вже існує.</translation>
     </message>
 </context>
 <context>
@@ -181,7 +181,7 @@
     <message>
         <location filename="../emessagebox.cpp" line="33"/>
         <source>Файл уже существует!</source>
-        <translation>File already exists!</translation>
+        <translation>Такий файл вже існує!</translation>
     </message>
 </context>
 <context>
@@ -189,37 +189,37 @@
     <message>
         <location filename="../floating_window/floatingwindow.cpp" line="33"/>
         <source>Диаграмма</source>
-        <translation>Diagram</translation>
+        <translation>Діаграма</translation>
     </message>
     <message>
         <location filename="../floating_window/floatingwindow.cpp" line="39"/>
         <source>График</source>
-        <translation>Graph</translation>
+        <translation>Графік</translation>
     </message>
     <message>
         <location filename="../floating_window/floatingwindow.cpp" line="46"/>
         <source>Отображать</source>
-        <translation>Display</translation>
+        <translation>Відображати</translation>
     </message>
     <message>
         <location filename="../floating_window/floatingwindow.cpp" line="49"/>
         <source>Всегда</source>
-        <translation>Always</translation>
+        <translation>Завжди</translation>
     </message>
     <message>
         <location filename="../floating_window/floatingwindow.cpp" line="55"/>
         <source>Во время закачки</source>
-        <translation>During download</translation>
+        <translation>Під час завантаження</translation>
     </message>
     <message>
         <location filename="../floating_window/floatingwindow.cpp" line="62"/>
         <source>Скрыть</source>
-        <translation>Hide</translation>
+        <translation>Приховати</translation>
     </message>
     <message>
         <location filename="../floating_window/floatingwindow.cpp" line="116"/>
         <source>Выполнено на %v</source>
-        <translation>Done %v</translation>
+        <translation>Виконано на %v</translation>
     </message>
 </context>
 <context>
@@ -227,7 +227,7 @@
     <message>
         <location filename="../fontselectbutton.cpp" line="25"/>
         <source>АаБбВвГг</source>
-        <translation>AaBbCcDd</translation>
+        <translation>АаБаВвГг</translation>
     </message>
 </context>
 <context>
@@ -235,42 +235,42 @@
     <message>
         <location filename="../floating_window/graphwidget.cpp" line="130"/>
         <source> ГБ/с</source>
-        <translation>GBps</translation>
+        <translation>GB/s</translation>
     </message>
     <message>
         <location filename="../floating_window/graphwidget.cpp" line="130"/>
         <source> Гб/с</source>
-        <translation>Gbps</translation>
+        <translation>Gb/s</translation>
     </message>
     <message>
         <location filename="../floating_window/graphwidget.cpp" line="131"/>
         <source> МБ/с</source>
-        <translation>MBps</translation>
+        <translation>MB/s</translation>
     </message>
     <message>
         <location filename="../floating_window/graphwidget.cpp" line="131"/>
         <source> Мб/с</source>
-        <translation>Mbps</translation>
+        <translation>Mb/s</translation>
     </message>
     <message>
         <location filename="../floating_window/graphwidget.cpp" line="132"/>
         <source> кБ/с</source>
-        <translation>kBps</translation>
+        <translation>kB/s</translation>
     </message>
     <message>
         <location filename="../floating_window/graphwidget.cpp" line="132"/>
         <source> кб/с</source>
-        <translation>kbps</translation>
+        <translation>kb/s</translation>
     </message>
     <message>
         <location filename="../floating_window/graphwidget.cpp" line="133"/>
         <source> Байт/с</source>
-        <translation>Bytesps</translation>
+        <translation>Bytes/s</translation>
     </message>
     <message>
         <location filename="../floating_window/graphwidget.cpp" line="133"/>
         <source> бит/с</source>
-        <translation>bitps</translation>
+        <translation>bit/s</translation>
     </message>
 </context>
 <context>
@@ -278,7 +278,7 @@
     <message>
         <location filename="../importdialog.ui" line="28"/>
         <source>Строки</source>
-        <translation>Lines</translation>
+        <translation>Рядки</translation>
     </message>
     <message>
         <location filename="../importdialog.ui" line="35"/>
@@ -289,7 +289,7 @@
     <message>
         <location filename="../importdialog.ui" line="48"/>
         <source>Найдено</source>
-        <translation>Found</translation>
+        <translation>Знайдено</translation>
     </message>
     <message>
         <location filename="../importdialog.ui" line="103"/>
@@ -304,22 +304,22 @@
     <message>
         <location filename="../importdialog.ui" line="14"/>
         <source>Импорт URL</source>
-        <translation>Import URL</translation>
+        <translation>Імпорт URL</translation>
     </message>
     <message>
         <location filename="../importdialog.ui" line="95"/>
         <source>Выделить всё</source>
-        <translation>Select all</translation>
+        <translation>Виділити все</translation>
     </message>
     <message>
         <location filename="../importdialog.ui" line="110"/>
         <source>Снять все выделения</source>
-        <translation>Deselect all</translation>
+        <translation>Зняти все виділення</translation>
     </message>
     <message>
         <location filename="../importdialog.ui" line="127"/>
         <source>Инвертировать выделения</source>
-        <translation>Invert selection</translation>
+        <translation>Інвертувати виділення</translation>
     </message>
     <message>
         <location filename="../importdialog.ui" line="136"/>
@@ -329,12 +329,12 @@
     <message>
         <location filename="../importdialog.ui" line="162"/>
         <source>Категория</source>
-        <translation>Category</translation>
+        <translation>Категорія</translation>
     </message>
     <message>
         <location filename="../importdialog.ui" line="195"/>
         <source>Директория</source>
-        <translation>Directory</translation>
+        <translation>Папка</translation>
     </message>
     <message>
         <location filename="../importdialog.ui" line="215"/>
@@ -344,64 +344,64 @@
     <message>
         <location filename="../importdialog.ui" line="226"/>
         <source>Закачать потом</source>
-        <translation>Download later</translation>
+        <translation>Завантажити потім</translation>
     </message>
     <message>
         <location filename="../importdialog.ui" line="249"/>
         <source>Добавить</source>
-        <translation>Add</translation>
+        <translation>Додати</translation>
     </message>
     <message>
         <location filename="../importdialog.ui" line="256"/>
         <source>Добав. и выход</source>
-        <translation>Add &amp; exit</translation>
+        <translation>Дадати і вийти</translation>
     </message>
     <message>
         <location filename="../importdialog.ui" line="263"/>
         <source>Отмена</source>
-        <translation>Cancel</translation>
+        <translation>Відмінити</translation>
     </message>
     <message>
         <location filename="../importdialog.cpp" line="90"/>
         <source>Архивы</source>
-        <translation>Archives</translation>
+        <translation>Архіви</translation>
     </message>
     <message>
         <location filename="../importdialog.cpp" line="95"/>
         <source>Приложения</source>
-        <translation>Applications</translation>
+        <translation>Програми</translation>
     </message>
     <message>
         <location filename="../importdialog.cpp" line="100"/>
         <source>Аудио</source>
-        <translation>Audio</translation>
+        <translation>Аудіо</translation>
     </message>
     <message>
         <location filename="../importdialog.cpp" line="105"/>
         <source>Видео</source>
-        <translation>Video</translation>
+        <translation>Відео</translation>
     </message>
     <message>
         <location filename="../importdialog.cpp" line="110"/>
         <source>Другое</source>
-        <translation>Other</translation>
+        <translation>Різне</translation>
     </message>
     <message>
         <location filename="../importdialog.cpp" line="295"/>
         <source>Выбор директории</source>
-        <translation>Select directory</translation>
+        <translation>Вибір папки</translation>
     </message>
     <message>
         <location filename="../importdialog.cpp" line="398"/>
         <source>Предупреждение</source>
-        <translation>Warning</translation>
+        <translation>Попередження</translation>
     </message>
     <message>
         <location filename="../importdialog.cpp" line="399"/>
         <source>Некоторые URL уже присутствуют в списке заданий.
 Для уточнения списка совпавших URL кликните по кнопке &quot;Показать подробности...&quot;</source>
-        <translation>Some URL already in the task list.
-To refine the list of matching URL click &quot;Show details...&quot;</translation>
+        <translation>В списку завдань вже присутні деякі URL.
+Щоб переглянути які саме клікніть по кнопці &quot;Показати подробиці...&quot;</translation>
     </message>
 </context>
 <context>
@@ -409,30 +409,30 @@ To refine the list of matching URL click &quot;Show details...&quot;</translatio
     <message>
         <location filename="../logmanager.cpp" line="146"/>
         <source>События приложения</source>
-        <translation>Application events</translation>
+        <translation>Події програми</translation>
     </message>
     <message>
         <location filename="../logmanager.cpp" line="198"/>
         <location filename="../logmanager.cpp" line="214"/>
         <source>Секция %1</source>
-        <translation>Section %1</translation>
+        <translation>Секція %1</translation>
     </message>
     <message>
         <location filename="../logmanager.cpp" line="356"/>
         <location filename="../logmanager.cpp" line="376"/>
         <source>Невозможно создать файл журнала - директория для файлов журнала &apos;%1&apos; не существует или нет прав на запись</source>
-        <translation>Unable to create log file - directory for log file &apos;%1&apos;  does not exist or not have write permission</translation>
+        <translation>Неможлива створити файл журналу - директорія для журнальних файлів &apos;%1&apos;  не існує або нема прав на запис</translation>
     </message>
     <message>
         <location filename="../logmanager.cpp" line="357"/>
         <location filename="../logmanager.cpp" line="377"/>
         <source>Для исправления ситуации проверьте права на запись в указанную директорию, либо выберете другую директорию в настройках программы (пункт &apos;События&apos;)</source>
-        <translation>To correct it check write permissions to specified directory or choose different folder in program settings (&apos;Events&apos; item)</translation>
+        <translation>Щоб виправити цитуацію перевірте права на запис в указану папку, або виберіть іншу в налаштуваннях програми (пункт &apos;Події&apos;)</translation>
     </message>
     <message>
         <location filename="../logmanager.cpp" line="382"/>
         <source>Выбрана новая директория (&apos;%1&apos;) для журналов событий программы</source>
-        <translation>New directory (&apos;%1&apos;) selected for program event logs</translation>
+        <translation>Вибрана нова папка (&apos;%1&apos;) для журналів подій програми</translation>
     </message>
 </context>
 <context>
@@ -440,27 +440,27 @@ To refine the list of matching URL click &quot;Show details...&quot;</translatio
     <message>
         <location filename="../pluginitemdelegate.cpp" line="78"/>
         <source> (версия %1)</source>
-        <translation>(version %1)</translation>
+        <translation>(версія %1)</translation>
     </message>
     <message>
         <location filename="../pluginitemdelegate.cpp" line="126"/>
         <source>Протокол: </source>
-        <translation>Protocol: </translation>
+        <translation>Протокол: </translation>
     </message>
     <message>
         <location filename="../pluginitemdelegate.cpp" line="127"/>
         <source>Плагин: </source>
-        <translation>Plugin: </translation>
+        <translation>Плагін: </translation>
     </message>
     <message>
         <location filename="../pluginitemdelegate.cpp" line="128"/>
         <source>Автор: </source>
-        <translation>Author:</translation>
+        <translation>Автор: </translation>
     </message>
     <message>
         <location filename="../pluginitemdelegate.cpp" line="129"/>
         <source>Лицензия: </source>
-        <translation>License:</translation>
+        <translation>Ліцензія: </translation>
     </message>
 </context>
 <context>
@@ -468,7 +468,7 @@ To refine the list of matching URL click &quot;Show details...&quot;</translatio
     <message>
         <location filename="../pluginlistmodel.cpp" line="58"/>
         <source>отключено</source>
-        <translation>off</translation>
+        <translation>відключено</translation>
     </message>
 </context>
 <context>
@@ -476,7 +476,7 @@ To refine the list of matching URL click &quot;Show details...&quot;</translatio
     <message>
         <location filename="../pluginmanager.cpp" line="91"/>
         <source>Плагин %1 версия %2-%3 (&apos;%4&apos;) загружен.</source>
-        <translation>Plugin %1 version %2-%3 (&apos;%4&apos;) is loaded.</translation>
+        <translation>Плагін %1 версія %2-%3 (&apos;%4&apos;) завантажено.</translation>
     </message>
 </context>
 <context>
@@ -496,47 +496,47 @@ To refine the list of matching URL click &quot;Show details...&quot;</translatio
     <message>
         <location filename="../rexwindow.ui" line="121"/>
         <source>&amp;Задания</source>
-        <translation>&amp;Tasks</translation>
+        <translation>&amp;Завдання</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="125"/>
         <source>Установить приоритет</source>
-        <translation>Set priority</translation>
+        <translation>Встановити пріорітет</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="135"/>
         <source>Скорость загрузки</source>
-        <translation>Download speed</translation>
+        <translation>Швидкість завантаження</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="159"/>
         <source>&amp;Автоматизация</source>
-        <translation>&amp;Automation</translation>
+        <translation>&amp;Автоматизація</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="163"/>
         <source>По завершении заданий</source>
-        <translation>Upon completion tasks</translation>
+        <translation>По закінченню завдань</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="174"/>
         <source>&amp;Приложение</source>
-        <translation>&amp;Application</translation>
+        <translation>&amp;Програми</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="182"/>
         <source>П&amp;омощь</source>
-        <translation>&amp;Help</translation>
+        <translation>Д&amp;опомога</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="204"/>
         <source>Панель инструментов</source>
-        <translation>Toolbar</translation>
+        <translation>Панель інструментів</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="239"/>
         <source>Добавить URL</source>
-        <translation>Add URL</translation>
+        <translation>Додати URL</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="242"/>
@@ -546,7 +546,7 @@ To refine the list of matching URL click &quot;Show details...&quot;</translatio
     <message>
         <location filename="../rexwindow.ui" line="251"/>
         <source>Удалить URL</source>
-        <translation>Remove URL</translation>
+        <translation>Видалити URL</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="254"/>
@@ -556,52 +556,52 @@ To refine the list of matching URL click &quot;Show details...&quot;</translatio
     <message>
         <location filename="../rexwindow.ui" line="263"/>
         <source>Запустить</source>
-        <translation>Run</translation>
+        <translation>Запустити</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="272"/>
         <source>Приостановить</source>
-        <translation>Stop</translation>
+        <translation>Призупинити</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="281"/>
         <source>Запустить все</source>
-        <translation>Run all</translation>
+        <translation>Запустити все</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="290"/>
         <source>Приостановить все</source>
-        <translation>Stop all</translation>
+        <translation>Зупинити все</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="295"/>
         <source>Свойства задания</source>
-        <translation>Task properties</translation>
+        <translation>Властивості завдання</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="300"/>
         <source>Расписание</source>
-        <translation>Schedule</translation>
+        <translation>Розклад</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="308"/>
         <source>Выключить компьютер</source>
-        <translation>Turn off computer</translation>
+        <translation>Вимкнути компьютер</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="313"/>
         <source>Плагины</source>
-        <translation>Plugins</translation>
+        <translation>Плагіни</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="322"/>
         <source>Настройки приложения</source>
-        <translation>Application settings</translation>
+        <translation>Налаштування програми</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="327"/>
         <source>Помощь по программе</source>
-        <translation>Getting help</translation>
+        <translation>Допомога з програмою</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="330"/>
@@ -611,23 +611,23 @@ To refine the list of matching URL click &quot;Show details...&quot;</translatio
     <message>
         <location filename="../rexwindow.ui" line="335"/>
         <source>On-line руководства</source>
-        <translation>On-line manual</translation>
+        <translation>On-line посібник</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="344"/>
         <location filename="../rexwindow.cpp" line="2665"/>
         <source>О программе</source>
-        <translation>About</translation>
+        <translation>Про програму</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="349"/>
         <source>О Qt</source>
-        <translation>About Qt</translation>
+        <translation>Про Qt</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="354"/>
         <source>Удалить URL и файл</source>
-        <translation>Remove URL and file</translation>
+        <translation>Видалити URL і файл</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="357"/>
@@ -637,93 +637,93 @@ To refine the list of matching URL click &quot;Show details...&quot;</translatio
     <message>
         <location filename="../rexwindow.ui" line="365"/>
         <source>Очень низкая</source>
-        <translation>Very low</translation>
+        <translation>Дуже визька</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="373"/>
         <source>Низкая</source>
-        <translation>Low</translation>
+        <translation>Низька</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="381"/>
         <source>Средняя</source>
-        <translation>Middle</translation>
+        <translation>Середня</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="389"/>
         <source>Высокая</source>
-        <translation>High</translation>
+        <translation>Висока</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="394"/>
         <location filename="../rexwindow.cpp" line="503"/>
         <source>Открыть папку</source>
-        <translation>Open folder</translation>
+        <translation>Відкрити папку</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="397"/>
         <source>Открывает папку, в которой сохранен данный объект</source>
-        <translation>Opens folder in which you saved object</translation>
+        <translation>Відкрити папку в якій збережений даний об’єкт</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="402"/>
         <source>Открыть/Запустить</source>
-        <translation>Open/Run</translation>
+        <translation>Відкрити/Запустити</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="405"/>
         <source>Открывает или запускает скачанный файл средствами операционной системы</source>
-        <translation>Opens or runs downloaded file to operating system</translation>
+        <translation>Відкрити або запустити завантажений файл засобами операційної системи</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="417"/>
         <source>Самый низкий</source>
-        <translation>Very low</translation>
+        <translation>Дуже низький</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="429"/>
         <source>Низкий</source>
-        <translation>Low</translation>
+        <translation>Низький</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="441"/>
         <source>Средний</source>
-        <translation>Middle</translation>
+        <translation>Середній</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="453"/>
         <source>Высокий</source>
-        <translation>High</translation>
+        <translation>Високий</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="465"/>
         <source>Очень высокий</source>
-        <translation>Very high</translation>
+        <translation>Дуже високий</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="470"/>
         <source>Перезакачать</source>
-        <translation>Redownload</translation>
+        <translation>Перезавантажити</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="475"/>
         <source>Импорт URL</source>
-        <translation>Import URL</translation>
+        <translation>Імпорт URL</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="480"/>
         <source>Создать категорию</source>
-        <translation>Create category</translation>
+        <translation>Створити категорію</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="485"/>
         <source>Удалить категорию</source>
-        <translation>Remove category</translation>
+        <translation>Видалити категорію</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="490"/>
         <source>Свойства</source>
-        <translation>Properties</translation>
+        <translation>Властивості</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="498"/>
@@ -753,59 +753,59 @@ To refine the list of matching URL click &quot;Show details...&quot;</translatio
     <message>
         <location filename="../rexwindow.ui" line="538"/>
         <source>Гибернация</source>
-        <translation>Hibernate</translation>
+        <translation>Гібернізація</translation>
     </message>
     <message>
         <location filename="../rexwindow.ui" line="546"/>
         <source>Ждущий режим</source>
-        <translation>Standby</translation>
+        <translation>Режим очікування</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="41"/>
         <source>/Загрузки</source>
-        <translation>/Downloads</translation>
+        <translation>/Завантаження</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="86"/>
         <location filename="../rexwindow.cpp" line="770"/>
         <source>Критическая ошибка</source>
-        <translation>Fatal error</translation>
+        <translation>Критична помилка</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="94"/>
         <source>&lt;center&gt;Приложение успешно запущено&lt;/center&gt;</source>
-        <translation>&lt;center&gt;Application launched successfully&lt;/center&gt;</translation>
+        <translation>&lt;center&gt;Програма запустилася успішно&lt;/center&gt;</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="96"/>
         <source>Внимание!</source>
-        <translation>Attention!</translation>
+        <translation>Увага!</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="96"/>
         <source>Активирован режим &lt;b&gt;автоматического выключения ПК&lt;/b&gt; по завершении всех заданий</source>
-        <translation>&lt;b&gt;Automatically shutdown PC&lt;/b&gt; after all tasks completed mode  activated</translation>
+        <translation>Режим &lt;b&gt;автоматичного вимкнення ПК&lt;/b&gt; по закінченню всіх завдань  активований</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="291"/>
         <source>Одновременные скачивания</source>
-        <translation>Simultaneous downloads</translation>
+        <translation>Одночасне завантаження</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="315"/>
         <location filename="../rexwindow.cpp" line="1020"/>
         <source>Скрыть</source>
-        <translation>Hide</translation>
+        <translation>Приховати</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="327"/>
         <source>Плавающее окно</source>
-        <translation>Floating window</translation>
+        <translation>Плаваюче вікно</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="334"/>
         <source>Выход</source>
-        <translation>Exit</translation>
+        <translation>Вихід</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="586"/>
@@ -827,7 +827,7 @@ To refine the list of matching URL click &quot;Show details...&quot;</translatio
         <location filename="../rexwindow.cpp" line="2378"/>
         <location filename="../rexwindow.cpp" line="2394"/>
         <source>Ошибка выполнения SQL запроса</source>
-        <translation>SQL query error</translation>
+        <translation>Помилка виконання SQL запита</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="587"/>
@@ -850,339 +850,339 @@ To refine the list of matching URL click &quot;Show details...&quot;</translatio
         <location filename="../rexwindow.cpp" line="2395"/>
         <source>Запрос: %1
 Ошибка: %2</source>
-        <translation>Request: %1
-Error: %2</translation>
+        <translation>Запит: %1
+Помилка %2</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1013"/>
         <location filename="../rexwindow.cpp" line="2002"/>
         <source>Восстановить</source>
-        <translation>Restore</translation>
+        <translation>Відновити</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1109"/>
         <source>Что делать?</source>
-        <translation>What to do?</translation>
+        <translation>Що робити?</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1111"/>
         <source>Выбрано более одного задания.</source>
-        <translation>More than one task selected</translation>
+        <translation>Вибрано більше ніж одне завдання.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1112"/>
         <source>Чтобы подтвердить удаление нескольких заданий нажмите &lt;b&gt;&quot;Ok&quot;&lt;/b&gt; или &lt;b&gt;&quot;Отмена&quot;&lt;/b&gt; для отмены удаления.</source>
-        <translation>To confirm removing multiple tasks click &lt;b&gt;&quot;Ok&quot;&lt;/ b&gt; or click &lt;b&gt;&quot;Cancel&quot;&lt;/ b&gt; to cancel removing.</translation>
+        <translation>Щоб видалити декілька завдань клікніть &lt;b&gt;&quot;Ok&quot;&lt;/b&gt; або &lt;b&gt;&quot;Відміна&quot;&lt;/b&gt; щоб скасувати видалення.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1509"/>
         <source>Файл не найден.</source>
-        <translation>File not found.</translation>
+        <translation>Файл не знайдено.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1510"/>
         <source>Файл на стороне сервера был изменён.</source>
-        <translation>File on server has been changed.</translation>
+        <translation>На стороні серверу файл було змінено.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1511"/>
         <source>Размер файла на сервере отличается от размера задания.</source>
-        <translation>File size on server different from file size in task.</translation>
+        <translation>Розмір файлу на сервері відрізняється від розміру в завданні.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1512"/>
         <source>Невозможно создать файл на локальном диске.</source>
-        <translation>Unable to create file on local disk.</translation>
+        <translation>Неможливо створити файл на локальному диску.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1513"/>
         <source>Невозможно записать в локальный файл.</source>
-        <translation>Unable to write to local file.</translation>
+        <translation>Неможливо записати в локальний файл.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1514"/>
         <source>Невозможно прочитать локальный файл.</source>
-        <translation>Unable to read local file.</translation>
+        <translation>Неможливо прочитати з локального файлу.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1515"/>
         <source>Удаленнй сервер не найден.</source>
-        <translation>Remote server not found.</translation>
+        <translation>Відалений сервер не доступний.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1516"/>
         <source>Ошибка подключения к удалённому серверу.</source>
-        <translation>Remote server connection error.</translation>
+        <translation>Помилка підключення до відаленого серверу.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1517"/>
         <source>Подключение к удаленному серверу потеряно.</source>
-        <translation>Remote server connection lost.</translation>
+        <translation>Втрачено з’єднання з відаленим сервером.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1518"/>
         <source>Сервер отклонил запрос на соединение.</source>
-        <translation>Server refused connection request.</translation>
+        <translation>Сервер відмовив у підключенні.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1519"/>
         <source>Прокси не найден.</source>
-        <translation>Proxy not found.</translation>
+        <translation>Проксі не знайдено.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1520"/>
         <source>Не удалось пройти аутентификацию на прокси.</source>
-        <translation>Unable to authenticate to proxy.</translation>
+        <translation>Невдала аутентифікація на проксі.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1521"/>
         <source>Ошибка протокола прокси.</source>
-        <translation>Proxy protocol error.</translation>
+        <translation>Помилка проксі протокола.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1522"/>
         <source>Прокси неожиданно разорвал соединение.</source>
-        <translation>Proxy unexpectedly closed connection.</translation>
+        <translation>Проксі розірвав з’єднання.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1523"/>
         <source>Прокси отверг попытку подключения.</source>
-        <translation>Proxy refused connection attempt.</translation>
+        <translation>Проксі відхилив спробу підключення.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1524"/>
         <source>Таймаут прокси.</source>
-        <translation>Proxy timeout.</translation>
+        <translation>Таймаут проксі.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1525"/>
         <source>Достигнуто максимальное количество ошибок.</source>
-        <translation>Maximum number of errors reached.</translation>
+        <translation>Досягнуто максимальну кількість помилок.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1537"/>
         <source>%1 (Код ошибки: %2)</source>
-        <translation>%1 (Error code: %2)</translation>
+        <translation>%1 (Код помилки: %2)</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1549"/>
         <source>Ошибка при скачивании файла &apos;%1&apos;: %2 (Код ошибки: %3)</source>
-        <translation>File downloading error &apos;%1&apos;: %2 (Error code: %3)</translation>
+        <translation>Помилка при завантаженні файлу &apos;%1&apos;: %2 (Код помилки: %3)</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1551"/>
         <location filename="../rexwindow.cpp" line="1701"/>
         <source>Ошибка</source>
-        <translation>Error</translation>
+        <translation>Помилка</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1552"/>
         <source>Ошибка при скачивании файла &lt;b&gt;%1&lt;/b&gt;: &lt;b&gt;%2&lt;/b&gt;</source>
-        <translation>File downloading error &lt;b&gt;%1&lt;/b&gt;: &lt;b&gt;%2&lt;/b&gt;</translation>
+        <translation>Помилка при завантаженні файлу &lt;b&gt;%1&lt;/b&gt;: &lt;b&gt;%2&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1571"/>
         <source>Заменить</source>
-        <translation>Replace</translation>
+        <translation>Замінити</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1572"/>
         <source>Переименовать</source>
-        <translation>Rename</translation>
+        <translation>Перейменувати</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1574"/>
         <source>Файл &lt;b&gt;%1&lt;/b&gt; уже существет.</source>
-        <translation>File &lt;b&gt;%1&lt;/b&gt; already exists.</translation>
+        <translation>Файл &lt;b&gt;%1&lt;/b&gt; вже існує.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1575"/>
         <source>Для замены существующего файла нажмите &quot;Заменить&quot;. Для переименования нажмите &quot;Переименовать&quot;.</source>
-        <translation>To replace the existing file click &quot;Replace&quot;. To rename, click &quot;Rename&quot;.</translation>
+        <translation>Для заміни існуючого файлу клікніть &quot;Замінити&quot;, для перейменування &quot;Перейменувати&quot;.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1599"/>
         <location filename="../rexwindow.cpp" line="2053"/>
         <location filename="../rexwindow.cpp" line="2063"/>
         <source>Скачивание файла %1 завершено</source>
-        <translation>Downloading file %1 completed</translation>
+        <translation>Завантаження файлу %1 закінчено</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1602"/>
         <location filename="../rexwindow.cpp" line="2054"/>
         <location filename="../rexwindow.cpp" line="2064"/>
         <source>Задание завершено</source>
-        <translation>Task is completed</translation>
+        <translation>Завдання закінчено</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1602"/>
         <location filename="../rexwindow.cpp" line="2054"/>
         <source>Скачивание файла &lt;b&gt;%1&lt;/b&gt; завершено</source>
-        <translation>Downloading file &lt;b&gt;%1&lt;/b&gt; completed</translation>
+        <translation>Завантаження файлу &lt;b&gt;%1&lt;/b&gt; закінчено</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1646"/>
         <source>Все задания завершены.</source>
-        <translation>All tasks completed.</translation>
+        <translation>Всі завдання закінчені.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1651"/>
         <source>Завершить работу ПК?</source>
-        <translation>Shut down PC?</translation>
+        <translation>Закінчити роботу ПК?</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1653"/>
         <source>Выключить ПК</source>
-        <translation>Turn off PC</translation>
+        <translation>Вимкнути компьютер</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1656"/>
         <source>Выключить ПК после завершения всех заданий?</source>
-        <translation>Turn PC off after all tasks completed?</translation>
+        <translation>Виключити ПК по завершенні всіх завдань?</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1657"/>
         <source>Для завершения работы ПК нажмите &quot;Выключить ПК&quot;, для отмены - &quot;Отмена&quot;</source>
-        <translation>To shut down PC click &quot;Turn off PC&quot;, to cancel - &quot;Cancel&quot;</translation>
+        <translation>Щоб вимкнути компьютер клікніть &quot;Вимкнути ПК&quot;, для відміни - &quot;Відміна&quot;</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1690"/>
         <source>Протокол &apos;%1&apos; не поддерживается. Проверьте наличие соответствующего плагина и его состояние.</source>
-        <translation>Protocol &apos;%1&apos; is not supported. Check the appropriate plugin and its state.</translation>
+        <translation>Протокол &apos;%1&apos; не підтримується. Перевірте стан та наявність відповідного плагіна.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1699"/>
         <source>Ошибка при загрузке файла %1</source>
-        <translation>Downloading file %1 failed</translation>
+        <translation>Помилка при завантаженні файлу %1</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1701"/>
         <source>Ошибка при загрузке файла &lt;b&gt;%1&lt;/b&gt;</source>
-        <translation>Downloading file &lt;b&gt;%1&lt;/b&gt; failed</translation>
+        <translation>Помилка при завантаженні файлу &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1770"/>
         <source>Этот протокол не поддерживается. Проверьте наличие соответствующего плагина и его состояние.</source>
-        <translation>This protocol is not supported. Check the appropriate plugin and its state.</translation>
+        <translation>Цей протокол не підтримується. Перевірте стан та наявність відповідного плагіна.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="2064"/>
         <source>Файл &lt;b&gt;%1&lt;/b&gt; скачан, переименован и сохранен как &lt;b&gt;%2&lt;/b&gt;</source>
-        <translation>File &lt;b&gt;%1&lt;/b&gt; was downloaded, renamed and saved as &lt;b&gt;%2&lt;/b&gt;</translation>
+        <translation>Файл &lt;b&gt;%1&lt;/b&gt; завантажений, перейменований та збережений як &lt;b&gt;%2&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="2613"/>
         <source>Повторять действие завершения работы ПК?</source>
-        <translation>Repeat shutdown PC action?</translation>
+        <translation>Повторити дію завершення роботи ПК?</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="2614"/>
         <source>Вы установили опцию автоматического завершения работы ПК по завершению всех заданий. Хотите чтобы программа всегда выполняла данное действие автоматизации?</source>
-        <translation>You set automatically shutdown PC after complete all tasks option. Do you want the program to always do it at automation?</translation>
+        <translation>Ви встановили опцію автоматичного вимкнення комьютера по закінченню всіх завдань. Хочете щоб програма завжди викокувала цю дію автоматизації?</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="2616"/>
         <source>Да, всегда выключать ПК</source>
-        <translation>Yes, always turn off PC</translation>
+        <translation>Да, завжди вимикати компьютер</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="2617"/>
         <source>Нет, выключить единоразово</source>
-        <translation>No, turn off one-time</translation>
+        <translation>Ні, вимкнути тільки один раз</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="2655"/>
         <source>Это приложение - свободное программное обеспечение и распространяется по лицензии GNU/GPL-3. Разработка идет при участии &lt;a href=&apos;http://kubuntu.ru/&apos;&gt;Русского сообщества Kubuntu&lt;/a&gt;, сайт разработчика - &lt;a href=&apos;http://spolab.ru/&apos;&gt;Лаборатория Свободного программного обеспечения (Лаборатория СПО)&lt;/a&gt;.&lt;hr&gt;Уважаемые пользователи! Я приглашаю принять участие всех заинтересовавшихся данной программой в её дальнейшей разработке. Для этого вам достаточно связаться со мной по электронной почте &lt;a href=&apos;mailto:ra9oaj@gmail.com&apos;&gt;ra9oaj@gmail.com&lt;/a&gt;, либо зарегистрироваться на сайте &lt;a href=&apos;http://spolab.ru/&apos;&gt;Лаборатория СПО&lt;/a&gt; и связаться с помощью личного сообщения.&lt;br&gt;Выражаю особую благодарность активному пользователю Русского сообщества Kubuntu - &lt;b&gt;Дмитрию Перлову (aka DarkneSS)&lt;/b&gt;, ставшему первым Maintainer&apos;ом этого ПО в различных дистрибутивах GNU/Linux.</source>
-        <translation>This application is free software and licensed under GNU/GPL-3. Development comes with participation of &lt;a href=&apos;http://kubuntu.ru/&apos;&gt;Kubuntu Russian community&lt;/a&gt;, developer&apos;s site &lt;a href=&apos;http://spolab.ru/&apos;&gt; Free Software Laboratory (FS Laboratory) &lt;/a&gt;. &lt;hr&gt; Dear users! I invite all interested to attend this program in its further development. For this you can contact me by e-mail &lt;a href=&apos;mailto:ra9oaj@gmail.com&apos;&gt; ra9oaj@gmail.com &lt;/a&gt;, or register on &lt;a href = &apos;http://spolab.ru / &apos;&gt;FS Laboratory&lt;/a&gt; site and get in touch with personal message. &lt;br&gt; Special thanks to active user of Kubuntu Russian Community - &lt;b&gt;Dmitry Perlov (aka DarkneSS)&lt;/b&gt;, which was first  maintainer of this software in different GNU/Linux distributions.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1713"/>
         <location filename="../rexwindow.cpp" line="1788"/>
         <source>Загрузка файла %1 начинается</source>
-        <translation>Downloading file %1 begins</translation>
+        <translation>Починається завантаження файлу %1</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="86"/>
         <source>Не найден ни один плагин.
  Проверьте наличие файлов плагинов в директории &apos;.rexloader&apos; и &apos;/usr/{local/}lib/rexloader/plugins&apos;.</source>
-        <translation>No plugins found.
- Check plugin files in &apos;.rexloader&apos; and &apos;/usr/{local/}lib/rexloader/plugins&apos;  directories .</translation>
+        <translation>Ні одного плагіну не було знайдено.
+Перевірте наявність файлів плагінів у папках &apos;.rexloader&apos; та &apos;/usr/{local/}lib/rexloader/plugins&apos;.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="508"/>
         <source>Открыть файл</source>
-        <translation>Open file</translation>
+        <translation>Відкрити файл</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="513"/>
         <source>Повторить попытку</source>
-        <translation>Retry</translation>
+        <translation>Спробувати ще раз</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="770"/>
         <source>Невозможно открыть файл базы данных.
  Это критическая ошибка, приложение будет закрыто.
  Проверьте свои права доступа к директории &apos;.rexloader&apos;.</source>
-        <translation>Cannot open database file.
- This is critical error and application will close.
- Check your permissions on &apos;.rexloader&apos; directory.</translation>
+        <translation>Неможливо відкрити файл бази данних.
+ Це критична помилка, програму буде завершено.
+ Перевірте свої права на доступ до папки &apos;.rexloader&apos;.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1752"/>
         <source>Загрузка файла %1 приостановлена</source>
-        <translation>Downloading file %1 stopped</translation>
+        <translation>Призупинене завантаження файлу %1</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1855"/>
         <location filename="../rexwindow.cpp" line="1914"/>
         <source>Скорость: %1</source>
-        <translation>Speed: %1</translation>
+        <translation>Швидкість: %1</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1910"/>
         <source>Осталось: %1</source>
-        <translation>Remains: %1</translation>
+        <translation>Залишилося: %1</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1969"/>
         <source>Файл для импорта</source>
-        <translation>File for import</translation>
+        <translation>Файл для імпорту</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="2050"/>
         <source>Замена файла %1</source>
-        <translation>Replacing file %1</translation>
+        <translation>Заміна файлу %1</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="2062"/>
         <source>Файл %1 сохранен как %2</source>
-        <translation>File %1 saved as %2</translation>
+        <translation>Файл %1 збережено як %2</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="2116"/>
         <source>Продолжить закачку?</source>
-        <translation>Continue downloading?</translation>
+        <translation>Продовжити завантаження?</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="2118"/>
         <source>Продолжить все</source>
-        <translation>Continue all</translation>
+        <translation>Продовжити все</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1654"/>
         <location filename="../rexwindow.cpp" line="2119"/>
         <source>Отмена</source>
-        <translation>Cancel</translation>
+        <translation>Відмінити</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="2121"/>
         <source>Есть незавершённые задания.</source>
-        <translation>There are incomplete tasks.</translation>
+        <translation>Є незавершені завдання.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="2122"/>
         <source>Для продолжения выполнения заданий нажмите &quot;Продолжить все&quot;, для отмены - &quot;Отмена&quot;</source>
-        <translation>To continue tasks click &quot;Continue all&quot;, to cancel click &quot;Cancel&quot;</translation>
+        <translation>Щоб продовжити виконувати завдання клікніть &quot;Продовжити все&quot;, щоб Скасувати &quot;Відмінити&quot;</translation>
     </message>
 </context>
 <context>
@@ -1190,86 +1190,86 @@ Error: %2</translation>
     <message>
         <location filename="../settingsdialog.ui" line="43"/>
         <source>Основные</source>
-        <translation>Main</translation>
+        <translation>Загальні</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="62"/>
         <location filename="../settingsdialog.ui" line="306"/>
         <source>Сеть</source>
-        <translation>Network</translation>
+        <translation>Мережа</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="75"/>
         <location filename="../settingsdialog.ui" line="665"/>
         <source>Закачки</source>
-        <translation>Downloads</translation>
+        <translation>Завантаження</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="88"/>
         <location filename="../settingsdialog.ui" line="958"/>
         <source>Интерфейс</source>
-        <translation>Interface</translation>
+        <translation>Інтерфейс</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="101"/>
         <location filename="../settingsdialog.ui" line="1282"/>
         <source>Плагины</source>
-        <translation>Plugins</translation>
+        <translation>Плагіни</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="114"/>
         <source>События</source>
-        <translation>Events</translation>
+        <translation>Події</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="135"/>
         <source>Основные настройки</source>
-        <translation>Main settings</translation>
+        <translation>Загальні налаштування</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="144"/>
         <source>Показывать лого</source>
-        <translation>Display logo</translation>
+        <translation>Показувати лого</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="154"/>
         <source>Минимизировать в трей при запуске</source>
-        <translation>Minimize to tray on launch</translation>
+        <translation>Мінімізувати в трей при завантаженні</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="164"/>
         <source>Анимировать значёк в трее (повышает нагрузку)</source>
-        <translation>Animate icon in tray (extra load)</translation>
+        <translation>Анімований значок в треї (збільшує навантаження)</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="177"/>
         <source>Проверять обновления</source>
-        <translation>Check for updates</translation>
+        <translation>Перевіряти оновлення</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="197"/>
         <source>Сохранять пароли в локальной базе данных</source>
-        <translation>Save passwords in local database</translation>
+        <translation>Зберігати паролі в локальній базі даних</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="211"/>
         <source>Сканировать буфер обмена</source>
-        <translation>Scan clipboard</translation>
+        <translation>Сканувати буфер обміну</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="221"/>
         <source>Не показывать диалог нового задания</source>
-        <translation>Do not show new task dialog</translation>
+        <translation>Не показувати діалог нового завдання</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="228"/>
         <source>Не добавлять задания с неизвестными протоколами</source>
-        <translation>Do not add tasks with unknown protocols</translation>
+        <translation>Не додавати завдання з невідомих протоколів</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="247"/>
         <source>Идентификация клиента</source>
-        <translation>Client identification</translation>
+        <translation>Ідентифікація клієнта</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="254"/>
@@ -1281,17 +1281,17 @@ Error: %2</translation>
         <location filename="../settingsdialog.ui" line="1218"/>
         <location filename="../settingsdialog.ui" line="1693"/>
         <source>Сбросить</source>
-        <translation>Reset</translation>
+        <translation>Скинути</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="319"/>
         <source>Подключение</source>
-        <translation>Connection</translation>
+        <translation>Підключити</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="327"/>
         <source>Высокая скорость</source>
-        <translation>High speed</translation>
+        <translation>Висока швидкість</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="340"/>
@@ -1299,52 +1299,52 @@ Error: %2</translation>
         <location filename="../settingsdialog.ui" line="397"/>
         <location filename="../settingsdialog.ui" line="427"/>
         <source> кБ/с</source>
-        <translation>kBps</translation>
+        <translation>kB/s</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="354"/>
         <source>Нормальная скорость</source>
-        <translation>Normal speed</translation>
+        <translation>Нормальна швидкість</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="384"/>
         <source>Низка скорость</source>
-        <translation>Low speed</translation>
+        <translation>Низька швидкість</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="414"/>
         <source>Очень низкая скорость</source>
-        <translation>Very low speed</translation>
+        <translation>Дуже низька швидкість</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="451"/>
         <source>Таймаут соединения</source>
-        <translation>Connection timeout</translation>
+        <translation>Таймаут з’єднання</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="461"/>
         <source> с</source>
-        <translation>s</translation>
+        <translation> с</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="506"/>
         <source>Прокси</source>
-        <translation>Proxy</translation>
+        <translation>Проксі</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="512"/>
         <source>Использовать прокси</source>
-        <translation>Use proxy</translation>
+        <translation>Використовувати проксі</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="522"/>
         <source>Настройки прокси</source>
-        <translation>Proxy settings</translation>
+        <translation>Налаштування проксі</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="530"/>
         <source>Адрес</source>
-        <translation>Address</translation>
+        <translation>Адреса</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="537"/>
@@ -1354,7 +1354,7 @@ Error: %2</translation>
     <message>
         <location filename="../settingsdialog.ui" line="557"/>
         <source>Порт</source>
-        <translation>Port</translation>
+        <translation>Порт</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="588"/>
@@ -1364,23 +1364,23 @@ Error: %2</translation>
     <message>
         <location filename="../settingsdialog.ui" line="612"/>
         <source>Имя пользователя</source>
-        <translation>User name</translation>
+        <translation>Ім’я користувача</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="626"/>
         <source>Пароль</source>
-        <translation>Password</translation>
+        <translation>Пароль</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="673"/>
         <source>Скачивать в</source>
-        <translation>Download to</translation>
+        <translation>Завантажувати в</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="696"/>
         <location filename="../settingsdialog.ui" line="1787"/>
         <source>Выбрать папку</source>
-        <translation>Select folder</translation>
+        <translation>Вибрати папку</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="699"/>
@@ -1391,7 +1391,7 @@ Error: %2</translation>
     <message>
         <location filename="../settingsdialog.ui" line="717"/>
         <source>Одновременных закачек</source>
-        <translation>Simultaneous downloads</translation>
+        <translation>Одночасних завантажень</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="747"/>
@@ -1426,37 +1426,37 @@ Error: %2</translation>
     <message>
         <location filename="../settingsdialog.ui" line="779"/>
         <source>Секций на закачку</source>
-        <translation>Sections for download</translation>
+        <translation>Секцій на завантаження</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="849"/>
         <source>Игнорировать критические ошибки</source>
-        <translation>Ignore critical errors</translation>
+        <translation>Ігнорувати критичні помилки</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="858"/>
         <source>Максимальное количество ошибок</source>
-        <translation>Maximum errors</translation>
+        <translation>Максимальна кількість помилок</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="898"/>
         <source>Интервал между попытками запроса</source>
-        <translation>Interval between attempts to query</translation>
+        <translation>Інтервал між спробами запиту</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="921"/>
         <source>с</source>
-        <translation>s</translation>
+        <translation>с</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="968"/>
         <source>Список заданий</source>
-        <translation>Task list</translation>
+        <translation>Список завдань</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="976"/>
         <source>Приостановлено</source>
-        <translation>Stopped</translation>
+        <translation>Призупинено</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="986"/>
@@ -1470,7 +1470,7 @@ Error: %2</translation>
         <location filename="../settingsdialog.ui" line="1592"/>
         <location filename="../settingsdialog.ui" line="1653"/>
         <source>Цвет строки</source>
-        <translation>Line color</translation>
+        <translation>Колір рядку</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="996"/>
@@ -1484,7 +1484,7 @@ Error: %2</translation>
         <location filename="../settingsdialog.ui" line="1500"/>
         <location filename="../settingsdialog.ui" line="1602"/>
         <source>Шрифт текста</source>
-        <translation>Text font</translation>
+        <translation>Колір шрифту</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="999"/>
@@ -1498,7 +1498,7 @@ Error: %2</translation>
         <location filename="../settingsdialog.ui" line="1503"/>
         <location filename="../settingsdialog.ui" line="1605"/>
         <source>Шрифт</source>
-        <translation>Font</translation>
+        <translation>Шрифт</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1009"/>
@@ -1512,157 +1512,157 @@ Error: %2</translation>
         <location filename="../settingsdialog.ui" line="1526"/>
         <location filename="../settingsdialog.ui" line="1615"/>
         <source>Цвет шрифта</source>
-        <translation>Font color</translation>
+        <translation>Колір шрифту</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1019"/>
         <source>В ожидании</source>
-        <translation>Pending</translation>
+        <translation>В очікуванні</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1062"/>
         <source>Выполняется</source>
-        <translation>Running</translation>
+        <translation>Виконується</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1105"/>
         <source>Ошибка</source>
-        <translation>Error</translation>
+        <translation>Помилка</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1148"/>
         <source>Завершено</source>
-        <translation>Completed</translation>
+        <translation>Завершено</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1195"/>
         <source>Переносить по словам</source>
-        <translation>Wrap</translation>
+        <translation>Переносити по словам</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1215"/>
         <location filename="../settingsdialog.ui" line="1690"/>
         <source>Сбросить настройки цвета/шрифта</source>
-        <translation>Reset color/font settings</translation>
+        <translation>Скинути налаштування кольору/шрифту</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1228"/>
         <source>Дерево фильтров</source>
-        <translation>Filters tree</translation>
+        <translation>Дерево фільтрів</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1243"/>
         <source>Показывать окно запущенного задания</source>
-        <translation>Show running task window</translation>
+        <translation>Показувати вікно запущеного завдання</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1253"/>
         <source>Показывать плавающее окно</source>
-        <translation>Show floating window</translation>
+        <translation>Показувати плаваюче вікно</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1303"/>
         <source>Активировать плагин</source>
-        <translation>Activate plugin</translation>
+        <translation>Активувати плагін</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1347"/>
         <source>События приложения</source>
-        <translation>Application events</translation>
+        <translation>Події програми</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1367"/>
         <source>Входящие сообщения</source>
-        <translation>Incoming messages</translation>
+        <translation>Вхідне повідомлення</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1451"/>
         <source>Исходящие сообщения</source>
-        <translation>Outgoing messages</translation>
+        <translation>Вихідне повідомлення</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1548"/>
         <source>Сообщения об ошибках</source>
-        <translation>Error messages</translation>
+        <translation>Повідомлення про помилку</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1573"/>
         <source>Информационные сообщения</source>
-        <translation>Information messages</translation>
+        <translation>Інформаційне повідомлення</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1637"/>
         <source>Предупреждающие сообщения</source>
-        <translation>Warning messages</translation>
+        <translation>Попереджуюче повідомлення</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1667"/>
         <source>Использовать шрифты и цветовое оформление системы</source>
-        <translation>Use system fonts and colors</translation>
+        <translation>Використовувати шрифти та кольорове оформлення системи</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1670"/>
         <source>Офомление системы</source>
-        <translation>Appearance</translation>
+        <translation>Оформлення системи</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1709"/>
         <source>Автоматически сохранять сообщения приложения</source>
-        <translation>Automatically save application messages</translation>
+        <translation>Автоматично зберігати повідомлення системи</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1718"/>
         <location filename="../settingsdialog.ui" line="1741"/>
         <source>Максимальное число видимых строк в журнале событий приложения и секций</source>
-        <translation>Maximum number of visible lines in application and sections event log</translation>
+        <translation>Максимальна кількість видимих рядків у журналі подій програми і секцій</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1721"/>
         <source>Макс. число видимых строк событий</source>
-        <translation>Maximum number of events visible lines</translation>
+        <translation>Максимальне число видимих рядків подій</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1764"/>
         <source>Директория</source>
-        <translation>Directory</translation>
+        <translation>Директорія</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1801"/>
         <location filename="../settingsdialog.ui" line="1811"/>
         <source>Время отсчета начинается только после завершения задания</source>
-        <translation>Countdown begins only after task is complete</translation>
+        <translation>Час відліку починається тільки після завершення завдання</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1804"/>
         <source>Врмя хранения событий заданий</source>
         <comment>Время отсчета начинается только после завершения задания</comment>
-        <translation>Tasks events storage time </translation>
+        <translation>Час відліку починається тільки після завершення завдання</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1817"/>
         <source>с</source>
         <comment>Время жизни в секундах</comment>
-        <translation>s</translation>
+        <translation>с</translation>
     </message>
     <message>
         <location filename="../settingsdialog.cpp" line="30"/>
         <source>Настройки</source>
-        <translation>Settings</translation>
+        <translation>Налаштування</translation>
     </message>
     <message>
         <location filename="../settingsdialog.cpp" line="35"/>
         <source>Загрузки</source>
-        <translation>Downloads</translation>
+        <translation>Завантаження</translation>
     </message>
     <message>
         <location filename="../settingsdialog.cpp" line="406"/>
         <source>Выбор директории</source>
-        <translation>Select directory</translation>
+        <translation>Вибір директорії</translation>
     </message>
     <message>
         <location filename="../settingsdialog.cpp" line="483"/>
         <source>отключено</source>
-        <translation>off</translation>
+        <translation>вимкнено</translation>
     </message>
 </context>
 <context>
@@ -1673,72 +1673,72 @@ Error: %2</translation>
         <location filename="../titemmodel.cpp" line="315"/>
         <location filename="../titemmodel.cpp" line="444"/>
         <source>Н/д</source>
-        <translation>N/a</translation>
+        <translation>Н/д</translation>
     </message>
     <message>
         <location filename="../titemmodel.cpp" line="222"/>
         <source>Остановлено</source>
-        <translation>Stopped</translation>
+        <translation>Зупинено</translation>
     </message>
     <message>
         <location filename="../titemmodel.cpp" line="223"/>
         <source>Ошибка</source>
-        <translation>Error</translation>
+        <translation>Помилка</translation>
     </message>
     <message>
         <location filename="../titemmodel.cpp" line="224"/>
         <source>Ожидание</source>
-        <translation>Waiting</translation>
+        <translation>Очікування</translation>
     </message>
     <message>
         <location filename="../titemmodel.cpp" line="231"/>
         <source>Завершено</source>
-        <translation>Completed</translation>
+        <translation>Закінчено</translation>
     </message>
     <message>
         <location filename="../titemmodel.cpp" line="328"/>
         <source>URL: %1&lt;br&gt;Имя файла: %2&lt;br&gt;Размер: %3&lt;br&gt;Завершено: %4 %5&lt;br&gt;&lt;font color=&apos;#00bb00&apos;&gt;Скорость: %6&lt;/font&gt;</source>
-        <translation>URL: %1&lt;br&gt;Filename: %2&lt;br&gt;Size: %3&lt;br&gt;Completed: %4 %5&lt;br&gt;&lt;font color=&apos;#00bb00&apos;&gt;Speed: %6&lt;/font&gt;</translation>
+        <translation>URL: %1&lt;br&gt;Ім’я файлу: %2&lt;br&gt;Розмір: %3&lt;br&gt;Закінчено: %4 %5&lt;br&gt;&lt;font color=&apos;#00bb00&apos;&gt;Швидкість: %6&lt;/font&gt;</translation>
     </message>
     <message>
         <location filename="../titemmodel.cpp" line="371"/>
         <source>Скорость</source>
-        <translation>Speed</translation>
+        <translation>Швидкість</translation>
     </message>
     <message>
         <location filename="../titemmodel.cpp" line="374"/>
         <source>До завершения</source>
-        <translation>Remains</translation>
+        <translation>До закінчення</translation>
     </message>
     <message>
         <location filename="../titemmodel.cpp" line="379"/>
         <source>Дата создания</source>
-        <translation>Creation date</translation>
+        <translation>Дата створення</translation>
     </message>
     <message>
         <location filename="../titemmodel.cpp" line="380"/>
         <source>Файл</source>
-        <translation>File</translation>
+        <translation>Файл</translation>
     </message>
     <message>
         <location filename="../titemmodel.cpp" line="381"/>
         <source>Размер</source>
-        <translation>Size</translation>
+        <translation>Розмір</translation>
     </message>
     <message>
         <location filename="../titemmodel.cpp" line="382"/>
         <source>Время скачивания</source>
-        <translation>Downloading time</translation>
+        <translation>Час завантаження</translation>
     </message>
     <message>
         <location filename="../titemmodel.cpp" line="383"/>
         <source>Статус</source>
-        <translation>State</translation>
+        <translation>Статус</translation>
     </message>
     <message>
         <location filename="../titemmodel.cpp" line="384"/>
         <source>Примечание</source>
-        <translation>Comment</translation>
+        <translation>Коментар</translation>
     </message>
     <message>
         <location filename="../titemmodel.cpp" line="421"/>
@@ -1763,7 +1763,7 @@ Error: %2</translation>
     <message>
         <location filename="../titemmodel.cpp" line="434"/>
         <source> ГБ/с</source>
-        <translation>GBps</translation>
+        <translation>GB/s</translation>
     </message>
     <message>
         <location filename="../titemmodel.cpp" line="434"/>
@@ -1773,7 +1773,7 @@ Error: %2</translation>
     <message>
         <location filename="../titemmodel.cpp" line="435"/>
         <source> МБ/с</source>
-        <translation>MBps</translation>
+        <translation>MB/s</translation>
     </message>
     <message>
         <location filename="../titemmodel.cpp" line="435"/>
@@ -1783,7 +1783,7 @@ Error: %2</translation>
     <message>
         <location filename="../titemmodel.cpp" line="436"/>
         <source> кБ/с</source>
-        <translation>kBps</translation>
+        <translation>kB/s</translation>
     </message>
     <message>
         <location filename="../titemmodel.cpp" line="436"/>
@@ -1793,7 +1793,7 @@ Error: %2</translation>
     <message>
         <location filename="../titemmodel.cpp" line="437"/>
         <source> Байт/с</source>
-        <translation>Bytesps</translation>
+        <translation>Bytes/s</translation>
     </message>
     <message>
         <location filename="../titemmodel.cpp" line="437"/>
@@ -1808,7 +1808,7 @@ Error: %2</translation>
     <message>
         <location filename="../titemmodel.cpp" line="459"/>
         <source>%1ч %2м %3с</source>
-        <translation>%1 h %2 m %3 s</translation>
+        <translation>%1ч %2м %3с</translation>
     </message>
     <message>
         <location filename="../titemmodel.cpp" line="461"/>
@@ -1826,7 +1826,7 @@ Error: %2</translation>
     <message>
         <location filename="../taskdialog.ui" line="38"/>
         <source>Задание</source>
-        <translation>Task</translation>
+        <translation>Завдання</translation>
     </message>
     <message>
         <location filename="../taskdialog.ui" line="65"/>
@@ -1836,52 +1836,52 @@ Error: %2</translation>
     <message>
         <location filename="../taskdialog.ui" line="99"/>
         <source>Приоритет</source>
-        <translation>Priority</translation>
+        <translation>Пріорітет</translation>
     </message>
     <message>
         <location filename="../taskdialog.ui" line="113"/>
         <source>Самый низкий</source>
-        <translation>Very low</translation>
+        <translation>Самий низький</translation>
     </message>
     <message>
         <location filename="../taskdialog.ui" line="118"/>
         <source>Низкий</source>
-        <translation>Low</translation>
+        <translation>Низький</translation>
     </message>
     <message>
         <location filename="../taskdialog.ui" line="123"/>
         <source>Средний</source>
-        <translation>Middle</translation>
+        <translation>Середній</translation>
     </message>
     <message>
         <location filename="../taskdialog.ui" line="128"/>
         <source>Высокий</source>
-        <translation>High</translation>
+        <translation>Високий</translation>
     </message>
     <message>
         <location filename="../taskdialog.ui" line="133"/>
         <source>Очень высокий</source>
-        <translation>Very high</translation>
+        <translation>Дуже високий</translation>
     </message>
     <message>
         <location filename="../taskdialog.ui" line="157"/>
         <source>Докачка</source>
-        <translation>Resume</translation>
+        <translation>Дозавантаження</translation>
     </message>
     <message>
         <location filename="../taskdialog.ui" line="216"/>
         <source>Статус:</source>
-        <translation>State:</translation>
+        <translation>Статус:</translation>
     </message>
     <message>
         <location filename="../taskdialog.ui" line="242"/>
         <source>Секции:</source>
-        <translation>Sections:</translation>
+        <translation>Секції:</translation>
     </message>
     <message>
         <location filename="../taskdialog.ui" line="268"/>
         <source>Размер:</source>
-        <translation>Size:</translation>
+        <translation>Розмір:</translation>
     </message>
     <message>
         <location filename="../taskdialog.ui" line="281"/>
@@ -1894,54 +1894,54 @@ Error: %2</translation>
     <message>
         <location filename="../taskdialog.ui" line="294"/>
         <source>Время скачивания:</source>
-        <translation>Downloading time:</translation>
+        <translation>Час завантаження:</translation>
     </message>
     <message>
         <location filename="../taskdialog.ui" line="320"/>
         <source>Скачано:</source>
-        <translation>Downloaded:</translation>
+        <translation>Завантаженно:</translation>
     </message>
     <message>
         <location filename="../taskdialog.ui" line="346"/>
         <source>Времени осталось:</source>
-        <translation>Time left:</translation>
+        <translation>Часу залишилось:</translation>
     </message>
     <message>
         <location filename="../taskdialog.ui" line="406"/>
         <location filename="../taskdialog.cpp" line="101"/>
         <location filename="../taskdialog.cpp" line="111"/>
         <source>Запустить</source>
-        <translation>Run</translation>
+        <translation>Запустити</translation>
     </message>
     <message>
         <location filename="../taskdialog.ui" line="417"/>
         <source>Изменить свойства</source>
-        <translation>Edit properties</translation>
+        <translation>Змінити властивості</translation>
     </message>
     <message>
         <location filename="../taskdialog.cpp" line="91"/>
         <source>Есть</source>
-        <translation>Yes</translation>
+        <translation>Да</translation>
     </message>
     <message>
         <location filename="../taskdialog.cpp" line="91"/>
         <source>Нет</source>
-        <translation>No</translation>
+        <translation>Ні</translation>
     </message>
     <message>
         <location filename="../taskdialog.cpp" line="100"/>
         <source>Ошибка</source>
-        <translation>Error</translation>
+        <translation>Помилка</translation>
     </message>
     <message>
         <location filename="../taskdialog.cpp" line="110"/>
         <source>Приостановлено</source>
-        <translation>Stopped</translation>
+        <translation>Зупинено</translation>
     </message>
     <message>
         <location filename="../taskdialog.cpp" line="119"/>
         <source>Ожидание</source>
-        <translation>Waiting</translation>
+        <translation>Очікування</translation>
     </message>
     <message>
         <location filename="../taskdialog.cpp" line="120"/>
@@ -1949,32 +1949,32 @@ Error: %2</translation>
         <location filename="../taskdialog.cpp" line="147"/>
         <location filename="../taskdialog.cpp" line="157"/>
         <source>Приостановить</source>
-        <translation>Stop</translation>
+        <translation>Зупинити</translation>
     </message>
     <message>
         <location filename="../taskdialog.cpp" line="128"/>
         <source>Завершено</source>
-        <translation>Completed</translation>
+        <translation>Готово</translation>
     </message>
     <message>
         <location filename="../taskdialog.cpp" line="129"/>
         <source>Перезакачать</source>
-        <translation>Redownload</translation>
+        <translation>Перезавантажити</translation>
     </message>
     <message>
         <location filename="../taskdialog.cpp" line="137"/>
         <source>Посылка запроса</source>
-        <translation>Sending request</translation>
+        <translation>Посилаю запит</translation>
     </message>
     <message>
         <location filename="../taskdialog.cpp" line="146"/>
         <source>Запрос принят</source>
-        <translation>Request accepted</translation>
+        <translation>Запит отримано</translation>
     </message>
     <message>
         <location filename="../taskdialog.cpp" line="156"/>
         <source>Закачивается</source>
-        <translation>Downloading</translation>
+        <translation>Завантажується</translation>
     </message>
 </context>
 <context>
@@ -1983,67 +1983,67 @@ Error: %2</translation>
         <location filename="../treeitemmodel.cpp" line="44"/>
         <location filename="../treeitemmodel.cpp" line="84"/>
         <source>Все закачки</source>
-        <translation>All downloads</translation>
+        <translation>Всі завантаження</translation>
     </message>
     <message>
         <location filename="../treeitemmodel.cpp" line="45"/>
         <location filename="../treeitemmodel.cpp" line="85"/>
         <source>Архивы</source>
-        <translation>Archives</translation>
+        <translation>Архіви</translation>
     </message>
     <message>
         <location filename="../treeitemmodel.cpp" line="46"/>
         <location filename="../treeitemmodel.cpp" line="86"/>
         <source>Приложения</source>
-        <translation>Applications</translation>
+        <translation>Програми</translation>
     </message>
     <message>
         <location filename="../treeitemmodel.cpp" line="47"/>
         <location filename="../treeitemmodel.cpp" line="87"/>
         <source>Аудио</source>
-        <translation>Audio</translation>
+        <translation>Аудіо</translation>
     </message>
     <message>
         <location filename="../treeitemmodel.cpp" line="48"/>
         <location filename="../treeitemmodel.cpp" line="88"/>
         <source>Видео</source>
-        <translation>Video</translation>
+        <translation>Відео</translation>
     </message>
     <message>
         <location filename="../treeitemmodel.cpp" line="49"/>
         <location filename="../treeitemmodel.cpp" line="89"/>
         <source>Другое</source>
-        <translation>Other</translation>
+        <translation>Різне</translation>
     </message>
     <message>
         <location filename="../treeitemmodel.cpp" line="196"/>
         <source>Состояния</source>
-        <translation>State</translation>
+        <translation>Стан</translation>
     </message>
     <message>
         <location filename="../treeitemmodel.cpp" line="197"/>
         <source>Выполняются</source>
-        <translation>Running</translation>
+        <translation>Виконується</translation>
     </message>
     <message>
         <location filename="../treeitemmodel.cpp" line="198"/>
         <source>В ожидании</source>
-        <translation>Pending</translation>
+        <translation>В очікуванні</translation>
     </message>
     <message>
         <location filename="../treeitemmodel.cpp" line="199"/>
         <source>Остановленные</source>
-        <translation>Stopped</translation>
+        <translation>Зупинені</translation>
     </message>
     <message>
         <location filename="../treeitemmodel.cpp" line="200"/>
         <source>Завершенные</source>
-        <translation>Completed</translation>
+        <translation>Завершені</translation>
     </message>
     <message>
         <location filename="../treeitemmodel.cpp" line="201"/>
         <source>С ошибками</source>
-        <translation>With errors</translation>
+        <translation>З помилками</translation>
     </message>
 </context>
 </TS>
