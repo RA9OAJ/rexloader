@@ -191,10 +191,10 @@ void SettingsDialog::applySets()
     sets.insert("noadd_unsupported",ui->notAddTaskUnsupported->isChecked());
     sets.insert("tray_doubleclick",ui->doubleClickBox->isChecked());
 
-    sets.insert("s_hight",(qint64)ui->spinHight->value());
-    sets.insert("s_normal",(qint64)ui->spinNormal->value());
-    sets.insert("s_low",(qint64)ui->spinLow->value());
-    sets.insert("s_vlow",(qint64)ui->spinVLow->value());
+    sets.insert("s_hight",(qint64)ui->spinHight->value()/8);
+    sets.insert("s_normal",(qint64)ui->spinNormal->value()/8);
+    sets.insert("s_low",(qint64)ui->spinLow->value()/8);
+    sets.insert("s_vlow",(qint64)ui->spinVLow->value()/8);
     sets.insert("timeout_interval",ui->connectionTimeout->value());
 
     sets.insert("proxy_enable",ui->proxyCheckBox->isChecked());
@@ -282,10 +282,10 @@ void SettingsDialog::cancelSets()
     ui->userAgent->setText(sets.value("user_agent").toString());
     ui->doubleClickBox->setChecked(sets.value("tray_doubleclick",false).toBool());
 
-    ui->spinHight->setValue(sets.value("s_hight").toLongLong());
-    ui->spinNormal->setValue(sets.value("s_normal").toLongLong());
-    ui->spinLow->setValue(sets.value("s_low").toLongLong());
-    ui->spinVLow->setValue(sets.value("s_vlow").toLongLong());
+    ui->spinHight->setValue(sets.value("s_hight").toLongLong()*8);
+    ui->spinNormal->setValue(sets.value("s_normal").toLongLong()*8);
+    ui->spinLow->setValue(sets.value("s_low").toLongLong()*8);
+    ui->spinVLow->setValue(sets.value("s_vlow").toLongLong()*8);
     ui->connectionTimeout->setValue(sets.value("timeout_interval").toInt());
 
     ui->proxyCheckBox->setChecked(sets.value("proxy_enable").toBool());

@@ -360,7 +360,7 @@
                    <enum>QAbstractSpinBox::UpDownArrows</enum>
                   </property>
                   <property name="suffix">
-                   <string> кБ/с</string>
+                   <string> кбит/с</string>
                   </property>
                   <property name="maximum">
                    <number>500000</number>
@@ -387,7 +387,7 @@
                    <enum>QAbstractSpinBox::UpDownArrows</enum>
                   </property>
                   <property name="suffix">
-                   <string> кБ/с</string>
+                   <string> кбит/с</string>
                   </property>
                   <property name="maximum">
                    <number>500000</number>
@@ -417,7 +417,7 @@
                    <enum>QAbstractSpinBox::UpDownArrows</enum>
                   </property>
                   <property name="suffix">
-                   <string> кБ/с</string>
+                   <string> кбит/с</string>
                   </property>
                   <property name="maximum">
                    <number>500000</number>
@@ -447,7 +447,7 @@
                    <enum>QAbstractSpinBox::UpDownArrows</enum>
                   </property>
                   <property name="suffix">
-                   <string> кБ/с</string>
+                   <string> кбит/с</string>
                   </property>
                   <property name="maximum">
                    <number>500000</number>
