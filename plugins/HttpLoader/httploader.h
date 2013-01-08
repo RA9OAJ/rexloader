@@ -99,6 +99,7 @@ public:
     QTime watcher;
     qint64 last_size;
     qint64 cur_speed;
+    QString etag;
 };
 
 class HttpLoader : public LoaderInterface
