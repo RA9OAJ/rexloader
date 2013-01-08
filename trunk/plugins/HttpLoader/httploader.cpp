@@ -284,6 +284,7 @@ void HttpLoader::startDownload(int id_task)
     sect->setUserAgent(uAgent);
     if(!tsk->referer.isEmpty())sect->setReferer(tsk->referer);
     sect->setLastModified(tsk->last_modif);
+    sect->setETag(tsk->etag);
 
     if(tsk->proxy_type != LInterface::PROXY_NOPROXY)
     {
@@ -620,6 +621,7 @@ void HttpLoader::addSection(int id_task)
     sect->setUserAgent(uAgent);
     if(!_task->referer.isEmpty())sect->setReferer(_task->referer);
     sect->setLastModified(_task->last_modif);
+    sect->setETag(_task->etag);
 
     if(_task->proxy_type != LInterface::PROXY_NOPROXY)
     {
@@ -831,6 +833,9 @@ void HttpLoader::acceptSectionData()
     tsk->map[2*sect_id-1] = sect->totalLoadOnSection();
     if(!sect->lastModified().isNull() && sect->lastModified().isValid() && tsk->last_modif.isNull())
         tsk->last_modif = sect->lastModified();
+    if(!sect->eTag().isEmpty() && tsk->etag.isEmpty())
+        tsk->etag = sect->eTag();
+
     tsk->map[13] = tsk->totalLoad();
 
     bool ismax = false;
@@ -1128,7 +1133,12 @@ void HttpLoader::addInAQueue()
     if(!sect_id)return;
     tsk->status = LInterface::ON_LOAD;
     tsk->filepath = sect->fileName();
-
+    //08.12.2013
+    if(!sect->lastModified().isNull() && sect->lastModified().isValid() && tsk->last_modif.isNull())
+        tsk->last_modif = sect->lastModified();
+    if(!sect->eTag().isEmpty() && tsk->etag.isEmpty())
+        tsk->etag = sect->eTag();
+    //----------
     disconnect(sect,SIGNAL(acceptRanges()),this,SLOT(addInAQueue()));
     connect(sect, SIGNAL(acceptQuery()),this,SLOT(acceptQuery()));
     connect(sect,SIGNAL(downloadingCompleted()),this,SLOT(sectionCompleted()));

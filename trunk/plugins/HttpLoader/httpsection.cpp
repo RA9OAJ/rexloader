@@ -277,6 +277,13 @@ void HttpSection::sendHeader()
     {
         _header += QString("Range: bytes=%1-%2").arg(QString::number(start_s+totalload), (finish_s == 0 ? "":QString::number(finish_s)));
         _header += "\r\n";
+        if(!_etag.isEmpty())
+            _header += QString("If-Range: %1\r\n").arg(_etag);
+        else if(!lastmodified.isNull())
+        {
+            QLocale locale(QLocale::C);
+            _header += QString("If-Range: %1\r\n").arg(locale.toString(lastmodified,"ddd, dd MMM yyyy hh:mm:ss 'GMT'"));
+        }
     }
     if(!authorization.isEmpty())
         _header += QString("Authorization: Basic %1\r\n").arg(authorization);
@@ -312,17 +319,17 @@ void HttpSection::dataAnalising()
             if(cur_str.at(cur_str.size()-2) != 0x0D) header[_tmp.value(0).toLower()].chop(1);
             else header[_tmp.value(0).toLower()].chop(2);
         }
-        emit sectionMessage(LInterface::MT_IN,tr("Получен ответ %1").arg(header["HTTP"]),_request);
         if(_errno == QAbstractSocket::RemoteHostClosedError && mode != 1){_errno = HttpSection::SERV_CONNECT_ERROR;emit errorSignal(_errno); stopDownloading(); return;}
     }
     if(mode == 1)
     {
+        emit sectionMessage(LInterface::MT_IN,tr("Получен ответ %1").arg(header["HTTP"]),_request);
         int reqid = header["HTTP"].toInt();
         _errno = reqid;
 
         //--Определяем имя файла---
         QFileInfo flinfo(flname);
-        if(flinfo.isDir() || (!flinfo.exists() && (header.contains("content-disposition"))))
+        if((flinfo.isDir() || (!flinfo.exists()) && (header.contains("content-disposition"))))
         {
             if(flname[flname.size()-1]!='/' && flinfo.isDir())flname += "/";
             if(flname[flname.size()-1]!='/' && header.contains("content-disposition")) flname = flinfo.absolutePath() + "/";
@@ -543,10 +550,20 @@ QDateTime HttpSection::lastModified() const
     return lastmodified;
 }
 
+QString HttpSection::eTag() const
+{
+    return _etag;
+}
+
 void HttpSection::setLastModified(const QDateTime &_dtime)
 {
     if(!_dtime.isValid())return;
     lastmodified = _dtime;
+}
+
+void HttpSection::setETag(const QString &etag)
+{
+    _etag = etag;
 }
 
 qint64 HttpSection::downSpeed() const
@@ -589,9 +606,10 @@ QString HttpSection::attachedFileName(const QString &cont_dispos) const
     for(int i = 0; i<words.size(); ++i)
     {
         if(words.value(i).indexOf("filename")<0)continue;
-        QString str = words.value(i).split("=\"").value(1);
+        QString str = words.value(i).split("filename=",QString::KeepEmptyParts).value(1);
+        if(str.toAscii()[0] == '"' && str.toAscii()[str.toAscii().size()-1] == '"')
+            str = str.replace(QRegExp("(^\")|(\"$)"),"");
         str = str.replace(QRegExp("[\r\n;]$"),"");
-        str.chop(1);
         return str;
     }
     return QString();

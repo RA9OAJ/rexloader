@@ -57,6 +57,7 @@ public:
     void setUserAgent(const QString &uagent); //устанавливаем клиентский агент
     void setReferer(const QString &uref); //устанавливаем реферера на ресурс
     void setLastModified(const QDateTime &_dtime); //устанавливает дату последнего изменения файла
+    void setETag(const QString &etag); //устанавливает ETag
     qint64 totalLoadOnSection() const; //возвращает итоговый размер скачаных данных в секции
     qint64 totalFileSize() const; //возвращает полный размер скачиваемого файла
     qint64 startByte() const; //возвращает номер начального байта секции
@@ -64,6 +65,7 @@ public:
     qint64 downSpeed() const; //возвращает максимально разрешенную скорость
     QString fileName() const; //возвращает локальный путь до файла-назначения
     QDateTime lastModified() const; //возвращает дату последней модификации файла
+    QString eTag() const; //возвращает ETag
     int errorNumber() const; // возвращает номер ошибки секции
     bool pauseState();// возвращает статус флага паузы
     void setAuthorizationData(const QString &data_base64); //устанавливает логин/пароль в base64 для вэб-авторизации
@@ -125,6 +127,7 @@ private:
     qint64 real_speed;
     qint64 last_buf_size;
     QDateTime lastmodified; //дата прошлой модификации удаленного файла для скачивания
+    QString _etag;
 
     qint64 down_speed; //предельная скорость скачивания
     qint64 chunked_size; //общий размер текущей секции
