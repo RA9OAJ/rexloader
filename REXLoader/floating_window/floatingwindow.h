@@ -53,6 +53,7 @@ public slots:
     void show();
     void disableWindow(bool dis);
     void setRenderGraphMode(int md);
+    void setSpeedFormat(bool bytes);
     void setShowWindowMode(bool md);
     int renderGraphMode();
     bool showWindowsMode();

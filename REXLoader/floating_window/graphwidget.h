@@ -42,6 +42,7 @@ signals:
 public slots:
     void addPoint(qint64 val);
     void setRenderStyle(int style);
+    void setSpeedFormat(bool out_bytes);
 
 protected:
     virtual void paintEvent(QPaintEvent *e);
@@ -58,6 +59,7 @@ private:
     qint64 max;
     bool pub;
     bool schedule_enable;
+    bool out_spdf;
 };
 
 #endif // GRAPHWIDGET_H

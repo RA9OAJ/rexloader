@@ -1,81 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="en_US">
+<TS version="2.0">
 <defaultcodec>UTF-8</defaultcodec>
 <context>
     <name>HttpLoader</name>
-    <message>
-        <source>Сарваритдинов Равиль Хамитович (mailto:ra9oaj@mail.ru)</source>
-        <translation type="obsolete">Sarvaritdinov Ravil (mailto:ra9oaj@mail.ru)</translation>
-    </message>
-    <message>
-        <source>Россия, г.Барабинск, 2011 год</source>
-        <translation type="obsolete">Russia, Barabinsk, 2011</translation>
-    </message>
-    <message>
-        <source>© 2011 Сарваритдинов Равиль Хамитович</source>
-        <translation type="obsolete">© 2011 Sarvaritdinov Ravil</translation>
-    </message>
-    <message>
-        <source>GNU GPL 2</source>
-        <translation type="obsolete">GNU GPL 2</translation>
-    </message>
-    <message>
-        <source>Плагин для скачивания файлов по протоколу HTTP.</source>
-        <translation type="obsolete">Plugin for downloading files on HTTP.</translation>
-    </message>
-    <message>
-        <source>400 Плохой запрос</source>
-        <translation type="obsolete">400 Bad Request</translation>
-    </message>
-    <message>
-        <source>401 Не авторизован</source>
-        <translation type="obsolete">401 Unauthorized</translation>
-    </message>
-    <message>
-        <source>403 Запрещено</source>
-        <translation type="obsolete">403 Forbidden</translation>
-    </message>
-    <message>
-        <source>407 требуется авторизация прокси</source>
-        <translation type="obsolete">407 Proxy Authentication Required</translation>
-    </message>
-    <message>
-        <source>409 Конфликт</source>
-        <translation type="obsolete">409 Conflict</translation>
-    </message>
-    <message>
-        <source>410 Удалён</source>
-        <translation type="obsolete">410 Gone</translation>
-    </message>
-    <message>
-        <source>414 Запрашиваемый URL слишком длинный</source>
-        <translation type="obsolete">414 Request-URL Too Long</translation>
-    </message>
-    <message>
-        <source>500 Внутренняя ошибка сервера</source>
-        <translation type="obsolete">500 Internal Server Error</translation>
-    </message>
-    <message>
-        <source>501 Не реализовано</source>
-        <translation type="obsolete">501 Not Implemented</translation>
-    </message>
-    <message>
-        <source>502 Плохой шлюз</source>
-        <translation type="obsolete">502 Bad Gateway</translation>
-    </message>
-    <message>
-        <source>503 Сервис недоступен</source>
-        <translation type="obsolete">503 Service Unavailable</translation>
-    </message>
-    <message>
-        <source>504 Шлюз не отвечает</source>
-        <translation type="obsolete">504 Gateway Timeout</translation>
-    </message>
-    <message>
-        <source>505 Версия HTTP не поддерживается</source>
-        <translation type="obsolete">505 HTTP Version Not Supported</translation>
-    </message>
     <message>
         <location filename="../httploader.cpp" line="65"/>
         <source>HttpLoader</source>
@@ -184,7 +112,7 @@
     <message>
         <location filename="../httploader.cpp" line="1077"/>
         <source>Неизвестная ошибка. Код ошибки = </source>
-        <translation>Unknown Error. Error code = </translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

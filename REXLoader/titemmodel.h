@@ -38,6 +38,7 @@ public:
     virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
     virtual QModelIndex parent(const QModelIndex &child) const;
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+    void setSpdFormat(bool out_bytes = false);
     static QStringList sizeForHumans(qint64 sz);
     static QStringList speedForHumans(qint64 sp, bool in_bytes = true, bool out_bytes = false);
     static QString secForHumans(int sec);
@@ -65,6 +66,7 @@ private:
     QHash<int,QColor>row_font_colors;
     QHash<int, QHash<int,QVariant> >cache;
     QList<int> upd_queue;
+    bool out_spdf;
 };
 
 #endif // TITEMMODEL_H

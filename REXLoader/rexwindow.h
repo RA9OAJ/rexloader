@@ -139,6 +139,7 @@ protected slots:
     void showAbout(); //отображает диалоговое окно с данными о версии программы
     void notifActAnalyzer(const QString &act); //анализирует нажатие кнопки уведомления
     void checkFileType(const QString &mime, const QString &filepath); //проверяет mime файла и вызывает определенное действие для этого типа файлов
+    void showSettDialog(); //отображает окно настроек программы
 
 signals:
     void transAct();

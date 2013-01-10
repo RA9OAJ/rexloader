@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 GraphWidget::GraphWidget(QWidget *parent) :
     QWidget(parent)
 {
+    out_spdf = true;
     rstyle = RS_Graph;
     pub = false;
     schedule_enable = true;
@@ -61,6 +62,11 @@ void GraphWidget::setRenderStyle(int style)
     rstyle = (RenderStyle)style;
 }
 
+void GraphWidget::setSpeedFormat(bool out_bytes)
+{
+    out_spdf = out_bytes;
+}
+
 void GraphWidget::paintEvent(QPaintEvent *e)
 {
     QPainter *p = new QPainter(this);
@@ -79,7 +85,7 @@ void GraphWidget::paintEvent(QPaintEvent *e)
     font.setPixelSize(10);
     p->setFont(font);
 
-    QStringList out = speedForHumans((points.isEmpty() ? 0 : points.first()),true,true);
+    QStringList out = speedForHumans((points.isEmpty() ? 0 : points.first()),true,out_spdf);
     p->drawText(QRect(3,2,100,12),QString("%1%2").arg(out.first(),out.last()));
     p->end();
 
