@@ -230,6 +230,7 @@ void SettingsDialog::applySets()
     sets.insert("on_finish_font",ui->onFinishFont->font());
     sets.insert("on_finish_font_color",ui->onFinishFontColor->currentColor());
     sets.insert("table_word_wrap",ui->tableWordWrap->isChecked());
+    sets.insert("speed_on_kBps",ui->downSpdKBps->isChecked());
 
     sets.insert("log_dir",ui->logDir->text());
     sets.insert("log_autosave",ui->logAutisave->isChecked());
@@ -321,6 +322,7 @@ void SettingsDialog::cancelSets()
     ui->onFinishFont->setFont(sets.value("on_finish_font").value<QFont>());
     ui->onFinishFontColor->setColor(sets.value("on_finish_font_color").value<QColor>());
     ui->tableWordWrap->setChecked(sets.value("table_word_wrap").toBool());
+    ui->downSpdKBps->setChecked(sets.value("speed_on_kBps").toBool());
 
     ui->logDir->setText(sets.value("log_dir").toString());
     ui->logAutisave->setChecked(sets.value("log_autosave").toBool());
@@ -422,6 +424,29 @@ void SettingsDialog::updateInterface()
 {
     cancelSets();
     emit newSettings();
+}
+
+void SettingsDialog::selectCurrentSubsettings(SettingsDialog::SettingsSection sect)
+{
+    int rowid = 0;
+    switch(sect)
+    {
+    case NETWORK:
+        rowid = 1; break;
+    case DOWNLOADS:
+        rowid = 2; break;
+    case GUI:
+        rowid = 3; break;
+    case PLUGINS:
+        rowid = 4; break;
+    case EVENTS:
+        rowid = 5; break;
+    default:
+        rowid = 0; break;
+    }
+
+    ui->listWidget->setCurrentRow(rowid,QItemSelectionModel::Select);
+    selectSubSettings();
 }
 
 void SettingsDialog::resetFontsColors()

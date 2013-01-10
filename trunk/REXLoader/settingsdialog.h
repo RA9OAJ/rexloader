@@ -36,6 +36,15 @@ class SettingsDialog : public QDialog
     Q_OBJECT
 
 public:
+    enum SettingsSection{
+        GENERAL,
+        NETWORK,
+        DOWNLOADS,
+        GUI,
+        PLUGINS,
+        EVENTS
+    };
+
     explicit SettingsDialog(QWidget *parent = 0);
     ~SettingsDialog();
     QList<QString> keys() const;
@@ -49,6 +58,7 @@ public slots:
     void show();
     void setSettingAttribute(const QString &key, const QVariant &value);
     void updateInterface();
+    void selectCurrentSubsettings(SettingsSection sect = GENERAL);
 
 protected:
     void closeEvent(QCloseEvent *event);

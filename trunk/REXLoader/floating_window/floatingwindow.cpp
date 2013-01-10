@@ -184,6 +184,11 @@ void FloatingWindow::setRenderGraphMode(int md)
     }
 }
 
+void FloatingWindow::setSpeedFormat(bool bytes)
+{
+    graph->setSpeedFormat(bytes);
+}
+
 void FloatingWindow::setShowWindowMode(bool md)
 {
     if(md)

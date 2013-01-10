@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 TItemModel::TItemModel(QObject *parent) :
     QAbstractItemModel(parent)
 {
+    out_spdf = false;
     qr = 0;
     grow=gcolumn=0;
     row_colors.insert((int)LInterface::ON_PAUSE, QColor("#fff3a4"));
@@ -159,7 +160,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
             case LInterface::FINISHED: return QVariant();
 
             default:
-                QStringList _tmp = speedForHumans(curspeed.value(myData(row,0).toInt()));
+                QStringList _tmp = speedForHumans(curspeed.value(myData(row,0).toInt()),true,out_spdf);
                 QString curspd_ = _tmp.value(0)+_tmp.value(1);
                 return curspd_;
             }
@@ -246,7 +247,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
             case LInterface::FINISHED: return QVariant();
 
             default:
-                QStringList _tmp = speedForHumans(myData(row,col).toLongLong());
+                QStringList _tmp = speedForHumans(myData(row,col).toLongLong(),true,out_spdf);
                 QString curspd_ = _tmp.value(0)+_tmp.value(1);
                 return curspd_;
             }
@@ -322,7 +323,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         _tmp.clear();
         if(myData(row,9).toInt() == LInterface::ON_LOAD)
         {
-            _tmp = speedForHumans(curspeed.value(myData(row,0).toLongLong()));
+            _tmp = speedForHumans(curspeed.value(myData(row,0).toLongLong()),true,out_spdf);
             spd = _tmp.value(0)+_tmp.value(1);
         }
         else spd = "---";
@@ -388,6 +389,11 @@ QVariant TItemModel::headerData(int section, Qt::Orientation orientation, int ro
         default: return qr->record().field(section).name();
         }
     else return QVariant();
+}
+
+void TItemModel::setSpdFormat(bool out_bytes)
+{
+    out_spdf = out_bytes;
 }
 
 QModelIndex TItemModel::parent(const QModelIndex &child) const

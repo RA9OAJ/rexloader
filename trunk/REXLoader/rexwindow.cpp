@@ -38,10 +38,6 @@ REXWindow::REXWindow(QWidget *parent) :
     libdir.cdUp();
     pluginDirs << libdir.absolutePath()+"/lib/rexloader/plugins" << libdir.absolutePath()+"/lib64/rexloader/plugins" << QDir::homePath()+"/.rexloader/plugins";
 
-    downDir = QDir::homePath()+tr("/Загрузки");
-    if(!QDir().exists(downDir))
-        QDir().mkpath(downDir);
-
     sz << 800 << 150;
     sz1 << 150 << 800;
     ui->splitter->setSizes(sz);
@@ -273,6 +269,7 @@ void REXWindow::createInterface()
     connect(ui->actionSuspend,SIGNAL(triggered()),this,SLOT(setPostActionMode()));
     connect(qApp->clipboard(),SIGNAL(dataChanged()),this,SLOT(scanClipboard()));
     connect(ui->actionAbout,SIGNAL(triggered()),this,SLOT(showAbout()));
+    connect(ui->actionpluginsShow,SIGNAL(triggered()),this,SLOT(showSettDialog()));
 
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);
@@ -2154,6 +2151,12 @@ void REXWindow::readSettings()
     max_tasks = settDlg->value("max_number_tasks").toInt();
     max_threads = settDlg->value("max_number_sections").toInt();
     downDir = settDlg->value("down_dir").toString();
+    if(!QDir().exists(downDir))
+    {
+        if(downDir.isEmpty())
+            downDir = QDir::homePath()+tr("/Загрузки");
+        QDir().mkpath(downDir);
+    }
 
     if(ui->actionVeryLow->isChecked()) down_speed = settDlg->value("s_vlow").toLongLong()*8;
     else if(ui->actionLow->isChecked()) down_speed = settDlg->value("s_low").toLongLong()*8;
@@ -2171,6 +2174,8 @@ void REXWindow::readSettings()
         plugins.value(i)->setAttemptInterval(settDlg->value("attempt_interval").toInt());
     }
 
+    model->setSpdFormat(settDlg->value("speed_on_kBps").toBool());
+    fwnd->setSpeedFormat(settDlg->value("speed_on_kBps").toBool());
     model->setRowColor((int)LInterface::ON_PAUSE, settDlg->value("on_pause_color").value<QColor>());
     model->setRowColor((int)LInterface::ON_LOAD, settDlg->value("on_load_color").value<QColor>());
     model->setRowColor((int)LInterface::ERROR_TASK, settDlg->value("on_error_color").value<QColor>());
@@ -2716,6 +2721,16 @@ void REXWindow::checkFileType(const QString &mime, const QString &filepath)
         question->show();
         question->activateWindow();
     }
+}
+
+void REXWindow::showSettDialog()
+{
+    QAction *act = qobject_cast<QAction*>(sender());
+
+    if(act == ui->actionpluginsShow)
+        settDlg->selectCurrentSubsettings(SettingsDialog::PLUGINS);
+
+    settDlg->show();
 }
 
 void REXWindow::prepareToQuit()
