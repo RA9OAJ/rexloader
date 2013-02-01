@@ -329,7 +329,7 @@ void HttpSection::dataAnalising()
 
         //--Определяем имя файла---
         QFileInfo flinfo(flname);
-        if(flinfo.isDir() || !flinfo.exists() || header.contains("content-disposition"))
+        if(flinfo.isDir() || (header.contains("content-disposition") && !flinfo.exists()))
         {
             if(flname[flname.size()-1]!='/' && flinfo.isDir())flname += "/";
             if(flname[flname.size()-1]!='/' && header.contains("content-disposition")) flname = flinfo.absolutePath() + "/";
