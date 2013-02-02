@@ -1,13 +1,9 @@
 TEMPLATE = subdirs
 
-SUBDIRS = \
-    HttpLoader
+SUBDIRS = HttpLoader HashCalculator
 
 unix{
-SUBDIRS += \
-    NixNotifyPlugin
+    SUBDIRS += NixNotifyPlugin
 }
   
-HEADERS = \
-    LoaderInterface.h\
-    NotifInterface.h
+HEADERS = LoaderInterface.h NotifInterface.h FileInterface.h
