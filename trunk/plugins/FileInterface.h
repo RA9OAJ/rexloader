@@ -5,7 +5,7 @@
 #include <QString>
 #include <QStringList>
 #include <QAction>
-
+#include <QList>
 
 /*
     Интерфейс для модулей манипулирующих загружеными
@@ -18,7 +18,7 @@ class FileInterface
 public:
     virtual ~FileInterface() {};
     // функция инициализации модуля
-    virtual void setFileName(const QString &file_name) = 0;
+    virtual void setFileName(const QStringList &file_name_list) = 0;
     // функция освобождения захваченых ресурсов
     virtual void release() = 0;
     // текстовое описание последней ошибки
@@ -26,7 +26,7 @@ public:
     // возвращает данные о модуле и его авторах
     virtual QStringList pluginInfo() const = 0;
     // действие запускающее основную функцию модуля
-    virtual QAction *getRunAction() const = 0;
+    virtual QList<QAction*> getRunAction() const = 0;
 };
 
 Q_DECLARE_INTERFACE(FileInterface, "local.rav.RExLoader.FileInterface/0.1a")

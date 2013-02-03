@@ -15,16 +15,16 @@ public:
     HashCalculator();
     virtual ~HashCalculator();
     //
-    virtual void setFileName(const QString &file_name);
+    virtual void setFileName(const QStringList &file_name);
     virtual void release();
     virtual QString getLastError() const;
     virtual QStringList pluginInfo() const;
-    virtual QAction *getRunAction() const;
+    virtual QList<QAction*> getRunAction() const;
 
 private:
-    QString m_file_name;
+    QStringList m_file_name_list;
     QDialog *mp_control_dialog;
-    QAction *mp_run_action;
+    QList<QAction*> m_run_action_list;
 
 private slots:
     void run();
