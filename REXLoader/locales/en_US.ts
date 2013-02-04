@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="en_US" sourcelanguage="ru_RU">
+<TS version="2.0" language="en_US">
 <defaultcodec>UTF-8</defaultcodec>
 <context>
     <name>AddTaskDialog</name>
@@ -65,13 +65,9 @@
         <translation>Choose directory</translation>
     </message>
     <message>
-        <source>URL не корректен. Введите другой URL или справьте этот.</source>
-        <translation type="obsolete">URL is incorrect. Enter another URL or correct it.</translation>
-    </message>
-    <message>
         <location filename="../addtaskdialog.cpp" line="132"/>
         <source>URL не корректен. Введите другой URL или исправьте этот.</source>
-        <translation type="unfinished"></translation>
+        <translation>Invalid URL. Enter another URL or correct it.</translation>
     </message>
     <message>
         <location filename="../addtaskdialog.cpp" line="133"/>
@@ -239,48 +235,53 @@
 <context>
     <name>GraphWidget</name>
     <message>
-        <location filename="../floating_window/graphwidget.cpp" line="130"/>
+        <location filename="../floating_window/graphwidget.cpp" line="136"/>
         <source> ГБ/с</source>
         <translation>GBps</translation>
     </message>
     <message>
-        <location filename="../floating_window/graphwidget.cpp" line="130"/>
+        <location filename="../floating_window/graphwidget.cpp" line="136"/>
         <source> Гб/с</source>
         <translation>Gbps</translation>
     </message>
     <message>
-        <location filename="../floating_window/graphwidget.cpp" line="131"/>
+        <location filename="../floating_window/graphwidget.cpp" line="137"/>
         <source> МБ/с</source>
         <translation>MBps</translation>
     </message>
     <message>
-        <location filename="../floating_window/graphwidget.cpp" line="131"/>
+        <location filename="../floating_window/graphwidget.cpp" line="137"/>
         <source> Мб/с</source>
         <translation>Mbps</translation>
     </message>
     <message>
-        <location filename="../floating_window/graphwidget.cpp" line="132"/>
+        <location filename="../floating_window/graphwidget.cpp" line="138"/>
         <source> кБ/с</source>
         <translation>kBps</translation>
     </message>
     <message>
-        <location filename="../floating_window/graphwidget.cpp" line="132"/>
+        <location filename="../floating_window/graphwidget.cpp" line="138"/>
         <source> кб/с</source>
         <translation>kbps</translation>
     </message>
     <message>
-        <location filename="../floating_window/graphwidget.cpp" line="133"/>
+        <location filename="../floating_window/graphwidget.cpp" line="139"/>
         <source> Байт/с</source>
         <translation>Bytesps</translation>
     </message>
     <message>
-        <location filename="../floating_window/graphwidget.cpp" line="133"/>
+        <location filename="../floating_window/graphwidget.cpp" line="139"/>
         <source> бит/с</source>
         <translation>bitps</translation>
     </message>
 </context>
 <context>
     <name>ImportDialog</name>
+    <message>
+        <location filename="../importdialog.ui" line="14"/>
+        <source>Импорт URL</source>
+        <translation>Import URL</translation>
+    </message>
     <message>
         <location filename="../importdialog.ui" line="28"/>
         <source>Строки</source>
@@ -298,29 +299,24 @@
         <translation>Found</translation>
     </message>
     <message>
-        <location filename="../importdialog.ui" line="103"/>
-        <source>+</source>
-        <translation>+</translation>
-    </message>
-    <message>
-        <location filename="../importdialog.ui" line="120"/>
-        <source>-</source>
-        <translation>-</translation>
-    </message>
-    <message>
-        <location filename="../importdialog.ui" line="14"/>
-        <source>Импорт URL</source>
-        <translation>Import URL</translation>
-    </message>
-    <message>
         <location filename="../importdialog.ui" line="95"/>
         <source>Выделить всё</source>
         <translation>Select all</translation>
     </message>
     <message>
+        <location filename="../importdialog.ui" line="103"/>
+        <source>+</source>
+        <translation>+</translation>
+    </message>
+    <message>
         <location filename="../importdialog.ui" line="110"/>
         <source>Снять все выделения</source>
         <translation>Deselect all</translation>
+    </message>
+    <message>
+        <location filename="../importdialog.ui" line="120"/>
+        <source>-</source>
+        <translation>-</translation>
     </message>
     <message>
         <location filename="../importdialog.ui" line="127"/>
@@ -621,7 +617,7 @@ To refine the list of matching URL click &quot;Show details...&quot;</translatio
     </message>
     <message>
         <location filename="../rexwindow.ui" line="356"/>
-        <location filename="../rexwindow.cpp" line="2690"/>
+        <location filename="../rexwindow.cpp" line="2692"/>
         <source>О программе</source>
         <translation>About</translation>
     </message>
@@ -767,21 +763,16 @@ To refine the list of matching URL click &quot;Show details...&quot;</translatio
         <translation>Standby</translation>
     </message>
     <message>
-        <location filename="../rexwindow.cpp" line="2157"/>
-        <source>/Загрузки</source>
-        <translation>/Downloads</translation>
-    </message>
-    <message>
         <location filename="../rexwindow.cpp" line="82"/>
         <location filename="../rexwindow.cpp" line="771"/>
         <source>Критическая ошибка</source>
         <translation>Fatal error</translation>
     </message>
     <message>
+        <location filename="../rexwindow.cpp" line="82"/>
         <source>Не найден ни один плагин.
  Проверьте наличие файлов плагинов в директории &apos;.rexloader&apos; и &apos;/usr/{local/}lib/rexloader/plugins&apos;.</source>
-        <translation type="obsolete">No plugins found.
- Check plugin files in &apos;.rexloader&apos; and &apos;/usr/{local/}lib/rexloader/plugins&apos;  directories .</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="90"/>
@@ -820,6 +811,16 @@ To refine the list of matching URL click &quot;Show details...&quot;</translatio
         <translation>Exit</translation>
     </message>
     <message>
+        <location filename="../rexwindow.cpp" line="507"/>
+        <source>Открыть файл</source>
+        <translation>Open file</translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="512"/>
+        <source>Повторить попытку</source>
+        <translation>Retry</translation>
+    </message>
+    <message>
         <location filename="../rexwindow.cpp" line="585"/>
         <location filename="../rexwindow.cpp" line="602"/>
         <location filename="../rexwindow.cpp" line="783"/>
@@ -833,11 +834,11 @@ To refine the list of matching URL click &quot;Show details...&quot;</translatio
         <location filename="../rexwindow.cpp" line="1462"/>
         <location filename="../rexwindow.cpp" line="2087"/>
         <location filename="../rexwindow.cpp" line="2127"/>
-        <location filename="../rexwindow.cpp" line="2331"/>
-        <location filename="../rexwindow.cpp" line="2344"/>
-        <location filename="../rexwindow.cpp" line="2357"/>
-        <location filename="../rexwindow.cpp" line="2403"/>
-        <location filename="../rexwindow.cpp" line="2419"/>
+        <location filename="../rexwindow.cpp" line="2333"/>
+        <location filename="../rexwindow.cpp" line="2346"/>
+        <location filename="../rexwindow.cpp" line="2359"/>
+        <location filename="../rexwindow.cpp" line="2405"/>
+        <location filename="../rexwindow.cpp" line="2421"/>
         <source>Ошибка выполнения SQL запроса</source>
         <translation>SQL query error</translation>
     </message>
@@ -855,15 +856,21 @@ To refine the list of matching URL click &quot;Show details...&quot;</translatio
         <location filename="../rexwindow.cpp" line="1463"/>
         <location filename="../rexwindow.cpp" line="2088"/>
         <location filename="../rexwindow.cpp" line="2128"/>
-        <location filename="../rexwindow.cpp" line="2332"/>
-        <location filename="../rexwindow.cpp" line="2345"/>
-        <location filename="../rexwindow.cpp" line="2358"/>
-        <location filename="../rexwindow.cpp" line="2404"/>
-        <location filename="../rexwindow.cpp" line="2420"/>
+        <location filename="../rexwindow.cpp" line="2334"/>
+        <location filename="../rexwindow.cpp" line="2347"/>
+        <location filename="../rexwindow.cpp" line="2360"/>
+        <location filename="../rexwindow.cpp" line="2406"/>
+        <location filename="../rexwindow.cpp" line="2422"/>
         <source>Запрос: %1
 Ошибка: %2</source>
         <translation>Request: %1
 Error: %2</translation>
+    </message>
+    <message>
+        <source>Не найден ни один плагин.
+ Проверьте наличие файлов плагинов в директории &apos;.rexloader&apos; и &apos;/usr/{local/}lib/rexloader/plugins&apos;.</source>
+        <translation type="obsolete">No plugins found.
+ Check plugin files in &apos;.rexloader&apos; and &apos;/usr/{local/}lib/rexloader/plugins&apos;  directories .</translation>
     </message>
     <message>
         <source>Невозможно открыть файл базы данных.
@@ -872,6 +879,13 @@ Error: %2</translation>
         <translation type="obsolete">Cannot open database file.
  This is critical error and application will close.
  Check your permissions on &apos;.rexloader&apos; directory.</translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="771"/>
+        <source>Невозможно открыть файл базы данных.
+ Это критическая ошибка, приложение будет закрыто.
+ Проверьте свои права доступа к директории &apos;.rexloader&apos;.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1015"/>
@@ -1056,6 +1070,13 @@ Error: %2</translation>
         <translation>Turn off PC</translation>
     </message>
     <message>
+        <location filename="../rexwindow.cpp" line="1666"/>
+        <location filename="../rexwindow.cpp" line="2138"/>
+        <location filename="../rexwindow.cpp" line="2711"/>
+        <source>Отмена</source>
+        <translation>Cancel</translation>
+    </message>
+    <message>
         <location filename="../rexwindow.cpp" line="1668"/>
         <source>Выключить ПК после завершения всех заданий?</source>
         <translation>Turn PC off after all tasks completed?</translation>
@@ -1081,88 +1102,20 @@ Error: %2</translation>
         <translation>Downloading file &lt;b&gt;%1&lt;/b&gt; failed</translation>
     </message>
     <message>
-        <location filename="../rexwindow.cpp" line="1782"/>
-        <source>Этот протокол не поддерживается. Проверьте наличие соответствующего плагина и его состояние.</source>
-        <translation>This protocol is not supported. Check the appropriate plugin and its state.</translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="2076"/>
-        <source>Файл &lt;b&gt;%1&lt;/b&gt; скачан, переименован и сохранен как &lt;b&gt;%2&lt;/b&gt;</source>
-        <translation>File &lt;b&gt;%1&lt;/b&gt; was downloaded, renamed and saved as &lt;b&gt;%2&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="2638"/>
-        <source>Повторять действие завершения работы ПК?</source>
-        <translation>Repeat shutdown PC action?</translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="2639"/>
-        <source>Вы установили опцию автоматического завершения работы ПК по завершению всех заданий. Хотите чтобы программа всегда выполняла данное действие автоматизации?</source>
-        <translation>You set automatically shutdown PC after complete all tasks option. Do you want the program to always do it at automation?</translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="2641"/>
-        <source>Да, всегда выключать ПК</source>
-        <translation>Yes, always turn off PC</translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="2642"/>
-        <source>Нет, выключить единоразово</source>
-        <translation>No, turn off one-time</translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="2680"/>
-        <source>Это приложение - свободное программное обеспечение и распространяется по лицензии GNU/GPL-3. Разработка идет при участии &lt;a href=&apos;http://kubuntu.ru/&apos;&gt;Русского сообщества Kubuntu&lt;/a&gt;, сайт разработчика - &lt;a href=&apos;http://spolab.ru/&apos;&gt;Лаборатория Свободного программного обеспечения (Лаборатория СПО)&lt;/a&gt;.&lt;hr&gt;Уважаемые пользователи! Я приглашаю принять участие всех заинтересовавшихся данной программой в её дальнейшей разработке. Для этого вам достаточно связаться со мной по электронной почте &lt;a href=&apos;mailto:ra9oaj@gmail.com&apos;&gt;ra9oaj@gmail.com&lt;/a&gt;, либо зарегистрироваться на сайте &lt;a href=&apos;http://spolab.ru/&apos;&gt;Лаборатория СПО&lt;/a&gt; и связаться с помощью личного сообщения.&lt;br&gt;Выражаю особую благодарность активному пользователю Русского сообщества Kubuntu - &lt;b&gt;Дмитрию Перлову (aka DarkneSS)&lt;/b&gt;, ставшему первым Maintainer&apos;ом этого ПО в различных дистрибутивах GNU/Linux.</source>
-        <translation>This application is free software and licensed under GNU/GPL-3. Development comes with participation of &lt;a href=&apos;http://kubuntu.ru/&apos;&gt;Kubuntu Russian community&lt;/a&gt;, developer&apos;s site &lt;a href=&apos;http://spolab.ru/&apos;&gt; Free Software Laboratory (FS Laboratory) &lt;/a&gt;. &lt;hr&gt; Dear users! I invite all interested to attend this program in its further development. For this you can contact me by e-mail &lt;a href=&apos;mailto:ra9oaj@gmail.com&apos;&gt; ra9oaj@gmail.com &lt;/a&gt;, or register on &lt;a href = &apos;http://spolab.ru / &apos;&gt;FS Laboratory&lt;/a&gt; site and get in touch with personal message. &lt;br&gt; Special thanks to active user of Kubuntu Russian Community - &lt;b&gt;Dmitry Perlov (aka DarkneSS)&lt;/b&gt;, which was first  maintainer of this software in different GNU/Linux distributions.</translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="2708"/>
-        <source>Импортировать</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="2712"/>
-        <source>Файл &lt;b&gt;%1&lt;/b&gt; является текстовым/html, вы можете импортировать URL из файла</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="2713"/>
-        <source>Для импорта нажмите &quot;Импортировать&quot;, для отмены - &quot;Отмена&quot;.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../rexwindow.cpp" line="1725"/>
         <location filename="../rexwindow.cpp" line="1800"/>
         <source>Загрузка файла %1 начинается</source>
         <translation>Downloading file %1 begins</translation>
     </message>
     <message>
-        <location filename="../rexwindow.cpp" line="82"/>
-        <source>Не найден ни один плагин.
- Проверьте наличие файлов плагинов в директории &apos;.rexloader&apos; и &apos;/usr/{local/}lib/rexloader/plugins&apos;.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="507"/>
-        <source>Открыть файл</source>
-        <translation>Open file</translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="512"/>
-        <source>Повторить попытку</source>
-        <translation>Retry</translation>
-    </message>
-    <message>
-        <location filename="../rexwindow.cpp" line="771"/>
-        <source>Невозможно открыть файл базы данных.
- Это критическая ошибка, приложение будет закрыто.
- Проверьте свои права доступа к директории &apos;.rexloader&apos;.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../rexwindow.cpp" line="1764"/>
         <source>Загрузка файла %1 приостановлена</source>
         <translation>Downloading file %1 stopped</translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="1782"/>
+        <source>Этот протокол не поддерживается. Проверьте наличие соответствующего плагина и его состояние.</source>
+        <translation>This protocol is not supported. Check the appropriate plugin and its state.</translation>
     </message>
     <message>
         <location filename="../rexwindow.cpp" line="1867"/>
@@ -1191,6 +1144,11 @@ Error: %2</translation>
         <translation>File %1 saved as %2</translation>
     </message>
     <message>
+        <location filename="../rexwindow.cpp" line="2076"/>
+        <source>Файл &lt;b&gt;%1&lt;/b&gt; скачан, переименован и сохранен как &lt;b&gt;%2&lt;/b&gt;</source>
+        <translation>File &lt;b&gt;%1&lt;/b&gt; was downloaded, renamed and saved as &lt;b&gt;%2&lt;/b&gt;</translation>
+    </message>
+    <message>
         <location filename="../rexwindow.cpp" line="2135"/>
         <source>Продолжить закачку?</source>
         <translation>Continue downloading?</translation>
@@ -1201,13 +1159,6 @@ Error: %2</translation>
         <translation>Continue all</translation>
     </message>
     <message>
-        <location filename="../rexwindow.cpp" line="1666"/>
-        <location filename="../rexwindow.cpp" line="2138"/>
-        <location filename="../rexwindow.cpp" line="2709"/>
-        <source>Отмена</source>
-        <translation>Cancel</translation>
-    </message>
-    <message>
         <location filename="../rexwindow.cpp" line="2140"/>
         <source>Есть незавершённые задания.</source>
         <translation>There are incomplete tasks.</translation>
@@ -1216,6 +1167,51 @@ Error: %2</translation>
         <location filename="../rexwindow.cpp" line="2141"/>
         <source>Для продолжения выполнения заданий нажмите &quot;Продолжить все&quot;, для отмены - &quot;Отмена&quot;</source>
         <translation>To continue tasks click &quot;Continue all&quot;, to cancel click &quot;Cancel&quot;</translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="2157"/>
+        <source>/Загрузки</source>
+        <translation>/Downloads</translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="2640"/>
+        <source>Повторять действие завершения работы ПК?</source>
+        <translation>Repeat shutdown PC action?</translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="2641"/>
+        <source>Вы установили опцию автоматического завершения работы ПК по завершению всех заданий. Хотите чтобы программа всегда выполняла данное действие автоматизации?</source>
+        <translation>You set automatically shutdown PC after complete all tasks option. Do you want the program to always do it at automation?</translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="2643"/>
+        <source>Да, всегда выключать ПК</source>
+        <translation>Yes, always turn off PC</translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="2644"/>
+        <source>Нет, выключить единоразово</source>
+        <translation>No, turn off one-time</translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="2682"/>
+        <source>Это приложение - свободное программное обеспечение и распространяется по лицензии GNU/GPL-3. Разработка идет при участии &lt;a href=&apos;http://kubuntu.ru/&apos;&gt;Русского сообщества Kubuntu&lt;/a&gt;, сайт разработчика - &lt;a href=&apos;http://spolab.ru/&apos;&gt;Лаборатория Свободного программного обеспечения (Лаборатория СПО)&lt;/a&gt;.&lt;hr&gt;Уважаемые пользователи! Я приглашаю принять участие всех заинтересовавшихся данной программой в её дальнейшей разработке. Для этого вам достаточно связаться со мной по электронной почте &lt;a href=&apos;mailto:ra9oaj@gmail.com&apos;&gt;ra9oaj@gmail.com&lt;/a&gt;, либо зарегистрироваться на сайте &lt;a href=&apos;http://spolab.ru/&apos;&gt;Лаборатория СПО&lt;/a&gt; и связаться с помощью личного сообщения.&lt;br&gt;Выражаю особую благодарность активному пользователю Русского сообщества Kubuntu - &lt;b&gt;Дмитрию Перлову (aka DarkneSS)&lt;/b&gt;, ставшему первым Maintainer&apos;ом этого ПО в различных дистрибутивах GNU/Linux.</source>
+        <translation>This application is free software and licensed under GNU/GPL-3. Development comes with participation of &lt;a href=&apos;http://kubuntu.ru/&apos;&gt;Kubuntu Russian community&lt;/a&gt;, developer&apos;s site &lt;a href=&apos;http://spolab.ru/&apos;&gt; Free Software Laboratory (FS Laboratory) &lt;/a&gt;. &lt;hr&gt; Dear users! I invite all interested to attend this program in its further development. For this you can contact me by e-mail &lt;a href=&apos;mailto:ra9oaj@gmail.com&apos;&gt; ra9oaj@gmail.com &lt;/a&gt;, or register on &lt;a href = &apos;http://spolab.ru / &apos;&gt;FS Laboratory&lt;/a&gt; site and get in touch with personal message. &lt;br&gt; Special thanks to active user of Kubuntu Russian Community - &lt;b&gt;Dmitry Perlov (aka DarkneSS)&lt;/b&gt;, which was first  maintainer of this software in different GNU/Linux distributions.</translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="2710"/>
+        <source>Импортировать</source>
+        <translation>Import</translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="2714"/>
+        <source>Файл &lt;b&gt;%1&lt;/b&gt; является текстовым/html, вы можете импортировать URL из файла</source>
+        <translation>File &lt;b&gt;%1&lt;/b&gt; is a text/html, you can import URL from file</translation>
+    </message>
+    <message>
+        <location filename="../rexwindow.cpp" line="2715"/>
+        <source>Для импорта нажмите &quot;Импортировать&quot;, для отмены - &quot;Отмена&quot;.</source>
+        <translation>To import click &quot;Import&quot;,  to cancel - &quot;Cancel.&quot;</translation>
     </message>
 </context>
 <context>
@@ -1245,7 +1241,7 @@ Error: %2</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="113"/>
-        <location filename="../settingsdialog.ui" line="1308"/>
+        <location filename="../settingsdialog.ui" line="1315"/>
         <source>Плагины</source>
         <translation>Plugins</translation>
     </message>
@@ -1272,7 +1268,7 @@ Error: %2</translation>
     <message>
         <location filename="../settingsdialog.ui" line="180"/>
         <source>Вызывать основное окно из трея двойным кликом</source>
-        <translation type="unfinished"></translation>
+        <translation>Call main window from tray by double-clicking</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="187"/>
@@ -1317,7 +1313,7 @@ Error: %2</translation>
     <message>
         <location filename="../settingsdialog.ui" line="304"/>
         <location filename="../settingsdialog.ui" line="1241"/>
-        <location filename="../settingsdialog.ui" line="1719"/>
+        <location filename="../settingsdialog.ui" line="1726"/>
         <source>Сбросить</source>
         <translation>Reset</translation>
     </message>
@@ -1332,8 +1328,12 @@ Error: %2</translation>
         <translation>High speed</translation>
     </message>
     <message>
-        <source> кБ/с</source>
-        <translation type="obsolete">kBps</translation>
+        <location filename="../settingsdialog.ui" line="363"/>
+        <location filename="../settingsdialog.ui" line="390"/>
+        <location filename="../settingsdialog.ui" line="420"/>
+        <location filename="../settingsdialog.ui" line="450"/>
+        <source> кбит/с</source>
+        <translation>kbps</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="377"/>
@@ -1341,21 +1341,9 @@ Error: %2</translation>
         <translation>Normal speed</translation>
     </message>
     <message>
-        <source>Низка скорость</source>
-        <translation type="obsolete">Low speed</translation>
-    </message>
-    <message>
-        <location filename="../settingsdialog.ui" line="363"/>
-        <location filename="../settingsdialog.ui" line="390"/>
-        <location filename="../settingsdialog.ui" line="420"/>
-        <location filename="../settingsdialog.ui" line="450"/>
-        <source> кбит/с</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../settingsdialog.ui" line="407"/>
         <source>Низкая скорость</source>
-        <translation type="unfinished"></translation>
+        <translation>Low speed</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="437"/>
@@ -1424,13 +1412,13 @@ Error: %2</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="719"/>
-        <location filename="../settingsdialog.ui" line="1813"/>
+        <location filename="../settingsdialog.ui" line="1820"/>
         <source>Выбрать папку</source>
         <translation>Select folder</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="722"/>
-        <location filename="../settingsdialog.ui" line="1816"/>
+        <location filename="../settingsdialog.ui" line="1823"/>
         <source>...</source>
         <translation>...</translation>
     </message>
@@ -1500,73 +1488,73 @@ Error: %2</translation>
         <translation>Task list</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="999"/>
+        <location filename="../settingsdialog.ui" line="1006"/>
         <source>Приостановлено</source>
         <translation>Stopped</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1009"/>
-        <location filename="../settingsdialog.ui" line="1052"/>
+        <location filename="../settingsdialog.ui" line="1016"/>
+        <location filename="../settingsdialog.ui" line="1059"/>
         <location filename="../settingsdialog.ui" line="1095"/>
         <location filename="../settingsdialog.ui" line="1138"/>
         <location filename="../settingsdialog.ui" line="1181"/>
-        <location filename="../settingsdialog.ui" line="1409"/>
-        <location filename="../settingsdialog.ui" line="1493"/>
-        <location filename="../settingsdialog.ui" line="1539"/>
-        <location filename="../settingsdialog.ui" line="1618"/>
-        <location filename="../settingsdialog.ui" line="1679"/>
+        <location filename="../settingsdialog.ui" line="1416"/>
+        <location filename="../settingsdialog.ui" line="1500"/>
+        <location filename="../settingsdialog.ui" line="1546"/>
+        <location filename="../settingsdialog.ui" line="1625"/>
+        <location filename="../settingsdialog.ui" line="1686"/>
         <source>Цвет строки</source>
         <translation>Line color</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1019"/>
-        <location filename="../settingsdialog.ui" line="1062"/>
+        <location filename="../settingsdialog.ui" line="1026"/>
+        <location filename="../settingsdialog.ui" line="1069"/>
         <location filename="../settingsdialog.ui" line="1105"/>
         <location filename="../settingsdialog.ui" line="1148"/>
         <location filename="../settingsdialog.ui" line="1191"/>
-        <location filename="../settingsdialog.ui" line="1419"/>
-        <location filename="../settingsdialog.ui" line="1442"/>
-        <location filename="../settingsdialog.ui" line="1503"/>
-        <location filename="../settingsdialog.ui" line="1526"/>
-        <location filename="../settingsdialog.ui" line="1628"/>
+        <location filename="../settingsdialog.ui" line="1426"/>
+        <location filename="../settingsdialog.ui" line="1449"/>
+        <location filename="../settingsdialog.ui" line="1510"/>
+        <location filename="../settingsdialog.ui" line="1533"/>
+        <location filename="../settingsdialog.ui" line="1635"/>
         <source>Шрифт текста</source>
         <translation>Text font</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1022"/>
-        <location filename="../settingsdialog.ui" line="1065"/>
+        <location filename="../settingsdialog.ui" line="1029"/>
+        <location filename="../settingsdialog.ui" line="1072"/>
         <location filename="../settingsdialog.ui" line="1108"/>
         <location filename="../settingsdialog.ui" line="1151"/>
         <location filename="../settingsdialog.ui" line="1194"/>
-        <location filename="../settingsdialog.ui" line="1422"/>
-        <location filename="../settingsdialog.ui" line="1445"/>
-        <location filename="../settingsdialog.ui" line="1506"/>
-        <location filename="../settingsdialog.ui" line="1529"/>
-        <location filename="../settingsdialog.ui" line="1631"/>
+        <location filename="../settingsdialog.ui" line="1429"/>
+        <location filename="../settingsdialog.ui" line="1452"/>
+        <location filename="../settingsdialog.ui" line="1513"/>
+        <location filename="../settingsdialog.ui" line="1536"/>
+        <location filename="../settingsdialog.ui" line="1638"/>
         <source>Шрифт</source>
         <translation>Font</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1032"/>
-        <location filename="../settingsdialog.ui" line="1075"/>
+        <location filename="../settingsdialog.ui" line="1039"/>
+        <location filename="../settingsdialog.ui" line="1082"/>
         <location filename="../settingsdialog.ui" line="1118"/>
         <location filename="../settingsdialog.ui" line="1161"/>
         <location filename="../settingsdialog.ui" line="1204"/>
-        <location filename="../settingsdialog.ui" line="1432"/>
-        <location filename="../settingsdialog.ui" line="1455"/>
-        <location filename="../settingsdialog.ui" line="1516"/>
-        <location filename="../settingsdialog.ui" line="1552"/>
-        <location filename="../settingsdialog.ui" line="1641"/>
+        <location filename="../settingsdialog.ui" line="1439"/>
+        <location filename="../settingsdialog.ui" line="1462"/>
+        <location filename="../settingsdialog.ui" line="1523"/>
+        <location filename="../settingsdialog.ui" line="1559"/>
+        <location filename="../settingsdialog.ui" line="1648"/>
         <source>Цвет шрифта</source>
         <translation>Font color</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1042"/>
+        <location filename="../settingsdialog.ui" line="1049"/>
         <source>В ожидании</source>
         <translation>Pending</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1085"/>
+        <location filename="../settingsdialog.ui" line="999"/>
         <source>Выполняется</source>
         <translation>Running</translation>
     </message>
@@ -1587,105 +1575,110 @@ Error: %2</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="1238"/>
-        <location filename="../settingsdialog.ui" line="1716"/>
+        <location filename="../settingsdialog.ui" line="1723"/>
         <source>Сбросить настройки цвета/шрифта</source>
         <translation>Reset color/font settings</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1251"/>
+        <location filename="../settingsdialog.ui" line="1250"/>
+        <source>Скорость в кБайт/с</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog.ui" line="1258"/>
         <source>Дерево фильтров</source>
         <translation>Filters tree</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1266"/>
+        <location filename="../settingsdialog.ui" line="1273"/>
         <source>Показывать окно запущенного задания</source>
         <translation>Show running task window</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1276"/>
+        <location filename="../settingsdialog.ui" line="1283"/>
         <source>Показывать плавающее окно</source>
         <translation>Show floating window</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1329"/>
+        <location filename="../settingsdialog.ui" line="1336"/>
         <source>Активировать плагин</source>
         <translation>Activate plugin</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1373"/>
+        <location filename="../settingsdialog.ui" line="1380"/>
         <source>События приложения</source>
         <translation>Application events</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1393"/>
+        <location filename="../settingsdialog.ui" line="1400"/>
         <source>Входящие сообщения</source>
         <translation>Incoming messages</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1477"/>
+        <location filename="../settingsdialog.ui" line="1484"/>
         <source>Исходящие сообщения</source>
         <translation>Outgoing messages</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1574"/>
+        <location filename="../settingsdialog.ui" line="1581"/>
         <source>Сообщения об ошибках</source>
         <translation>Error messages</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1599"/>
+        <location filename="../settingsdialog.ui" line="1606"/>
         <source>Информационные сообщения</source>
         <translation>Information messages</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1663"/>
+        <location filename="../settingsdialog.ui" line="1670"/>
         <source>Предупреждающие сообщения</source>
         <translation>Warning messages</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1693"/>
+        <location filename="../settingsdialog.ui" line="1700"/>
         <source>Использовать шрифты и цветовое оформление системы</source>
         <translation>Use system fonts and colors</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1696"/>
+        <location filename="../settingsdialog.ui" line="1703"/>
         <source>Офомление системы</source>
         <translation>Appearance</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1735"/>
+        <location filename="../settingsdialog.ui" line="1742"/>
         <source>Автоматически сохранять сообщения приложения</source>
         <translation>Automatically save application messages</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1744"/>
-        <location filename="../settingsdialog.ui" line="1767"/>
+        <location filename="../settingsdialog.ui" line="1751"/>
+        <location filename="../settingsdialog.ui" line="1774"/>
         <source>Максимальное число видимых строк в журнале событий приложения и секций</source>
         <translation>Maximum number of visible lines in application and sections event log</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1747"/>
+        <location filename="../settingsdialog.ui" line="1754"/>
         <source>Макс. число видимых строк событий</source>
         <translation>Maximum number of events visible lines</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1790"/>
+        <location filename="../settingsdialog.ui" line="1797"/>
         <source>Директория</source>
         <translation>Directory</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1827"/>
-        <location filename="../settingsdialog.ui" line="1837"/>
+        <location filename="../settingsdialog.ui" line="1834"/>
+        <location filename="../settingsdialog.ui" line="1844"/>
         <source>Время отсчета начинается только после завершения задания</source>
         <translation>Countdown begins only after task is complete</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1830"/>
+        <location filename="../settingsdialog.ui" line="1837"/>
         <source>Врмя хранения событий заданий</source>
         <comment>Время отсчета начинается только после завершения задания</comment>
         <translation>Tasks events storage time </translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="1843"/>
+        <location filename="../settingsdialog.ui" line="1850"/>
         <source>с</source>
         <comment>Время жизни в секундах</comment>
         <translation>s</translation>
@@ -1701,12 +1694,12 @@ Error: %2</translation>
         <translation>Downloads</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="408"/>
+        <location filename="../settingsdialog.cpp" line="410"/>
         <source>Выбор директории</source>
         <translation>Select directory</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="508"/>
+        <location filename="../settingsdialog.cpp" line="510"/>
         <source>отключено</source>
         <translation>off</translation>
     </message>
@@ -1714,155 +1707,155 @@ Error: %2</translation>
 <context>
     <name>TItemModel</name>
     <message>
-        <location filename="../titemmodel.cpp" line="199"/>
-        <location filename="../titemmodel.cpp" line="214"/>
-        <location filename="../titemmodel.cpp" line="317"/>
-        <location filename="../titemmodel.cpp" line="448"/>
+        <location filename="../titemmodel.cpp" line="200"/>
+        <location filename="../titemmodel.cpp" line="215"/>
+        <location filename="../titemmodel.cpp" line="318"/>
+        <location filename="../titemmodel.cpp" line="454"/>
         <source>Н/д</source>
         <translation>N/a</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="224"/>
+        <location filename="../titemmodel.cpp" line="225"/>
         <source>Остановлено</source>
         <translation>Stopped</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="225"/>
+        <location filename="../titemmodel.cpp" line="226"/>
         <source>Ошибка</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="226"/>
+        <location filename="../titemmodel.cpp" line="227"/>
         <source>Ожидание</source>
         <translation>Waiting</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="233"/>
+        <location filename="../titemmodel.cpp" line="234"/>
         <source>Завершено</source>
         <translation>Completed</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="330"/>
+        <location filename="../titemmodel.cpp" line="331"/>
         <source>URL: %1&lt;br&gt;Имя файла: %2&lt;br&gt;Размер: %3&lt;br&gt;Завершено: %4 %5&lt;br&gt;&lt;font color=&apos;#00bb00&apos;&gt;Скорость: %6&lt;/font&gt;</source>
         <translation>URL: %1&lt;br&gt;Filename: %2&lt;br&gt;Size: %3&lt;br&gt;Completed: %4 %5&lt;br&gt;&lt;font color=&apos;#00bb00&apos;&gt;Speed: %6&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="373"/>
+        <location filename="../titemmodel.cpp" line="374"/>
         <source>Скорость</source>
         <translation>Speed</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="376"/>
+        <location filename="../titemmodel.cpp" line="377"/>
         <source>До завершения</source>
         <translation>Remains</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="381"/>
+        <location filename="../titemmodel.cpp" line="382"/>
         <source>Дата создания</source>
         <translation>Creation date</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="382"/>
+        <location filename="../titemmodel.cpp" line="383"/>
         <source>Файл</source>
         <translation>File</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="383"/>
+        <location filename="../titemmodel.cpp" line="384"/>
         <source>Размер</source>
         <translation>Size</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="384"/>
+        <location filename="../titemmodel.cpp" line="385"/>
         <source>Время скачивания</source>
         <translation>Downloading time</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="385"/>
+        <location filename="../titemmodel.cpp" line="386"/>
         <source>Статус</source>
         <translation>State</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="386"/>
+        <location filename="../titemmodel.cpp" line="387"/>
         <source>Примечание</source>
         <translation>Comment</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="425"/>
+        <location filename="../titemmodel.cpp" line="431"/>
         <source> ГБ</source>
         <translation>GB</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="426"/>
+        <location filename="../titemmodel.cpp" line="432"/>
         <source> МБ</source>
         <translation>MB</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="427"/>
+        <location filename="../titemmodel.cpp" line="433"/>
         <source> кБ</source>
         <translation>kB</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="428"/>
+        <location filename="../titemmodel.cpp" line="434"/>
         <source> Байт</source>
         <translation>Bytes</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="438"/>
+        <location filename="../titemmodel.cpp" line="444"/>
         <source> ГБ/с</source>
         <translation>GBps</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="438"/>
+        <location filename="../titemmodel.cpp" line="444"/>
         <source> Gbps</source>
         <translation> Gbps</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="439"/>
+        <location filename="../titemmodel.cpp" line="445"/>
         <source> МБ/с</source>
         <translation>MBps</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="439"/>
+        <location filename="../titemmodel.cpp" line="445"/>
         <source> Mbps</source>
         <translation> Mbps</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="440"/>
+        <location filename="../titemmodel.cpp" line="446"/>
         <source> кБ/с</source>
         <translation>kBps</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="440"/>
+        <location filename="../titemmodel.cpp" line="446"/>
         <source> Kbps</source>
         <translation> Kbps</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="441"/>
+        <location filename="../titemmodel.cpp" line="447"/>
         <source> Байт/с</source>
         <translation>Bytesps</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="441"/>
+        <location filename="../titemmodel.cpp" line="447"/>
         <source> bps</source>
         <translation> bps</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="461"/>
+        <location filename="../titemmodel.cpp" line="467"/>
         <source>%1д %2ч %3м %4с</source>
         <translation>%1 d %2 h %3 m %4 s</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="463"/>
+        <location filename="../titemmodel.cpp" line="469"/>
         <source>%1ч %2м %3с</source>
         <translation>%1 h %2 m %3 s</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="465"/>
+        <location filename="../titemmodel.cpp" line="471"/>
         <source>%1м %2с</source>
         <translation>%1 m %2 s</translation>
     </message>
     <message>
-        <location filename="../titemmodel.cpp" line="467"/>
+        <location filename="../titemmodel.cpp" line="473"/>
         <source>%1с</source>
         <translation>%1 s</translation>
     </message>

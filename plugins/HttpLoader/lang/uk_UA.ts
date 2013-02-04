@@ -112,7 +112,7 @@
     <message>
         <location filename="../httploader.cpp" line="1077"/>
         <source>Неизвестная ошибка. Код ошибки = </source>
-        <translation type="unfinished"></translation>
+        <translation>Невідома помилка. Код помилки: </translation>
     </message>
 </context>
 <context>

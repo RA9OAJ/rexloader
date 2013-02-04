@@ -5,91 +5,19 @@
 <context>
     <name>HttpLoader</name>
     <message>
-        <source>Сарваритдинов Равиль Хамитович (mailto:ra9oaj@mail.ru)</source>
-        <translation type="obsolete">Sarvaritdinov Ravil (mailto:ra9oaj@mail.ru)</translation>
-    </message>
-    <message>
-        <source>Россия, г.Барабинск, 2011 год</source>
-        <translation type="obsolete">Russia, Barabinsk, 2011</translation>
-    </message>
-    <message>
-        <source>© 2011 Сарваритдинов Равиль Хамитович</source>
-        <translation type="obsolete">© 2011 Sarvaritdinov Ravil</translation>
-    </message>
-    <message>
-        <source>GNU GPL 2</source>
-        <translation type="obsolete">GNU GPL 2</translation>
-    </message>
-    <message>
-        <source>Плагин для скачивания файлов по протоколу HTTP.</source>
-        <translation type="obsolete">Plugin for downloading files on HTTP.</translation>
-    </message>
-    <message>
-        <source>400 Плохой запрос</source>
-        <translation type="obsolete">400 Bad Request</translation>
-    </message>
-    <message>
-        <source>401 Не авторизован</source>
-        <translation type="obsolete">401 Unauthorized</translation>
-    </message>
-    <message>
-        <source>403 Запрещено</source>
-        <translation type="obsolete">403 Forbidden</translation>
-    </message>
-    <message>
-        <source>407 требуется авторизация прокси</source>
-        <translation type="obsolete">407 Proxy Authentication Required</translation>
-    </message>
-    <message>
-        <source>409 Конфликт</source>
-        <translation type="obsolete">409 Conflict</translation>
-    </message>
-    <message>
-        <source>410 Удалён</source>
-        <translation type="obsolete">410 Gone</translation>
-    </message>
-    <message>
-        <source>414 Запрашиваемый URL слишком длинный</source>
-        <translation type="obsolete">414 Request-URL Too Long</translation>
-    </message>
-    <message>
-        <source>500 Внутренняя ошибка сервера</source>
-        <translation type="obsolete">500 Internal Server Error</translation>
-    </message>
-    <message>
-        <source>501 Не реализовано</source>
-        <translation type="obsolete">501 Not Implemented</translation>
-    </message>
-    <message>
-        <source>502 Плохой шлюз</source>
-        <translation type="obsolete">502 Bad Gateway</translation>
-    </message>
-    <message>
-        <source>503 Сервис недоступен</source>
-        <translation type="obsolete">503 Service Unavailable</translation>
-    </message>
-    <message>
-        <source>504 Шлюз не отвечает</source>
-        <translation type="obsolete">504 Gateway Timeout</translation>
-    </message>
-    <message>
-        <source>505 Версия HTTP не поддерживается</source>
-        <translation type="obsolete">505 HTTP Version Not Supported</translation>
-    </message>
-    <message>
         <location filename="../httploader.cpp" line="65"/>
         <source>HttpLoader</source>
-        <translation type="unfinished"></translation>
+        <translation>HttpLoader</translation>
     </message>
     <message>
         <location filename="../httploader.cpp" line="66"/>
         <source>Sarvaritdino R.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sarvaritdinov R.</translation>
     </message>
     <message>
         <location filename="../httploader.cpp" line="72"/>
         <source>Плагин для скачивания файлов по протоколу HTTP/S.</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugin for downloading files via HTTP/S.</translation>
     </message>
     <message>
         <location filename="../httploader.cpp" line="340"/>
@@ -104,82 +32,82 @@
     <message>
         <location filename="../httploader.cpp" line="488"/>
         <source>Секция завершена</source>
-        <translation type="unfinished"></translation>
+        <translation>Section completed</translation>
     </message>
     <message>
         <location filename="../httploader.cpp" line="519"/>
         <source>Проверка размера задания</source>
-        <translation type="unfinished"></translation>
+        <translation>Checking task size</translation>
     </message>
     <message>
         <location filename="../httploader.cpp" line="1062"/>
         <source>400 Bad Request</source>
-        <translation type="unfinished"></translation>
+        <translation>400 Bad Request</translation>
     </message>
     <message>
         <location filename="../httploader.cpp" line="1063"/>
         <source>401 Unauthorized</source>
-        <translation type="unfinished"></translation>
+        <translation>401 Unauthorized</translation>
     </message>
     <message>
         <location filename="../httploader.cpp" line="1064"/>
         <source>403 Forbidden</source>
-        <translation type="unfinished"></translation>
+        <translation>403 Forbidden</translation>
     </message>
     <message>
         <location filename="../httploader.cpp" line="1065"/>
         <source>407 Proxy Authentication Required</source>
-        <translation type="unfinished"></translation>
+        <translation>407 Proxy Authentication Required</translation>
     </message>
     <message>
         <location filename="../httploader.cpp" line="1066"/>
         <source>409 Conflict</source>
-        <translation type="unfinished"></translation>
+        <translation>409 Conflict</translation>
     </message>
     <message>
         <location filename="../httploader.cpp" line="1067"/>
         <source>410 Gone</source>
-        <translation type="unfinished"></translation>
+        <translation>410 Gone</translation>
     </message>
     <message>
         <location filename="../httploader.cpp" line="1068"/>
         <source>414 Request-URL Too Long</source>
-        <translation type="unfinished"></translation>
+        <translation>414 Request-URL Too Long</translation>
     </message>
     <message>
         <location filename="../httploader.cpp" line="1069"/>
         <source>500 Internal Server Error</source>
-        <translation type="unfinished"></translation>
+        <translation>500 Internal Server Error</translation>
     </message>
     <message>
         <location filename="../httploader.cpp" line="1070"/>
         <source>501 Not Implemented</source>
-        <translation type="unfinished"></translation>
+        <translation>501 Not Implemented</translation>
     </message>
     <message>
         <location filename="../httploader.cpp" line="1071"/>
         <source>502 Bad Gateway</source>
-        <translation type="unfinished"></translation>
+        <translation>502 Bad Gateway</translation>
     </message>
     <message>
         <location filename="../httploader.cpp" line="1072"/>
         <source>503 Service Unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>503 Service Unavailable</translation>
     </message>
     <message>
         <location filename="../httploader.cpp" line="1073"/>
         <source>504 Gateway Timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>504 Gateway Timeout</translation>
     </message>
     <message>
         <location filename="../httploader.cpp" line="1074"/>
         <source>505 HTTP Version Not Supported</source>
-        <translation type="unfinished"></translation>
+        <translation>505 HTTP Version Not Supported</translation>
     </message>
     <message>
         <location filename="../httploader.cpp" line="1075"/>
         <source>Файл больше недоступен по данному URL</source>
-        <translation type="unfinished"></translation>
+        <translation>File on this URL is no longer available </translation>
     </message>
     <message>
         <location filename="../httploader.cpp" line="1077"/>
@@ -192,12 +120,12 @@
     <message>
         <location filename="../httpsection.cpp" line="35"/>
         <source>Создана секция</source>
-        <translation type="unfinished"></translation>
+        <translation>Section created</translation>
     </message>
     <message>
         <location filename="../httpsection.cpp" line="115"/>
         <source>Попытка соединения с %1 на порту %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Trying to connect to %1 on port %2</translation>
     </message>
     <message>
         <location filename="../httpsection.cpp" line="130"/>
@@ -212,17 +140,17 @@
     <message>
         <location filename="../httpsection.cpp" line="250"/>
         <source>Секция остановлена</source>
-        <translation type="unfinished"></translation>
+        <translation>Section stopped</translation>
     </message>
     <message>
         <location filename="../httpsection.cpp" line="268"/>
         <source>Соединение с узлом установлено</source>
-        <translation type="unfinished"></translation>
+        <translation>Connected to host</translation>
     </message>
     <message>
         <location filename="../httpsection.cpp" line="295"/>
         <source>Отправка HTTP заголовка</source>
-        <translation type="unfinished"></translation>
+        <translation>Sending HTTP header</translation>
     </message>
     <message>
         <location filename="../httpsection.cpp" line="326"/>
@@ -232,12 +160,12 @@
     <message>
         <location filename="../httpsection.cpp" line="364"/>
         <source>Докачка не поддерживается</source>
-        <translation type="unfinished"></translation>
+        <translation>Resume is not supported</translation>
     </message>
     <message>
         <location filename="../httpsection.cpp" line="386"/>
         <source>Докачка поддерживается</source>
-        <translation type="unfinished"></translation>
+        <translation>Resume is supported</translation>
     </message>
 </context>
 </TS>
