@@ -12,6 +12,12 @@
     файлами.
 */
 
+struct DataAction //структура для передачи данных о возможных действиях плагина
+{
+    int act_id; // идентификатор дейсвия
+    QString act_title; // заголовок действия
+    QIcon act_icon; // иконка действия
+};
 
 class FileInterface
 {
@@ -25,8 +31,10 @@ public:
     virtual QString getLastError() const = 0;
     // возвращает данные о модуле и его авторах
     virtual QStringList pluginInfo() const = 0;
-    // действие запускающее основную функцию модуля
-    virtual QList<QAction*> getRunAction() const = 0;
+    // список пар идентификатор_команды-заголовок_действия
+    virtual QList<DataAction> getActionList() const = 0;
+    // запускает действие по идентификатору действия
+    virtual void runAction(int act_id) = 0;
 };
 
 Q_DECLARE_INTERFACE(FileInterface, "local.rav.RExLoader.FileInterface/0.1a")
