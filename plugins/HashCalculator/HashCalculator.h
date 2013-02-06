@@ -19,12 +19,12 @@ public:
     virtual void release();
     virtual QString getLastError() const;
     virtual QStringList pluginInfo() const;
-    virtual QList<QAction*> getRunAction() const;
+    virtual QList<DataAction> getActionList() const;
+    virtual void runAction(int act_id);
 
 private:
     QStringList m_file_name_list;
     QDialog *mp_control_dialog;
-    QList<QAction*> m_run_action_list;
 
 private slots:
     void run();

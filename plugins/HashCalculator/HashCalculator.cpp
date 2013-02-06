@@ -4,9 +4,6 @@
 
 HashCalculator::HashCalculator()
 {
-    QAction *act = new QAction(QString::fromUtf8("запуск"),this);
-    m_run_action_list.append(act);
-
     mp_control_dialog = new QDialog();
 }
 
@@ -48,12 +45,21 @@ QStringList HashCalculator::pluginInfo() const
     return pinfo;
 }
 
-
-QList<QAction*> HashCalculator::getRunAction() const
+QList<DataAction> HashCalculator::getActionList() const
 {
-    return m_run_action_list;
+    QList<DataAction> lst;
+    DataAction act;
+    lst.append(act);
+    act.act_id = 1;
+    act.act_title = tr("Подсчёт контрольных сумм");
+    //act.act_icon = QIcon(":/path/to/internal/icon"); // если есть жедание записхнуть через ресурсы иконку для пункта меню
+    return lst;
 }
 
+void HashCalculator::runAction(int act_id)
+{
+    // тут нужно обработать id и дернуть нужный метод
+}
 
 void HashCalculator::run()
 {
