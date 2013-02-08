@@ -32,6 +32,7 @@ PluginManager::PluginManager(QObject *parent) :
     notifplugin.second = 0;
     appIcon = new QImage(":/appimages/trayicon.png");
     *appIcon = appIcon->scaledToWidth(64,Qt::SmoothTransformation).rgbSwapped();
+    connect(this,SIGNAL(needLoadOtherPlugin(QString)),this,SLOT(loadOtherPlugin(QString)),Qt::QueuedConnection);
 
     updOper = 0;
 }
@@ -75,7 +76,12 @@ void PluginManager::run()
             if(!ldr)
             {
                 NotifInterface *nldr = qobject_cast<NotifInterface*>(plug.instance());
-                if(!nldr) continue;
+                if(!nldr)
+                {
+                    emit needLoadOtherPlugin(pluginDirs->value(i)+"/"+plg.value(y));
+                    continue;
+                }
+
                 QStringList pluginfo = nldr->pluginInfo();
                 pluginfo << QString("Filepath: ")+pluginDirs->value(i)+"/"+plg.value(y);
                 notifplugins.insert(notifplugins.size()+1,pluginfo);
@@ -86,6 +92,7 @@ void PluginManager::run()
                     notifplugin.second = notifplugins.size();
                 }
                 else plug.unload();
+
                 continue;
             }
             emit messageAvailable(-1,0,LInterface::MT_INFO,tr("Плагин %1 версия %2-%3 ('%4') загружен.").arg(pluginInfo(ldr,"Plugin"),pluginInfo(ldr,"Version"),pluginInfo(ldr,"Build date"),pluginDirs->value(i)+"/"+plg.value(y)),QString());
@@ -117,6 +124,21 @@ void PluginManager::run()
 
     emit pluginStatus(stat);
     exec();
+}
+
+void PluginManager::loadOtherPlugin(const QString &filepath)
+{
+    QPluginLoader pldr(filepath);
+    FileInterface *plg = qobject_cast<FileInterface*>(pldr.instance());
+    if(!plg)
+        return;
+
+    QStringList pluginfo = plg->pluginInfo();
+    QString plgid = filepath;
+    fileplugins.insert(plgid,pluginfo);
+    if(!fileplugin.contains(plgid))
+        pldr.unload();
+    else fileplugin.insert(plgid,plg);
 }
 
 void PluginManager::setDefaultSettings(const int &tasks, const int &threads, const qint64 &speed, const int &att_interval)
@@ -317,6 +339,12 @@ void PluginManager::restorePluginsState(const QByteArray &stat)
         plugproto->insert(proto,id);
     }
     if(!plugproto->size()) *plugproto = last_state;
+}
+
+void PluginManager::setPluginListModel(PluginListModel *mdl)
+{
+    if(mdl)
+        mdl->setOtherPluginSources(&notifplugins, &notifplugin, &fileplugins, &fileplugin);
 }
 
 QString PluginManager::pluginInfo(const LoaderInterface *ldr, const QString &call) const

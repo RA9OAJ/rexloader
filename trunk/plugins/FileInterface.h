@@ -6,6 +6,7 @@
 #include <QStringList>
 #include <QAction>
 #include <QList>
+#include <QTranslator>
 
 /*
     Интерфейс для модулей манипулирующих загружеными
@@ -35,6 +36,8 @@ public:
     virtual QList<DataAction> getActionList() const = 0;
     // запускает действие по идентификатору действия
     virtual void runAction(int act_id) = 0;
+    //возвращает указатель на транслятор для указанной локали, либо 0 при отсутствии транслятора
+    virtual QTranslator* getTranslator(const QLocale &locale) =0;
 };
 
 Q_DECLARE_INTERFACE(FileInterface, "local.rav.RExLoader.FileInterface/0.1a")

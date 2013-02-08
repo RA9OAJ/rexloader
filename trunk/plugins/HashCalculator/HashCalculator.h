@@ -21,6 +21,7 @@ public:
     virtual QStringList pluginInfo() const;
     virtual QList<DataAction> getActionList() const;
     virtual void runAction(int act_id);
+    virtual QTranslator* getTranslator(const QLocale &locale);
 
 private:
     QStringList m_file_name_list;

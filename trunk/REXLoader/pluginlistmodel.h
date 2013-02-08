@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QStringList>
 #include "../plugins/LoaderInterface.h"
 #include "../plugins/NotifInterface.h"
+#include "../plugins/FileInterface.h"
 
 class PluginInfo
 {
@@ -46,7 +47,9 @@ public:
     enum DataType{
         PlugName = 100,
         PlugId = 101,
-        ProtocolName = 102
+        ProtocolName = 102,
+        PlugType = 103,
+        PlugState = 104
     };
 
     explicit PluginListModel(QObject *parent = 0);
@@ -58,6 +61,7 @@ public:
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::UserRole);
     void addPluginCategory(const QString &name);
     void setSorces(QHash<int,QString> *plugdirs, QHash<int,LoaderInterface*> *plglst, QHash<QString,int> *plgproto);
+    void setOtherPluginSources(QHash<int,QStringList> *notifplgs, QPair<NotifInterface*,int> *notifplg, QHash<QString,QStringList> *flplgs, QHash<QString,FileInterface*> *flplg);
     QList<QPair<QString, int> > pluginsList(const QModelIndex &index);
 signals:
     
@@ -68,6 +72,10 @@ private:
     QHash<int,QString> *plugfiles; //хэш путей к файлам плагинов
     QHash<int,LoaderInterface*> *pluglist; //хэш ссылок на плагины
     QHash<QString,int> *plugproto; //хэш дескрипторов плагинов с соответствующими протоколами
+    QHash<int,QStringList> *notifplugins; //данные о доступных плагинах уведомлений
+    QPair<NotifInterface*,int> *notifplugin; //активный плагин уведомления
+    QHash<QString,QStringList> *fileplugins; //данные о доступных файловых плагинах
+    QHash<QString,FileInterface*> *fileplugin; //ссылки на активные файловые плагины
 };
 
 #endif // PLUGINLISTMODEL_H
