@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPainter>
 #include <QFont>
 #include <QStyleOptionViewItem>
+#include "pluginlistmodel.h"
 
 class PluginItemDelegate : public QStyledItemDelegate
 {
@@ -33,7 +34,7 @@ public:
     ~PluginItemDelegate();
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const;
+    QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &index) const;
     
 signals:
     
@@ -41,6 +42,8 @@ public slots:
 
 protected:
     void paintBody(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void paintBodyNotif(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void paintOther(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void paintGrid(QPainter *painter, const QStyleOptionViewItem &option) const;
     void resetOptions();
 

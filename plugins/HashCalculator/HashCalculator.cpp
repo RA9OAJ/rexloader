@@ -61,6 +61,11 @@ void HashCalculator::runAction(int act_id)
     // тут нужно обработать id и дернуть нужный метод
 }
 
+QTranslator *HashCalculator::getTranslator(const QLocale &locale)
+{
+    return 0;
+}
+
 void HashCalculator::run()
 {
     //mp_control_dialog->exec();

@@ -31,8 +31,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "../plugins/LoaderInterface.h"
 #include "../plugins/NotifInterface.h"
+#include "../plugins/FileInterface.h"
 #include "titemmodel.h"
 #include "logtreemodel.h"
+#include "pluginlistmodel.h"
 
 class PluginOperator : public QObject
 {
@@ -74,6 +76,7 @@ public:
     void setDatabaseFile(const QString &dbfile);
     void loadLocale(const QLocale &locale);
     void restorePluginsState(const QByteArray &stat);
+    void setPluginListModel(PluginListModel *mdl);
     QString pluginInfo(const LoaderInterface *ldr,const QString &call) const;
     QByteArray pluginsState() const;
 
@@ -84,6 +87,7 @@ signals:
     void needExecQuery(const QString &query);
     void messageAvailable(int id_task, int id_sect, int ms_type, const QString &title, const QString &more);
     void notifActionInvoked(const QString &act);
+    void needLoadOtherPlugin(const QString &filepath);
 
 public slots:
     void startDownload(int id_task);
@@ -96,6 +100,9 @@ public slots:
 protected:
     void run();
 
+protected slots:
+    void loadOtherPlugin(const QString &filepath);
+
 private:
     const QStringList *pluginDirs; //список с директориями, в которых могут быть плагины
     QHash<int,QString> *plugfiles; //хэш путей к файлам плагинов
@@ -105,6 +112,8 @@ private:
     QHash<int,QTranslator*> translators;
     QHash<int,QStringList> notifplugins; //данные о доступных плагинах уведомлений
     QPair<NotifInterface*,int> notifplugin; //активный плагин уведомления
+    QHash<QString,QStringList> fileplugins; //данные о доступных файловых плагинах
+    QHash<QString,FileInterface*> fileplugin; //ссылки на активные файловые плагины
 
     const int *max_tasks; //максимальное количество одновременных закачек
     const int *max_threads; //максимальное кол-во потоков при скачивании

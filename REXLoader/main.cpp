@@ -73,7 +73,8 @@ void checkDatabase()
                 "note TEXT,"
                 "priority INTEGER,"
                 "params TEXT,"
-                "plane_id INTEGER);");
+                "plane_id INTEGER,"
+                "arch INTEGER);");
 
             if(!flag)
             {
@@ -135,11 +136,25 @@ void checkDatabase()
                             "startdatetime TEXT,"
                             "enddatetime TEXT);");
 
-                        if(!flag)
-                        {
-                            qDebug()<<"5. "<<qr->lastError().text()<<qr->lastQuery()<<querstr;
-                            //записываем ошибку в error.log
-                        }
+            if(!flag)
+            {
+                qDebug()<<"5. "<<qr->lastError().text()<<qr->lastQuery()<<querstr;
+                //записываем ошибку в error.log
+            }
+
+            qr->clear();
+            flag = qr->exec("CREATE TABLE mirrors ("
+                            "id INTEGER PRIMARY KEY,"
+                            "url TEXT,"
+                            "tid INTEGER,"
+                            "prior INTEGER,"
+                            "params TEXT);");
+
+            if(!flag)
+            {
+                qDebug()<<"6. "<<qr->lastError().text()<<qr->lastQuery()<<querstr;
+                //записываем ошибку в error.log
+            }
 
             delete qr;
         }
@@ -156,29 +171,43 @@ void checkDatabase()
 
             if(!flag)
             {
-                qDebug()<<"5. "<<qr->lastError().text()<<qr->lastQuery();
+                qDebug()<<"7. "<<qr->lastError().text()<<qr->lastQuery();
                 //записываем ошибку в error.log
             }
 
-            //если в таблице tasks < 16 полей, то добавляем 16 поле - plane_id
+            //если в таблице tasks < 17 полей, то добавляем 17 поле - arch
             qr->clear();
             flag = qr->exec("SELECT * FROM tasks");
 
             if(!flag)
             {
-                qDebug()<<"6. "<<qr->lastError().text()<<qr->lastQuery();
+                qDebug()<<"8. "<<qr->lastError().text()<<qr->lastQuery();
                 //записываем ошибку в error.log
             }
             else if(qr->record().count() < 16)
             {
                 qr->clear();
-                flag = qr->exec("ALTER TABLE tasks ADD COLUMN plane_id INTEGER");
+                flag = qr->exec("ALTER TABLE tasks ADD COLUMN arch INTEGER");
 
                 if(!flag)
                 {
-                    qDebug()<<"7. "<<qr->lastError().text()<<qr->lastQuery();
+                    qDebug()<<"9. "<<qr->lastError().text()<<qr->lastQuery();
                     //записываем ошибку в error.log
                 }
+            }
+
+            qr->clear();
+            flag = qr->exec("CREATE TABLE IF NOT EXISTS mirrors ("
+                            "id INTEGER PRIMARY KEY,"
+                            "url TEXT,"
+                            "tid INTEGER,"
+                            "prior INTEGER,"
+                            "params TEXT);");
+
+            if(!flag)
+            {
+                qDebug()<<"10. "<<qr->lastError().text()<<qr->lastQuery();
+                //записываем ошибку в error.log
             }
 
             delete qr;

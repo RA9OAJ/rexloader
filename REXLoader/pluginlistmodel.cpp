@@ -48,52 +48,89 @@ QVariant PluginListModel::data(const QModelIndex &index, int role) const
     if(!plugproto || !plugfiles || !pluglist)
         return QVariant();
 
-    switch(role)
+    if(index.row() < plugproto->size())
     {
-    case Qt::DisplayRole:
-    {
-        QStringList out;
-        QStringList protolist = plugproto->keys();
-        out << protolist.value(index.row()).toUpper();
-
-        if(plugproto->value(protolist.value(index.row())))
+        switch(role)
         {
-            PluginInfo pluginfo(pluglist->value(plugproto->value(protolist.value(index.row())))->pluginInfo());
+        case Qt::DisplayRole:
+        {
+            QStringList out;
+            QStringList protolist = plugproto->keys();
+            out << protolist.value(index.row()).toUpper();
+
+            if(plugproto->value(protolist.value(index.row())))
+            {
+                PluginInfo pluginfo(pluglist->value(plugproto->value(protolist.value(index.row())))->pluginInfo());
+                out << pluginfo.name << pluginfo.version << pluginfo.authors << pluginfo.license;
+            }
+            else out << tr("отключено") << "" << "-" << "-" << "-";
+            return out;
+        }
+        case PluginListModel::PlugName:
+        {
+            QStringList protolist = plugproto->keys();
+
+            if(plugproto->value(protolist.value(index.row())))
+            {
+                PluginInfo pluginfo(pluglist->value(plugproto->value(protolist.value(index.row())))->pluginInfo());
+                return pluginfo.name;
+            }
+            else return QVariant();
+        }
+        case PluginListModel::ProtocolName:
+        {
+            QStringList protolist = plugproto->keys();
+            return protolist.value(index.row());
+        }
+        case PluginListModel::PlugId:
+        {
+            QStringList protolist = plugproto->keys();
+            return plugproto->value(protolist.value(index.row()));
+        }
+        case PluginListModel::PlugType:
+        {
+            return QString("Loader");
+        }
+
+        default: return QVariant();
+        }
+    }
+    else if(index.row() >= plugproto->size() + notifplugins->size())
+    {
+        QStringList plgs = fileplugins->keys();
+        QString plgpath = plgs.value(index.row() - plugproto->size() - notifplugins->size());
+        switch(role)
+        {
+        case Qt::DisplayRole:
+        {
+            QStringList out;
+            PluginInfo pluginfo(fileplugins->value(plgpath));
             out << pluginfo.name << pluginfo.version << pluginfo.authors << pluginfo.license;
+            return out;
         }
-        else out << tr("отключено") << "" << "-" << "-" << "-";
-        return out;
-    }
-    case PluginListModel::PlugName:
-    {
-        QStringList protolist = plugproto->keys();
-
-        if(plugproto->value(protolist.value(index.row())))
+        case PluginListModel::PlugState:
         {
-            PluginInfo pluginfo(pluglist->value(plugproto->value(protolist.value(index.row())))->pluginInfo());
-            return pluginfo.name;
+            if(fileplugin->contains(plgpath))
+                return true;
+            return false;
         }
-        else return QVariant();
-    }
-    case PluginListModel::ProtocolName:
-    {
-        QStringList protolist = plugproto->keys();
-        return protolist.value(index.row());
-    }
-    case PluginListModel::PlugId:
-    {
-        QStringList protolist = plugproto->keys();
-        return plugproto->value(protolist.value(index.row()));
-    }
+        case PluginListModel::PlugType:
+        {
+            return QString("File");
+        }
 
-    default: return QVariant();
+        default: return QVariant();
+        }
     }
+    return QVariant();
 }
 
 int PluginListModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
     int sz = (plugproto ? plugproto->size(): 0);
+    sz += (notifplugins ? notifplugins->size(): 0);
+    sz += (fileplugins ? fileplugins->size(): 0);
     return sz;
 }
 
@@ -115,6 +152,14 @@ void PluginListModel::setSorces(QHash<int, QString> *plugdirs, QHash<int, Loader
     plugfiles = plugdirs;
     pluglist = plglst;
     plugproto = plgproto;
+}
+
+void PluginListModel::setOtherPluginSources(QHash<int, QStringList> *notifplgs, QPair<NotifInterface*,int> *notifplg, QHash<QString, QStringList> *flplgs, QHash<QString, FileInterface *> *flplg)
+{
+    notifplugins = notifplgs;
+    notifplugin = notifplg;
+    fileplugins = flplgs;
+    fileplugin = flplg;
 }
 
 QList<QPair<QString, int> > PluginListModel::pluginsList(const QModelIndex &index)

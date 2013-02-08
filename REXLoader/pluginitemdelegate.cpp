@@ -36,12 +36,17 @@ void PluginItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     painter->setBackground(QBrush(QColor(Qt::green)));
     opt.widget->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
 
-    paintBody(painter,opt,index);
+    if(index.data(PluginListModel::PlugType).toString() == "Loader")
+        paintBody(painter,opt,index);
+    else
+        paintBodyNotif(painter,opt,index);
     paintGrid(painter,opt);
 }
 
-QSize PluginItemDelegate::sizeHint(const QStyleOptionViewItem &/*option*/, const QModelIndex &/*index*/) const
+QSize PluginItemDelegate::sizeHint(const QStyleOptionViewItem &/*option*/, const QModelIndex &index) const
 {
+    if(index.data(PluginListModel::PlugType).toString() == "File")
+        return QSize(200,35);
     return QSize(200,60);
 }
 
@@ -93,6 +98,54 @@ void PluginItemDelegate::paintBody(QPainter *painter, const QStyleOptionViewItem
     painter->drawText(staffTextBox,Qt::AlignLeft | Qt::AlignTop, data.value(3));
 
     painter->restore();
+}
+
+void PluginItemDelegate::paintBodyNotif(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    painter->save();
+    painter->translate(option.rect.topLeft());
+    QStringList data = index.data(Qt::DisplayRole).toStringList();
+
+    //текст названия плагина и версия
+    QRectF staffTextBox(3,0,option.rect.width(),option.rect.height()/2.0f);
+    painter->setFont(boldFont);
+    staffTextBox.setLeft(staffTextBox.left());
+    painter->drawText(staffTextBox, Qt::AlignLeft | Qt::AlignBottom, data.value(0));
+
+    int dx = 0;
+    QFontMetrics fm(boldFont);
+    dx = fm.size(Qt::TextSingleLine,data.value(0)).width();
+    staffTextBox.setLeft(staffTextBox.left() + dx);
+    painter->setFont(normFont);
+    painter->drawText(staffTextBox,Qt::AlignLeft | Qt::AlignBottom,tr(" (версия %1)").arg(data.value(1)));
+    QFontMetrics fmn(normFont);
+    dx = fmn.size(Qt::TextSingleLine, tr(" (версия %1)").arg(data.value(1))).width() + 3;
+    staffTextBox.setLeft(staffTextBox.left() + dx);
+
+    if(index.data(PluginListModel::PlugState).toBool())
+        painter->drawImage(staffTextBox.x(),staffTextBox.y() + 1,QImage(":/appimages/yes_16x16.png"));
+    else
+        painter->drawImage(staffTextBox.x(),staffTextBox.y() + 1,QImage(":/appimages/no_16x16.png"));
+
+    //автор плагина, лицензия
+    staffTextBox.setRect(3,option.rect.height()/2.0f,option.rect.width(),option.rect.height()/2.0f);
+    painter->setFont(smallFont);
+    painter->drawText(staffTextBox,Qt::AlignLeft | Qt::AlignTop, authorText);
+    QFontMetrics fmsb(smallBoldFont);
+    dx = fmsb.size(Qt::TextSingleLine,data.value(2)).width() + 3;
+    staffTextBox.setLeft(staffTextBox.left() + dx3_1 + dx);
+    painter->drawText(staffTextBox,Qt::AlignLeft | Qt::AlignTop, licText);
+    painter->setFont(smallBoldFont);
+    staffTextBox.setLeft(staffTextBox.left() + dx3_2);
+    painter->drawText(staffTextBox,Qt::AlignLeft | Qt::AlignTop, data.value(3));
+    staffTextBox.setLeft(staffTextBox.left() - dx3_2 - dx);
+    painter->drawText(staffTextBox,Qt::AlignLeft | Qt::AlignTop, data.value(2));
+
+    painter->restore();
+}
+
+void PluginItemDelegate::paintOther(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
 }
 
 void PluginItemDelegate::paintGrid(QPainter *painter, const QStyleOptionViewItem &option) const
