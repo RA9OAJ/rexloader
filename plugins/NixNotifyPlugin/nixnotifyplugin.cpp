@@ -43,7 +43,16 @@ NixNotifyPlugin::~NixNotifyPlugin()
 
 QStringList NixNotifyPlugin::pluginInfo() const
 {
-    return QStringList();
+    QStringList pinfo;
+    pinfo << QString("Plugin: ") + tr("NixNotify");
+    pinfo << QString("Authors: ") + tr("Sarvaritdino R.");
+    pinfo << QString("Place: Russia, Barabinsk, 2011-2013");
+    pinfo << QString("Build date: ") + QString("20013-02-08");
+    pinfo << QString("Version: ") + QString("0.1");
+    pinfo << QString("Contacts: mailto:ra9oaj@mail.ru");
+    pinfo << QString("Lic: GNU/LGPL v2.1");
+    pinfo << QString("Description: ") + tr("Плагин отображения системных уведомлений через DBus.");
+    return pinfo;
 }
 
 void NixNotifyPlugin::notify(const QString &app, const QString &title, const QString &msg, int timeout, int type, const QStringList &actions, QImage *image)

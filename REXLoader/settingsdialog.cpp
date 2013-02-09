@@ -259,9 +259,18 @@ void SettingsDialog::applySets()
         {
             QModelIndex cur = mdl->index(i,0);
 
-            int plugin = plugproto.value(cur.data(PluginListModel::ProtocolName).toString().toLower(),-1);
-            if(plugin != -1)
-                mdl->setData(cur,plugin);
+            if(cur.data(PluginListModel::PlugType).toString() == "Loader")
+            {
+                int plugin = plugproto.value(cur.data(PluginListModel::ProtocolName).toString().toLower(),-1);
+                if(plugin != -1)
+                    mdl->setData(cur,plugin);
+            }
+            else if(cur.data(PluginListModel::PlugType).toString() == "File")
+            {
+                QString plgid = cur.data(PluginListModel::PlugId).toString();
+                bool status = (fileplugin.contains(plgid) ? true : false);
+                mdl->setData(cur,status);
+            }
         }
         ui->pluginListView->scroll(0,1);
         ui->pluginListView->scroll(0,-1);
@@ -347,6 +356,7 @@ void SettingsDialog::cancelSets()
     ui->logSysColor->setChecked(sets.value("log_use_system_style").toBool());
 
     plugproto.clear();
+    fileplugin.clear();
 
 }
 
@@ -523,7 +533,17 @@ void SettingsDialog::updatePluginListBox(const QModelIndex &index)
     for(int i = idx; i < ui->pluginComboBox->count(); ++i)
         ui->pluginComboBox->removeItem(i);
 
-    if(index.data(PluginListModel::PlugId).toInt())
+    if(index.data(PluginListModel::PlugType).toString() == "Notify")
+    {
+        ui->pluginComboBox->setCurrentIndex(ui->pluginComboBox->findData(index.data(PluginListModel::PlugId)));
+    }
+    else if(index.data(PluginListModel::PlugType).toString() == "File")
+    {
+        if(index.data(PluginListModel::PlugState).toBool() || fileplugin.contains(index.data(PluginListModel::PlugId).toString()))
+            ui->pluginComboBox->setCurrentIndex(1);
+        else ui->pluginComboBox->setCurrentIndex(0);
+    }
+    else if(index.data(PluginListModel::PlugId).toInt())
     {
         if(plugproto.contains(index.data(PluginListModel::ProtocolName).toString().toLower()))
             ui->pluginComboBox->setCurrentIndex(ui->pluginComboBox->findData(plugproto.value(index.data(PluginListModel::ProtocolName).toString().toLower())));
@@ -535,16 +555,28 @@ void SettingsDialog::updatePluginListBox(const QModelIndex &index)
 
 void SettingsDialog::updatePluginStatus(int index)
 {
-    int newplugin = ui->pluginComboBox->itemData(index).toInt();
     QItemSelectionModel *selection = ui->pluginListView->selectionModel();
     QModelIndex curIndex = selection->selectedIndexes().value(0);
-    QString protocol = curIndex.data(PluginListModel::ProtocolName).toString().toLower();
-    int curplugin = curIndex.data(PluginListModel::PlugId).toInt();
 
-    if(curplugin == newplugin)
-        return;
+    if(curIndex.data(PluginListModel::PlugType).toString() == "Loader")
+    {
+        QString protocol = curIndex.data(PluginListModel::ProtocolName).toString().toLower();
+        int curplugin = curIndex.data(PluginListModel::PlugId).toInt();
+        int newplugin = ui->pluginComboBox->itemData(index).toInt();
 
-    plugproto.insert(protocol,newplugin);
+        if(curplugin == newplugin)
+            return;
+
+        plugproto.insert(protocol,newplugin);
+    }
+    else if(curIndex.data(PluginListModel::PlugType).toString() == "File")
+    {
+        QString plgid = curIndex.data(PluginListModel::PlugId).toString();
+        if(fileplugin.contains(plgid) && !index)
+            fileplugin.remove(plgid);
+        else if(!fileplugin.contains(plgid) && index)
+            fileplugin.insert(plgid,0);
+    }
 }
 
 void SettingsDialog::disableLogUserFonColorStyle(bool flag)

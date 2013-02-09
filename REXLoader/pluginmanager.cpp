@@ -268,6 +268,16 @@ void PluginManager::restorePluginsState(const QByteArray &stat)
 
     QHash<QString,int> last_state = *plugproto;
     plugproto->clear();
+    if(!fileplugin.isEmpty())
+    {
+        QStringList plgs = fileplugin.keys();
+        foreach(QString plg,plgs)
+            if(fileplugin.value(plg))
+                delete fileplugin.value(plg);
+
+        fileplugin.clear();
+    }
+
     QDataStream in(stat);
 
     int len;
@@ -316,6 +326,26 @@ void PluginManager::restorePluginsState(const QByteArray &stat)
             in >> len;
             continue;
         }
+        if(proto == "FILE")
+        {
+            in >> len;
+            if(!len) break;
+
+            inbuf.clear();
+            inbuf.resize(len);
+            in.readRawData(inbuf.data(),len);
+
+            QString filepath = inbuf;
+            QPluginLoader ldr(inbuf);
+            if(ldr.load())
+            {
+                FileInterface *plg = qobject_cast<FileInterface*>(ldr.instance());
+                if(plg) fileplugin.insert(filepath,plg);
+            }
+
+            in >> len;
+            continue;
+        }
 
         in >> len; //считываем размер строки пути до файла плагина
         if(!len) break;
@@ -345,6 +375,16 @@ void PluginManager::setPluginListModel(PluginListModel *mdl)
 {
     if(mdl)
         mdl->setOtherPluginSources(&notifplugins, &notifplugin, &fileplugins, &fileplugin);
+}
+
+QPair<NotifInterface *, int> *PluginManager::getNotifPlugin()
+{
+    return &notifplugin;
+}
+
+QHash<QString, FileInterface *> *PluginManager::getFilePlugin()
+{
+    return &fileplugin;
 }
 
 QString PluginManager::pluginInfo(const LoaderInterface *ldr, const QString &call) const
@@ -386,14 +426,26 @@ QByteArray PluginManager::pluginsState() const
     QString notif = "NOTIF";
     stat << notif.toAscii().size();
     stat.writeRawData(notif.toAscii().data(),notif.toAscii().size());
-    if(!notifplugin.second)
-        stat << (int) 0;
-    else
+    if(notifplugin.second)
     {
         QString filepath = notifplugins.value(notifplugin.second).last();
         filepath = filepath.replace("Filepath: ","");
         stat << filepath.toAscii().size();
         stat.writeRawData(filepath.toAscii().data(),filepath.toAscii().size());
+    }
+
+    if(!fileplugin.isEmpty())
+    {
+        QStringList plgs = fileplugin.keys();
+        QString filepath;
+        foreach(filepath,plgs)
+        {
+            QString file = "FILE";
+            stat << file.toAscii().size();
+            stat.writeRawData(file.toAscii().data(),file.toAscii().size());
+            stat << filepath.toAscii().size();
+            stat.writeRawData(filepath.toAscii().data(),filepath.toAscii().size());
+        }
     }
 
     stat << (int) 0;
