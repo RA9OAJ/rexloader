@@ -99,14 +99,19 @@ QVariant PluginListModel::data(const QModelIndex &index, int role) const
     {
         QStringList plgs = fileplugins->keys();
         QString plgpath = plgs.value(index.row() - plugproto->size() - notifplugins->size());
+        PluginInfo pluginfo(fileplugins->value(plgpath));
+
         switch(role)
         {
         case Qt::DisplayRole:
         {
             QStringList out;
-            PluginInfo pluginfo(fileplugins->value(plgpath));
             out << pluginfo.name << pluginfo.version << pluginfo.authors << pluginfo.license;
             return out;
+        }
+        case PluginListModel::PlugName:
+        {
+            return pluginfo.name;
         }
         case PluginListModel::PlugState:
         {
@@ -115,13 +120,43 @@ QVariant PluginListModel::data(const QModelIndex &index, int role) const
             return false;
         }
         case PluginListModel::PlugType:
-        {
             return QString("File");
+        case PluginListModel::PlugId:
+        {
+            return plgpath;
         }
 
         default: return QVariant();
         }
     }
+    else
+    {
+        QList<int> plgs = notifplugins->keys();
+        PluginInfo pluginfo(notifplugins->value(plgs.value(index.row() - plugproto->size())));
+
+        switch(role)
+        {
+        case Qt::DisplayRole:
+        {
+            QStringList out;
+            out<<pluginfo.name<<pluginfo.version<<pluginfo.authors<<pluginfo.license;
+            return out;
+        }
+        case PluginListModel::PlugName:
+        {
+            return pluginfo.name;
+        }
+        case PluginListModel::PlugId:
+        {
+            return plgs.value(index.row() - plugproto->size());
+        }
+        case PluginListModel::PlugType:
+            return QString("Notify");
+
+        default: return QVariant();
+        }
+    }
+
     return QVariant();
 }
 
@@ -143,7 +178,36 @@ int PluginListModel::columnCount(const QModelIndex &parent) const
 bool PluginListModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     Q_UNUSED(role)
-    plugproto->insert(index.data(ProtocolName).toString().toLower(),value.toInt());
+    if(index.row() < plugproto->size())
+        plugproto->insert(index.data(ProtocolName).toString().toLower(),value.toInt());
+    else if(index.row() >= plugproto->size() + notifplugins->size())
+    {
+        QString plgid = index.data(PlugId).toString();
+        if(!fileplugin->contains(plgid) && value.toBool())
+        {
+            QPluginLoader ldr;
+            ldr.setFileName(plgid);
+            if(!ldr.load())
+                return true;
+
+            FileInterface *plg = qobject_cast<FileInterface*>(ldr.instance());
+            if(plg) fileplugin->insert(plgid,plg);
+        }
+        else if(!fileplugin->contains(plgid))
+        {
+            QString plgid = index.data(PlugId).toString();
+            if(fileplugin->contains(plgid) && fileplugin->value(plgid))
+            {
+                delete fileplugin->value(plgid);
+                fileplugin->remove(plgid);
+            }
+        }
+    }
+    else
+    {
+
+    }
+
     return true;
 }
 
@@ -165,16 +229,33 @@ void PluginListModel::setOtherPluginSources(QHash<int, QStringList> *notifplgs, 
 QList<QPair<QString, int> > PluginListModel::pluginsList(const QModelIndex &index)
 {
     QList<QPair<QString, int> > lst;
-    QList<int> keys = pluglist->keys();
-    int key;
 
-    foreach(key,keys)
+    if(index.data(PluginListModel::PlugType).toString() == "Loader")
     {
-        LoaderInterface *plg = pluglist->value(key);
-        if(plg->protocols().contains(index.data(PluginListModel::ProtocolName).toString(),Qt::CaseInsensitive))
+        QList<int> keys = pluglist->keys();
+        int key;
+
+        foreach(key,keys)
         {
-            PluginInfo plginfo(plg->pluginInfo());
-            lst << QPair<QString,int>(plginfo.name,key);
+            LoaderInterface *plg = pluglist->value(key);
+            if(plg->protocols().contains(index.data(PluginListModel::ProtocolName).toString(),Qt::CaseInsensitive))
+            {
+                PluginInfo plginfo(plg->pluginInfo());
+                lst << QPair<QString,int>(plginfo.name,key);
+            }
+        }
+    }
+    else if(index.data(PluginListModel::PlugType).toString() == "File")
+        lst << QPair<QString,int>(tr("включено"),1);
+    else
+    {
+        QList<int> keys = notifplugins->keys();
+        int key;
+
+        foreach(key,keys)
+        {
+            PluginInfo plginfo(notifplugins->value(key));
+            lst << QPair<QString, int>(plginfo.name, key);
         }
     }
 

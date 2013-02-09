@@ -77,6 +77,8 @@ public:
     void loadLocale(const QLocale &locale);
     void restorePluginsState(const QByteArray &stat);
     void setPluginListModel(PluginListModel *mdl);
+    QPair<NotifInterface*,int>* getNotifPlugin();
+    QHash<QString,FileInterface*> *getFilePlugin();
     QString pluginInfo(const LoaderInterface *ldr,const QString &call) const;
     QByteArray pluginsState() const;
 
