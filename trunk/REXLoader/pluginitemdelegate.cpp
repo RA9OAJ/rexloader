@@ -116,13 +116,16 @@ void PluginItemDelegate::paintBodyNotif(QPainter *painter, const QStyleOptionVie
     painter->drawText(staffTextBox, Qt::AlignLeft | Qt::AlignBottom, data.value(0));
 
     int dx = 0;
-    QFontMetrics fm(bigBoldFont);
-    dx = fm.size(Qt::TextSingleLine,data.value(0)).width();
-    staffTextBox.setLeft(staffTextBox.left() + dx);
-    painter->setFont(normFont);
-    painter->drawText(staffTextBox,Qt::AlignLeft | Qt::AlignBottom,tr(" (версия %1)").arg(data.value(1)));
-    QFontMetrics fmn(normFont);
-    dx = fmn.size(Qt::TextSingleLine, tr(" (версия %1)").arg(data.value(1))).width() + 3;
+    if(!data.value(1).isEmpty())
+    {
+        QFontMetrics fm(bigBoldFont);
+        dx = fm.size(Qt::TextSingleLine,data.value(0)).width();
+        staffTextBox.setLeft(staffTextBox.left() + dx);
+        painter->setFont(normFont);
+        painter->drawText(staffTextBox,Qt::AlignLeft | Qt::AlignBottom,tr(" (версия %1)").arg(data.value(1)));
+        QFontMetrics fmn(normFont);
+        dx = fmn.size(Qt::TextSingleLine, tr(" (версия %1)").arg(data.value(1))).width() + 3;
+    }
 
     //автор плагина, лицензия
     staffTextBox.setRect(3,option.rect.height()/2.0f,option.rect.width(),option.rect.height()/2.0f);
