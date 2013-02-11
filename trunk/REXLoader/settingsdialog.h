@@ -83,8 +83,8 @@ private:
 
     QHash<QString, int> plugproto;
     QHash<QString,QVariant> sets;
-    QPair<NotifInterface*,int> notifplugin; //активный плагин уведомления
-    QHash<QString,FileInterface*> fileplugin; //ссылки на активные файловые плагины
+    int notifplugin; //активный плагин уведомления
+    QHash<QString,bool> fileplugin; //ссылки на активные файловые плагины
 };
 
 #endif // SETTINGSDIALOG_H

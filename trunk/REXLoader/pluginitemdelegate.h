@@ -49,8 +49,8 @@ protected:
 
 private:
     QFont bigFont, bigBoldFont, normFont,boldFont, smallFont, smallBoldFont;
-    QString protoText, pluginText, authorText, licText;
-    int dx1,dx2,dx3_1,dx3_2;
+    QString protoText, pluginText, authorText, licText, notifText;
+    int dx1,dx2,dx3_1,dx3_2,dx_notif;
 };
 
 #endif // PLUGINITEMDELEGATE_H

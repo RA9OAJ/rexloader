@@ -1,6 +1,6 @@
 /*
 Project: REXLoader (Downloader), Source file: pluginlistmodel.cpp
-Copyright (C) 2011-2012  Sarvaritdinov R.
+Copyright (C) 2011-2013  Sarvaritdinov R.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ QVariant PluginListModel::data(const QModelIndex &index, int role) const
         default: return QVariant();
         }
     }
-    else if(index.row() >= plugproto->size() + notifplugins->size())
+    else if(index.row() >= plugproto->size() + 1)
     {
         QStringList plgs = fileplugins->keys();
         QString plgpath = plgs.value(index.row() - plugproto->size() - notifplugins->size());
@@ -148,7 +148,7 @@ QVariant PluginListModel::data(const QModelIndex &index, int role) const
         }
         case PluginListModel::PlugId:
         {
-            return plgs.value(index.row() - plugproto->size());
+            return notifplugin->second;
         }
         case PluginListModel::PlugType:
             return QString("Notify");
@@ -164,8 +164,7 @@ int PluginListModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
     int sz = (plugproto ? plugproto->size(): 0);
-    sz += (notifplugins ? notifplugins->size(): 0);
-    sz += (fileplugins ? fileplugins->size(): 0);
+    sz += 1 + (fileplugins ? fileplugins->size(): 0);
     return sz;
 }
 
@@ -193,7 +192,7 @@ bool PluginListModel::setData(const QModelIndex &index, const QVariant &value, i
             FileInterface *plg = qobject_cast<FileInterface*>(ldr.instance());
             if(plg) fileplugin->insert(plgid,plg);
         }
-        else if(!fileplugin->contains(plgid))
+        else if(fileplugin->contains(plgid))
         {
             QString plgid = index.data(PlugId).toString();
             if(fileplugin->contains(plgid) && fileplugin->value(plgid))
@@ -203,9 +202,29 @@ bool PluginListModel::setData(const QModelIndex &index, const QVariant &value, i
             }
         }
     }
-    else
+    else if(notifplugins->contains(value.toInt()))
     {
+        if(!value.toInt())
+        {
+            if(notifplugin->first)
+                delete notifplugin->first;
 
+            notifplugin->first = 0;
+            notifplugin->second = 0;
+            return true;
+        }
+
+        PluginInfo pluginfo(notifplugins->value(value.toInt()));
+        QPluginLoader ldr(pluginfo.filepath);
+        if(!ldr.load())
+            return true;
+
+        NotifInterface *plg = qobject_cast<NotifInterface*>(ldr.instance());
+        if(!plg)
+            return true;
+
+        notifplugin->first = plg;
+        notifplugin->second = value.toInt();
     }
 
     return true;
@@ -293,6 +312,8 @@ PluginInfo::PluginInfo(const QStringList &params)
             license = pair.value(1);
         else if(pair.value(0).toLower() == "description")
             description = pair.value(1);
+        else if(pair.value(0).toLower() == "filepath")
+            filepath = pair.value(1);
     }
 }
 

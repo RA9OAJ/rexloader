@@ -1,6 +1,6 @@
 /*
 Project: REXLoader (Downloader), Source file: pluginitemdelegate.cpp
-Copyright (C) 2012  Sarvaritdinov R.
+Copyright (C) 2012-2013  Sarvaritdinov R.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -38,14 +38,15 @@ void PluginItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
 
     if(index.data(PluginListModel::PlugType).toString() == "Loader")
         paintBody(painter,opt,index);
-    else
-        paintBodyNotif(painter,opt,index);
+    else if(index.data(PluginListModel::PlugType).toString() == "File")
+        paintOther(painter,opt,index);
+    else paintBodyNotif(painter,opt,index);
     paintGrid(painter,opt);
 }
 
 QSize PluginItemDelegate::sizeHint(const QStyleOptionViewItem &/*option*/, const QModelIndex &index) const
 {
-    if(index.data(PluginListModel::PlugType).toString() == "File")
+    if(index.data(PluginListModel::PlugType).toString() != "Loader")
         return QSize(200,35);
     return QSize(200,60);
 }
@@ -108,8 +109,48 @@ void PluginItemDelegate::paintBodyNotif(QPainter *painter, const QStyleOptionVie
 
     //текст названия плагина и версия
     QRectF staffTextBox(3,0,option.rect.width(),option.rect.height()/2.0f);
+    painter->setFont(bigFont);
+    painter->drawText(staffTextBox, Qt::AlignLeft | Qt::AlignBottom, notifText);
+    painter->setFont(bigBoldFont);
+    staffTextBox.setLeft(staffTextBox.left() + dx_notif);
+    painter->drawText(staffTextBox, Qt::AlignLeft | Qt::AlignBottom, data.value(0));
+
+    int dx = 0;
+    QFontMetrics fm(bigBoldFont);
+    dx = fm.size(Qt::TextSingleLine,data.value(0)).width();
+    staffTextBox.setLeft(staffTextBox.left() + dx);
+    painter->setFont(normFont);
+    painter->drawText(staffTextBox,Qt::AlignLeft | Qt::AlignBottom,tr(" (версия %1)").arg(data.value(1)));
+    QFontMetrics fmn(normFont);
+    dx = fmn.size(Qt::TextSingleLine, tr(" (версия %1)").arg(data.value(1))).width() + 3;
+
+    //автор плагина, лицензия
+    staffTextBox.setRect(3,option.rect.height()/2.0f,option.rect.width(),option.rect.height()/2.0f);
+    painter->setFont(smallFont);
+    painter->drawText(staffTextBox,Qt::AlignLeft | Qt::AlignTop, authorText);
+    QFontMetrics fmsb(smallBoldFont);
+    dx = fmsb.size(Qt::TextSingleLine,data.value(2)).width() + 3;
+    staffTextBox.setLeft(staffTextBox.left() + dx3_1 + dx);
+    painter->drawText(staffTextBox,Qt::AlignLeft | Qt::AlignTop, licText);
+    painter->setFont(smallBoldFont);
+    staffTextBox.setLeft(staffTextBox.left() + dx3_2);
+    painter->drawText(staffTextBox,Qt::AlignLeft | Qt::AlignTop, data.value(3));
+    staffTextBox.setLeft(staffTextBox.left() - dx3_2 - dx);
+    painter->drawText(staffTextBox,Qt::AlignLeft | Qt::AlignTop, data.value(2));
+
+    painter->restore();
+}
+
+void PluginItemDelegate::paintOther(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    painter->save();
+    painter->translate(option.rect.topLeft());
+    QStringList data = index.data(Qt::DisplayRole).toStringList();
+
+    //текст названия плагина и версия
+    QRectF staffTextBox(3,0,option.rect.width(),option.rect.height()/2.0f);
     painter->setFont(boldFont);
-    staffTextBox.setLeft(staffTextBox.left());
+    //staffTextBox.setLeft(staffTextBox.left());
     painter->drawText(staffTextBox, Qt::AlignLeft | Qt::AlignBottom, data.value(0));
 
     int dx = 0;
@@ -144,10 +185,6 @@ void PluginItemDelegate::paintBodyNotif(QPainter *painter, const QStyleOptionVie
     painter->restore();
 }
 
-void PluginItemDelegate::paintOther(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
-}
-
 void PluginItemDelegate::paintGrid(QPainter *painter, const QStyleOptionViewItem &option) const
 {
     painter->save();
@@ -180,6 +217,7 @@ void PluginItemDelegate::resetOptions()
     pluginText = tr("Плагин: ");
     authorText = tr("Автор: ");
     licText = tr("Лицензия: ");
+    notifText = tr("Нотификатор: ");
 
     //расчет отклонений dx для строк
     QFontMetrics bigFontMetrics(bigFont), normFontMetrics(normFont),smallFontMetrics(smallFont);
@@ -187,4 +225,5 @@ void PluginItemDelegate::resetOptions()
     dx2 = normFontMetrics.size(Qt::TextSingleLine,pluginText).width();
     dx3_1 = smallFontMetrics.size(Qt::TextSingleLine,authorText).width();
     dx3_2 = smallFontMetrics.size(Qt::TextSingleLine,licText).width();
+    dx_notif = bigFontMetrics.size(Qt::TextSingleLine,notifText).width();
 }

@@ -39,6 +39,7 @@ public:
     QString version;
     QString license;
     QString description;
+    QString filepath;
 };
 
 class PluginListModel : public QAbstractListModel

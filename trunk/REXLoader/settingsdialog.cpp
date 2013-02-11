@@ -82,6 +82,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     delegate = new PluginItemDelegate(this);
     ui->pluginListView->setItemDelegate(delegate);
     mdl = 0;
+    notifplugin = -1;
 
     sets.insert("poweroff",false);
     sets.insert("hibernate",false);
@@ -268,13 +269,19 @@ void SettingsDialog::applySets()
             else if(cur.data(PluginListModel::PlugType).toString() == "File")
             {
                 QString plgid = cur.data(PluginListModel::PlugId).toString();
-                bool status = (fileplugin.contains(plgid) ? true : false);
-                mdl->setData(cur,status);
+                if(fileplugin.contains(plgid))
+                {
+                    bool status = fileplugin.value(plgid);
+                    mdl->setData(cur,status);
+                }
             }
+            else if(notifplugin != -1)
+                mdl->setData(cur,notifplugin);
         }
         ui->pluginListView->scroll(0,1);
         ui->pluginListView->scroll(0,-1);
         plugproto.clear();
+        fileplugin.clear();
     }
 
     emit newSettings();
@@ -357,6 +364,7 @@ void SettingsDialog::cancelSets()
 
     plugproto.clear();
     fileplugin.clear();
+    notifplugin = -1;
 
 }
 
@@ -535,7 +543,9 @@ void SettingsDialog::updatePluginListBox(const QModelIndex &index)
 
     if(index.data(PluginListModel::PlugType).toString() == "Notify")
     {
-        ui->pluginComboBox->setCurrentIndex(ui->pluginComboBox->findData(index.data(PluginListModel::PlugId)));
+        if(notifplugin == -1)
+            ui->pluginComboBox->setCurrentIndex(ui->pluginComboBox->findData(index.data(PluginListModel::PlugId)));
+        else ui->pluginComboBox->setCurrentIndex(ui->pluginComboBox->findData(notifplugin));
     }
     else if(index.data(PluginListModel::PlugType).toString() == "File")
     {
@@ -573,10 +583,11 @@ void SettingsDialog::updatePluginStatus(int index)
     {
         QString plgid = curIndex.data(PluginListModel::PlugId).toString();
         if(fileplugin.contains(plgid) && !index)
-            fileplugin.remove(plgid);
+            fileplugin.insert(plgid,false);
         else if(!fileplugin.contains(plgid) && index)
-            fileplugin.insert(plgid,0);
+            fileplugin.insert(plgid,true);
     }
+    else notifplugin = ui->pluginComboBox->itemData(index).toInt();
 }
 
 void SettingsDialog::disableLogUserFonColorStyle(bool flag)
