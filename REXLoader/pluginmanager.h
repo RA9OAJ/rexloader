@@ -70,6 +70,7 @@ public:
     explicit PluginManager(QObject *parent = 0);
     ~PluginManager();
 
+    void isFirstRun(bool frst = true);
     void setPlugDir(const QStringList &dir);
     void setPlugLists(QHash<int,QString> *files, QHash<int,LoaderInterface*> *list, QHash<QString,int> *proto, QHash<int,int> *tsklist);
     void setDefaultSettings(const int &tasks, const int &threads, const qint64 &speed, const int &att_interval);
@@ -127,6 +128,7 @@ private:
 
     UpdaterOperator *updOper;
     QString db;
+    bool first_run;
 };
 
 #endif // PLUGINMANAGER_H

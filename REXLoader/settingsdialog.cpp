@@ -282,6 +282,7 @@ void SettingsDialog::applySets()
         ui->pluginListView->scroll(0,-1);
         plugproto.clear();
         fileplugin.clear();
+        notifplugin = -1;
     }
 
     emit newSettings();

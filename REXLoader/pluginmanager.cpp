@@ -33,7 +33,7 @@ PluginManager::PluginManager(QObject *parent) :
     appIcon = new QImage(":/appimages/trayicon.png");
     *appIcon = appIcon->scaledToWidth(64,Qt::SmoothTransformation).rgbSwapped();
     connect(this,SIGNAL(needLoadOtherPlugin(QString)),this,SLOT(loadOtherPlugin(QString)),Qt::QueuedConnection);
-
+    first_run = false;
     updOper = 0;
 }
 
@@ -85,13 +85,17 @@ void PluginManager::run()
                 QStringList pluginfo = nldr->pluginInfo();
                 pluginfo << QString("Filepath: ")+pluginDirs->value(i)+"/"+plg.value(y);
                 notifplugins.insert(notifplugins.size()+1,pluginfo);
-                if(!notifplugin.first)
+                if(!notifplugin.first && first_run)
                 {
                     notifplugin.first = nldr;
                     connect(nldr,SIGNAL(notifyActionData(uint,QString)),this,SLOT(notifActRecv(uint,QString)));
                     notifplugin.second = notifplugins.size();
                 }
-                else plug.unload();
+                else
+                {
+                    delete nldr;
+                    plug.unload();
+                }
 
                 continue;
             }
@@ -214,6 +218,11 @@ PluginOperator::PluginOperator(QObject *parent) :
 void PluginOperator::setPluglist(QHash<int, LoaderInterface *> *list)
 {
     pluglist = list;
+}
+
+void PluginManager::isFirstRun(bool frst)
+{
+    first_run = frst;
 }
 
 void PluginOperator::startDownload(int id_task)
@@ -423,11 +432,12 @@ QByteArray PluginManager::pluginsState() const
         stat.writeRawData(filepath.toAscii().data(),filepath.toAscii().size()); //путь до файла плагина
     }
 
-    QString notif = "NOTIF";
-    stat << notif.toAscii().size();
-    stat.writeRawData(notif.toAscii().data(),notif.toAscii().size());
     if(notifplugin.second)
     {
+        QString notif = "NOTIF";
+        stat << notif.toAscii().size();
+        stat.writeRawData(notif.toAscii().data(),notif.toAscii().size());
+
         QString filepath = notifplugins.value(notifplugin.second).last();
         filepath = filepath.replace("Filepath: ","");
         stat << filepath.toAscii().size();

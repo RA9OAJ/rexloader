@@ -669,6 +669,13 @@ void REXWindow::saveSettings()
 
 void REXWindow::loadSettings()
 {
+    QFileInfo info(apphomedir+"/rexloader.ini");
+    if(!info.exists())
+    {
+        plugmgr->isFirstRun();
+        return;
+    }
+
     QSettings settings(apphomedir+"/rexloader.ini", QSettings::IniFormat,this);
     settings.beginGroup("Main Window");
     restoreGeometry(settings.value("WindowGeometry").toByteArray());

@@ -131,15 +131,17 @@ QVariant PluginListModel::data(const QModelIndex &index, int role) const
     }
     else
     {
-        QList<int> plgs = notifplugins->keys();
-        PluginInfo pluginfo(notifplugins->value(plgs.value(index.row() - plugproto->size())));
+        QList<QString> plgs = (notifplugin->first ? notifplugin->first->pluginInfo() : QStringList());
+        PluginInfo pluginfo(plgs);
 
         switch(role)
         {
         case Qt::DisplayRole:
         {
             QStringList out;
-            out<<pluginfo.name<<pluginfo.version<<pluginfo.authors<<pluginfo.license;
+            if(notifplugin->first)
+                out<<pluginfo.name<<pluginfo.version<<pluginfo.authors<<pluginfo.license;
+            else out << tr("отключено") << "" << "-" << "-" << "-";
             return out;
         }
         case PluginListModel::PlugName:
@@ -202,7 +204,7 @@ bool PluginListModel::setData(const QModelIndex &index, const QVariant &value, i
             }
         }
     }
-    else if(notifplugins->contains(value.toInt()))
+    else
     {
         if(!value.toInt())
         {
