@@ -583,9 +583,9 @@ void SettingsDialog::updatePluginStatus(int index)
     else if(curIndex.data(PluginListModel::PlugType).toString() == "File")
     {
         QString plgid = curIndex.data(PluginListModel::PlugId).toString();
-        if(fileplugin.contains(plgid) && !index)
+        if(!index)
             fileplugin.insert(plgid,false);
-        else if(!fileplugin.contains(plgid) && index)
+        else
             fileplugin.insert(plgid,true);
     }
     else notifplugin = ui->pluginComboBox->itemData(index).toInt();

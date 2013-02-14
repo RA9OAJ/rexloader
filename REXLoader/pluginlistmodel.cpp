@@ -186,18 +186,13 @@ bool PluginListModel::setData(const QModelIndex &index, const QVariant &value, i
         QString plgid = index.data(PlugId).toString();
         if(!fileplugin->contains(plgid) && value.toBool())
         {
-            QPluginLoader ldr;
-            ldr.setFileName(plgid);
-            if(!ldr.load())
-                return true;
-
-            FileInterface *plg = qobject_cast<FileInterface*>(ldr.instance());
-            if(plg) fileplugin->insert(plgid,plg);
+            emit needLoadOtherPlugin(plgid);
+            return true;
         }
         else if(fileplugin->contains(plgid))
         {
             QString plgid = index.data(PlugId).toString();
-            if(fileplugin->contains(plgid) && fileplugin->value(plgid))
+            if(fileplugin->contains(plgid))
             {
                 delete fileplugin->value(plgid);
                 fileplugin->remove(plgid);
@@ -216,7 +211,7 @@ bool PluginListModel::setData(const QModelIndex &index, const QVariant &value, i
             return true;
         }
 
-        PluginInfo pluginfo(notifplugins->value(value.toInt()));
+        /*PluginInfo pluginfo(notifplugins->value(value.toInt()));
         QPluginLoader ldr(pluginfo.filepath);
         if(!ldr.load())
             return true;
@@ -226,7 +221,8 @@ bool PluginListModel::setData(const QModelIndex &index, const QVariant &value, i
             return true;
 
         notifplugin->first = plg;
-        notifplugin->second = value.toInt();
+        notifplugin->second = value.toInt();*/
+        emit needLoadNotifPlugin(value.toInt());
     }
 
     return true;

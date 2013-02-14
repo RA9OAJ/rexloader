@@ -91,6 +91,7 @@ signals:
     void messageAvailable(int id_task, int id_sect, int ms_type, const QString &title, const QString &more);
     void notifActionInvoked(const QString &act);
     void needLoadOtherPlugin(const QString &filepath);
+    void needLoadNotifPlugin(int id);
 
 public slots:
     void startDownload(int id_task);
@@ -105,6 +106,7 @@ protected:
 
 protected slots:
     void loadOtherPlugin(const QString &filepath);
+    void loadNotifPlugin(int id);
 
 private:
     const QStringList *pluginDirs; //список с директориями, в которых могут быть плагины

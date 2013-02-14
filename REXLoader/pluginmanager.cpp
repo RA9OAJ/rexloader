@@ -33,6 +33,7 @@ PluginManager::PluginManager(QObject *parent) :
     appIcon = new QImage(":/appimages/trayicon.png");
     *appIcon = appIcon->scaledToWidth(64,Qt::SmoothTransformation).rgbSwapped();
     connect(this,SIGNAL(needLoadOtherPlugin(QString)),this,SLOT(loadOtherPlugin(QString)),Qt::QueuedConnection);
+    connect(this,SIGNAL(needLoadNotifPlugin(int)),this,SLOT(loadNotifPlugin(int)),Qt::QueuedConnection);
     first_run = false;
     updOper = 0;
 }
@@ -72,13 +73,19 @@ void PluginManager::run()
         {
             QPluginLoader plug(pluginDirs->value(i)+"/"+plg.value(y));
             if(!plug.load())continue;
-            LoaderInterface *ldr = qobject_cast<LoaderInterface*>(plug.instance());
+            QObject *pobject = plug.instance();
+            LoaderInterface *ldr = qobject_cast<LoaderInterface*>(pobject);
             if(!ldr)
             {
-                NotifInterface *nldr = qobject_cast<NotifInterface*>(plug.instance());
+                NotifInterface *nldr = qobject_cast<NotifInterface*>(pobject);
                 if(!nldr)
                 {
-                    emit needLoadOtherPlugin(pluginDirs->value(i)+"/"+plg.value(y));
+                    FileInterface *fplg = qobject_cast<FileInterface*>(pobject);
+                    if(fplg)
+                        fileplugins.insert(pluginDirs->value(i)+"/"+plg.value(y),fplg->pluginInfo());
+
+                    plug.unload();
+                    //emit needLoadOtherPlugin(pluginDirs->value(i)+"/"+plg.value(y));
                     continue;
                 }
 
@@ -87,9 +94,11 @@ void PluginManager::run()
                 notifplugins.insert(notifplugins.size()+1,pluginfo);
                 if(!notifplugin.first && first_run)
                 {
-                    notifplugin.first = nldr;
+                    plug.unload();
+                    emit needLoadNotifPlugin(notifplugins.size());
+                    /*notifplugin.first = nldr;
                     connect(nldr,SIGNAL(notifyActionData(uint,QString)),this,SLOT(notifActRecv(uint,QString)));
-                    notifplugin.second = notifplugins.size();
+                    notifplugin.second = notifplugins.size();*/
                 }
                 else
                 {
@@ -132,17 +141,50 @@ void PluginManager::run()
 
 void PluginManager::loadOtherPlugin(const QString &filepath)
 {
+    if(fileplugin.contains(filepath))
+        return;
+
     QPluginLoader pldr(filepath);
+    if(!pldr.load())
+        return;
+
     FileInterface *plg = qobject_cast<FileInterface*>(pldr.instance());
     if(!plg)
+    {
+        pldr.unload();
         return;
+    }
 
     QStringList pluginfo = plg->pluginInfo();
     QString plgid = filepath;
-    fileplugins.insert(plgid,pluginfo);
-    if(!fileplugin.contains(plgid))
+    if(!fileplugins.contains(plgid))
+        fileplugins.insert(plgid,pluginfo);
+    fileplugin.insert(plgid,plg);
+}
+
+void PluginManager::loadNotifPlugin(int id)
+{
+    if(!notifplugins.contains(id))
+        return;
+
+    if(notifplugin.first)
+        delete notifplugin.first;
+
+    PluginInfo plginfo(notifplugins.value(id));
+    QPluginLoader pldr(plginfo.filepath);
+    if(!pldr.load())
+        return;
+
+    NotifInterface *plg = qobject_cast<NotifInterface*>(pldr.instance());
+    if(!plg)
+    {
         pldr.unload();
-    else fileplugin.insert(plgid,plg);
+        return;
+    }
+
+    notifplugin.first = plg;
+    notifplugin.second = id;
+    connect(plg,SIGNAL(notifyActionData(uint,QString)),this,SLOT(notifActRecv(uint,QString)));
 }
 
 void PluginManager::setDefaultSettings(const int &tasks, const int &threads, const qint64 &speed, const int &att_interval)
@@ -313,22 +355,10 @@ void PluginManager::restorePluginsState(const QByteArray &stat)
             in.readRawData(inbuf.data(),len); //считываем путь до NOTIF плагина
 
             QString filepath = inbuf;
-            for(int i = 1; i < notifplugins.size(); ++i)
+            for(int i = 1; i <= notifplugins.size(); ++i)
                 if(notifplugins.value(i).last() == QString("Filepath: ")+filepath && notifplugin.second != i)
                 {
-                    disconnect(notifplugin.first,SIGNAL(notifyActionData(uint,QString)),this,SLOT(notifActRecv(uint,QString)));
-                    QPluginLoader ldr(notifplugins.value(i).last());
-                    if(ldr.isLoaded())
-                        ldr.unload();
-                    ldr.setFileName(notifplugins.value(i).last());
-                    if(!ldr.load()) break;
-
-                    notifplugin.first = qobject_cast<NotifInterface*>(ldr.instance());
-                    if(!notifplugin.first)
-                        break;
-
-                    connect(notifplugin.first,SIGNAL(notifyActionData(uint,QString)),this,SLOT(notifActRecv(uint,QString)));
-                    notifplugin.second = i;
+                    loadNotifPlugin(i);
                     break;
                 }
 
@@ -347,10 +377,7 @@ void PluginManager::restorePluginsState(const QByteArray &stat)
             QString filepath = inbuf;
             QPluginLoader ldr(inbuf);
             if(ldr.load())
-            {
-                FileInterface *plg = qobject_cast<FileInterface*>(ldr.instance());
-                if(plg) fileplugin.insert(filepath,plg);
-            }
+                loadOtherPlugin(filepath);
 
             in >> len;
             continue;
@@ -383,7 +410,11 @@ void PluginManager::restorePluginsState(const QByteArray &stat)
 void PluginManager::setPluginListModel(PluginListModel *mdl)
 {
     if(mdl)
+    {
         mdl->setOtherPluginSources(&notifplugins, &notifplugin, &fileplugins, &fileplugin);
+        connect(mdl,SIGNAL(needLoadNotifPlugin(int)),this,SLOT(loadNotifPlugin(int)));
+        connect(mdl,SIGNAL(needLoadOtherPlugin(QString)),this,SLOT(loadOtherPlugin(QString)));
+    }
 }
 
 QPair<NotifInterface *, int> *PluginManager::getNotifPlugin()
