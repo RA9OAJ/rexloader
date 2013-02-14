@@ -36,6 +36,7 @@ PluginManager::PluginManager(QObject *parent) :
     connect(this,SIGNAL(needLoadNotifPlugin(int)),this,SLOT(loadNotifPlugin(int)),Qt::QueuedConnection);
     first_run = false;
     updOper = 0;
+    menu = new QMenu();
 }
 
 PluginManager::~PluginManager()
@@ -139,6 +140,12 @@ void PluginManager::run()
     exec();
 }
 
+void PluginManager::updateFilePluginMenu()
+{
+    menu->clear();
+    menu->addActions(act_table.keys());
+}
+
 void PluginManager::loadOtherPlugin(const QString &filepath)
 {
     if(fileplugin.contains(filepath))
@@ -160,6 +167,20 @@ void PluginManager::loadOtherPlugin(const QString &filepath)
     if(!fileplugins.contains(plgid))
         fileplugins.insert(plgid,pluginfo);
     fileplugin.insert(plgid,plg);
+
+    QList<DataAction> actions = plg->getActionList();
+    foreach(DataAction dact, actions)
+    {
+        QAction *act = new QAction(dact.act_title,this);
+        act->setIcon(dact.act_icon);
+        QPair<FileInterface*,int> ref;
+        ref.first = plg;
+        ref.second = dact.act_id;
+        act_table.insert(act,ref);
+        connect(act,SIGNAL(triggered()),this,SLOT(actionAnalizer()));
+    }
+
+    updateFilePluginMenu();
 }
 
 void PluginManager::loadNotifPlugin(int id)
@@ -242,6 +263,16 @@ void PluginManager::notify(const QString &title, const QString &msg, int timeout
 void PluginManager::notifActRecv(unsigned int, const QString &act)
 {
     emit notifActionInvoked(act);
+}
+
+void PluginManager::actionAnalizer()
+{
+    QAction *act = qobject_cast<QAction*>(sender());
+    if(!act)
+        return;
+
+    if(act_table.contains(act))
+        act_table.value(act).first->runAction(act_table.value(act).second);
 }
 
 void PluginManager::setDatabaseFile(const QString &dbfile)
@@ -492,6 +523,11 @@ QByteArray PluginManager::pluginsState() const
     stat << (int) 0;
 
     return out;
+}
+
+QMenu *PluginManager::filePluginMenu() const
+{
+    return menu;
 }
 
 //-----------------------UpdaterOperator-----------------

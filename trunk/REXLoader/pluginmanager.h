@@ -28,6 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QApplication>
 #include <QTranslator>
 #include <QtSql/QtSql>
+#include <QAction>
+#include <QMenu>
 
 #include "../plugins/LoaderInterface.h"
 #include "../plugins/NotifInterface.h"
@@ -82,6 +84,7 @@ public:
     QHash<QString,FileInterface*> *getFilePlugin();
     QString pluginInfo(const LoaderInterface *ldr,const QString &call) const;
     QByteArray pluginsState() const;
+    QMenu* filePluginMenu() const;
 
 signals:
     void pluginStatus(bool stat);
@@ -100,9 +103,11 @@ public slots:
     void appendLog(int id_task, int id_sect, int ms_type, const QString &title, const QString &more);
     void notify(const QString &title, const QString &msg, int timeout = 10, const QStringList &acts = QStringList(), int type = NotifInterface::INFO, QImage* img=0);
     void notifActRecv(unsigned int, const QString &act);
+    void actionAnalizer();
 
 protected:
     void run();
+    void updateFilePluginMenu();
 
 protected slots:
     void loadOtherPlugin(const QString &filepath);
@@ -131,6 +136,8 @@ private:
     UpdaterOperator *updOper;
     QString db;
     bool first_run;
+    QHash<QAction*,QPair<FileInterface*,int> > act_table; //хэш связей QAction с файл-плагинами
+    QMenu *menu;
 };
 
 #endif // PLUGINMANAGER_H
