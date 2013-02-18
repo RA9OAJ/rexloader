@@ -144,6 +144,7 @@ void REXWindow::createInterface()
     plugmodel = new PluginListModel(this);
     plugmodel->setSorces(&plugfiles,&pluglist,&plugproto);
     plugmgr->setPluginListModel(plugmodel);
+    plugmgr->setTaskTable(ui->tableView);
     settDlg->setPlugListModel(plugmodel);
 
     //настраиваем лог
@@ -350,6 +351,8 @@ void REXWindow::createInterface()
     tblMenu->addAction(ui->actionStop);
     tblMenu->addSeparator();
     tblMenu->addAction(ui->actionRedownload);
+    tblMenu->addSeparator();
+    tblMenu->addMenu(plugmgr->filePluginMenu());
     tblMenu->addSeparator();
     tblMenu->addAction(ui->actionDelURL);
     tblMenu->addAction(ui->actionDelURLFiles);

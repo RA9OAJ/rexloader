@@ -36,7 +36,7 @@ PluginManager::PluginManager(QObject *parent) :
     connect(this,SIGNAL(needLoadNotifPlugin(int)),this,SLOT(loadNotifPlugin(int)),Qt::QueuedConnection);
     first_run = false;
     updOper = 0;
-    menu = new QMenu();
+    menu = new QMenu(tr("Действия с файлами"));
 }
 
 PluginManager::~PluginManager()
@@ -171,7 +171,8 @@ void PluginManager::loadOtherPlugin(const QString &filepath)
     QList<DataAction> actions = plg->getActionList();
     foreach(DataAction dact, actions)
     {
-        QAction *act = new QAction(dact.act_title,this);
+        QAction *act = new QAction(this);
+        act->setText(dact.act_title);
         act->setIcon(dact.act_icon);
         QPair<FileInterface*,int> ref;
         ref.first = plg;
@@ -272,7 +273,22 @@ void PluginManager::actionAnalizer()
         return;
 
     if(act_table.contains(act))
-        act_table.value(act).first->runAction(act_table.value(act).second);
+    {
+        FileInterface *plg = act_table.value(act).first;
+        if(tab_view->selectionModel()->hasSelection())
+        {
+            QStringList filelist;
+            QItemSelectionModel *selection = tab_view->selectionModel();
+            QModelIndexList fileindex = selection->selectedRows(3);
+            for(int i = 0; i < fileindex.size(); ++i)
+                if(selection->selectedRows(9).value(i).data(100).toInt() == LInterface::FINISHED)
+                    filelist.append(fileindex.value(i).data(100).toString());
+
+            plg->setFileName(filelist);
+        }
+
+        plg->runAction(act_table.value(act).second);
+    }
 }
 
 void PluginManager::setDatabaseFile(const QString &dbfile)
@@ -446,6 +462,11 @@ void PluginManager::setPluginListModel(PluginListModel *mdl)
         connect(mdl,SIGNAL(needLoadNotifPlugin(int)),this,SLOT(loadNotifPlugin(int)));
         connect(mdl,SIGNAL(needLoadOtherPlugin(QString)),this,SLOT(loadOtherPlugin(QString)));
     }
+}
+
+void PluginManager::setTaskTable(QTableView *tbl)
+{
+    tab_view = tbl;
 }
 
 QPair<NotifInterface *, int> *PluginManager::getNotifPlugin()
