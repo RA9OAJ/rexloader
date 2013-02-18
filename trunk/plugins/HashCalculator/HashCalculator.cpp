@@ -49,10 +49,10 @@ QList<DataAction> HashCalculator::getActionList() const
 {
     QList<DataAction> lst;
     DataAction act;
-    lst.append(act);
     act.act_id = 1;
     act.act_title = tr("Подсчёт контрольных сумм");
-    //act.act_icon = QIcon(":/path/to/internal/icon"); // если есть жедание записхнуть через ресурсы иконку для пункта меню
+    //act.act_icon = QIcon(":/path/to/internal/icon"); // если есть жедание запихнуть через ресурсы иконку для пункта меню
+    lst.append(act);
     return lst;
 }
 

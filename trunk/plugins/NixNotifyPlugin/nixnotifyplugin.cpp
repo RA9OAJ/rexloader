@@ -112,9 +112,7 @@ void NixNotifyPlugin::closeNotify(unsigned int id)
             closeNotify(cid);
         return;
     }
-    QVariantList args;
-    args << id;
-    dbusNotification.callWithArgumentList(QDBus::AutoDetect, "CloseNotification", args);
+    dbusNotification.call(QDBus::AutoDetect, "CloseNotification", id);
 }
 
 void NixNotifyPlugin::notifIsClosed(unsigned int id)

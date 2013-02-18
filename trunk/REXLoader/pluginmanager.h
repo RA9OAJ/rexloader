@@ -30,6 +30,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtSql/QtSql>
 #include <QAction>
 #include <QMenu>
+#include <QTableView>
+#include <QItemSelectionModel>
+#include <QSortFilterProxyModel>
 
 #include "../plugins/LoaderInterface.h"
 #include "../plugins/NotifInterface.h"
@@ -80,6 +83,7 @@ public:
     void loadLocale(const QLocale &locale);
     void restorePluginsState(const QByteArray &stat);
     void setPluginListModel(PluginListModel *mdl);
+    void setTaskTable(QTableView *tbl);
     QPair<NotifInterface*,int>* getNotifPlugin();
     QHash<QString,FileInterface*> *getFilePlugin();
     QString pluginInfo(const LoaderInterface *ldr,const QString &call) const;
@@ -138,6 +142,7 @@ private:
     bool first_run;
     QHash<QAction*,QPair<FileInterface*,int> > act_table; //хэш связей QAction с файл-плагинами
     QMenu *menu;
+    QTableView *tab_view;
 };
 
 #endif // PLUGINMANAGER_H
