@@ -34,6 +34,7 @@ PluginManager::PluginManager(QObject *parent) :
     *appIcon = appIcon->scaledToWidth(64,Qt::SmoothTransformation).rgbSwapped();
     connect(this,SIGNAL(needLoadOtherPlugin(QString)),this,SLOT(loadOtherPlugin(QString)),Qt::QueuedConnection);
     connect(this,SIGNAL(needLoadNotifPlugin(int)),this,SLOT(loadNotifPlugin(int)),Qt::QueuedConnection);
+    connect(this,SIGNAL(needCreatePlugWidget(int)),this,SLOT(createPlugWidget(int)),Qt::QueuedConnection);
     first_run = false;
     updOper = 0;
     menu = new QMenu(tr("Действия с файлами"));
@@ -109,9 +110,12 @@ void PluginManager::run()
 
                 continue;
             }
+
             emit messageAvailable(-1,0,LInterface::MT_INFO,tr("Плагин %1 версия %2-%3 ('%4') загружен.").arg(pluginInfo(ldr,"Plugin"),pluginInfo(ldr,"Version"),pluginInfo(ldr,"Build date"),pluginDirs->value(i)+"/"+plg.value(y)),QString());
             pluglist->insert(pluglist->size()+1,ldr);
             plugfiles->insert(pluglist->size(),pluginDirs->value(i)+"/"+plg.value(y));
+            emit needCreatePlugWidget(pluglist->size());
+
             connect(ldr,SIGNAL(messageAvailable(int,int,int,QString,QString)),this,SLOT(appendLog(int,int,int,QString,QString)),Qt::QueuedConnection);
 
             QStringList protocols = ldr->protocols();
@@ -207,6 +211,18 @@ void PluginManager::loadNotifPlugin(int id)
     notifplugin.first = plg;
     notifplugin.second = id;
     connect(plg,SIGNAL(notifyActionData(uint,QString)),this,SLOT(notifActRecv(uint,QString)));
+}
+
+void PluginManager::createPlugWidget(int plug_id)
+{
+    if(pluglist->contains(plug_id))
+    {
+        PluginInfo plginfo(pluglist->value(plug_id)->pluginInfo());
+        QString file_path = QDir::homePath() + QString("/.config/.rexloader/plugins/%1.ini").arg(plginfo.name);
+        QWidget *wgt = pluglist->value(plug_id)->widgetSettings(file_path);
+        if(wgt) plug_widgets.insert(plug_id,wgt);
+    }
+
 }
 
 void PluginManager::setDefaultSettings(const int &tasks, const int &threads, const qint64 &speed, const int &att_interval)
@@ -477,6 +493,11 @@ QPair<NotifInterface *, int> *PluginManager::getNotifPlugin()
 QHash<QString, FileInterface *> *PluginManager::getFilePlugin()
 {
     return &fileplugin;
+}
+
+QHash<int, QWidget *> *PluginManager::getPlugWidgets()
+{
+    return &plug_widgets;
 }
 
 QString PluginManager::pluginInfo(const LoaderInterface *ldr, const QString &call) const

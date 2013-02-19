@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <QtGui/QApplication>
+#include <QMessageBox>
 #include <QTextCodec>
 #include "rexwindow.h"
 #include <QDebug>
@@ -31,12 +32,24 @@ void checkDatabase()
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
         dbname = db.connectionName();
-        if(!homeapp.exists(homedir+"/.rexloader"))
+        if(!homeapp.exists(homedir+"/.config"))
+            homeapp.mkpath(homedir+"/.config");
+
+        homeapp.cd(homedir+"/.config");
+
+        QDir olddir(QDir::homePath()+"/.rexloader");
+        if(olddir.exists())
         {
-            homeapp.mkpath(homedir+"/.rexloader");
-            homeapp.mkpath(homedir+"/.rexloader/plugins");
+            olddir.rename(olddir.absolutePath(), homeapp.absolutePath()+"/rexloader");
+            QMessageBox::information(0,QObject::tr("Перенос настроек"),QObject::tr("Файлы настроек REXLoader были перенесены в ~/.config/rexloader"));
         }
-        homeapp.cd(homedir+"/.rexloader");
+
+        if(!homeapp.exists(homedir+"/rexloader"))
+        {
+            homeapp.mkpath(homedir+"/rexloader");
+            homeapp.mkpath(homedir+"/rexloader/plugins");
+        }
+        homeapp.cd(homedir+"/rexloader");
         if(!homeapp.exists(homeapp.path()+"/logs"))
             homeapp.mkpath(homeapp.path()+"/logs");
         if(!homeapp.exists(homeapp.path()+"/locales"))
@@ -371,13 +384,12 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("Sarvaritdinov Ravil");
     QCoreApplication::setApplicationName("REXLoader");
 
-    checkDatabase();
-
     QTextCodec::setCodecForLocale(QTextCodec::codecForLocale());
     QTextCodec::setCodecForCStrings(QTextCodec::codecForLocale());
     QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
 
     QApplication a(argc, argv);
+    checkDatabase();
 
     QApplication::setQuitOnLastWindowClosed(false);
     addURL(a.arguments());

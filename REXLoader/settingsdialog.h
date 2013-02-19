@@ -50,6 +50,7 @@ public:
     QList<QString> keys() const;
     QVariant value(const QString &key) const;
     void setPlugListModel(PluginListModel* model);
+    void setPlugWidgets(QHash<int, QWidget*> *plg_wdt);
 
 signals:
     void newSettings();
@@ -74,6 +75,7 @@ protected slots:
     void updatePluginListBox(const QModelIndex &index);
     void updatePluginStatus(int index);
     void disableLogUserFonColorStyle(bool flag = true);
+    void showPlugWidget();
 
 private:
     Ui::SettingsDialog *ui;
@@ -85,6 +87,7 @@ private:
     QHash<QString,QVariant> sets;
     int notifplugin; //активный плагин уведомления
     QHash<QString,bool> fileplugin; //ссылки на активные файловые плагины
+    QHash<int, QWidget*> *plug_widgets;
 };
 
 #endif // SETTINGSDIALOG_H

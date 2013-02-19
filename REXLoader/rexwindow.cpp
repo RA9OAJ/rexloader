@@ -36,7 +36,8 @@ REXWindow::REXWindow(QWidget *parent) :
     QList<int> sz1;
     QDir libdir(QApplication::applicationDirPath());
     libdir.cdUp();
-    pluginDirs << libdir.absolutePath()+"/lib/rexloader/plugins" << libdir.absolutePath()+"/lib64/rexloader/plugins" << QDir::homePath()+"/.rexloader/plugins";
+    apphomedir = QDir::homePath()+"/.config/rexloader";
+    pluginDirs << libdir.absolutePath()+"/lib/rexloader/plugins" << libdir.absolutePath()+"/lib64/rexloader/plugins" << apphomedir+"/plugins";
 
     sz << 800 << 150;
     sz1 << 150 << 800;
@@ -53,8 +54,6 @@ REXWindow::REXWindow(QWidget *parent) :
 
     settDlg = new SettingsDialog(this);
     connect(settDlg,SIGNAL(newSettings()),this,SLOT(readSettings()));
-
-    apphomedir = QDir::homePath()+"/.rexloader";
 
     logmgr = new LogManager(this);
     lockProcess();
@@ -79,7 +78,7 @@ void REXWindow::pluginStatus(bool stat)
     if(!stat)
     {
         setEnabled(false);
-        int quit_ok = QMessageBox::critical(this,windowTitle()+" - "+tr("Критическая ошибка"),tr("Не найден ни один плагин.\r\n Проверьте наличие файлов плагинов в директории '.rexloader' и '/usr/{local/}lib/rexloader/plugins'."));
+        int quit_ok = QMessageBox::critical(this,windowTitle()+" - "+tr("Критическая ошибка"),tr("Не найден ни один плагин.\r\n Проверьте наличие файлов плагинов в директории '~/.config/rexloader/plugins' и '/usr/{local/}lib/rexloader/plugins'."));
         if(quit_ok == QMessageBox::Ok)QTimer::singleShot(0,this,SLOT(close()));
     }
     plugmgr->restorePluginsState(plug_state);
@@ -146,6 +145,7 @@ void REXWindow::createInterface()
     plugmgr->setPluginListModel(plugmodel);
     plugmgr->setTaskTable(ui->tableView);
     settDlg->setPlugListModel(plugmodel);
+    settDlg->setPlugWidgets(plugmgr->getPlugWidgets());
 
     //настраиваем лог
     logmgr->setTabWidget(ui->tabWidget);
@@ -772,15 +772,13 @@ void REXWindow::scanClipboard()
 
 void REXWindow::openDataBase()
 {
-    QString homedir = QDir::homePath()+"/.rexloader";
-
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
 
-    db.setDatabaseName(homedir+"/tasks.db");
+    db.setDatabaseName(apphomedir+"/tasks.db");
     if(!db.open())
     {
         setEnabled(false);
-        int quit_ok = QMessageBox::critical(this,windowTitle()+" - "+tr("Критическая ошибка"),tr("Невозможно открыть файл базы данных.\r\n Это критическая ошибка, приложение будет закрыто.\r\n Проверьте свои права доступа к директории '.rexloader'."));
+        int quit_ok = QMessageBox::critical(this,windowTitle()+" - "+tr("Критическая ошибка"),tr("Невозможно открыть файл базы данных.\r\n Это критическая ошибка, приложение будет закрыто.\r\n Проверьте свои права доступа к директории '~/.config/rexloader'."));
         if(quit_ok == QMessageBox::Ok)QTimer::singleShot(0,this,SLOT(close()));
     }
 
@@ -928,7 +926,7 @@ void REXWindow::scanNewTaskQueue()
 
 void REXWindow::loadPlugins()
 {
-    QString dbfile = QDir::homePath()+"/.rexloader/tasks.db";
+    QString dbfile = apphomedir+"/tasks.db";
     plugmgr->setDatabaseFile(dbfile);
 
     plugmgr->setDefaultSettings(max_tasks, max_threads, down_speed, settDlg->value("attempt_interval").toInt());
