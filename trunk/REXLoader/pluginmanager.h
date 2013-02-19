@@ -86,6 +86,7 @@ public:
     void setTaskTable(QTableView *tbl);
     QPair<NotifInterface*,int>* getNotifPlugin();
     QHash<QString,FileInterface*> *getFilePlugin();
+    QHash<int,QWidget*> *getPlugWidgets();
     QString pluginInfo(const LoaderInterface *ldr,const QString &call) const;
     QByteArray pluginsState() const;
     QMenu* filePluginMenu() const;
@@ -99,6 +100,7 @@ signals:
     void notifActionInvoked(const QString &act);
     void needLoadOtherPlugin(const QString &filepath);
     void needLoadNotifPlugin(int id);
+    void needCreatePlugWidget(int plug_id);
 
 public slots:
     void startDownload(int id_task);
@@ -116,6 +118,7 @@ protected:
 protected slots:
     void loadOtherPlugin(const QString &filepath);
     void loadNotifPlugin(int id);
+    void createPlugWidget(int plug_id);
 
 private:
     const QStringList *pluginDirs; //список с директориями, в которых могут быть плагины
@@ -143,6 +146,7 @@ private:
     QHash<QAction*,QPair<FileInterface*,int> > act_table; //хэш связей QAction с файл-плагинами
     QMenu *menu;
     QTableView *tab_view;
+    QHash<int, QWidget*> plug_widgets;
 };
 
 #endif // PLUGINMANAGER_H

@@ -145,6 +145,7 @@ public:
     void setProxy(int id_task, const QUrl &_proxy, LInterface::ProxyType _ptype, const QString &data_base64); //устанавливает прокси
     void setAdvancedOptions(int id_task, const QString &options); //передает загрузчику дополнительные параметры
     QTranslator* getTranslator(const QLocale &locale); //возвращает указатель на транслятор для указанной локали, либо 0 при отсутствии транслятора
+    QWidget* widgetSettings(const QString &file_path); //возвращает указатель на виджет настроек плагина, или 0 при отсутствии настроек
 
 signals:
     void sheduleImpulse(); //сигнал генериться с интервалом шедулера

@@ -25,6 +25,7 @@ class QStringList;
 class QUrl;
 class QTranslator;
 class QLocale;
+class QWidget;
 
 namespace LInterface{
 
@@ -119,6 +120,7 @@ public:
     virtual void setProxy(int id_task, const QUrl &_proxy, LInterface::ProxyType _ptype, const QString &data_base64)=0; //устанавливает прокси
     virtual void setAdvancedOptions(int id_task, const QString &options)=0; //передает загрузчику дополнительные параметры
     virtual QTranslator* getTranslator(const QLocale &locale) =0; //возвращает указатель на транслятор для указанной локали, либо 0 при отсутствии транслятора
+    virtual QWidget* widgetSettings(const QString &file_path) =0; //возвращает указатель на виджет настроек плагина (file_path - путь до папки сохранения настрое плагина), или 0 при отсутствии настроек
 
 signals:
     virtual void messageAvailable(int id_task, int id_sect, int ms_type, const QString &title, const QString &more)=0; //сигнал сообщает о наличии служебных сообщений для задания id_task

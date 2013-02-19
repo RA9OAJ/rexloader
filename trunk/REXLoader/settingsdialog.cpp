@@ -70,6 +70,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
     connect(ui->pluginListView,SIGNAL(clicked(QModelIndex)),this,SLOT(updatePluginListBox(QModelIndex)));
     connect(ui->pluginComboBox,SIGNAL(activated(int)),this,SLOT(updatePluginStatus(int)));
+    connect(ui->showPluginSettings,SIGNAL(released()),this,SLOT(showPlugWidget()));
 
     resetFontsColors();
 
@@ -385,6 +386,11 @@ void SettingsDialog::setPlugListModel(PluginListModel *model)
     mdl = model;
 }
 
+void SettingsDialog::setPlugWidgets(QHash<int, QWidget *> *plg_wdt)
+{
+    plug_widgets = plg_wdt;
+}
+
 void SettingsDialog::closeEvent(QCloseEvent *event)
 {
     cancelSets();
@@ -556,6 +562,10 @@ void SettingsDialog::updatePluginListBox(const QModelIndex &index)
     }
     else if(index.data(PluginListModel::PlugId).toInt())
     {
+        if(plug_widgets->contains(index.data(PluginListModel::PlugId).toInt()))
+            ui->showPluginSettings->setEnabled(true);
+        else ui->showPluginSettings->setEnabled(false);
+
         if(plugproto.contains(index.data(PluginListModel::ProtocolName).toString().toLower()))
             ui->pluginComboBox->setCurrentIndex(ui->pluginComboBox->findData(plugproto.value(index.data(PluginListModel::ProtocolName).toString().toLower())));
         else
@@ -614,4 +624,20 @@ void SettingsDialog::disableLogUserFonColorStyle(bool flag)
     ui->label_23->setEnabled(!flag);
     ui->label_24->setEnabled(!flag);
     ui->label_25->setEnabled(!flag);
+}
+
+void SettingsDialog::showPlugWidget()
+{
+    int id = ui->pluginListView->currentIndex().data(PluginListModel::PlugId).toInt();
+    if(plug_widgets->contains(id))
+    {
+        QWidget *wgt = plug_widgets->value(id);
+        if(wgt->parent() != this)
+        {
+            wgt->setParent(this);
+            wgt->setWindowFlags(Qt::Dialog);
+        }
+
+        wgt->show();
+    }
 }
