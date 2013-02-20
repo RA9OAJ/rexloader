@@ -65,9 +65,11 @@ public:
     void setSorces(QHash<int,QString> *plugdirs, QHash<int,LoaderInterface*> *plglst, QHash<QString,int> *plgproto);
     void setOtherPluginSources(QHash<int,QStringList> *notifplgs, QPair<NotifInterface*,int> *notifplg, QHash<QString,QStringList> *flplgs, QHash<QString,FileInterface*> *flplg);
     QList<QPair<QString, int> > pluginsList(const QModelIndex &index);
+
 signals:
     void needLoadOtherPlugin(const QString &filepath);
     void needLoadNotifPlugin(int id);
+    void needUpdatePlugMenu();
     
 public slots:
 

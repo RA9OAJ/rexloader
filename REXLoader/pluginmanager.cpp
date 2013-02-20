@@ -147,6 +147,16 @@ void PluginManager::run()
 void PluginManager::updateFilePluginMenu()
 {
     menu->clear();
+
+    QList<QAction*> keys = act_table.keys();
+    QList<FileInterface*> plgs = fileplugin.values();
+    foreach(QAction *act, keys)
+        if(!plgs.contains(act_table.value(act).first))
+        {
+            act_table.remove(act);
+            act->deleteLater();
+        }
+
     menu->addActions(act_table.keys());
 }
 
@@ -477,6 +487,7 @@ void PluginManager::setPluginListModel(PluginListModel *mdl)
         mdl->setOtherPluginSources(&notifplugins, &notifplugin, &fileplugins, &fileplugin);
         connect(mdl,SIGNAL(needLoadNotifPlugin(int)),this,SLOT(loadNotifPlugin(int)));
         connect(mdl,SIGNAL(needLoadOtherPlugin(QString)),this,SLOT(loadOtherPlugin(QString)));
+        connect(mdl,SIGNAL(needUpdatePlugMenu()),this,SLOT(updateFilePluginMenu()));
     }
 }
 

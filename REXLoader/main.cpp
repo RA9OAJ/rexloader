@@ -323,7 +323,7 @@ void addURL(const QStringList &_argv)
 
 bool firstProcess()
 {
-    QString homeappdir = QDir::homePath()+"/.rexloader";
+    QString homeappdir = QDir::homePath()+"/.config/rexloader";
 
     if(QFile::exists(homeappdir+"/proc.lock"))
     {
