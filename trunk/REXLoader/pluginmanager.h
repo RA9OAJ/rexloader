@@ -110,10 +110,10 @@ public slots:
     void notify(const QString &title, const QString &msg, int timeout = 10, const QStringList &acts = QStringList(), int type = NotifInterface::INFO, QImage* img=0);
     void notifActRecv(unsigned int, const QString &act);
     void actionAnalizer();
+    void updateFilePluginMenu();
 
 protected:
     void run();
-    void updateFilePluginMenu();
 
 protected slots:
     void loadOtherPlugin(const QString &filepath);
