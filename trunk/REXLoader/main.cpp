@@ -44,12 +44,12 @@ void checkDatabase()
             QMessageBox::information(0,QObject::tr("Перенос настроек"),QObject::tr("Файлы настроек REXLoader были перенесены в ~/.config/rexloader"));
         }
 
-        if(!homeapp.exists(homedir+"/rexloader"))
+        if(!homeapp.exists(homeapp.absolutePath()+"/rexloader"))
         {
-            homeapp.mkpath(homedir+"/rexloader");
-            homeapp.mkpath(homedir+"/rexloader/plugins");
+            homeapp.mkpath(homeapp.absolutePath()+"/rexloader");
+            homeapp.mkpath(homeapp.absolutePath()+"/rexloader");
         }
-        homeapp.cd(homedir+"/rexloader");
+        homeapp.cd(homeapp.absolutePath()+"/rexloader");
         if(!homeapp.exists(homeapp.path()+"/logs"))
             homeapp.mkpath(homeapp.path()+"/logs");
         if(!homeapp.exists(homeapp.path()+"/locales"))
