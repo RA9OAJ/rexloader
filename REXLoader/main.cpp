@@ -235,7 +235,7 @@ void addURL(const QStringList &_argv)
 {
     if(_argv.size() <= 1)return;
 
-    QString homedir = QDir::homePath()+"/.rexloader";
+    QString homedir = QDir::homePath()+"/.config/rexloader";
     QDir homeapp;
     QString dbname;
     if(!homeapp.cd(homedir))
