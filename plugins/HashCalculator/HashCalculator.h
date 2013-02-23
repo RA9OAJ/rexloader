@@ -4,6 +4,8 @@
 #include <QtCore>
 #include <QDialog>
 #include "../FileInterface.h"
+#include "controldialog.h"
+//#include "HashCalculatorThread.h"
 
 class HashCalculator : public QObject,
                        public FileInterface
@@ -25,10 +27,12 @@ public:
 
 private:
     QStringList m_file_name_list;
-    QDialog *mp_control_dialog;
+    ControlDialog *mp_control_dialog;
+    QList<DataAction> m_action_list;
+    //HashCalculatorThread *mp_hash_calc;
 
 private slots:
-    void run();
+    //void run();
 };
 
 #endif // HASHCALCULATOR_H
