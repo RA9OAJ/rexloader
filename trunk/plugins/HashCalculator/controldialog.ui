@@ -49,7 +49,11 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="sha1_result"/>
+      <widget class="QLineEdit" name="sha1_result">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
