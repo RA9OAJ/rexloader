@@ -346,7 +346,7 @@ bool firstProcess()
 
 void setAppLanguage(QApplication *app)
 {
-    QString homedir = QDir::homePath()+"/locales";
+    QString homedir = QDir::homePath()+"/.config/rexloader/locales";
     QDir libdir(QApplication::applicationDirPath());
     libdir.cdUp();
 
