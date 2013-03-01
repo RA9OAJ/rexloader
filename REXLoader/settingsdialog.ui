@@ -238,10 +238,13 @@
           <item>
            <widget class="QCheckBox" name="notShowAddingDialog">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text">
              <string>Не показывать диалог нового задания</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>

@@ -213,24 +213,28 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         if(index.column() == 9)
         {
             QString percent = tr("Н/д");
-            QString altpersent;
+            //QString altpersent;
             if(myData(row,5).toLongLong())
             {
                 percent = QString::number(myData(row,4).toLongLong()*100/myData(row,5).toLongLong())+QString("%");
-                altpersent = QString(" (%1)").arg(percent);
+                //altpersent = QString(" (%1)").arg(percent);
             }
+            QStringList szl = sizeForHumans(myData(row,4).toLongLong());
+            QString sz = QString(" [%1]").arg(szl.value(0)+szl.value(1));
 
             switch(myData(row,9).toInt())
             {
-            case LInterface::ON_PAUSE: return tr("Остановлено") + altpersent;
-            case LInterface::ERROR_TASK: return tr("Ошибка") + altpersent;
-            case -100: return QString(tr("Ожидание")) + altpersent;
+            case LInterface::ON_PAUSE: return tr("Остановлено") + sz;
+            case LInterface::ERROR_TASK: return tr("Ошибка") + sz;
+            case -100: return QString(tr("Ожидание")) + sz;
             case LInterface::ACCEPT_QUERY:
             case LInterface::SEND_QUERY:
             case LInterface::REDIRECT:
             case LInterface::STOPPING:
             case LInterface::ON_LOAD:
-                return percent;
+            {
+                return percent + sz;
+            }
             case LInterface::FINISHED: return tr("Завершено");
 
             default: return QVariant();

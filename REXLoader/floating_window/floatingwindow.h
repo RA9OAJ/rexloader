@@ -1,6 +1,6 @@
 /*
 Project: REXLoader (Downloader), Source file: floatingwindow.h
-Copyright (C) 2012  Sarvaritdinov R.
+Copyright (C) 2012-2013  Sarvaritdinov R.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ public slots:
     void currentSpeed(qint64 spd);
     void startTask(int id);
     void stopTask(int id);
-    void taskData(int id, qint64 total, qint64 load);
+    void taskData(int id, qint64 total, qint64 load, const QString &tooltip);
     void show();
     void disableWindow(bool dis);
     void setRenderGraphMode(int md);
@@ -60,6 +60,7 @@ public slots:
     QMenu* subMenu();
     
 signals:
+    void selectedTask(int id);
     
 protected:
     virtual bool event (QEvent *event);
@@ -72,6 +73,7 @@ protected slots:
     void showContextMenu(const QPoint &pos);
     void setRenderMode(bool checked);
     void setShowMode(bool checked);
+    void doubleClick();
     
 private:
     float opacity;

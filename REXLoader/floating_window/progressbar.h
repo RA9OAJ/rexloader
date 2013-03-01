@@ -1,6 +1,6 @@
 /*
 Project: REXLoader (Downloader), Source file: progressbar.h
-Copyright (C) 2012  Sarvaritdinov R.
+Copyright (C) 2012-2013  Sarvaritdinov R.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPainter>
 #include <QTimer>
 #include <QPaintEvent>
+#include <QToolTip>
 #include <QDebug>
 
 class ProgressBar : public QWidget
@@ -34,23 +35,29 @@ public:
     
     int maximumValue() const;
     int value() const;
-    void setToolTipFormat(const QString &text);
+    void setMyToolTip(const QString &text);
+    QString myToolTip() const;
 
 signals:
-    
+    void doubleClick();
+
 public slots:
     void setMaxValue(int max);
     void setValue(int val);
 
 protected:
     virtual void paintEvent(QPaintEvent *e);
+    virtual void mouseDoubleClickEvent(QMouseEvent *e);
+    virtual void enterEvent(QEvent *e);
+
+protected slots:
+    void showToolTip();
 
 private:
     int maxval;
     int _value;
     float arg;
-    QString toolout;
-
+    QString tooltip_text;
 };
 
 #endif // PROGRESSBAR_H

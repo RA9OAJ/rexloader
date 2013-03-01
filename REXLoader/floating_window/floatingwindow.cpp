@@ -1,6 +1,6 @@
 /*
 Project: REXLoader (Downloader), Source file: floatingwindow.cpp
-Copyright (C) 2012  Sarvaritdinov R.
+Copyright (C) 2012-2013  Sarvaritdinov R.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -113,9 +113,9 @@ void FloatingWindow::startTask(int id)
     bar->setMaximumHeight(5);
     bar->setMaxValue(100);
     bar->setValue(0);
-    bar->setToolTipFormat(tr("Выполнено на %v"));
     tasksbars.insert(id,bar);
     layout()->addWidget(bar);
+    connect(bar,SIGNAL(doubleClick()),this,SLOT(doubleClick()));
 
     if((menu->findChild<QAction*>("ShowDownloadOnly"))->isChecked() && isHidden())
         show();
@@ -137,7 +137,7 @@ void FloatingWindow::stopTask(int id)
         hide();
 }
 
-void FloatingWindow::taskData(int id, qint64 total, qint64 load)
+void FloatingWindow::taskData(int id, qint64 total, qint64 load, const QString &tooltip)
 {
     if(!tasksbars.contains(id))
         return;
@@ -147,6 +147,7 @@ void FloatingWindow::taskData(int id, qint64 total, qint64 load)
 
     ProgressBar *bar = tasksbars.value(id);
     bar->setMaxValue(100);
+    bar->setMyToolTip(tooltip);
     int cur = load*100/total;
     bar->setValue(cur);
 }
@@ -323,4 +324,13 @@ void FloatingWindow::setShowMode(bool checked)
         if(!tasksbars.count())
             hide();
     }
+}
+
+void FloatingWindow::doubleClick()
+{
+    ProgressBar *bar = qobject_cast<ProgressBar*>(sender());
+    if(!bar)
+        return;
+
+    emit selectedTask(tasksbars.key(bar));
 }
