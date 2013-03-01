@@ -133,6 +133,7 @@ protected slots:
     void setTaskCnt(); //устанавливает кол-во одновременных закачек
     void showTaskDialog(); //показывает диалог состояния выделенного задания
     void showTaskDialog(int id_row); //переопределение метода
+    void showTaskDialogById(int id_task); //показывает диалог состояния задания по его id_task
     void closeTaskDialog(); //удаляет закрытый диалог состояния задания
     void setPostActionMode(); //определяет режим отключения ПК при завершении всех закачек
     void shutDownPC(); //завершает работу ПК в установленном режиме
@@ -146,7 +147,7 @@ signals:
     void needExecQuery(const QString &query);
     void taskStarted(int id);
     void taskStopped(int id);
-    void taskData(int id, qint64 total, qint64 load);
+    void taskData(int id, qint64 total, qint64 load, const QString &tooltip);
     void TotalDowSpeed(qint64 spd);
 
 private:

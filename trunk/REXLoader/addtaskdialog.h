@@ -46,6 +46,9 @@ public:
 
     ~AddTaskDialog();
 
+public slots:
+    void addTask();
+
 signals:
     void addedNewTask();
 
@@ -54,7 +57,6 @@ protected:
     void construct();
     void loadDatabaseData();
     void scanClipboard();
-    void addTask();
 
 protected slots:
     void updateLocation(int index);

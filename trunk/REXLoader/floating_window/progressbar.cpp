@@ -1,6 +1,6 @@
 /*
 Project: REXLoader (Downloader), Source file: progressbar.cpp
-Copyright (C) 2012  Sarvaritdinov R.
+Copyright (C) 2012-2013  Sarvaritdinov R.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -40,9 +40,17 @@ int ProgressBar::value() const
     return _value;
 }
 
-void ProgressBar::setToolTipFormat(const QString &text)
+void ProgressBar::setMyToolTip(const QString &text)
 {
-    toolout = text;
+    tooltip_text = text;
+
+    if(QToolTip::isVisible())
+        showToolTip();
+}
+
+QString ProgressBar::myToolTip() const
+{
+    return tooltip_text;
 }
 
 void ProgressBar::setMaxValue(int max)
@@ -75,4 +83,23 @@ void ProgressBar::paintEvent(QPaintEvent *e)
     p->end();
 
     e->accept();
+}
+
+void ProgressBar::mouseDoubleClickEvent(QMouseEvent *e)
+{
+    QWidget::mouseDoubleClickEvent(e);
+    emit doubleClick();
+}
+
+void ProgressBar::enterEvent(QEvent *e)
+{
+    QWidget::enterEvent(e);
+
+    QTimer::singleShot(150,this,SLOT(showToolTip()));
+}
+
+void ProgressBar::showToolTip()
+{
+    if(underMouse())
+        QToolTip::showText(QCursor::pos(),tooltip_text,this);
 }

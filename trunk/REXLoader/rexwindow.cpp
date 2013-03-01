@@ -86,7 +86,7 @@ void REXWindow::pluginStatus(bool stat)
 
     readSettings();
 
-    plugmgr->notify(tr("REXLoader"),tr("<center>Приложение успешно запущено</center>"),5);
+    plugmgr->notify(tr("REXLoader"),tr("Приложение успешно запущено"),5);
     if(ui->actionPoweroff->isChecked() || ui->actionHibernate->isChecked() || ui->actionSuspend->isChecked())
         plugmgr->notify(tr("Внимание!"),tr("Активирован режим <b>автоматического выключения ПК</b> по завершении всех заданий"),13);
 
@@ -302,8 +302,9 @@ void REXWindow::createInterface()
     fwnd = new FloatingWindow();
     connect(this,SIGNAL(taskStarted(int)),fwnd,SLOT(startTask(int)));
     connect(this,SIGNAL(taskStopped(int)),fwnd,SLOT(stopTask(int)));
-    connect(this,SIGNAL(taskData(int,qint64,qint64)),fwnd,SLOT(taskData(int,qint64,qint64)));
+    connect(this,SIGNAL(taskData(int,qint64,qint64,QString)),fwnd,SLOT(taskData(int,qint64,qint64,QString)));
     connect(this,SIGNAL(TotalDowSpeed(qint64)),fwnd,SLOT(currentSpeed(qint64)));
+    connect(fwnd,SIGNAL(selectedTask(int)),this,SLOT(showTaskDialogById(int)));
 
     if(settDlg->value("show_float_window").toBool())fwnd->show();
 
@@ -903,8 +904,29 @@ void REXWindow::scanNewTaskQueue()
                 dlg->setNewUrl(qr.value(1).toString());
                 dlg->setParams(qr.value(3).toString());
                 dlg->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
-                dlg->show();
-                dlg->activateWindow();
+                if(!settDlg->value("notshow_adding").toBool())
+                {
+                    dlg->show();
+                    dlg->activateWindow();
+                }
+                else
+                {
+                    dlg->addTask();
+                    if(!plugproto.contains(url.scheme().toLower()))
+                    {
+                        QString notif = tr("Протокол <b>%1</b> не поддерживается. Невозможно скачать файл по URL <b>%2</b>").arg(url.scheme().toLower(),url.toString());
+                        plugmgr->notify(tr("Ошибка"), notif, 10, QStringList(), NotifInterface::WARNING);
+                        notif = notif.replace(QRegExp("(<b>)|(</b>)"),"");
+                        plugmgr->appendLog(-1,0, LInterface::MT_WARNING,notif,QString());
+                    }
+                }
+            }
+            else
+            {
+                QString notif = tr("Протокол <b>%1</b> не поддерживается. Невозможно скачать файл по URL <b>%2</b>").arg(url.scheme().toLower(),url.toString());
+                plugmgr->notify(tr("Ошибка"), notif, 10, QStringList(), NotifInterface::WARNING);
+                notif = notif.replace(QRegExp("(<b>)|(</b>)"),"");
+                plugmgr->appendLog(-1,0, LInterface::MT_WARNING,notif,QString());
             }
         }
 
@@ -1062,7 +1084,7 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
 
                 pluglist.value(id_proto)->setAdvancedOptions(id_task,model->data(model->index(srcIdx.row(),14),100).toString());
                 plugmgr->startDownload(id_task + id_proto*100);
-                emit taskStarted(id_task);
+                emit taskStarted(id_task + id_proto*100);
                 if(settDlg->value("show_taskdialog").toBool()) showTaskDialog(id_row);
                 updateTaskSheet();
                 return;
@@ -1104,7 +1126,7 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
     //pluglist.value(id_proto)->startDownload(id_task);
     setProxy(id_task, id_proto);
     plugmgr->startDownload(id_task + id_proto*100);
-    emit taskStarted(id_task);
+    emit taskStarted(id_task + id_proto*100);
     if(settDlg->value("show_taskdialog").toBool()) showTaskDialog(id_row);
 }
 
@@ -1452,8 +1474,9 @@ void REXWindow::syncTaskData()
     for(int i = 0; i < keys.length(); i++)
     {
         int id_row = keys.value(i);
-        int id_task = (tasklist.value(id_row))%100;
-        int id_proto = (tasklist.value(id_row))/100;
+        int gid_task = tasklist.value(id_row);
+        int id_task = gid_task%100;
+        int id_proto = gid_task/100;
 
         LoaderInterface *ldr = pluglist.value(id_proto);
         if(!ldr)continue;
@@ -1565,8 +1588,8 @@ void REXWindow::syncTaskData()
 
             ldr->deleteTask(id_task);
             if(dlglist.contains(id_row)) dlglist.value(id_row)->close();
+            emit taskStopped(gid_task);
             tasklist.remove(id_row);
-            emit taskStopped(id_task);
             calculateSpeed();
         }
         else
@@ -1575,7 +1598,7 @@ void REXWindow::syncTaskData()
             {
                 QString newFilename = filepath.right(5) == ".rldr" ? filepath.left(filepath.size()-20) : filepath;
                 QFile fl(filepath);
-                int id_proto = tasklist.value(id_row)/100;
+                int id_proto = gid_task/100;
 
                 if(fl.exists(newFilename))
                 {
@@ -1644,15 +1667,15 @@ void REXWindow::syncTaskData()
             model->addToCache(index.row(),9,tstatus);
             model->addToCache(index.row(),11,speedAvg);
 
-            emit taskData(id_task, totalsize, totalload);
+            emit taskData(gid_task, totalsize, totalload, model->data(index, Qt::ToolTipRole).toString());
         }
 
         if(tstatus == LInterface::ON_PAUSE || tstatus == LInterface::FINISHED)
         {
             ldr->deleteTask(id_task);
+            emit taskStopped(gid_task);
             tasklist.remove(id_row);
             calculateSpeed();
-            emit taskStopped(id_task);
         }
         model->addToUpdateRowQueue(index.row());
         QTimer::singleShot(0,model,SLOT(updateRow()));
@@ -2581,6 +2604,13 @@ void REXWindow::showTaskDialog(int id_row)
     connect(dlg,SIGNAL(setPriority(int,int)),this,SLOT(setTaskPriority(int,int)));
     dlglist.insert(id_row, dlg);
     dlg->show();
+}
+
+void REXWindow::showTaskDialogById(int id_task)
+{
+    QList<int> tskid_list = tasklist.values();
+    if(tskid_list.contains(id_task))
+        showTaskDialog(tasklist.key(id_task));
 }
 
 void REXWindow::closeTaskDialog()
