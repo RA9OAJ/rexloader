@@ -373,6 +373,29 @@ void REXWindow::createInterface()
     connect(ui->actionAddCategory,SIGNAL(triggered()),this,SLOT(addCategory()));
     connect(ui->actionCatProperties,SIGNAL(triggered()),this,SLOT(categorySettings()));
 
+    //настраиваем меню колонок таблицы заданий
+    QMenu *tblHdrMenu = new QMenu(this);
+    tblHdrMenu->setObjectName("tblHdrMenu");
+    QAction *titleact = new QAction(tr("Видимые колонки"),tblHdrMenu);
+    titleact->setEnabled(false);
+    tblHdrMenu->addAction(titleact);
+    tblHdrMenu->addSeparator();
+    for(int i = 0; i < model->columnCount(QModelIndex()); ++i)
+    {
+        if(i == 3 || i == 9) continue;
+
+        if(!ui->tableView->isColumnHidden(i) && !model->headerData(i,Qt::Horizontal,Qt::DisplayRole).isNull())
+        {
+            QAction *act = new QAction(model->headerData(i,Qt::Horizontal,Qt::DisplayRole).toString(),tblHdrMenu);
+            act->setObjectName(QString::number(i));
+            act->setCheckable(true);
+            tblHdrMenu->addAction(act);
+            act->setChecked(true);
+            connect(act,SIGNAL(triggered()),this,SLOT(showHideTableColumn()));
+        }
+    }
+    ui->tableView->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->tableView->horizontalHeader(),SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(showTableHeaderContextMenu(QPoint)));
 }
 
 void REXWindow::showTableContextMenu(const QPoint &pos)
@@ -388,6 +411,22 @@ void REXWindow::showTableContextMenu(const QPoint &pos)
 
     QMenu *mnu = findChild<QMenu*>("tblMenu");
     if(mnu)mnu->popup(QCursor::pos());
+}
+
+void REXWindow::showTableHeaderContextMenu(const QPoint &pos)
+{
+    Q_UNUSED(pos)
+    QMenu *mnu = findChild<QMenu*>("tblHdrMenu");
+    if(!mnu)
+        return;
+
+    for(int i = 0; i < model->columnCount(QModelIndex()); ++i)
+    {
+        QAction *act = mnu->findChild<QAction*>(QString::number(i));
+        if(act) act->setChecked(!ui->tableView->isColumnHidden(i));
+    }
+
+    mnu->popup(QCursor::pos());
 }
 
 void REXWindow::setTaskFilter(const QModelIndex &index)
@@ -669,6 +708,14 @@ void REXWindow::saveSettings()
     settings.setValue("GraphMode",fwnd->renderGraphMode());
     settings.endGroup();
     settings.sync();
+
+#ifdef Q_OS_LINUX
+    //реализация автозапуска приложения по стандарту freedesktop.org
+    if(settDlg->value("autostart").toBool() && QFile::exists("/usr/share/app-install/desktop/rexloader.desktop"))
+        QFile::copy("/usr/share/app-install/desktop/rexloader.desktop",QDir::homePath()+"/.config/autostart/rexloader.desktop");
+    else if(QFile::exists("/usr/share/app-install/desktop/rexloader.desktop"))
+        QFile::remove(QDir::homePath()+"/.config/autostart/rexloader.desktop");
+#endif
 }
 
 void REXWindow::loadSettings()
@@ -2771,6 +2818,14 @@ void REXWindow::showSettDialog()
         settDlg->selectCurrentSubsettings(SettingsDialog::PLUGINS);
 
     settDlg->show();
+}
+
+void REXWindow::showHideTableColumn()
+{
+    QAction *act = qobject_cast<QAction*>(sender());
+    if(!act) return;
+
+    act->isChecked() ? ui->tableView->showColumn(act->objectName().toInt()) : ui->tableView->hideColumn(act->objectName().toInt());
 }
 
 void REXWindow::prepareToQuit()

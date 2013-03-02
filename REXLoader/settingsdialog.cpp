@@ -35,6 +35,10 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui->downDir->setText(QDir::home().path()+"/"+tr("Загрузки"));
     ui->logDir->setText(QDir::home().path()+"/.rexloader/logs");
 
+#ifdef Q_OS_WIN32
+    ui->checkBoxAutostart->setEnabled(false);
+#endif
+
     connect(ui->listWidget,SIGNAL(clicked(QModelIndex)),this,SLOT(selectSubSettings()));
     connect(ui->proxyCheckBox,SIGNAL(toggled(bool)),ui->groupBox,SLOT(setEnabled(bool)));
     connect(ui->buttonBox->button(QDialogButtonBox::Apply),SIGNAL(released()),this,SLOT(applySets()));
@@ -185,7 +189,7 @@ void SettingsDialog::applySets()
     sets.insert("show_logo",ui->checkBoxLogo->isChecked());
     sets.insert("start_minimized",ui->checkBoxMinimize->isChecked());
     sets.insert("animate_tray",ui->animateTrayBox->isChecked());
-    sets.insert("check_updates",ui->checkBoxUpdates->isChecked());
+    sets.insert("autostart",ui->checkBoxAutostart->isChecked());
     sets.insert("restore_passwords",ui->checkBoxPasswords->isChecked());
     sets.insert("scan_clipboard",ui->scanClipboard->isChecked());
     sets.insert("notshow_adding",ui->notShowAddingDialog->isChecked());
@@ -294,7 +298,7 @@ void SettingsDialog::cancelSets()
     ui->checkBoxLogo->setChecked(sets.value("show_logo").toBool());
     ui->checkBoxMinimize->setChecked(sets.value("start_minimized").toBool());
     ui->animateTrayBox->setChecked(sets.value("animate_tray").toBool());
-    ui->checkBoxUpdates->setChecked(sets.value("check_updates").toBool());
+    ui->checkBoxAutostart->setChecked(sets.value("autostart").toBool());
     ui->checkBoxPasswords->setChecked(sets.value("restore_passwords").toBool());
     ui->scanClipboard->setChecked(sets.value("scan_clipboard").toBool());
     ui->notShowAddingDialog->setChecked(sets.value("notshow_adding").toBool());
