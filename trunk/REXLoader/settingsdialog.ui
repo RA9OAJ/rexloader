@@ -170,7 +170,7 @@
              <string>Минимизировать в трей при запуске</string>
             </property>
             <property name="checked">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -192,12 +192,12 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBoxUpdates">
+           <widget class="QCheckBox" name="checkBoxAutostart">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text">
-             <string>Проверять обновления</string>
+             <string>Запуска вместе с ОС</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -1954,7 +1954,7 @@
   <tabstop>checkBoxLogo</tabstop>
   <tabstop>checkBoxMinimize</tabstop>
   <tabstop>animateTrayBox</tabstop>
-  <tabstop>checkBoxUpdates</tabstop>
+  <tabstop>checkBoxAutostart</tabstop>
   <tabstop>checkBoxPasswords</tabstop>
   <tabstop>scanClipboard</tabstop>
   <tabstop>notShowAddingDialog</tabstop>

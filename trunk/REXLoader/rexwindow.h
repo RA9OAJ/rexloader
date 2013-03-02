@@ -114,6 +114,7 @@ protected slots:
     void startTaskNumber(int id_row, const QUrl &url, const QString &filename = QString(), qint64 totalload = 0);
     void setProxy(int id_task, int id_proto, bool global = true); //настраивает задание на скачивание через прокси
     void showTableContextMenu(const QPoint &pos); //отображает контекстное меню в таблице
+    void showTableHeaderContextMenu(const QPoint &pos); //отображает контекстное меню заголовка таблицы
     void openTask(); //отображает окно свойств задачи, если оно не закачано, или же пытается открыть файл стандартными программами
     void openTask(const QString &path); //отображает окно свойств задачи, если оно не закачано, или же пытается открыть файл стандартными программами
     void openTaskDir(); //открывает в файловом менеджере папку куда сохраняется/сохранен целевой файл
@@ -141,6 +142,7 @@ protected slots:
     void notifActAnalyzer(const QString &act); //анализирует нажатие кнопки уведомления
     void checkFileType(const QString &mime, const QString &filepath); //проверяет mime файла и вызывает определенное действие для этого типа файлов
     void showSettDialog(); //отображает окно настроек программы
+    void showHideTableColumn(); //отображает или скрывает определенный столбец таблицы заданий
 
 signals:
     void transAct();
