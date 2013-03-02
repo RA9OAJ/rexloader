@@ -1,5 +1,6 @@
 QT -= gui
 QT += network
+QT += webkit
 CONFIG += plugin
 TARGET = HttpLoader
 TEMPLATE = lib
