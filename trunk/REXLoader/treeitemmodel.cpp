@@ -531,7 +531,13 @@ int TreeItemModel::taskCount(const QModelIndex &index,  bool incomplete) const
     }
 
     while(query.next())
-        cnt += taskCount(indexById(query.value(0).toInt()),incomplete);
+    {
+        QModelIndex idx = indexById(query.value(0).toInt());
+        if(idx == QModelIndex())
+            continue;
+
+        cnt += taskCount(idx,incomplete);
+    }
 
     query.clear();
     query.prepare("SELECT COUNT(*) FROM tasks WHERE categoryid=:id" + filter);

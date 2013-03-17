@@ -43,6 +43,7 @@ public:
     void setNewUrl(const QString &url);
     void setParams(const QString &params);
     void setAdditionalInfo(const QString &flnm, qint64 cursz, qint64 totalsz, const QString &mime);
+    void setUpdateMode(const QModelIndex &idx);
 
     ~AddTaskDialog();
 
@@ -51,6 +52,7 @@ public slots:
 
 signals:
     void addedNewTask();
+    void taskUpdated();
 
 protected:
     void changeEvent(QEvent *e);
@@ -66,6 +68,7 @@ protected slots:
     void startLater();
     void acceptQAction(QAbstractButton *btn); //обработчик решений пользователя на задаваемые программой вопросы
     void getCategory(const QString &file); //распознает категорию для файла по его расширению
+    void updateTaskInfo();
 
 private:
     Ui::AddTaskDialog *gui;
@@ -77,6 +80,7 @@ private:
     int priority;
     QString defUrl;
     QString dop_params;
+    QModelIndex sindex;
 
     static int obj_cnt;
     QString myfilename;
@@ -84,6 +88,7 @@ private:
     qint64 totalsize;
     QString mymime;
     bool additional_flag;
+    bool upd_mode;
 };
 
 #endif // ADDTASKDIALOG_H

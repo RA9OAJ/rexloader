@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPluginLoader>
 #include <QSortFilterProxyModel>
 #include <QtGui>
+#include <QSharedMemory>
 #include "titemmodel.h"
 #include "addtaskdialog.h"
 #include "emessagebox.h"
@@ -162,6 +163,7 @@ private:
     QSystemTrayIcon *trayicon; //объект системного лотка
     QMovie *movie; //мувик для реализауии анимации в трее
     SettingsDialog *settDlg;
+    QSharedMemory *lock_mem;
 
     PluginManager *plugmgr;
     LogManager *logmgr;
