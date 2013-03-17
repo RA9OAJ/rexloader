@@ -31,6 +31,7 @@ TaskDialog::TaskDialog(QWidget *parent) :
     setAttribute(Qt::WA_DeleteOnClose);
     connect(ui->startButton,SIGNAL(released()),this,SLOT(pressAnaliser()));
     connect(ui->comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(selectPriority(int)));
+    connect(ui->settingsButton,SIGNAL(released()),this,SLOT(showTaskSettings()));
 
     QTimer::singleShot(0,this,SLOT(scheduler()));
     moveToCenter();
@@ -210,4 +211,12 @@ void TaskDialog::selectPriority(int cur_index)
         int id = mdl->data(mdl->index(idx.row(),0),100).toInt();
         emit setPriority(id,cur_index);
     }
+}
+
+void TaskDialog::showTaskSettings()
+{
+    AddTaskDialog *dlg = new AddTaskDialog(QString(),this);
+    dlg->setAttribute(Qt::WA_DeleteOnClose);
+    dlg->setUpdateMode(idx);
+    dlg->show();
 }

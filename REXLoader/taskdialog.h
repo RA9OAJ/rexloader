@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDialog>
 #include <QTimer>
 #include <QDesktopWidget>
+#include "addtaskdialog.h"
 #include "titemmodel.h"
 
 namespace Ui {
@@ -46,6 +47,7 @@ protected slots:
     void pressAnaliser();
     void moveToCenter();
     void selectPriority(int cur_index);
+    void showTaskSettings();
 
 signals:
     void startTask(int id);

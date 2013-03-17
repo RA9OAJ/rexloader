@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtGui/QApplication>
 #include <QMessageBox>
 #include <QTextCodec>
+#include <QSharedMemory>
 #include "rexwindow.h"
 #include <QDebug>
 
@@ -323,25 +324,25 @@ void addURL(const QStringList &_argv)
 
 bool firstProcess()
 {
-    QString homeappdir = QDir::homePath()+"/.config/rexloader";
+    QSharedMemory lock_mem("rexloader");
+    if(!lock_mem.create(32))
+        lock_mem.attach();
 
-    if(QFile::exists(homeappdir+"/proc.lock"))
+    if(lock_mem.isAttached())
     {
-        QFile fl(homeappdir+"/proc.lock");
-        fl.open(QFile::ReadOnly);
-        QString string = fl.readLine(1024);
+        QByteArray data;
+        QString dtime;
+        data.setRawData((char*)lock_mem.data(),lock_mem.size());
+        dtime = data;
+
         QDateTime proc_time;
         QDateTime cur_time = QDateTime::currentDateTime();
-        proc_time = QDateTime::fromString(string,"yyyy-MM-ddThh:mm:ss");
+        proc_time = QDateTime::fromString(dtime,"yyyy-MM-ddThh:mm:ss");
 
         if(proc_time.secsTo(cur_time) > 5)
-        {
-            fl.remove();
             return true;
-        }
-        return false;
     }
-    return true;
+    return false;
 }
 
 void setAppLanguage(QApplication *app)

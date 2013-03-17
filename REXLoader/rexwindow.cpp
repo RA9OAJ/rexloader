@@ -31,6 +31,7 @@ REXWindow::REXWindow(QWidget *parent) :
     max_threads = 3;
     down_speed = 2048*8; // 2Mbps
     plug_state.clear();
+    lock_mem = 0;
 
     QList<int> sz;
     QList<int> sz1;
@@ -630,7 +631,7 @@ void REXWindow::setTaskPriority()
                           tr("Ошибка выполнения SQL запроса"),
                           tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
                           );
-        qDebug()<<"void REXWindow::setTaskPriority(1)" + qr.executedQuery() + " Error:" + qr.lastError().text();
+        qDebug()<<"void REXWindow::setTaskPriority(1) " + qr.executedQuery() + " Error:" + qr.lastError().text();
     }
     updateTaskSheet();
 }
@@ -711,9 +712,25 @@ void REXWindow::saveSettings()
 
 #ifdef Q_OS_LINUX
     //реализация автозапуска приложения по стандарту freedesktop.org
-    if(settDlg->value("autostart").toBool() && QFile::exists("/usr/share/app-install/desktop/rexloader.desktop"))
-        QFile::copy("/usr/share/app-install/desktop/rexloader.desktop",QDir::homePath()+"/.config/autostart/rexloader.desktop");
-    else if(QFile::exists("/usr/share/app-install/desktop/rexloader.desktop"))
+    if(settDlg->value("autostart").toBool() && !QFile::exists(QDir::homePath()+"/.config/autostart/rexloader.desktop"))
+    {
+        QFile fl(QDir::homePath()+"/.config/autostart/rexloader.desktop");
+        if(fl.open(QFile::WriteOnly))
+        {
+            QString desktop = QString("[Desktop Entry]\r\n"
+                                      "Name=REXLoader\r\n"
+                                      "Name[x-test]=xxREXLoaderxx\r\n"
+                                      "GenericName=Download Manager\r\n"
+                                      "Exec=rexloader\r\n"
+                                      "Icon=rexloader\r\n"
+                                      "Categories=Network;Qt;FileTransfer;\r\n"
+                                      "Type=Application\r\n");
+            fl.write(desktop.toAscii());
+            fl.close();
+        }
+        else qDebug()<<"void REXWindow::saveSettings(1) Error: can't create desktop file";
+    }
+    else if(!settDlg->value("autostart").toBool() && QFile::exists(QDir::homePath()+"/.config/autostart/rexloader.desktop"))
         QFile::remove(QDir::homePath()+"/.config/autostart/rexloader.desktop");
 #endif
 }
@@ -1006,15 +1023,22 @@ void REXWindow::loadPlugins()
 
 void REXWindow::lockProcess(bool flag)
 {
-    QFile fl(apphomedir+"/proc.lock");
     if(flag)
     {
-        fl.open(QFile::WriteOnly);
+        if(!lock_mem)
+        {
+            lock_mem = new QSharedMemory("rexloader",this);
+            lock_mem->create(32);
+        }
+        else lock_mem->attach();
+
+        lock_mem->lock();
         QString dtime = QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:ss");
-        fl.write(dtime.toAscii());
-        fl.close();
+        memcpy(lock_mem->data(),dtime.toAscii().data(),dtime.toAscii().size());
+        lock_mem->unlock();
     }
-    else fl.remove();
+    else
+        lock_mem->deleteLater();
 }
 
 void REXWindow::scheduler()

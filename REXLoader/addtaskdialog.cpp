@@ -52,6 +52,7 @@ AddTaskDialog::AddTaskDialog(const QString &dir, QSqlDatabase &db_, QWidget *par
 void AddTaskDialog::construct()
 {
     ++obj_cnt;
+    upd_mode = false;
     additional_flag = false;
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle("REXLoader - "+tr("Новое задание"));
@@ -60,6 +61,7 @@ void AddTaskDialog::construct()
     FileNameValidator *validator = new FileNameValidator(this);
     gui->fileName->setValidator(validator);
     gui->categoryBox->setValidator(validator);
+    gui->saveFrame->setVisible(false);
     urlValidator();
 
     loadDatabaseData();
@@ -69,6 +71,8 @@ void AddTaskDialog::construct()
     connect(gui->startNowBtn,SIGNAL(released()),this,SLOT(startNow()));
     connect(gui->startLaterBtn,SIGNAL(released()),this,SLOT(startLater()));
     connect(gui->urlBox,SIGNAL(activated(QString)),this,SLOT(getCategory(QString)));
+    connect(gui->saveButton,SIGNAL(released()),this,SLOT(updateTaskInfo()));
+    connect(gui->cancelButton_2,SIGNAL(released()),this,SLOT(reject()));
 
     QDesktopWidget ds;
     QRect desktop = ds.availableGeometry();
@@ -384,6 +388,30 @@ void AddTaskDialog::setAdditionalInfo(const QString &flnm, qint64 cursz, qint64 
     getCategory(gui->urlBox->currentText());
 }
 
+void AddTaskDialog::setUpdateMode(const QModelIndex &idx)
+{
+    upd_mode = (idx == QModelIndex() ? false : true);
+    if(upd_mode)
+    {
+        setWindowTitle(tr("Изменить задание"));
+        sindex = idx;
+        gui->addFrame->setVisible(false);
+        gui->saveFrame->setVisible(true);
+
+        QModelIndex curidx = sindex.model()->index(sindex.row(),1,QModelIndex());
+        setNewUrl(curidx.data(100).toString());
+        curidx = sindex.model()->index(sindex.row(),10,QModelIndex());
+        gui->categoryBox->setCurrentIndex(gui->categoryBox->findData(curidx.data(100).toInt()));
+        curidx = sindex.model()->index(sindex.row(),3,QModelIndex());
+        QFileInfo flinfo(curidx.data(100).toString());
+        gui->locationEdit->setText(flinfo.absoluteDir().path());
+        downDir = flinfo.absoluteDir().path();
+        gui->fileName->setText(flinfo.fileName());
+        curidx = sindex.model()->index(sindex.row(),12,QModelIndex());
+        gui->textEdit->setText(curidx.data(100).toString());
+    }
+}
+
 void AddTaskDialog::getCategory(const QString &file)
 {
     QString fl;
@@ -438,4 +466,10 @@ void AddTaskDialog::getCategory(const QString &file)
         catId = qr.value(0).toInt();
 
     gui->categoryBox->setCurrentIndex(gui->categoryBox->findData(catId));
+}
+
+void AddTaskDialog::updateTaskInfo()
+{
+
+    close();
 }
