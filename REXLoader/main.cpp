@@ -330,9 +330,9 @@ bool firstProcess()
 
     if(lock_mem.isAttached())
     {
-        QByteArray data;
+        QByteArray data(( const char*)lock_mem.data(),lock_mem.size());
         QString dtime;
-        data.setRawData((char*)lock_mem.data(),lock_mem.size());
+        //data.setRawData((char*)lock_mem.data(),lock_mem.size());
         dtime = data;
 
         QDateTime proc_time;
