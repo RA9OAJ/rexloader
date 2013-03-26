@@ -8,54 +8,60 @@ ControlDialog::ControlDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     mp_hash_calc_thread = new HashCalculatorThread(this);
-    connect(mp_hash_calc_thread, SIGNAL(progress(int)), this, SLOT(percent(int)), Qt::QueuedConnection);
-    connect(mp_hash_calc_thread, SIGNAL(s_md5(QByteArray)), this, SLOT(md5_result(QByteArray)), Qt::QueuedConnection);
-    connect(mp_hash_calc_thread, SIGNAL(s_sha1(QByteArray)), this, SLOT(sha1_result(QByteArray)), Qt::QueuedConnection);
-    connect(ui->btnStop, SIGNAL(clicked()), this, SLOT(slotClose()));
+    QStringList headers;
+    headers << tr("Имя файла") << "md5" << "sha1";
+    row = 0;
+    ui->table->setHorizontalHeaderLabels(headers);
+    ui->table->setColumnCount(3);
+    connect(mp_hash_calc_thread, SIGNAL(progress(QString, int)),
+            this, SLOT(progress(QString,int)), Qt::QueuedConnection);
+    connect(mp_hash_calc_thread, SIGNAL(calcFinished(QString,QString,QString)),
+            this, SLOT(calcFinished(QString,QString,QString)), Qt::QueuedConnection);
 }
-
 
 ControlDialog::~ControlDialog()
 {
     delete ui;
 }
 
-
-void ControlDialog::setFileName(const QString &file_name)
+void ControlDialog::setFileNames(const QStringList &file_name)
 {
-    mp_hash_calc_thread->setFileName(file_name);
+    mp_hash_calc_thread->setFileNames(file_name);
+    row = 0;
+    ui->table->clearContents();
+    ui->table->setRowCount(file_name.size());
 }
 
-
-void ControlDialog::percent(int percent)
+void ControlDialog::progress(QString file_name, int percent)
 {
+    Q_UNUSED(file_name)
     ui->progressBar->setValue(percent);
+    ui->file_name->setText(file_name);
 }
 
+void ControlDialog::calcFinished(QString file_name, QString md5_result, QString sha1_result)
+{
+    QTableWidgetItem *name = new QTableWidgetItem(file_name);
+    QTableWidgetItem *md5  = new QTableWidgetItem(md5_result);
+    QTableWidgetItem *sha1 = new QTableWidgetItem(sha1_result);
+    ui->table->setItem(row, 0, name);
+    ui->table->setItem(row, 1, md5);
+    ui->table->setItem(row, 2, sha1);
+    row++;
+    ui->table->resizeColumnsToContents();
+//    qDebug() << file_name;
+//    qDebug() << md5_result;
+//    qDebug() << sha1_result;
+}
+
+void ControlDialog::slotClose()
+{
+    mp_hash_calc_thread->stop();
+    reject();
+}
 
 int ControlDialog::exec()
 {
     mp_hash_calc_thread->start();
     return QDialog::exec();
-}
-
-
-void ControlDialog::md5_result(QByteArray result)
-{
-    ui->md5_result->setText(result);
-}
-
-
-void ControlDialog::sha1_result(QByteArray result)
-{
-    ui->sha1_result->setText(result);
-}
-
-
-void ControlDialog::slotClose()
-{
-    mp_hash_calc_thread->stop();
-    ui->md5_result->setText(QString(""));
-    ui->sha1_result->setText(QString(""));
-    reject();
 }

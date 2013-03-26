@@ -15,20 +15,17 @@ class ControlDialog : public QDialog
 public:
     explicit ControlDialog(QWidget *parent = 0);
     ~ControlDialog();
-    void setFileName(const QString &file_name);
+    void setFileNames(const QStringList &file_name);
 public slots:
-    void percent(int percent);
+    void progress(QString file_name, int percent);
+    void calcFinished(QString file_name, QString md5_result, QString sha1_result);
     int exec();
 private:
     Ui::ControlDialog *ui;
     HashCalculatorThread *mp_hash_calc_thread;
-
-public slots:
-    //void start();
+    int row;
 
 private slots:
-    void md5_result(QByteArray result);
-    void sha1_result(QByteArray result);
     void slotClose();
 };
 
