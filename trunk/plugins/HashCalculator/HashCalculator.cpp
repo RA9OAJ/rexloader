@@ -22,6 +22,7 @@ HashCalculator::~HashCalculator()
 void HashCalculator::setFileName(const QStringList &file_name_list)
 {
     m_file_name_list = file_name_list;
+    //qDebug() << file_name_list;
 }
 
 
@@ -46,7 +47,7 @@ void HashCalculator::runAction(int act_id)
     }
     if (act_id == 1)
     {
-        mp_control_dialog->setFileName(m_file_name_list.value(0));
+        mp_control_dialog->setFileNames(m_file_name_list);
         mp_control_dialog->exec();
     }
 }
@@ -54,6 +55,7 @@ void HashCalculator::runAction(int act_id)
 
 QTranslator *HashCalculator::getTranslator(const QLocale &locale)
 {
+    Q_UNUSED(locale)
     return 0;
 }
 

@@ -9,23 +9,18 @@ class HashCalculatorThread : public QThread
     Q_OBJECT
 public:
     HashCalculatorThread(QObject *parent = 0);
-    void setFileName(const QString &file_name);
-    QByteArray getMd5() const;
-    QByteArray getSha1() const;
+    void setFileNames(const QStringList &file_name);
     void stop();
 
 signals:
-    void progress(int percent); //состояние расчёта в процентах
-    void s_md5(QByteArray hash);
-    void s_sha1(QByteArray hash);
+    void progress(QString file_name, int percent);
+    void calcFinished(QString file_name, QString md5, QString sha1);
 
 protected:
     virtual void run();
 
 private:
-    QFile m_file;
-    QByteArray m_md5_result;
-    QByteArray m_sha1_result;
+    QStringList m_file_list;
     const qint64 buf_len;
     bool terminate;
 };
