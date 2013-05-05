@@ -470,6 +470,30 @@ void AddTaskDialog::getCategory(const QString &file)
 
 void AddTaskDialog::updateTaskInfo()
 {
+    QModelIndex curidx = sindex.model()->index(sindex.row(),1,QModelIndex());
+    QString lurl = curidx.data(100).toString();
+    curidx = sindex.model()->index(sindex.row(),3,QModelIndex());
+    QFileInfo flinfo(curidx.data(100).toString());
+    QString filename = flinfo.absoluteFilePath();
+    curidx = sindex.model()->index(sindex.row(),0,QModelIndex());
+    QString new_fullpath = QString(gui->locationEdit->text() + "/") + gui->fileName->text();
 
-    close();
+    if(lurl != gui->urlBox->currentText() || filename != new_fullpath)
+        emit taskUpdateStart(curidx.data(100).toInt());
+
+    QSqlQuery qr(mydb);
+    qr.prepare("UPDATE tasks SET url=:url,filename=:filename,categoryid=:categoryid,note=:note WHERE id=:id");
+    qr.bindValue(":url",gui->urlBox->currentText());
+    qr.bindValue(":filename",new_fullpath);
+    qr.bindValue(":categoryid",gui->categoryBox->itemData(gui->categoryBox->currentIndex()).toInt());
+    qr.bindValue(":note",gui->textEdit->document()->toPlainText());
+    qr.bindValue(":id",curidx.data(100).toInt());
+    if(!qr.exec())
+    {
+        //тут запись в журнал ошибок
+        qDebug()<<"void AddTaskDialog::updateTaskInfo(1): Error: "<<qr.lastError().text();
+    }
+
+    emit taskUpdateEnd(curidx.data(100).toInt());
+    hide();
 }

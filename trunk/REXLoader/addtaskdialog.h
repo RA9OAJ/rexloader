@@ -52,7 +52,8 @@ public slots:
 
 signals:
     void addedNewTask();
-    void taskUpdated();
+    void taskUpdateStart(int tid);
+    void taskUpdateEnd(int tid);
 
 protected:
     void changeEvent(QEvent *e);

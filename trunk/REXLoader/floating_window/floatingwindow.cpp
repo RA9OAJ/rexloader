@@ -158,7 +158,10 @@ void FloatingWindow::show()
         return;
 
     if(((menu->findChild<QAction*>("ShowDownloadOnly"))->isChecked() && tasksbars.count()) || (menu->findChild<QAction*>("ShowAlways"))->isChecked())
+    {
+        setWindowFlags(Qt::Tool | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
         QDialog::show();
+    }
 
 }
 

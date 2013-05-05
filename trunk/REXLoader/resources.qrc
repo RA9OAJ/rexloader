@@ -46,5 +46,8 @@
         <file alias="import.png">images/import.png</file>
         <file alias="schedule.png">images/schedule.png</file>
         <file alias="open_task.png">images/open_task.png</file>
+        <file alias="mime-app.png">images/categories/mime-app.png</file>
+        <file alias="mime-audio.png">images/categories/mime-audio.png</file>
+        <file alias="mime-video.png">images/categories/mime-video.png</file>
     </qresource>
 </RCC>
