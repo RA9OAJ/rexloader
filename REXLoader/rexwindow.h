@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QSystemTrayIcon>
 #include <QMessageBox>
 #include <QtSql/QtSql>
+#include <QFileInfo>
 #include <QDir>
 #include <QStringList>
 #include <QHash>
@@ -144,6 +145,9 @@ protected slots:
     void checkFileType(const QString &mime, const QString &filepath); //проверяет mime файла и вызывает определенное действие для этого типа файлов
     void showSettDialog(); //отображает окно настроек программы
     void showHideTableColumn(); //отображает или скрывает определенный столбец таблицы заданий
+    void startUpdateTaskProc(int id);
+    void endUpdateTaskProc(int id);
+    void startUpdatedTask();
 
 signals:
     void transAct();
@@ -171,6 +175,7 @@ private:
     QHash<int,QStringList> mesqueue; //очередь сообщений
     QHash<int,int> tasklist; //список дескрипторов активных заданий (id_in_table, id_task)
     QHash<int,TaskDialog*> dlglist;
+    QHash<int,QPair<QString,QString> > upd_block; //список заблокированных для синхронизации заданий
     QString apphomedir; //путь к рабочему каталогу приложения, где хранятся все его файлы конфигураций
     QString dbconnect; //имя подклюения к БД
     bool sched_flag; //признак разрешения работы планировщика
@@ -198,6 +203,7 @@ private:
     QByteArray plug_state;
 
     FloatingWindow *fwnd;
+    QList<int> updated_tasks; //список обновленных заданий, ожидающих запуска на исполнение
 };
 
 #endif // REXWINDOW_H

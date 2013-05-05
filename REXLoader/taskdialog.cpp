@@ -37,6 +37,24 @@ TaskDialog::TaskDialog(QWidget *parent) :
     moveToCenter();
 }
 
+TaskDialog::TaskDialog(const QString &dir, QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::TaskDialog)
+{
+    ++obj_cnt;
+    ui->setupUi(this);
+    setWindowFlags(Qt::Window);
+    setAttribute(Qt::WA_DeleteOnClose);
+    connect(ui->startButton,SIGNAL(released()),this,SLOT(pressAnaliser()));
+    connect(ui->comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(selectPriority(int)));
+    connect(ui->settingsButton,SIGNAL(released()),this,SLOT(showTaskSettings()));
+
+    QTimer::singleShot(0,this,SLOT(scheduler()));
+    moveToCenter();
+
+    downDir = dir;
+}
+
 TaskDialog::~TaskDialog()
 {
     delete ui;
@@ -215,7 +233,9 @@ void TaskDialog::selectPriority(int cur_index)
 
 void TaskDialog::showTaskSettings()
 {
-    AddTaskDialog *dlg = new AddTaskDialog(QString(),this);
+    AddTaskDialog *dlg = new AddTaskDialog(downDir,this);
+    connect(dlg,SIGNAL(taskUpdateStart(int)),parent(),SLOT(startUpdateTaskProc(int)));
+    connect(dlg,SIGNAL(taskUpdateEnd(int)),parent(),SLOT(endUpdateTaskProc(int)));
     dlg->setAttribute(Qt::WA_DeleteOnClose);
     dlg->setUpdateMode(idx);
     dlg->show();

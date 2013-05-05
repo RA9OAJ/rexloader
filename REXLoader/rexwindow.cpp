@@ -1545,6 +1545,10 @@ void REXWindow::syncTaskData()
     for(int i = 0; i < keys.length(); i++)
     {
         int id_row = keys.value(i);
+
+        if(upd_block.contains(id_row))
+            continue;
+
         int gid_task = tasklist.value(id_row);
         int id_task = gid_task%100;
         int id_proto = gid_task/100;
@@ -2640,7 +2644,7 @@ void REXWindow::showTaskDialog()
             return;
         }
 
-        TaskDialog *dlg = new TaskDialog(this);
+        TaskDialog *dlg = new TaskDialog(downDir,this);
         QModelIndex index = sfmodel->mapToSource(select->selectedRows(0).value(i));
         dlg->setSourceData(model, index, pluglist, tasklist);
         connect(dlg,SIGNAL(rejected()),this,SLOT(closeTaskDialog()));
@@ -2667,7 +2671,7 @@ void REXWindow::showTaskDialog(int id_row)
     filter.setFilterFixedString(QString::number(id_row));
     QModelIndex index = filter.mapToSource(filter.index(0,0));
 
-    TaskDialog *dlg = new TaskDialog(this);
+    TaskDialog *dlg = new TaskDialog(downDir,this);
     dlg->setSourceData(model, index, pluglist, tasklist);
     connect(dlg,SIGNAL(rejected()),this,SLOT(closeTaskDialog()));
     connect(dlg,SIGNAL(startTask(int)),this,SLOT(startTask(int)));
@@ -2850,6 +2854,101 @@ void REXWindow::showHideTableColumn()
     if(!act) return;
 
     act->isChecked() ? ui->tableView->showColumn(act->objectName().toInt()) : ui->tableView->hideColumn(act->objectName().toInt());
+}
+
+void REXWindow::startUpdateTaskProc(int id)
+{
+    int task_id = tasklist.value(id,0);
+    QPair<QString,QString> old_data;
+
+    QSortFilterProxyModel smodel;
+    smodel.setSourceModel(model);
+    smodel.setFilterRole(100);
+    smodel.setFilterKeyColumn(0);
+    smodel.setFilterFixedString(QString::number(id));
+    if(!sfmodel->rowCount())
+        return;
+
+    QModelIndex curidx = smodel.mapToSource(smodel.index(0,1));
+    old_data.first = curidx.data(100).toString();
+    curidx = curidx.model()->index(curidx.row(),3);
+    old_data.second = curidx.data(100).toString();
+    upd_block.insert(id,old_data);
+
+    int id_proto = task_id/100;
+    if(pluglist.contains(id_proto))
+        plugmgr->stopDownload(task_id);
+}
+
+void REXWindow::endUpdateTaskProc(int id)
+{
+    QSortFilterProxyModel smodel;
+    smodel.setSourceModel(model);
+    smodel.setFilterRole(100);
+    smodel.setFilterKeyColumn(0);
+    smodel.setFilterFixedString(QString::number(id));
+    if(!sfmodel->rowCount())
+        return;
+
+    updateTaskSheet();
+
+    if(upd_block.contains(id))
+    {
+        updated_tasks.append(id);
+        QTimer::singleShot(3000,this,SLOT(startUpdatedTask()));
+        return;
+    }
+}
+
+void REXWindow::startUpdatedTask()
+{
+    if(updated_tasks.isEmpty())
+        return;
+
+    int id = updated_tasks.first();
+
+    QSortFilterProxyModel smodel;
+    smodel.setSourceModel(model);
+    smodel.setFilterRole(100);
+    smodel.setFilterKeyColumn(0);
+    smodel.setFilterFixedString(QString::number(id));
+    if(!sfmodel->rowCount())
+        return;
+
+    QString url;
+    QModelIndex curidx = smodel.mapToSource(smodel.index(0,3));
+
+    QString filename = curidx.data(100).toString();
+    if(upd_block.value(id).second != filename && QFile::exists(upd_block.value(id).second))
+    {
+        QFileInfo flinfo(filename);
+        if(!QFile::exists(flinfo.absolutePath()))
+        {
+            QDir curdir;
+            curdir.mkpath(flinfo.absolutePath());
+        }
+        QFile::rename(upd_block.value(id).second,filename);
+    }
+
+    int task_id = tasklist.value(id,0);
+    int id_proto = task_id/100;
+
+    if(pluglist.contains(id_proto))
+    {
+        int new_id = 0;
+        pluglist.value(id_proto)->deleteTask(task_id%100);
+        if(QFile::exists(filename))
+            new_id = pluglist.value(id_proto)->loadTaskFile(filename);
+        if(!new_id)
+            new_id = pluglist.value(id_proto)->addTask(url);
+
+        tasklist.insert(id,id_proto*100+new_id);
+        plugmgr->startDownload(id_proto*100+new_id);
+    }
+
+    upd_block.remove(id);
+    updated_tasks.removeFirst();
+    updateTaskSheet();
 }
 
 void REXWindow::prepareToQuit()

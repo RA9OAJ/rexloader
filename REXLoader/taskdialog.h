@@ -35,6 +35,7 @@ class TaskDialog : public QDialog
 
 public:
     explicit TaskDialog(QWidget *parent = 0);
+    explicit TaskDialog(const QString &dir, QWidget *parent = 0);
     ~TaskDialog();
 
     void setSourceData(TItemModel *model, QModelIndex index, const QHash<int,LoaderInterface*> &pluglist, const QHash<int,int> &list);
@@ -61,6 +62,7 @@ private:
     QPointer<TItemModel> mdl;
     QModelIndex idx;
     const QHash<int,LoaderInterface*> *ldr;
+    QString downDir;
 
     static int obj_cnt;
 };
