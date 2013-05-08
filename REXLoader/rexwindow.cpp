@@ -2915,11 +2915,63 @@ void REXWindow::startUpdatedTask()
     if(!sfmodel->rowCount())
         return;
 
-    QString url;
-    QModelIndex curidx = smodel.mapToSource(smodel.index(0,3));
+    updateTaskSheet();
 
+    int task_id = tasklist.value(id,0);
+    int id_proto = task_id/100;
+
+    QModelIndex curidx = smodel.mapToSource(smodel.index(0,1));
+    QUrl url = QUrl::fromEncoded(curidx.data(100).toByteArray());
+    while(upd_block.value(id).first != curidx.data(100).toString()) //переписываем метаданные файла
+    {
+        QFile file(upd_block.value(id).second);
+        if(!file.open(QIODevice::ReadWrite)) break;
+
+        if(file.size() > 8)
+        {
+            QDataStream fl(&file);
+            qint64 pos = file.size() - 8;
+            file.seek(pos);
+            fl >> pos;
+            int length = 0;
+
+            file.seek(pos);
+            QString header = file.readLine(3);
+            if(header != "\r\n")
+            {
+                file.close();
+                break;
+            }
+
+            header = file.readLine(254);
+            if(header.indexOf("RExLoader") != 0){file.close(); break;}
+
+            QString fversion = header.split(" ").value(1);
+            if(fversion != "0.1a.1\r\n"){file.close(); break;}
+
+            pos = file.pos();
+            fl >> length;
+            QByteArray inbuffer;
+            inbuffer.resize(length);
+            fl.readRawData(inbuffer.data(),length); //считываем URL
+            inbuffer.clear();
+            inbuffer.resize(file.size() - file.pos());
+            fl.readRawData(inbuffer.data(), file.size() - file.pos()); // копируем в буфер все остальные неизменные данные
+            file.seek(pos);
+            length = url.toEncoded().size();
+            fl << (qint32)length;
+            fl.writeRawData(url.toEncoded().data(),length); //записываем в файл новый URL
+            fl.writeRawData(inbuffer,inbuffer.size()); //записываем остальные скопированные данные
+            pos = file.pos();
+            file.close();
+            file.resize(pos);
+        }
+       break;
+    }
+
+    curidx = smodel.mapToSource(smodel.index(0,3));
     QString filename = curidx.data(100).toString();
-    if(upd_block.value(id).second != filename && QFile::exists(upd_block.value(id).second))
+    if(upd_block.value(id).second != filename && QFile::exists(upd_block.value(id).second)) // если изменилось название/расположение, то переименовывем/переносим файл
     {
         QFileInfo flinfo(filename);
         if(!QFile::exists(flinfo.absolutePath()))
@@ -2930,20 +2982,23 @@ void REXWindow::startUpdatedTask()
         QFile::rename(upd_block.value(id).second,filename);
     }
 
-    int task_id = tasklist.value(id,0);
-    int id_proto = task_id/100;
 
     if(pluglist.contains(id_proto))
     {
         int new_id = 0;
         pluglist.value(id_proto)->deleteTask(task_id%100);
-        if(QFile::exists(filename))
-            new_id = pluglist.value(id_proto)->loadTaskFile(filename);
-        if(!new_id)
-            new_id = pluglist.value(id_proto)->addTask(url);
+        id_proto = plugproto.contains(url.scheme().toLower()) ? plugproto.value(url.scheme().toLower()) : 0;
 
-        tasklist.insert(id,id_proto*100+new_id);
-        plugmgr->startDownload(id_proto*100+new_id);
+        if(id_proto)
+        {
+            if(QFile::exists(filename))
+                new_id = pluglist.value(id_proto)->loadTaskFile(filename);
+            if(!new_id)
+                new_id = pluglist.value(id_proto)->addTask(url);
+
+            tasklist.insert(id,id_proto*100+new_id);
+            plugmgr->startDownload(id_proto*100+new_id);
+        }
     }
 
     upd_block.remove(id);
