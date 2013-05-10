@@ -49,7 +49,8 @@ SOURCES += main.cpp\
     floating_window/progressbar.cpp \
     floating_window/graphwidget.cpp \
     linkextractor.cpp \
-    taskschedulerdialog.cpp
+    taskschedulerdialog.cpp \
+    searchline/searchline.cpp
 
 HEADERS  += rexwindow.h \
     titemmodel.h \
@@ -76,7 +77,8 @@ HEADERS  += rexwindow.h \
     floating_window/progressbar.h \
     floating_window/graphwidget.h \
     linkextractor.h \
-    taskschedulerdialog.h
+    taskschedulerdialog.h \
+    searchline/searchline.h
 
 FORMS    += rexwindow.ui \
     addtaskdialog.ui \

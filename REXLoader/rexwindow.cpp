@@ -153,6 +153,10 @@ void REXWindow::createInterface()
     connect(plugmgr,SIGNAL(messageAvailable(int,int,int,QString,QString)),logmgr,SLOT(appendLog(int,int,int,QString,QString)));
     connect(ui->tableView,SIGNAL(clicked(int)),logmgr,SLOT(manageTabs(int)));
 
+    //добавляем строку поиска на панель меню
+    search_line = new SearchLine(this);
+    search_line->resize(150,25);
+    search_line->move(size().width()-136, 0);
 
     //настраиваем панель инструментов
     ui->mainToolBar->addAction(ui->actionAdd_URL);
@@ -2027,7 +2031,7 @@ void REXWindow::updateStatusBar()
         progress->setMaximum(100);
         int curVal = model->index(row_id,5).data(100).toLongLong() > 0 ? ((qint64)100*model->index(row_id,4).data(100).toLongLong()/model->index(row_id,5).data(100).toLongLong()) : 0;
         progress->setValue(curVal);
-        lefttime->setText(tr("Осталось: %1").arg(model->index(row_id,18).data(Qt::DisplayRole).toString()));
+        lefttime->setText(tr("Осталось: %1").arg(model->index(row_id,17).data(Qt::DisplayRole).toString()));
         lefttime->setVisible(true);
         lasterror->setText(model->index(row_id,7).data(100).toString());
         lasterror->setVisible(true);
@@ -2111,6 +2115,21 @@ void REXWindow::calculateSpeed()
 bool REXWindow::event(QEvent *event)
 {
     return QMainWindow::event(event);
+}
+
+void REXWindow::resizeEvent(QResizeEvent *event)
+{
+    QMainWindow::resizeEvent(event);
+
+    if(!ui->menuBar->actionAt(QPoint(size().width()-search_line->width()-5,5)))
+        search_line->move(size().width()-search_line->width()-5, 0);
+    else
+    {
+        int xpos = size().width()-search_line->width()-5;
+        while(ui->menuBar->actionAt(QPoint(xpos,5)))
+              xpos += 5;
+        search_line->move(xpos, 0);
+    }
 }
 
 void REXWindow::closeEvent(QCloseEvent *event)

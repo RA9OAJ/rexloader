@@ -46,6 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "pluginlistmodel.h"
 #include "shutdownmanager.h"
 #include "floating_window/floatingwindow.h"
+#include "searchline/searchline.h"
 
 #include "../plugins/LoaderInterface.h"
 
@@ -87,6 +88,7 @@ protected:
     void closeEvent(QCloseEvent *event);
     void changeEvent(QEvent *e);
     bool event(QEvent *event);
+    void resizeEvent(QResizeEvent *event);
     void openDataBase(); //создает/открывает существующую базу данных закачек
     void saveSettings(); //сохраняет свойства приложения
     void loadSettings(); //загружает свйоства приложения
@@ -202,8 +204,9 @@ private:
 
     QByteArray plug_state;
 
-    FloatingWindow *fwnd;
+    FloatingWindow *fwnd; //плавающее окно
     QList<int> updated_tasks; //список обновленных заданий, ожидающих запуска на исполнение
+    SearchLine *search_line;
 };
 
 #endif // REXWINDOW_H

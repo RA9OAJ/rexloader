@@ -50,4 +50,10 @@
         <file alias="mime-audio.png">images/categories/mime-audio.png</file>
         <file alias="mime-video.png">images/categories/mime-video.png</file>
     </qresource>
+    <qresource prefix="/searchline">
+        <file alias="find.png">images/searchline/find.png</file>
+        <file alias="find1.png">images/searchline/find1.png</file>
+        <file alias="clear.png">images/searchline/clear.png</file>
+        <file alias="clear1.png">images/searchline/clear1.png</file>
+    </qresource>
 </RCC>
