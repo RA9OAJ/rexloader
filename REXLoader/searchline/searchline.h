@@ -69,6 +69,10 @@ private:
     QAction *actFastSearch;
     QAction *actShowVariants;
     QAction *actShowAdvancedSearch;
+    QAction *actRegExp;
+    QAction *actCaseSensitive;
+
+    QList<QSortFilterProxyModel*> _sfmodels;
 };
 
 #endif // SEARCHLINE_H
