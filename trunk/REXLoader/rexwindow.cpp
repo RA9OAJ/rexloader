@@ -157,6 +157,7 @@ void REXWindow::createInterface()
     search_line = new SearchLine(this);
     search_line->resize(150,25);
     search_line->move(size().width()-136, 0);
+    search_line->setSourceSortFilterModel(sfmodel);
 
     //настраиваем панель инструментов
     ui->mainToolBar->addAction(ui->actionAdd_URL);
@@ -436,6 +437,7 @@ void REXWindow::showTableHeaderContextMenu(const QPoint &pos)
 
 void REXWindow::setTaskFilter(const QModelIndex &index)
 {
+    search_line->clearSearch();
     QModelIndex mindex = treemodel->index(index.row(),1,index.parent());
     int id_cat = treemodel->data(mindex,100).toInt();
     if(id_cat == 1 || id_cat == -1)
@@ -2013,7 +2015,7 @@ void REXWindow::updateStatusBar()
         ui->actionPHight->setChecked(false);
         ui->actionPVeryHight->setChecked(false);
 
-        switch(model->index(row_id,13).data(100).toInt())
+        switch(sfmodel->sourceModel()->index(row_id,13).data(100).toInt())
         {
         case 0: priority->setPixmap(QPixmap(":/appimages/pverylow_16x16.png")); ui->actionPVeryLow->setChecked(true); break;
         case 1: priority->setPixmap(QPixmap(":/appimages/plow_16x16.png")); ui->actionPLow->setChecked(true); break;
@@ -2025,17 +2027,17 @@ void REXWindow::updateStatusBar()
             break;
         }
         priority->setVisible(true);
-        QUrl cur_url = QUrl::fromEncoded(model->index(row_id,1).data(Qt::DisplayRole).toByteArray());
+        QUrl cur_url = QUrl::fromEncoded(sfmodel->sourceModel()->index(row_id,1).data(Qt::DisplayRole).toByteArray());
         urllbl->setText(QString("<a href='%1'>%2</a>").arg(cur_url.toString(),TItemModel::shortUrl(cur_url.toString())));
         urllbl->setVisible(true);
         progress->setMaximum(100);
-        int curVal = model->index(row_id,5).data(100).toLongLong() > 0 ? ((qint64)100*model->index(row_id,4).data(100).toLongLong()/model->index(row_id,5).data(100).toLongLong()) : 0;
+        int curVal = sfmodel->sourceModel()->index(row_id,5).data(100).toLongLong() > 0 ? ((qint64)100*sfmodel->sourceModel()->index(row_id,4).data(100).toLongLong()/sfmodel->sourceModel()->index(row_id,5).data(100).toLongLong()) : 0;
         progress->setValue(curVal);
-        lefttime->setText(tr("Осталось: %1").arg(model->index(row_id,17).data(Qt::DisplayRole).toString()));
+        lefttime->setText(tr("Осталось: %1").arg(sfmodel->sourceModel()->index(row_id,17).data(Qt::DisplayRole).toString()));
         lefttime->setVisible(true);
-        lasterror->setText(model->index(row_id,7).data(100).toString());
+        lasterror->setText(sfmodel->sourceModel()->index(row_id,7).data(100).toString());
         lasterror->setVisible(true);
-        if(!model->index(row_id,15).data().toString().isEmpty()) speed->setText(tr("Скорость: %1").arg(model->index(row_id,15).data().toString()));
+        if(!sfmodel->sourceModel()->index(row_id,15).data().toString().isEmpty()) speed->setText(tr("Скорость: %1").arg(sfmodel->sourceModel()->index(row_id,15).data().toString()));
         else speed->hide();
     }
 
