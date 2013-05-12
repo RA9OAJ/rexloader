@@ -1167,7 +1167,7 @@ QTranslator* HttpLoader::getTranslator(const QLocale &locale)
 QWidget *HttpLoader::widgetSettings(const QString &file_path)
 {
     Q_UNUSED(file_path);
-    return new QWidget();
+    return 0;
 }
 
 Q_EXPORT_PLUGIN2(HttpLoader, HttpLoader)

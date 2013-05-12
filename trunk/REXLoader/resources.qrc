@@ -49,6 +49,15 @@
         <file alias="mime-app.png">images/categories/mime-app.png</file>
         <file alias="mime-audio.png">images/categories/mime-audio.png</file>
         <file alias="mime-video.png">images/categories/mime-video.png</file>
+        <file alias="speed4.png">images/speed4.png</file>
+        <file alias="speed3.png">images/speed3.png</file>
+        <file alias="speed2.png">images/speed2.png</file>
+        <file alias="speed1.png">images/speed1.png</file>
+        <file alias="sections.png">images/sections.png</file>
+        <file alias="sections2.png">images/sections2.png</file>
+        <file alias="sections3.png">images/sections3.png</file>
+        <file alias="sections4.png">images/sections4.png</file>
+        <file alias="sections5.png">images/sections5.png</file>
     </qresource>
     <qresource prefix="/searchline">
         <file alias="find.png">images/searchline/find.png</file>
