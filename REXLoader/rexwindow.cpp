@@ -285,6 +285,8 @@ void REXWindow::createInterface()
     ui->actionHight->setChecked(true);
     spdbtn->setMenu(ui->menu_6);
     spdbtn->setPopupMode(QToolButton::InstantPopup);
+    spdbtn->setMinimumWidth(45);
+    spdbtn->setToolTip(tr("Регулятор скорости"));
     if(ui->actionHight->isChecked())spdbtn->setIcon(ui->actionHight->icon());
     else if(ui->actionNormal->isChecked())spdbtn->setIcon(ui->actionNormal->icon());
     else if(ui->actionLow->isChecked())spdbtn->setIcon(ui->actionLow->icon());
@@ -302,6 +304,8 @@ void REXWindow::createInterface()
     taskmenu->addAction(ui->actionFiveTasks);
     taskbtn->setMenu(taskmenu);
     taskbtn->setPopupMode(QToolButton::InstantPopup);
+    taskbtn->setMinimumSize(45,32);
+    taskbtn->setToolTip(tr("Количество одновременно закачиваемых заданий"));
     ui->mainToolBar->addWidget(taskbtn);
 
     //создаем и настраиваем плавающее окошко
@@ -2648,7 +2652,7 @@ void REXWindow::setTaskCnt()
     max_tasks = settDlg->value("max_number_tasks").toInt();
     sndr->setChecked(true);
     taskbtn->setIcon(sndr->icon());
-    taskbtn->setText(sndr->text());
+    //taskbtn->setText(sndr->text());
 }
 
 void REXWindow::showTaskDialog()
