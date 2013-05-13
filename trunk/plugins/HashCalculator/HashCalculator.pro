@@ -19,3 +19,8 @@ HEADERS       += HashCalculator.h HashCalculatorThread.h \
 
 FORMS += \
     controldialog.ui
+
+RESOURCES += \
+    resources.qrc
+
+include (lang/locales.pri)
