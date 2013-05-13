@@ -1,13 +1,14 @@
 /*
-Project: REXLoader (Downloader, DBUs based notification plugins), Source file: nixnotifyplugin.cpp
-Copyright (C) 2012  Sarvaritdinov R.
+Copyright (C) 2012-2013  Sarvaritdinov R.
 
-This program is free software: you can redistribute it and/or modify
+This file is part of REXLoader.
+
+REXLoader is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
+REXLoader is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -50,7 +51,7 @@ QStringList NixNotifyPlugin::pluginInfo() const
     pinfo << QString("Build date: ") + QString("20013-02-08");
     pinfo << QString("Version: ") + QString("0.1");
     pinfo << QString("Contacts: mailto:ra9oaj@mail.ru");
-    pinfo << QString("Lic: GNU/LGPL v2.1");
+    pinfo << QString("Lic: GNU/GPL v3");
     pinfo << QString("Description: ") + tr("Плагин отображения системных уведомлений через DBus.");
     return pinfo;
 }

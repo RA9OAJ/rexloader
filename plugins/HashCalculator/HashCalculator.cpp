@@ -1,3 +1,23 @@
+/*
+Copyright (C) 2012-2013  Alexey Schukin
+Copyright (C) 2012-2013  Sarvaritdinov R.
+
+This file is part of REXLoader.
+
+REXLoader is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+REXLoader is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include <QtCore>
 #include "HashCalculator.h"
 
@@ -55,8 +75,16 @@ void HashCalculator::runAction(int act_id)
 
 QTranslator *HashCalculator::getTranslator(const QLocale &locale)
 {
-    Q_UNUSED(locale)
-    return 0;
+    translator = new QTranslator();
+    QString slocale = ":/lang/";
+    slocale += locale.name();
+    if(!translator->load(slocale))
+    {
+        translator->deleteLater();
+        translator = 0;
+    }
+
+    return translator;
 }
 
 
@@ -75,7 +103,7 @@ QStringList HashCalculator::pluginInfo() const
     pinfo << QString("Build date: ") + QString("2013-02-03");
     pinfo << QString("Version: ") + QString("0.1");
     pinfo << QString("Contacts: mailto:mks-mail@ukr.net");
-    pinfo << QString("Lic: GNU/LGPL v2.1");
+    pinfo << QString("Lic: GNU/GPL v3");
     pinfo << QString("Description: ") + tr("Модуль для подсчёта контрольных сумм MD5 и SHA1");
     return pinfo;
 }
