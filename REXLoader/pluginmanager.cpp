@@ -39,6 +39,7 @@ PluginManager::PluginManager(QObject *parent) :
     first_run = false;
     updOper = 0;
     menu = new QMenu(tr("Действия с файлами"));
+    _locale = QLocale::system();
 }
 
 PluginManager::~PluginManager()
@@ -88,7 +89,8 @@ void PluginManager::run()
                         fileplugins.insert(pluginDirs->value(i)+"/"+plg.value(y),fplg->pluginInfo());
 
                     plug.unload();
-                    //emit needLoadOtherPlugin(pluginDirs->value(i)+"/"+plg.value(y));
+                    if(first_run)
+                        emit needLoadOtherPlugin(pluginDirs->value(i)+"/"+plg.value(y));
                     continue;
                 }
 
@@ -161,6 +163,22 @@ void PluginManager::updateFilePluginMenu()
     menu->addActions(act_table.keys());
 }
 
+void PluginManager::unloadOtherPlugin(const QString &plgid)
+{
+    if(!fileplugin.contains(plgid))
+        return;
+
+    delete fileplugin.value(plgid);
+    fileplugin.remove(plgid);
+
+    if(translators.contains(plgid))
+    {
+        translators.value(plgid)->deleteLater();
+        translators.remove(plgid);
+    }
+    updateFilePluginMenu();
+}
+
 void PluginManager::loadOtherPlugin(const QString &filepath)
 {
     if(fileplugin.contains(filepath))
@@ -194,6 +212,14 @@ void PluginManager::loadOtherPlugin(const QString &filepath)
         ref.second = dact.act_id;
         act_table.insert(act,ref);
         connect(act,SIGNAL(triggered()),this,SLOT(actionAnalizer()));
+    }
+
+    QTranslator *translator = plg->getTranslator(_locale);
+    if(translator)
+    {
+        translator->moveToThread(thread());
+        qApp->installTranslator(translator);
+        translators.insert(filepath,translator);
     }
 
     updateFilePluginMenu();
@@ -360,11 +386,11 @@ void PluginOperator::stopDownload(int id_task)
 
 void PluginManager::loadLocale(const QLocale &locale)
 {
-    QList<int> keys;
+    _locale = locale;
 
     if(!translators.isEmpty())
     {
-        keys = translators.keys();
+        QStringList keys = translators.keys();
         for(int i = 0; i < keys.size(); ++i)
         {
             qApp->removeTranslator(translators.value(keys.value(i)));
@@ -374,14 +400,25 @@ void PluginManager::loadLocale(const QLocale &locale)
         keys.clear();
     }
 
-    keys = pluglist->keys();
+
+    QList<int> keys = plugfiles->keys();
     for(int i = 0; i < keys.size(); ++i)
     {
         QTranslator *translator = pluglist->value(keys.value(i))->getTranslator(locale);
         if(!translator) continue;
         translator->moveToThread(thread());
         qApp->installTranslator(translator);
-        translators.insert(keys.value(i),translator);
+        translators.insert(plugfiles->value(keys.value(i)),translator);
+    }
+
+    QList<QString> fkeys = fileplugin.keys();
+    foreach (QString fpath, fkeys)
+    {
+        QTranslator *translator = fileplugin.value(fpath)->getTranslator(locale);
+        if(!translator) continue;
+        translator->moveToThread(thread());
+        qApp->installTranslator(translator);
+        translators.insert(fpath,translator);
     }
 }
 
@@ -488,6 +525,7 @@ void PluginManager::setPluginListModel(PluginListModel *mdl)
         connect(mdl,SIGNAL(needLoadNotifPlugin(int)),this,SLOT(loadNotifPlugin(int)));
         connect(mdl,SIGNAL(needLoadOtherPlugin(QString)),this,SLOT(loadOtherPlugin(QString)));
         connect(mdl,SIGNAL(needUpdatePlugMenu()),this,SLOT(updateFilePluginMenu()));
+        connect(mdl,SIGNAL(needUnloadOtherPlugin(QString)),this,SLOT(unloadOtherPlugin(QString)));
     }
 }
 

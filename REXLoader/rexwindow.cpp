@@ -83,7 +83,8 @@ void REXWindow::pluginStatus(bool stat)
         int quit_ok = QMessageBox::critical(this,windowTitle()+" - "+tr("Критическая ошибка"),tr("Не найден ни один плагин.\r\n Проверьте наличие файлов плагинов в директории '~/.config/rexloader/plugins' и '/usr/{local/}lib/rexloader/plugins'."));
         if(quit_ok == QMessageBox::Ok)QTimer::singleShot(0,this,SLOT(close()));
     }
-    plugmgr->restorePluginsState(plug_state);
+    if(!plug_state.isEmpty())
+        plugmgr->restorePluginsState(plug_state);
     plugmgr->loadLocale(QLocale::system());
 
     readSettings();
@@ -156,8 +157,8 @@ void REXWindow::createInterface()
 
     //добавляем строку поиска на панель меню
     search_line = new SearchLine(this);
-    search_line->resize(150,25);
-    search_line->move(size().width()-136, 0);
+    search_line->resize(150,ui->menuBar->height()-2);
+    search_line->move(size().width()-136, ui->menuBar->pos().y() + 1);
     search_line->setSourceSortFilterModel(sfmodel);
 
     //настраиваем панель инструментов
@@ -2129,14 +2130,15 @@ void REXWindow::resizeEvent(QResizeEvent *event)
     QMainWindow::resizeEvent(event);
 
     if(!ui->menuBar->actionAt(QPoint(size().width()-search_line->width()-5,5)))
-        search_line->move(size().width()-search_line->width()-5, 0);
+        search_line->move(size().width()-search_line->width()-5, ui->menuBar->pos().y() + 1);
     else
     {
         int xpos = size().width()-search_line->width()-5;
         while(ui->menuBar->actionAt(QPoint(xpos,5)))
               xpos += 5;
-        search_line->move(xpos, 0);
+        search_line->move(xpos, ui->menuBar->pos().y() + 1);
     }
+    search_line->resize(search_line->width(),ui->menuBar->height()-2);
 }
 
 void REXWindow::closeEvent(QCloseEvent *event)

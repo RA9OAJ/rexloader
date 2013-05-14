@@ -112,6 +112,7 @@ public slots:
     void notifActRecv(unsigned int, const QString &act);
     void actionAnalizer();
     void updateFilePluginMenu();
+    void unloadOtherPlugin(const QString &plgid);
 
 protected:
     void run();
@@ -127,7 +128,7 @@ private:
     QHash<int,LoaderInterface*> *pluglist; //хэш ссылок на плагины
     QHash<QString,int> *plugproto; //хэш дескрипторов плагинов с соответствующими протоколами
     QHash<int,int> *tasklist;
-    QHash<int,QTranslator*> translators;
+    QHash<QString,QTranslator*> translators;
     QHash<int,QStringList> notifplugins; //данные о доступных плагинах уведомлений
     QPair<NotifInterface*,int> notifplugin; //активный плагин уведомления
     QHash<QString,QStringList> fileplugins; //данные о доступных файловых плагинах
@@ -148,6 +149,7 @@ private:
     QMenu *menu;
     QTableView *tab_view;
     QHash<int, QWidget*> plug_widgets;
+    QLocale _locale;
 };
 
 #endif // PLUGINMANAGER_H
