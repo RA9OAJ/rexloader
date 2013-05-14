@@ -70,6 +70,7 @@ public:
 signals:
     void needLoadOtherPlugin(const QString &filepath);
     void needLoadNotifPlugin(int id);
+    void needUnloadOtherPlugin(const QString &plgid);
     void needUpdatePlugMenu();
     
 public slots:

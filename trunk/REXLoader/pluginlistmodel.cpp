@@ -195,9 +195,10 @@ bool PluginListModel::setData(const QModelIndex &index, const QVariant &value, i
             QString plgid = index.data(PlugId).toString();
             if(fileplugin->contains(plgid))
             {
-                delete fileplugin->value(plgid);
-                fileplugin->remove(plgid);
-                emit needUpdatePlugMenu();
+                /*delete fileplugin->value(plgid);
+                fileplugin->remove(plgid);*/
+                emit needUnloadOtherPlugin(plgid);
+                //emit needUpdatePlugMenu();
             }
         }
     }

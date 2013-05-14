@@ -105,8 +105,14 @@
      <x>0</x>
      <y>0</y>
      <width>687</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>25</height>
+    </size>
    </property>
    <property name="styleSheet">
     <string notr="true">QMenuBar 

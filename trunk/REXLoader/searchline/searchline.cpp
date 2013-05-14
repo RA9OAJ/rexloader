@@ -38,7 +38,6 @@ SearchLine::SearchLine(QWidget *parent) :
     actCaseSensitive->setCheckable(true);
     actCaseSensitive->setChecked(true);
 
-    setTextMargins(18,1,1,1);
     btnSearch = new QPushButton(this);
     btnSearch->resize(16,16);
     btnSearch->setCursor(QCursor(Qt::ArrowCursor));
@@ -46,6 +45,8 @@ SearchLine::SearchLine(QWidget *parent) :
                              "QPushButton::hover {image: url(:/searchline/find1.png);}"
                              "QPushButton::pressed {image: url(:/searchline/find.png);}"
                              "QPushButton::disabled {image: url(:/searchline/find.png);}");
+
+    setTextMargins(btnSearch->width()+2,1,1,1);
 
     btnClear = new QPushButton(this);
     btnClear->resize(16,16);
@@ -125,7 +126,15 @@ void SearchLine::paintEvent(QPaintEvent *event)
 void SearchLine::resizeEvent(QResizeEvent *event)
 {
     QLineEdit::resizeEvent(event);
+
+    QSize btnSz(size().height()-6, size().height()-6);
+    btnSearch->setMaximumSize(btnSz);
+    btnClear->setMaximumSize(btnSz);
     btnSearch->move(5,(height()-btnSearch->height())/2+1);
+
+    if(btnClear->isVisible())
+        setTextMargins(btnSearch->width()+2,1,btnClear->width()+2,1);
+    else setTextMargins(btnSearch->width()+2,1,1,1);
 }
 
 void SearchLine::contextMenuEvent(QContextMenuEvent *event)
@@ -149,13 +158,13 @@ void SearchLine::showClearButton(const QString &text)
 {
     if(!text.isEmpty())
     {
-        setTextMargins(18,1,18,1);
+        setTextMargins(btnSearch->width()+2,1,btnClear->width()-1,1);
         btnClear->move(width()-btnClear->width()-6,(height()-btnSearch->height())/2+1);
         btnClear->show();
     }
     else
     {
-        setTextMargins(18,1,1,1);
+        setTextMargins(btnSearch->width()+2,1,1,1);
         btnClear->hide();
         setFocus();
     }
