@@ -720,6 +720,11 @@ void REXWindow::saveSettings()
     settings.setValue("ShowAlways",fwnd->showWindowsMode());
     settings.setValue("GraphMode",fwnd->renderGraphMode());
     settings.endGroup();
+
+    settings.beginGroup("Search");
+    settings.setValue("State", search_line->saveSearchState());
+    settings.endGroup();
+
     settings.sync();
 
 #ifdef Q_OS_LINUX
@@ -812,6 +817,10 @@ void REXWindow::loadSettings()
     fwnd->restoreGeometry(settings.value("Geometry",QByteArray()).toByteArray());
     fwnd->setRenderGraphMode(settings.value("GraphMode",1).toInt());
     fwnd->setShowWindowMode(settings.value("ShowAlways",true).toBool());
+    settings.endGroup();
+
+    settings.beginGroup("Search");
+    search_line->restoreSearchState(settings.value("State",QByteArray()).toByteArray());
     settings.endGroup();
 
     ui->tableView->hideColumn(0);
@@ -1617,7 +1626,7 @@ void REXWindow::syncTaskData()
         downtimeId = mdl->mapToSource(downtimeId);
         speedAvgId = mdl->mapToSource(speedAvgId);
         int downtime = model->data(downtimeId,100).toInt();
-        qint64 speedAvg = downtime ? (model->data(speedAvgId,100).toLongLong()*downtime + speed/1024)/(downtime+1) : 0;
+        qint64 speedAvg = downtime ? (model->data(speedAvgId,100).toLongLong()*(qint64)downtime + speed/1024)/(qint64)(downtime+1) : 0;
         ++downtime;
         delete(mdl);
 
