@@ -28,7 +28,6 @@ SearchLine::SearchLine(QWidget *parent) :
     actShowVariants = new QAction(tr("Показывать варианты"),this);
     actShowVariants->setCheckable(true);
     actShowVariants->setChecked(true);
-    actShowVariants->setDisabled(true);
     actShowAdvancedSearch = new QAction(tr("Расширенный поиск"),this);
     actShowAdvancedSearch->setDisabled(true);
     actRegExp = new QAction(tr("Регулярные выражения"),this);
@@ -37,6 +36,8 @@ SearchLine::SearchLine(QWidget *parent) :
     actCaseSensitive = new QAction(tr("С учетом регистра"),this);
     actCaseSensitive->setCheckable(true);
     actCaseSensitive->setChecked(true);
+    actClearVariantList = new QAction(tr("Очистить список вариантов"),this);
+    popuplist = new PopupList(this);
 
     btnSearch = new QPushButton(this);
     btnSearch->resize(16,16);
@@ -64,15 +65,58 @@ SearchLine::SearchLine(QWidget *parent) :
     connect(actShowVariants,SIGNAL(triggered(bool)),this,SLOT(setOptions(bool)));
     connect(actRegExp,SIGNAL(triggered(bool)),this,SLOT(setOptions(bool)));
     connect(actCaseSensitive,SIGNAL(triggered(bool)),this,SLOT(setOptions(bool)));
+    connect(this,SIGNAL(textChanged(QString)),popuplist,SLOT(setFilter(QString)));
+    connect(popuplist,SIGNAL(filterSelected(QString)),this,SLOT(setText(QString)));
+    connect(actClearVariantList,SIGNAL(triggered()),popuplist,SLOT(clearVariants()));
 }
 
 QByteArray SearchLine::saveSearchState()
 {
-    return QByteArray();
+    QStringList lst = popuplist->getFiltersList();
+    QByteArray outbuf;
+    QDataStream out(&outbuf,QIODevice::WriteOnly);
+    out << actFastSearch->isChecked();
+    out << actShowVariants->isChecked();
+    out << actRegExp->isChecked();
+    out << actCaseSensitive->isChecked();
+
+    out << (qint32) lst.size();
+    foreach (QString cur, lst)
+    {
+        out << (qint32) cur.toAscii().size();
+        out.writeRawData(cur.toAscii().data(),cur.toAscii().size());
+    }
+
+    return outbuf;
 }
 
-bool SearchLine::restoreSearchState(QByteArray state)
+bool SearchLine::restoreSearchState(const QByteArray &state)
 {
+    if(state.isEmpty())
+        return false;
+
+    QDataStream in(state);
+    bool flag;
+    in >> flag;
+    actFastSearch->setChecked(flag);
+    in >> flag;
+    actShowVariants->setChecked(flag);
+    in >> flag;
+    actRegExp->setChecked(flag);
+    in >> flag;
+    actCaseSensitive->setChecked(flag);
+    \
+    qint32 sz;
+    in >> sz;
+    for(int i = 0; i < sz; ++i)
+    {
+        qint32 cursz;
+        in >> cursz;
+        QByteArray inbuf;
+        inbuf.resize(cursz);
+        in.readRawData(inbuf.data(),cursz);
+        popuplist->addVariant(QString(inbuf));
+    }
     return true;
 }
 
@@ -105,6 +149,7 @@ void SearchLine::keyPressEvent(QKeyEvent *event)
         {
             search();
             clearFocus();
+            popuplist->addVariant(text());
         }
         break;
     default:
@@ -146,12 +191,26 @@ void SearchLine::contextMenuEvent(QContextMenuEvent *event)
     cmenu->addAction(actRegExp);
     cmenu->addAction(actCaseSensitive);
     cmenu->addAction(actShowAdvancedSearch);
+    cmenu->addSeparator();
+    cmenu->addAction(actClearVariantList);
     cmenu->exec(event->globalPos());
     delete cmenu;
 }
 
+void SearchLine::focusOutEvent(QFocusEvent *event)
+{
+    if(!popuplist->hasFocus() && popuplist->isVisible())
+        popuplist->hide();
+
+    QLineEdit::focusOutEvent(event);
+}
+
 void SearchLine::showVariantList(const QString &str)
 {
+    if(str.isEmpty())
+        popuplist->hide();
+    else
+        popuplist->setFilter(str);
 }
 
 void SearchLine::showClearButton(const QString &text)
@@ -161,12 +220,14 @@ void SearchLine::showClearButton(const QString &text)
         setTextMargins(btnSearch->width()+2,1,btnClear->width()-1,1);
         btnClear->move(width()-btnClear->width()-6,(height()-btnSearch->height())/2+1);
         btnClear->show();
+        showVariantList(text);
     }
     else
     {
         setTextMargins(btnSearch->width()+2,1,1,1);
         btnClear->hide();
         setFocus();
+        popuplist->hide();
     }
 }
 
@@ -254,6 +315,7 @@ void SearchLine::search(const QString &text)
 
         if(!_sfmodels.last()->rowCount())
             setStyleSheet("SearchLine {color: red;}");
-        else setStyleSheet("");
+        else
+            setStyleSheet("");
     }
 }

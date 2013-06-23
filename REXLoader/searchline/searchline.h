@@ -29,13 +29,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QAbstractItemModel>
 #include <QSortFilterProxyModel>
 
+#include "popuplist.h"
+
 class SearchLine : public QLineEdit
 {
     Q_OBJECT
 public:
     explicit SearchLine(QWidget *parent = 0);
     QByteArray saveSearchState();
-    bool restoreSearchState(QByteArray state);
+    bool restoreSearchState(const QByteArray &state);
     void setMirror(SearchLine *ln);
     SearchLine* mirror();
     void setSourceSortFilterModel(QSortFilterProxyModel *mdl);
@@ -54,6 +56,7 @@ protected:
     virtual void paintEvent(QPaintEvent *event);
     virtual void resizeEvent(QResizeEvent *event);
     virtual void contextMenuEvent(QContextMenuEvent *event);
+    virtual void focusOutEvent(QFocusEvent *event);
 
 protected slots:
     void showVariantList(const QString &str);
@@ -72,8 +75,10 @@ private:
     QAction *actShowAdvancedSearch;
     QAction *actRegExp;
     QAction *actCaseSensitive;
+    QAction *actClearVariantList;
 
     QList<QSortFilterProxyModel*> _sfmodels;
+    PopupList *popuplist;
 };
 
 #endif // SEARCHLINE_H
