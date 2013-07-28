@@ -2048,11 +2048,11 @@ void REXWindow::updateStatusBar()
         progress->setMaximum(100);
         int curVal = sfmodel->sourceModel()->index(row_id,5).data(100).toLongLong() > 0 ? ((qint64)100*sfmodel->sourceModel()->index(row_id,4).data(100).toLongLong()/sfmodel->sourceModel()->index(row_id,5).data(100).toLongLong()) : 0;
         progress->setValue(curVal);
-        lefttime->setText(tr("Осталось: %1").arg(sfmodel->sourceModel()->index(row_id,17).data(Qt::DisplayRole).toString()));
+        lefttime->setText(tr("Осталось: %1").arg(sfmodel->sourceModel()->index(row_id,18).data(Qt::DisplayRole).toString()));
         lefttime->setVisible(true);
         lasterror->setText(sfmodel->sourceModel()->index(row_id,7).data(100).toString());
         lasterror->setVisible(true);
-        if(!sfmodel->sourceModel()->index(row_id,15).data().toString().isEmpty()) speed->setText(tr("Скорость: %1").arg(sfmodel->sourceModel()->index(row_id,15).data().toString()));
+        if(!sfmodel->sourceModel()->index(row_id,17).data().toString().isEmpty()) speed->setText(tr("Скорость: %1").arg(sfmodel->sourceModel()->index(row_id,17).data().toString()));
         else speed->hide();
     }
 

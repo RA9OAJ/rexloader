@@ -39,6 +39,9 @@ void checkDatabase()
 
         homeapp.cd(homedir+"/.config");
 
+        if(!homeapp.exists(homeapp.absolutePath()+"autostart"))
+            homeapp.mkpath(homedir+"/.config/autostart");
+
         QDir olddir(QDir::homePath()+"/.rexloader");
         if(olddir.exists())
         {
