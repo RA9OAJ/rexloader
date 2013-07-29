@@ -95,7 +95,7 @@ void TaskDialog::scheduler()
         ui->progressBar->setValue(value);
         ui->loadLabel->setText(load.value(0) + load.value(1));
         ui->timeLabel->setText(mdl->data(mdl->index(idx.row(),6),Qt::DisplayRole).toString());
-        ui->leftLabel->setText(mdl->data(mdl->index(idx.row(),17),Qt::DisplayRole).toString());
+        ui->leftLabel->setText(mdl->data(mdl->index(idx.row(),18),Qt::DisplayRole).toString());
         int id = mdl->data(mdl->index(idx.row(),0),100).toInt();
         int task_id = lst->value(id)%100;
         int proto_id = lst->value(id)/100;

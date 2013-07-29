@@ -50,8 +50,9 @@ void HashCalculatorThread::run()
     QFile file_object;
     QFileInfo file_info;
 
-    for (int i; i<m_file_list.size(); i++)
+    for (int i=0; i<m_file_list.size(); i++)
     {
+        qDebug()<<"1";
         file_name = m_file_list.at(i);
         file_object.setFileName(file_name);
         file_info.setFile(file_object);
