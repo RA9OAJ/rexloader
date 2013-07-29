@@ -201,15 +201,22 @@ void TreeItemModel::addFiltersSubtree()
     filters << tr("Завершенные") << -5 << -1 << 5;
     filters << tr("С ошибками") << -6 << -1 << -2;
 
+    filters << tr("Запланированные") << -7 << 0 << 0;
+
+    filters << tr("Удаленные") << -8 << 0 << 0;
+    filters << tr("Недавно") << -9 << -8 << 0;
+    filters << tr("Сегодня") << -10 << -8 << 1;
+    filters << tr("Вчера") << -11 << -8 << 2;
+    filters << tr("За месяц") << -11 << -8 << 3;
+
     QModelIndex parent = QModelIndex();
     QHash<QModelIndex, int> cur_nodes;
     for(int i = 0; i < filters.size()/4; ++i)
     {
         if(!i)parent = QModelIndex();
-        else parent = cur_nodes.key(filters.value(i*4+2).toInt());
+        else parent = cur_nodes.key(filters.value(i*4+2).toInt(),QModelIndex());
 
-        int row_cnt = i-1;
-        if(!i)row_cnt = rowCount(parent);
+        int row_cnt = rowCount(parent);
         QModelIndex cur = createIndex(row_cnt,0,nodes.size());
         nodes.insert(cur,filters.value(i*4));
         link.insert(cur,parent);
