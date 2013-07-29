@@ -38,6 +38,8 @@ void checkDatabase()
             homeapp.mkpath(homedir+"/.config");
 
         homeapp.cd(homedir+"/.config");
+        if(!homeapp.exists(homedir+"/.config/autostart"))
+            homeapp.mkpath(homedir+"/.config/autostart");
 
         if(!homeapp.exists(homeapp.absolutePath()+"autostart"))
             homeapp.mkpath(homedir+"/.config/autostart");
