@@ -6,10 +6,43 @@
 #include <QStringList>
 #include <QSize>
 
+struct EFFilter { //структура хранения данных фильтра
+    int data_role;
+    int filter_operator;
+    QVariant filter_value;
+
+    EFFilter& operator=(EFFilter eff)
+    {
+        data_role = eff.data_role;
+        filter_operator = eff.filter_operator;
+        filter_value = eff.filter_value;
+        return *this;
+    }
+
+    bool operator==(EFFilter eff) const
+    {
+        if(eff.data_role == data_role
+                && eff.filter_operator == filter_operator
+                && eff.filter_value == filter_value)
+            return true;
+        return false;
+    }
+};
+
 class EFilterProxyModel : public QAbstractProxyModel
 {
     Q_OBJECT
 public:
+    enum EFOperator{
+        Equal = 0x0, // ==
+        Not = 0x1, // !=
+        Like = 0x2, // содержит подстроку
+        Larger = 0x4, //больше
+        Lesser = 0x8, //меньше
+        In = 0x10, //в списке
+        Between = 0x20 //в промежутке
+    };
+
     explicit EFilterProxyModel(QObject *parent = 0);
 
 
@@ -46,13 +79,14 @@ public:
 signals:
     
 public slots:
-    void addFilter(int key_column, int filter_role, const QString &filter);
+    void addFilter(int key_column, int filter_role, int _operator_, const QVariant &filter_val);
     void clearFilter(int key_column);
     void clearAllFilters();
 
 private:
-    QAbstractItemModel *_src;
-    QHash<int, QPair<int,QString> > _filters;
+    QAbstractItemModel *_src; //ссылка на модель-источник
+    QMultiHash<int, EFFilter> _filters; //фильтры
+    QHash<int, int> _srcmap; //хэш соответствия строк из модели отфильтрованным строкам
 };
 
 #endif // EFILTERPROXYMODEL_H
