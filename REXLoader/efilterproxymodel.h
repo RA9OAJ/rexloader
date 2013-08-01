@@ -83,10 +83,15 @@ public slots:
     void clearFilter(int key_column);
     void clearAllFilters();
 
+protected:
+    virtual void runSorting(int column, Qt::SortOrder order = Qt::AscendingOrder);
+    virtual void runFiltering();
+
 private:
     QAbstractItemModel *_src; //ссылка на модель-источник
     QMultiHash<int, EFFilter> _filters; //фильтры
-    QHash<int, int> _srcmap; //хэш соответствия строк из модели отфильтрованным строкам
+    QList<int> _srcmap; //хэш соответствия строк из модели отфильтрованным строкам
+    QPair<int,int> _sort_param;
 };
 
 #endif // EFILTERPROXYMODEL_H
