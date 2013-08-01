@@ -85,13 +85,18 @@ public slots:
 
 protected:
     virtual void runSorting(int column, Qt::SortOrder order = Qt::AscendingOrder);
-    virtual void runFiltering();
+    virtual bool runFiltering(int row = 0, const QModelIndex &parent = QModelIndex());
+
+private:
+    bool matchFilters(const QModelIndex &idx, const EFFilter &fltr) const;
 
 private:
     QAbstractItemModel *_src; //ссылка на модель-источник
     QMultiHash<int, EFFilter> _filters; //фильтры
     QList<int> _srcmap; //хэш соответствия строк из модели отфильтрованным строкам
-    QPair<int,int> _sort_param;
+    QPair<int,int> _sort_param; //параетры сортировки
+
+    QHash<QModelIndex, QList<QList<QModelIndex> > > indexes; //хэш дерева индексов со связями
 };
 
 #endif // EFILTERPROXYMODEL_H
