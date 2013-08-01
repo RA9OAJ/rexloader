@@ -66,6 +66,17 @@ bool EFilterProxyModel::insertRows(int row, int count, const QModelIndex &parent
 
 QModelIndex EFilterProxyModel::mapFromSource(const QModelIndex &sourceIndex) const
 {
+    QModelIndex cindex;
+    if(sourceModel() && _srcmap.contains(sourceIndex.row()))
+    {
+        int row = _srcmap.indexOf(sourceIndex.row());
+        QModelIndex prnt;
+        if(sourceIndex.parent() != QModelIndex())
+            prnt = mapFromSource(sourceIndex.parent());
+
+        cindex = index(row,sourceIndex.column(),prnt);
+    }
+    return cindex;
 }
 
 QItemSelection EFilterProxyModel::mapSelectionFromSource(const QItemSelection &sourceSelection) const
@@ -78,6 +89,17 @@ QItemSelection EFilterProxyModel::mapSelectionToSource(const QItemSelection &pro
 
 QModelIndex EFilterProxyModel::mapToSource(const QModelIndex &proxyIndex) const
 {
+    QModelIndex eindex;
+    if(sourceModel() && _srcmap.indexOf(proxyIndex.row()) != -1)
+    {
+        int row = _srcmap.value(proxyIndex.row());
+        QModelIndex prnt;
+        if(proxyIndex.parent() != QModelIndex())
+            prnt = mapToSource(proxyIndex.parent());
+
+        eindex = _src->index(row,proxyIndex.column(),prnt);
+    }
+    return eindex;
 }
 
 QModelIndexList EFilterProxyModel::match(const QModelIndex &start, int role, const QVariant &value, int hits, Qt::MatchFlags flags) const
@@ -94,10 +116,48 @@ QStringList EFilterProxyModel::mimeTypes() const
 
 QModelIndex EFilterProxyModel::parent(const QModelIndex &child) const
 {
+    QModelIndex prnt;
+    if(sourceModel())
+    {
+        QModelIndex eidx = mapToSource(child);
+        prnt = _src->parent(eidx);
+        prnt = mapFromSource(prnt);
+    }
+    return prnt;
 }
 
 bool EFilterProxyModel::removeColumns(int column, int count, const QModelIndex &parent)
 {
+    if(sourceModel())
+    {
+        QModelIndex eprnt = mapToSource(parent);
+        beginRemoveColumns(parent,column,column + count - 1);
+        sourceModel()->removeColumns(column,count,eprnt);
+        //Тут проверям фильтры по колонкам и удаляем, если удалена колонка
+        //по которой идет фильтрация или сортировка
+        int fsz = _filters.size();
+        for(int i = column; i < column + count; ++i)
+        {
+            if(_filters.contains(i))
+                _filters.remove(i);
+
+            if(_sort_param.first == i)
+                _sort_param.first = -1;
+        }
+
+        if(fsz > _filters.size())
+        {
+            runFiltering();
+            runSorting(_sort_param.first,(Qt::SortOrder)_sort_param.second);
+        }
+        else
+        {
+
+        }
+
+        endRemoveColumns();
+    }
+    return false;
 }
 
 bool EFilterProxyModel::removeRows(int row, int count, const QModelIndex &parent)
@@ -134,6 +194,8 @@ void EFilterProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
 
 void EFilterProxyModel::sort(int column, Qt::SortOrder order)
 {
+    _sort_param.first = column;
+    _sort_param.second = order;
 }
 
 QSize EFilterProxyModel::span(const QModelIndex &index) const
@@ -193,4 +255,12 @@ void EFilterProxyModel::clearAllFilters()
 {
     _filters.clear();
     //Доработать реакцию на смену фильтров + сортировка
+}
+
+void EFilterProxyModel::runSorting(int column, Qt::SortOrder order)
+{
+}
+
+void EFilterProxyModel::runFiltering()
+{
 }
