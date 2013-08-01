@@ -8,6 +8,13 @@ EFilterProxyModel::EFilterProxyModel(QObject *parent) :
 
 QModelIndex EFilterProxyModel::buddy(const QModelIndex &index) const
 {
+    QModelIndex bdindex;
+    if(sourceModel())
+    {
+        bdindex = sourceModel()->buddy(mapToSource(index));
+        bdindex = mapFromSource(bdindex);
+    }
+    return bdindex;
 }
 
 bool EFilterProxyModel::canFetchMore(const QModelIndex &parent) const
@@ -22,7 +29,12 @@ int EFilterProxyModel::columnCount(const QModelIndex &parent) const
         if(_filters.isEmpty())
             return sourceModel()->columnCount(parent);
     }
-    //-----Доработать---------
+
+    int cnt = 0;
+    if(indexes.contains(parent))
+        cnt = indexes.value(parent).value(0).size();
+
+    return cnt;
 }
 
 QVariant EFilterProxyModel::data(const QModelIndex &index, int role) const
@@ -81,10 +93,12 @@ QModelIndex EFilterProxyModel::mapFromSource(const QModelIndex &sourceIndex) con
 
 QItemSelection EFilterProxyModel::mapSelectionFromSource(const QItemSelection &sourceSelection) const
 {
+    return QItemSelection();
 }
 
 QItemSelection EFilterProxyModel::mapSelectionToSource(const QItemSelection &proxySelection) const
 {
+    return QItemSelection();
 }
 
 QModelIndex EFilterProxyModel::mapToSource(const QModelIndex &proxyIndex) const
@@ -104,14 +118,17 @@ QModelIndex EFilterProxyModel::mapToSource(const QModelIndex &proxyIndex) const
 
 QModelIndexList EFilterProxyModel::match(const QModelIndex &start, int role, const QVariant &value, int hits, Qt::MatchFlags flags) const
 {
+    return QModelIndexList();
 }
 
 QMimeData *EFilterProxyModel::mimeData(const QModelIndexList &indexes) const
 {
+    return 0;
 }
 
 QStringList EFilterProxyModel::mimeTypes() const
 {
+    return QStringList();
 }
 
 QModelIndex EFilterProxyModel::parent(const QModelIndex &child) const
@@ -148,7 +165,7 @@ bool EFilterProxyModel::removeColumns(int column, int count, const QModelIndex &
         if(fsz > _filters.size())
         {
             runFiltering();
-            runSorting(_sort_param.first,(Qt::SortOrder)_sort_param.second);
+            runSorting(_sort_param.first,(Qt::SortOrder)_sort_param.second); //?
         }
         else
         {
@@ -162,6 +179,7 @@ bool EFilterProxyModel::removeColumns(int column, int count, const QModelIndex &
 
 bool EFilterProxyModel::removeRows(int row, int count, const QModelIndex &parent)
 {
+    return false;
 }
 
 int EFilterProxyModel::rowCount(const QModelIndex &parent) const
@@ -171,7 +189,11 @@ int EFilterProxyModel::rowCount(const QModelIndex &parent) const
         if(_filters.isEmpty())
             return sourceModel()->rowCount(parent);
     }
-    //-----Доработать---------
+    int cnt = 0;
+    if(indexes.contains(parent))
+        cnt = indexes.value(parent).size();
+
+    return cnt;
 }
 
 bool EFilterProxyModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -185,6 +207,7 @@ bool EFilterProxyModel::setData(const QModelIndex &index, const QVariant &value,
 
 bool EFilterProxyModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role)
 {
+    return false;
 }
 
 void EFilterProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
@@ -261,6 +284,46 @@ void EFilterProxyModel::runSorting(int column, Qt::SortOrder order)
 {
 }
 
-void EFilterProxyModel::runFiltering()
+bool EFilterProxyModel::runFiltering(int row, const QModelIndex &parent)
 {
+    if(sourceModel() && !_filters.isEmpty())
+    {
+        for(int i = row; row < sourceModel()->rowCount(parent); ++i)
+        {
+            bool checked = false;
+            QModelIndex cur_src_idx = sourceModel()->index(i,0,parent);
+
+            if(sourceModel()->rowCount(cur_src_idx))
+                checked = runFiltering(0,cur_src_idx);
+
+            if(!checked)
+            {
+                //------------------------------
+                QList<int> columns = _filters.keys();
+                bool _match = false; // соответствие фильтру
+                foreach(int cur_column, columns) //цикл перебора фильтров по колонкам
+                {
+
+                    foreach (EFFilter fltr, _filters.values(cur_column)) //перебор всех условий по данной колонке
+                    {
+                        _match = matchFilters(cur_src_idx, fltr);
+                        if(!_match) break;
+                    }
+
+                    if(!_match) break;
+                }
+
+                if(!_match) continue;
+                //-----------------------------
+                //тут добавление строки в indexes
+            }
+
+        }
+    }
+    return false;
+}
+
+bool EFilterProxyModel::matchFilters(const QModelIndex &idx, const EFFilter &fltr) const
+{
+    return false;
 }
