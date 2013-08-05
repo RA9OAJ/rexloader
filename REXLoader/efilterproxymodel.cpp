@@ -79,14 +79,14 @@ bool EFilterProxyModel::insertRows(int row, int count, const QModelIndex &parent
 QModelIndex EFilterProxyModel::mapFromSource(const QModelIndex &sourceIndex) const
 {
     QModelIndex cindex;
-    if(sourceModel() && _srcmap.contains(sourceIndex.row()))
+    QModelIndexList lst = _srcmap.values();
+    if(sourceModel())
     {
-        int row = _srcmap.indexOf(sourceIndex.row());
-        QModelIndex prnt;
-        if(sourceIndex.parent() != QModelIndex())
-            prnt = mapFromSource(sourceIndex.parent());
-
-        cindex = index(row,sourceIndex.column(),prnt);
+        QModelIndex canon = sourceIndex;
+        if(sourceIndex.column() != 0)
+            canon = sourceModel()->index(sourceIndex.row(),0,sourceIndex.parent());
+        cindex = _srcmap.key(canon,QModelIndex());
+        cindex = index(cindex.row(),sourceIndex.column(),cindex.parent());
     }
     return cindex;
 }
@@ -104,14 +104,13 @@ QItemSelection EFilterProxyModel::mapSelectionToSource(const QItemSelection &pro
 QModelIndex EFilterProxyModel::mapToSource(const QModelIndex &proxyIndex) const
 {
     QModelIndex eindex;
-    if(sourceModel() && _srcmap.indexOf(proxyIndex.row()) != -1)
+    if(sourceModel() && !indexes.isEmpty())
     {
-        int row = _srcmap.value(proxyIndex.row());
-        QModelIndex prnt;
-        if(proxyIndex.parent() != QModelIndex())
-            prnt = mapToSource(proxyIndex.parent());
-
-        eindex = _src->index(row,proxyIndex.column(),prnt);
+        QModelIndex canon = proxyIndex;
+        if(proxyIndex.column() != 0)
+            canon = index(proxyIndex.row(),0,proxyIndex.parent());
+        eindex = _srcmap.value(canon,QModelIndex());
+        eindex = sourceModel()->index(eindex.row(),proxyIndex.column(),eindex.parent());
     }
     return eindex;
 }
@@ -137,7 +136,7 @@ QModelIndex EFilterProxyModel::parent(const QModelIndex &child) const
     if(sourceModel())
     {
         QModelIndex eidx = mapToSource(child);
-        prnt = _src->parent(eidx);
+        prnt = sourceModel()->parent(eidx);
         prnt = mapFromSource(prnt);
     }
     return prnt;
@@ -286,6 +285,7 @@ void EFilterProxyModel::runSorting(int column, Qt::SortOrder order)
 
 bool EFilterProxyModel::runFiltering(int row, const QModelIndex &parent)
 {
+    int cnt_added = 0;
     if(sourceModel() && !_filters.isEmpty())
     {
         for(int i = row; row < sourceModel()->rowCount(parent); ++i)
@@ -314,11 +314,14 @@ bool EFilterProxyModel::runFiltering(int row, const QModelIndex &parent)
                 }
 
                 if(!_match) continue;
+                ++cnt_added;
+
                 //-----------------------------
                 //тут добавление строки в indexes
             }
-
         }
+        if(cnt_added)
+            return true;
     }
     return false;
 }
@@ -326,4 +329,26 @@ bool EFilterProxyModel::runFiltering(int row, const QModelIndex &parent)
 bool EFilterProxyModel::matchFilters(const QModelIndex &idx, const EFFilter &fltr) const
 {
     return false;
+}
+
+void EFilterProxyModel::addItem(int row, const QModelIndex &parent)
+{
+    //добавление всех родителей итема до самого QModelIndex()
+    if(parent != QModelIndex() && mapFromSource(parent) == QModelIndex())
+    {
+
+    }
+
+    //добавление строки к родителю
+    for(int i = 0; i < sourceModel()->columnCount(); ++i)
+    {
+        QModelIndex srcidx = sourceModel()->index(row,i,parent);
+        QModelIndex iparent = mapFromSource(srcidx.parent());
+        int rowcnt = columnCount(iparent);
+        QModelIndex newidx = createIndex(rowcnt,i,(qint32)srcidx.internalId());
+        if(newidx == QModelIndex())
+            continue;
+
+        indexes[iparent][rowcnt][i] = newidx;
+    }
 }

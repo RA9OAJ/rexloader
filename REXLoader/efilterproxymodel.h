@@ -6,6 +6,10 @@
 #include <QStringList>
 #include <QSize>
 
+
+typedef QHash<int, QModelIndex> InternalIndex;
+typedef QHash<int, InternalIndex> InternalRow;
+
 struct EFFilter { //структура хранения данных фильтра
     int data_role;
     int filter_operator;
@@ -89,14 +93,15 @@ protected:
 
 private:
     bool matchFilters(const QModelIndex &idx, const EFFilter &fltr) const;
+    void addItem(int row, const QModelIndex &parent);
 
 private:
     QAbstractItemModel *_src; //ссылка на модель-источник
     QMultiHash<int, EFFilter> _filters; //фильтры
-    QList<int> _srcmap; //хэш соответствия строк из модели отфильтрованным строкам
-    QPair<int,int> _sort_param; //параетры сортировки
+    QHash<QModelIndex,QModelIndex> _srcmap; //хэш соответствия строк из модели отфильтрованным строкам
+    QPair<int,int> _sort_param; //параметры сортировки
 
-    QHash<QModelIndex, QList<QList<QModelIndex> > > indexes; //хэш дерева индексов со связями
+    QHash<QModelIndex, InternalRow> indexes; //хэш дерева индексов со связями
 };
 
 #endif // EFILTERPROXYMODEL_H
