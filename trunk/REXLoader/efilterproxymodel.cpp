@@ -164,7 +164,7 @@ bool EFilterProxyModel::removeColumns(int column, int count, const QModelIndex &
         if(fsz > _filters.size())
         {
             runFiltering();
-            runSorting(_sort_param.first,(Qt::SortOrder)_sort_param.second); //?
+            //runSorting(_sort_param.first,(Qt::SortOrder)_sort_param.second); //?
         }
         else
         {
@@ -285,70 +285,73 @@ void EFilterProxyModel::runSorting(int column, Qt::SortOrder order)
 
 bool EFilterProxyModel::runFiltering(int row, const QModelIndex &parent)
 {
-    int cnt_added = 0;
+    int cnt = 0;
     if(sourceModel() && !_filters.isEmpty())
     {
         for(int i = row; row < sourceModel()->rowCount(parent); ++i)
         {
-            bool checked = false;
-            QModelIndex cur_src_idx = sourceModel()->index(i,0,parent);
-
-            if(sourceModel()->rowCount(cur_src_idx))
-                checked = runFiltering(0,cur_src_idx);
-
-            if(!checked)
+            QModelIndex nparent = sourceModel()->index(i,0,parent);
+            if(sourceModel()->rowCount(nparent))
             {
-                //------------------------------
-                QList<int> columns = _filters.keys();
-                bool _match = false; // соответствие фильтру
-                foreach(int cur_column, columns) //цикл перебора фильтров по колонкам
-                {
-
-                    foreach (EFFilter fltr, _filters.values(cur_column)) //перебор всех условий по данной колонке
-                    {
-                        _match = matchFilters(cur_src_idx, fltr);
-                        if(!_match) break;
-                    }
-
-                    if(!_match) break;
-                }
-
-                if(!_match) continue;
-                ++cnt_added;
-
-                //-----------------------------
-                //тут добавление строки в indexes
+                addRow(i,parent);
+                if(!runFiltering(0,nparent) && !matchFilters(i,parent)) //если не прошли проверку подстроки и текущая строка
+                    deleteRow(i,parent);
+                else ++cnt;
+            }
+            else if(matchFilters(i,parent))
+            {
+                addRow(i,parent);
+                ++cnt;
             }
         }
-        if(cnt_added)
-            return true;
+    }
+    return cnt;
+}
+
+bool EFilterProxyModel::matchFilters(int row, const QModelIndex &parent) const
+{
+    if(sourceModel())
+    {
     }
     return false;
 }
 
-bool EFilterProxyModel::matchFilters(const QModelIndex &idx, const EFFilter &fltr) const
+void EFilterProxyModel::addRow(int row, const QModelIndex &parent)
 {
-    return false;
+    if(sourceModel())
+    {
+        QModelIndex iprnt = mapFromSource(parent);
+
+        if(iprnt == QModelIndex() && parent != QModelIndex())
+            return;
+
+        int col_cnt = sourceModel()->columnCount(parent);
+        for(int i = 0; i < col_cnt; ++i)
+        {
+            int irow_cnt = rowCount(iprnt);
+            QModelIndex ecur = sourceModel()->index(row,i,parent);
+            QModelIndex icur = createIndex(irow_cnt,columnCount(iprnt),(qint32)ecur.internalId());
+            indexes[iprnt][irow_cnt][i] = icur;
+        }
+    }
 }
 
-void EFilterProxyModel::addItem(int row, const QModelIndex &parent)
+void EFilterProxyModel::deleteRow(int row, const QModelIndex &parent)
 {
-    //добавление всех родителей итема до самого QModelIndex()
-    if(parent != QModelIndex() && mapFromSource(parent) == QModelIndex())
+    if(sourceModel())
     {
+        QModelIndex iprnt = mapFromSource(parent);
+        if(iprnt == QModelIndex() && parent != QModelIndex())
+            return;
 
-    }
-
-    //добавление строки к родителю
-    for(int i = 0; i < sourceModel()->columnCount(); ++i)
-    {
-        QModelIndex srcidx = sourceModel()->index(row,i,parent);
-        QModelIndex iparent = mapFromSource(srcidx.parent());
-        int rowcnt = columnCount(iparent);
-        QModelIndex newidx = createIndex(rowcnt,i,(qint32)srcidx.internalId());
-        if(newidx == QModelIndex())
-            continue;
-
-        indexes[iparent][rowcnt][i] = newidx;
+        if(row == sourceModel()->rowCount(parent) - 1)
+            indexes[iprnt].remove(row);
+        else if(row < sourceModel()->rowCount(parent))
+        {
+            int last_row = sourceModel()->rowCount(parent) - 1;
+            for(int i = row; i < last_row; ++i)
+                indexes[iprnt][i] = indexes[iprnt][i+1];
+            indexes[iprnt].remove(last_row);
+        }
     }
 }
