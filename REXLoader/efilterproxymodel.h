@@ -92,8 +92,9 @@ protected:
     virtual bool runFiltering(int row = 0, const QModelIndex &parent = QModelIndex());
 
 private:
-    bool matchFilters(const QModelIndex &idx, const EFFilter &fltr) const;
-    void addItem(int row, const QModelIndex &parent);
+    bool matchFilters(int row, const QModelIndex &parent) const;
+    void addRow(int row, const QModelIndex &parent);
+    void deleteRow(int row, const QModelIndex &parent);
 
 private:
     QAbstractItemModel *_src; //ссылка на модель-источник
