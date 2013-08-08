@@ -38,13 +38,13 @@ class EFilterProxyModel : public QAbstractProxyModel
     Q_OBJECT
 public:
     enum EFOperator{
-        Equal = 0x0, // ==
-        Not = 0x1, // !=
-        Like = 0x2, // содержит подстроку
-        Larger = 0x4, //больше
-        Lesser = 0x8, //меньше
-        In = 0x10, //в списке
-        Between = 0x20 //в промежутке
+        Equal = 0x1, // ==
+        Not = 0x2, // !=
+        Like = 0x4, // содержит подстроку
+        Larger = 0x8, //больше
+        Lesser = 0x10, //меньше
+        In = 0x20, //в списке
+        Between = 0x40 //в промежутке
     };
 
     explicit EFilterProxyModel(QObject *parent = 0);

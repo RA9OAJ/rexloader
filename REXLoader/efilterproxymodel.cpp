@@ -310,10 +310,44 @@ bool EFilterProxyModel::runFiltering(int row, const QModelIndex &parent)
 
 bool EFilterProxyModel::matchFilters(int row, const QModelIndex &parent) const
 {
+    bool res = false;
     if(sourceModel())
     {
+        bool cur_res = false;
+        foreach (int col, _filters.keys())
+        {
+            QList<EFFilter> fltrs = _filters.values(col);
+            foreach (EFFilter fltr, fltrs)
+            {
+                QVariant val = sourceModel()->index(row,col,parent).data(fltr.data_role);
+
+                int cur_oper = fltr.filter_operator & 0xfd;
+                bool not_flag = fltr.filter_operator & 0x2;
+                bool equal_flag = fltr.filter_operator & 0x1;
+
+                switch (cur_oper)
+                {
+                case Like:
+                    break;
+                case Larger:
+                    break;
+                case Lesser:
+                    break;
+                case In:
+                    break;
+                case Between:
+                    break;
+
+                default:
+                    break;
+                }
+            }
+            if(!cur_res)
+                break;
+            res = true;
+        }
     }
-    return false;
+    return res;
 }
 
 void EFilterProxyModel::addRow(int row, const QModelIndex &parent)
@@ -332,6 +366,9 @@ void EFilterProxyModel::addRow(int row, const QModelIndex &parent)
             QModelIndex ecur = sourceModel()->index(row,i,parent);
             QModelIndex icur = createIndex(irow_cnt,columnCount(iprnt),(qint32)ecur.internalId());
             indexes[iprnt][irow_cnt][i] = icur;
+
+            if(i == 0)
+                _srcmap.insert(ecur,icur);
         }
     }
 }
@@ -345,12 +382,28 @@ void EFilterProxyModel::deleteRow(int row, const QModelIndex &parent)
             return;
 
         if(row == sourceModel()->rowCount(parent) - 1)
+        {
+            if(_srcmap.values().contains(indexes[iprnt][row][0]))
+                _srcmap.remove(_srcmap.key(indexes[iprnt][row][0]));
+
             indexes[iprnt].remove(row);
+        }
         else if(row < sourceModel()->rowCount(parent))
         {
             int last_row = sourceModel()->rowCount(parent) - 1;
             for(int i = row; i < last_row; ++i)
-                indexes[iprnt][i] = indexes[iprnt][i+1];
+            {
+                int last_column = sourceModel()->columnCount(parent) - 1;
+                for(int y = 0; y < last_column; ++y)
+                {
+                    QModelIndex eidx = indexes[iprnt][i + 1][y];
+
+                    indexes[iprnt][i][y] = createIndex(i,y,(qint32)eidx.internalId());
+                    if(y == 0)
+                        _srcmap.insert(eidx,indexes[iprnt][i][y]);
+                }
+            }
+            _srcmap.remove(_srcmap.key(indexes[iprnt][last_row][0]));
             indexes[iprnt].remove(last_row);
         }
     }
