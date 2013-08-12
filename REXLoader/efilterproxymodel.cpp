@@ -19,7 +19,12 @@ QModelIndex EFilterProxyModel::buddy(const QModelIndex &index) const
 
 bool EFilterProxyModel::canFetchMore(const QModelIndex &parent) const
 {
-
+    if(sourceModel())
+    {
+        if(_filters.isEmpty())
+            return sourceModel()->canFetchMore(parent);
+    }
+    return false;
 }
 
 int EFilterProxyModel::columnCount(const QModelIndex &parent) const
@@ -44,6 +49,7 @@ QVariant EFilterProxyModel::data(const QModelIndex &index, int role) const
         if(_filters.isEmpty())
             return sourceModel()->data(index,role);
     }
+    return QVariant();
     //-----Доработать---------
 }
 
@@ -54,26 +60,56 @@ void EFilterProxyModel::fetchMore(const QModelIndex &parent)
 
 Qt::ItemFlags EFilterProxyModel::flags(const QModelIndex &index) const
 {
+    if(sourceModel())
+    {
+        if(_filters.isEmpty())
+            return sourceModel()->flags(index);
+    }
+
+    return Qt::NoItemFlags;
 }
 
 bool EFilterProxyModel::hasChildren(const QModelIndex &parent) const
 {
+    if(sourceModel())
+    {
+        if(_filters.isEmpty())
+            return sourceModel()->hasChildren(parent);
+    }
+    return false;
 }
 
 QVariant EFilterProxyModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
+    if(sourceModel())
+    {
+        if(_filters.isEmpty())
+            return sourceModel()->headerData(section,orientation,role);
+        //Доработать
+    }
+
+    return QVariant();
 }
 
 QModelIndex EFilterProxyModel::index(int row, int column, const QModelIndex &parent) const
 {
+    if(sourceModel())
+    {
+        if(_filters.isEmpty())
+            return sourceModel()->index(row,column,parent);
+        //Доработать
+    }
+    return QModelIndex();
 }
 
 bool EFilterProxyModel::insertColumns(int column, int count, const QModelIndex &parent)
 {
+    return false;
 }
 
 bool EFilterProxyModel::insertRows(int row, int count, const QModelIndex &parent)
 {
+    return false;
 }
 
 QModelIndex EFilterProxyModel::mapFromSource(const QModelIndex &sourceIndex) const
@@ -93,11 +129,23 @@ QModelIndex EFilterProxyModel::mapFromSource(const QModelIndex &sourceIndex) con
 
 QItemSelection EFilterProxyModel::mapSelectionFromSource(const QItemSelection &sourceSelection) const
 {
+    if(sourceModel())
+    {
+        if(_filters.isEmpty())
+            return sourceSelection;
+    }
+
     return QItemSelection();
 }
 
 QItemSelection EFilterProxyModel::mapSelectionToSource(const QItemSelection &proxySelection) const
 {
+    if(sourceModel())
+    {
+        if(_filters.isEmpty())
+            return proxySelection;
+    }
+
     return QItemSelection();
 }
 
@@ -117,11 +165,22 @@ QModelIndex EFilterProxyModel::mapToSource(const QModelIndex &proxyIndex) const
 
 QModelIndexList EFilterProxyModel::match(const QModelIndex &start, int role, const QVariant &value, int hits, Qt::MatchFlags flags) const
 {
+    if(sourceModel())
+    {
+        if(_filters.isEmpty())
+            return sourceModel()->match(start,role,value,hits,flags);
+    }
     return QModelIndexList();
 }
 
 QMimeData *EFilterProxyModel::mimeData(const QModelIndexList &indexes) const
 {
+    if(sourceModel())
+    {
+        if(_filters.isEmpty())
+            return sourceModel()->mimeData(indexes);
+    }
+
     return 0;
 }
 
@@ -206,6 +265,11 @@ bool EFilterProxyModel::setData(const QModelIndex &index, const QVariant &value,
 
 bool EFilterProxyModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role)
 {
+    if(sourceModel())
+    {
+        if(_filters.isEmpty())
+            return sourceModel()->setHeaderData(section,orientation,value,role);
+    }
     return false;
 }
 
@@ -263,19 +327,29 @@ void EFilterProxyModel::addFilter(int key_column, int filter_role, int _operator
         if (fltr == cur)
             return;
     }
+
+    beginResetModel();
     _filters.insertMulti(key_column,cur);
+    runFiltering();
+    endResetModel();
     //Доработать реакцию на смену фильтров + сортировка
 }
 
 void EFilterProxyModel::clearFilter(int key_column)
 {
+    beginResetModel();
     _filters.remove(key_column);
+    runFiltering();
+    endResetModel();
     //Доработать реакцию на смену фильтров + сортировка
 }
 
 void EFilterProxyModel::clearAllFilters()
 {
+    beginResetModel();
     _filters.clear();
+    _srcmap.clear();
+    endResetModel();
     //Доработать реакцию на смену фильтров + сортировка
 }
 
@@ -308,18 +382,26 @@ bool EFilterProxyModel::runFiltering(int row, const QModelIndex &parent)
     return cnt;
 }
 
+void EFilterProxyModel::reset()
+{
+    beginResetModel();
+    _filters.clear();
+    _srcmap.clear();
+    endResetModel();
+}
+
 bool EFilterProxyModel::matchFilters(int row, const QModelIndex &parent) const
 {
-    bool res = false;
+    bool result = false;
     if(sourceModel())
     {
-        bool cur_res = false;
         foreach (int col, _filters.keys())
         {
+            QModelIndex cur_idx = sourceModel()->index(row,col,parent);
             QList<EFFilter> fltrs = _filters.values(col);
             foreach (EFFilter fltr, fltrs)
             {
-                QVariant val = sourceModel()->index(row,col,parent).data(fltr.data_role);
+                QVariant val = cur_idx.data(fltr.data_role);
 
                 int cur_oper = fltr.filter_operator & 0xfd;
                 bool not_flag = fltr.filter_operator & 0x2;
@@ -330,24 +412,38 @@ bool EFilterProxyModel::matchFilters(int row, const QModelIndex &parent) const
                 case Like:
                     break;
                 case Larger:
+                    result = (equal_flag ? (cur_idx.data(fltr.data_role) >= fltr.filter_value)
+                                         : (cur_idx.data(fltr.data_role) > fltr.filter_value));
                     break;
                 case Lesser:
+                    result = (equal_flag ? (cur_idx.data(fltr.data_role) <= fltr.filter_value)
+                                         : (cur_idx.data(fltr.data_role) < fltr.filter_value));
                     break;
                 case In:
+                    result = false;
                     break;
                 case Between:
+                    result = false;
+                    break;
+                case Equal:
+                    result = (cur_idx.data(fltr.data_role) == fltr.filter_value);
                     break;
 
                 default:
+                    result = false;
                     break;
                 }
+                if(fltr.filter_operator & 0x65 && not_flag)
+                    result = !result;
+
+                if(!result)
+                    break;
             }
-            if(!cur_res)
+            if(!result)
                 break;
-            res = true;
         }
     }
-    return res;
+    return result;
 }
 
 void EFilterProxyModel::addRow(int row, const QModelIndex &parent)
@@ -407,4 +503,96 @@ void EFilterProxyModel::deleteRow(int row, const QModelIndex &parent)
             indexes[iprnt].remove(last_row);
         }
     }
+}
+
+
+bool operator >(const QVariant &val1, const QVariant &val2)
+{
+    int digits = QVariant::Int | QVariant::Bool | QVariant::LongLong | QVariant::Size;
+    int unsigned_digits =  QVariant::UInt | QVariant::ULongLong;
+    int float_digits = QVariant::Double | QVariant::SizeF;
+    int date = QVariant::Date | QVariant::DateTime;
+
+    if(val1.type() & digits)
+        return val1.toLongLong() > val2.toLongLong();
+
+    else if(val1.type() & unsigned_digits)
+        return val1.toULongLong() > val2.toULongLong();
+
+    else if(val1.type() & float_digits)
+        return val1.toDouble() > val2.toDouble();
+
+    else if(val1.type() & date)
+        return val1.toDateTime() > val2.toDateTime();
+
+    return false;
+}
+
+
+bool operator <(const QVariant &val1, const QVariant &val2)
+{
+    int digits = QVariant::Int | QVariant::Bool | QVariant::LongLong | QVariant::Size;
+    int unsigned_digits =  QVariant::UInt | QVariant::ULongLong;
+    int float_digits = QVariant::Double | QVariant::SizeF;
+    int date = QVariant::Date | QVariant::DateTime;
+
+    if(val1.type() & digits)
+        return val1.toLongLong() < val2.toLongLong();
+
+    else if(val1.type() & unsigned_digits)
+        return val1.toULongLong() < val2.toULongLong();
+
+    else if(val1.type() & float_digits)
+        return val1.toDouble() < val2.toDouble();
+
+    else if(val1.type() & date)
+        return val1.toDateTime() < val2.toDateTime();
+
+    return false;
+}
+
+
+bool operator <=(const QVariant &val1, const QVariant &val2)
+{
+    int digits = QVariant::Int | QVariant::Bool | QVariant::LongLong | QVariant::Size;
+    int unsigned_digits =  QVariant::UInt | QVariant::ULongLong;
+    int float_digits = QVariant::Double | QVariant::SizeF;
+    int date = QVariant::Date | QVariant::DateTime;
+
+    if(val1.type() & digits)
+        return val1.toLongLong() <= val2.toLongLong();
+
+    else if(val1.type() & unsigned_digits)
+        return val1.toULongLong() <= val2.toULongLong();
+
+    else if(val1.type() & float_digits)
+        return val1.toDouble() <= val2.toDouble();
+
+    else if(val1.type() & date)
+        return val1.toDateTime() <= val2.toDateTime();
+
+    return false;
+}
+
+
+bool operator >=(const QVariant &val1, const QVariant &val2)
+{
+    int digits = QVariant::Int | QVariant::Bool | QVariant::LongLong | QVariant::Size;
+    int unsigned_digits =  QVariant::UInt | QVariant::ULongLong;
+    int float_digits = QVariant::Double | QVariant::SizeF;
+    int date = QVariant::Date | QVariant::DateTime;
+
+    if(val1.type() & digits)
+        return val1.toLongLong() >= val2.toLongLong();
+
+    else if(val1.type() & unsigned_digits)
+        return val1.toULongLong() >= val2.toULongLong();
+
+    else if(val1.type() & float_digits)
+        return val1.toDouble() >= val2.toDouble();
+
+    else if(val1.type() & date)
+        return val1.toDateTime() >= val2.toDateTime();
+
+    return false;
 }
