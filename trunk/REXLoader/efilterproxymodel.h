@@ -4,11 +4,17 @@
 #include <QAbstractProxyModel>
 #include <QItemSelection>
 #include <QStringList>
+#include <QDateTime>
 #include <QSize>
 
 
 typedef QHash<int, QModelIndex> InternalIndex;
 typedef QHash<int, InternalIndex> InternalRow;
+
+bool operator >(const QVariant &val1, const QVariant &val2);
+bool operator <(const QVariant &val1, const QVariant &val2);
+bool operator <=(const QVariant &val1, const QVariant &val2);
+bool operator >=(const QVariant &val1, const QVariant &val2);
 
 struct EFFilter { //структура хранения данных фильтра
     int data_role;
@@ -90,6 +96,7 @@ public slots:
 protected:
     virtual void runSorting(int column, Qt::SortOrder order = Qt::AscendingOrder);
     virtual bool runFiltering(int row = 0, const QModelIndex &parent = QModelIndex());
+    void reset();
 
 private:
     bool matchFilters(int row, const QModelIndex &parent) const;
