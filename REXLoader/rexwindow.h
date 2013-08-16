@@ -48,6 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "shutdownmanager.h"
 #include "floating_window/floatingwindow.h"
 #include "searchline/searchline.h"
+#include "efilterproxymodel.h"
 
 #include "../plugins/LoaderInterface.h"
 
@@ -74,8 +75,6 @@ public:
 
     explicit REXWindow(QWidget *parent = 0);
     virtual ~REXWindow();
-
-    void showNotice(const QString &title, const QString &text, int type = 0);
 
 public slots:
     void updateTaskSheet(); //обновляет содержимое таблицы списка заданий
