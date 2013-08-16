@@ -6,6 +6,7 @@
 #include <QStringList>
 #include <QDateTime>
 #include <QSize>
+#include <QDebug>
 
 
 typedef QHash<int, QModelIndex> InternalIndex;
@@ -92,6 +93,13 @@ public slots:
     void addFilter(int key_column, int filter_role, int _operator_, const QVariant &filter_val);
     void clearFilter(int key_column);
     void clearAllFilters();
+
+    void proxyDataChanget(const QModelIndex & topLeft, const QModelIndex & bottomRight);
+    void proxyHeaderDataChanget(Qt::Orientation orientation, int first, int last);
+    void proxyModelReset();
+    void proxyRowsInsrted(const QModelIndex & parent, int start, int end);
+    void proxyRowsMoved(const QModelIndex & sourceParent, int sourceStart, int sourceEnd, const QModelIndex & destinationParent, int destinationRow);
+    void proxyRowsRemoved(const QModelIndex & parent, int start, int end);
 
 protected:
     virtual void runSorting(int column, Qt::SortOrder order = Qt::AscendingOrder);

@@ -123,6 +123,7 @@ void REXWindow::createInterface()
     ui->tableView->hideColumn(14);
     ui->tableView->hideColumn(15);
     ui->tableView->hideColumn(16);
+
     ui->tableView->horizontalHeader()->moveSection(2,3);
     ui->tableView->horizontalHeader()->moveSection(17,11);
     ui->tableView->horizontalHeader()->moveSection(18,12);
@@ -665,13 +666,6 @@ void REXWindow::setTaskPriority(int id, int prior)
     updateTaskSheet();
 }
 
-void REXWindow::showNotice(const QString &title, const QString &text, int type)
-{
-    Q_UNUSED(title)
-    Q_UNUSED(text)
-    Q_UNUSED(type)
-}
-
 void REXWindow::saveSettings()
 {
     QSettings settings(apphomedir+"/rexloader.ini", QSettings::IniFormat,this);
@@ -833,6 +827,8 @@ void REXWindow::loadSettings()
     ui->tableView->hideColumn(13);
     ui->tableView->hideColumn(14);
     ui->tableView->hideColumn(15);
+    ui->tableView->hideColumn(16);
+
 }
 
 void REXWindow::scanClipboard()

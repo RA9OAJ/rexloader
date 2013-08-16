@@ -84,15 +84,13 @@ bool TItemModel::silentUpdateModel(const QSqlDatabase &db)
 
 int TItemModel::rowCount(const QModelIndex &parent) const
 {
-    Q_UNUSED(parent)
-    if(!qr)return 0;
+    if(!qr || parent != QModelIndex())return 0;
     return grow;
 }
 
 int TItemModel::columnCount(const QModelIndex &parent) const
 {
-    Q_UNUSED(parent)
-    if(!qr)return 0;
+    if(!qr || parent != QModelIndex())return 0;
     return gcolumn+2;
 }
 
