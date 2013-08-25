@@ -9,8 +9,8 @@
 #include <QDebug>
 
 
-typedef QHash<int, QModelIndex> InternalIndex;
-typedef QHash<int, InternalIndex> InternalRow;
+//typedef QHash<int, QModelIndex> InternalIndex;
+typedef QList<int> InternalRow;
 
 bool operator >(const QVariant &val1, const QVariant &val2);
 bool operator <(const QVariant &val1, const QVariant &val2);
@@ -83,6 +83,7 @@ public:
     virtual bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role = Qt::EditRole);
     virtual void setSourceModel(QAbstractItemModel *sourceModel);
     virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
+    virtual bool hasIndex(int row, int column, const QModelIndex &parent) const;
     virtual QSize span(const QModelIndex &index) const;
     virtual Qt::DropActions supportedDropActions() const;
     QAbstractItemModel *sourceModel() const;
@@ -110,14 +111,18 @@ private:
     bool matchFilters(int row, const QModelIndex &parent) const;
     void addRow(int row, const QModelIndex &parent);
     void deleteRow(int row, const QModelIndex &parent);
+    void removeSrcMap(const QModelIndex &key);
+    void insertSrcMap(const QModelIndex &key, const QModelIndex &val);
+    void clearSrcMap();
 
 private:
     QAbstractItemModel *_src; //ссылка на модель-источник
     QMultiHash<int, EFFilter> _filters; //фильтры
-    QHash<QModelIndex,QModelIndex> _srcmap; //хэш соответствия строк из модели отфильтрованным строкам
+    QHash<QModelIndex,QModelIndex*> _srcmap; //хэш соответствия строк из модели отфильтрованным строкам
     QPair<int,int> _sort_param; //параметры сортировки
 
     QHash<QModelIndex, InternalRow> indexes; //хэш дерева индексов со связями
+    int row_diff;
 };
 
 #endif // EFILTERPROXYMODEL_H
