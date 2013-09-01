@@ -82,6 +82,7 @@ QModelIndex EFilterProxyModel::index(int row, int column, const QModelIndex &par
     {
         if(_filters.isEmpty())
         {
+            qDebug()<<"1";
             QModelIndex eidx = mapToSource(parent);
             const QModelIndex *iprnt = _srcmap.value(eidx,0);
             eidx = sourceModel()->index(row,column,eidx);
@@ -101,9 +102,11 @@ QModelIndex EFilterProxyModel::index(int row, int column, const QModelIndex &par
 
 bool EFilterProxyModel::insertColumns(int column, int count, const QModelIndex &parent)
 {
-    Q_UNUSED(column);
-    Q_UNUSED(count);
-    Q_UNUSED(parent);
+    if(sourceModel())
+    {
+        QModelIndex eprnt = mapToSource(parent);
+        return sourceModel()->insertColumns(column,count,eprnt);
+    }
 
     return false;
 }
@@ -160,15 +163,17 @@ QModelIndex EFilterProxyModel::mapFromSource(const QModelIndex &sourceIndex) con
         }
         else if(!indexes.isEmpty())
         {
-            QModelIndex iprnt = *(_srcmap.value(sourceIndex.parent()));
-            if(sourceIndex.parent() != QModelIndex() && iprnt == QModelIndex())
+            QModelIndex *iprnt = _srcmap.value(sourceIndex.parent(),0);
+            QModelIndex iparent = (iprnt == 0 ? QModelIndex() : *iprnt);
+
+            if(sourceIndex.parent() != QModelIndex() && iparent == QModelIndex())
                 return cindex;
 
-            int irow = indexes.value(iprnt).indexOf(sourceIndex.row());
+            int irow = indexes.value(iparent).indexOf(sourceIndex.row());
 
             if(irow != -1)
                 cindex = createIndex(irow,sourceIndex.column(),
-                                     (void*)_srcmap.value(sourceIndex.parent()));
+                                     (void*)_srcmap.value(sourceIndex.parent(),0));
         }
     }
     return cindex;
@@ -265,9 +270,9 @@ QModelIndex EFilterProxyModel::parent(const QModelIndex &child) const
     QModelIndex prnt;
     if(sourceModel())
     {
-        QModelIndex eidx = mapToSource(child);
-        prnt = sourceModel()->parent(eidx);
-        prnt = mapFromSource(prnt);
+        QModelIndex *iprnt = (QModelIndex*)child.internalPointer();
+        if(iprnt)
+            prnt = *iprnt;
     }
     return prnt;
 }
@@ -301,9 +306,57 @@ bool EFilterProxyModel::removeColumns(int column, int count, const QModelIndex &
 
 bool EFilterProxyModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-    Q_UNUSED(row);
-    Q_UNUSED(count);
-    Q_UNUSED(parent);
+    if(sourceModel())
+    {
+        QModelIndex eprnt = mapToSource(parent);
+
+        if(_filters.isEmpty())
+            return sourceModel()->removeRows(row,count,eprnt);
+
+        QList<int> erows;
+
+        for(int i = row; i < row + count; ++i)
+        {
+            int ercur = indexes.value(parent).value(i);
+
+            if(erows.isEmpty())
+            {
+                erows.append(ercur);
+                continue;
+            }
+
+            if(ercur < erows.first())
+                erows.insert(0,ercur);
+            else if(ercur > erows.last())
+                erows.append(ercur);
+            else
+            { //двоичный поиск места вставки
+                int first = 0;
+                int last = erows.size() - 1;
+
+                while(first < last - 1)
+                {
+                    int cntr = first + (last - first) / 2;
+
+                    if(ercur > erows.value(cntr))
+                        first = cntr;
+                    else last = cntr;
+                }
+                erows.insert(last,ercur);
+            }
+        }
+
+        int start;
+        QList<int>::iterator i;
+        for(i = erows.begin(), start = *i; i != erows.end(); ++i)
+        {
+            if(*i != *(i + 1) - 1)
+            {
+                sourceModel()->removeRows(start, *i - start, eprnt);
+                start = *(i + 1);
+            }
+        }
+    }
 
     return false;
 }
@@ -315,6 +368,7 @@ int EFilterProxyModel::rowCount(const QModelIndex &parent) const
         if(_filters.isEmpty())
             return sourceModel()->rowCount(mapToSource(parent)) - row_diff;
     }
+
     int cnt = 0;
     if(indexes.contains(parent))
         cnt = indexes.value(parent).size();
@@ -426,8 +480,8 @@ void EFilterProxyModel::addFilter(int key_column, int filter_role, int _operator
     cur.filter_value = filter_val;
 
     QList<EFFilter> list = _filters.values(filter_role);
-    if(list.isEmpty())
-        return;
+    /*if(list.isEmpty())
+        return;*/
 
     foreach (EFFilter fltr, list) {
         if (fltr == cur)
@@ -461,8 +515,68 @@ void EFilterProxyModel::clearAllFilters()
 
 void EFilterProxyModel::proxyDataChanget(const QModelIndex &topLeft, const QModelIndex &bottomRight)
 {
-    emit dataChanged(mapFromSource(topLeft),
-                     mapFromSource(bottomRight));
+    if(_filters.isEmpty())
+    {
+        emit dataChanged(mapFromSource(topLeft),
+                         mapFromSource(bottomRight));
+        return;
+    }
+
+    int tLeft = -1, bRight = -1;
+    QList<int> fltr_columns = _filters.keys();
+    bool filter_col = false;
+
+    for(int i = topLeft.column(); i <= bottomRight.column(); ++i)
+        if(fltr_columns.indexOf(i) != -1)
+        {
+            filter_col = true;
+            break;
+        }
+
+    for(int i = topLeft.row(); i <= bottomRight.row(); ++i) //проходим каждую строку
+    {
+        QModelIndex eidx = sourceModel()->index(i,0,topLeft.parent());
+        bool internal = false;
+        if(eidx != QModelIndex() && mapFromSource(eidx) != QModelIndex()) //присутствие во внутренней модели
+            internal = true;
+
+        if(filter_col) //если нужно проверить фильтры после изменения
+        {
+            if(matchFilters(i,topLeft.parent()))
+            {
+                if(!internal)
+                    addRow(i,eidx.parent()); //добавляем из внешней во внутреннюю модель строку
+                else
+                {
+                    if(tLeft == -1)
+                        tLeft = eidx.row();
+                    bRight = eidx.row();
+                }
+            }
+            else if(internal)
+            {
+                deleteRow(i,eidx.parent()); //удаляем строку, пересавшую удовлетворять фильтрам
+            }
+        }
+        else if(internal) //если строка есть во внутренней модели
+        {
+            if(tLeft == -1)
+                tLeft = eidx.row();
+            bRight = eidx.row();
+        }
+    }
+
+    if(tLeft != -1 && bRight != -1)
+    {
+        QModelIndex itopLeft = mapFromSource(sourceModel()->index(tLeft,
+                                                                  topLeft.column(),
+                                                                  topLeft.parent()));
+        QModelIndex ibottomRight = mapFromSource(sourceModel()->index(bRight,
+                                                                      bottomRight.column(),
+                                                                      bottomRight.parent()));
+
+        emit dataChanged(itopLeft,ibottomRight);
+    }
 }
 
 void EFilterProxyModel::proxyHeaderDataChanget(Qt::Orientation orientation, int first, int last)
@@ -477,12 +591,36 @@ void EFilterProxyModel::proxyModelReset()
 
 void EFilterProxyModel::proxyRowsInsrted(const QModelIndex &parent, int start, int end)
 {
-    row_diff = end - start + 1;
-    beginInsertRows(mapFromSource(parent),start,end);
-    removeSrcMap(parent);
-    runFiltering(0,parent);
-    row_diff = 0;
-    endInsertRows();
+    QModelIndex iparent = mapFromSource(parent);
+    if(parent != QModelIndex() && iparent == QModelIndex())
+        return;
+
+    if(_filters.isEmpty())
+    {
+        /*row_diff = end - start + 1;
+
+        beginInsertRows(iparent,start,end);*/
+        removeSrcMap(parent);
+        runFiltering(0,parent);
+        /*row_diff = 0;
+        endInsertRows();*/
+    }
+    else
+    {
+        //Реакция на смену номеров строк во внешней модели
+        int first = 0;
+        int last = indexes.value(iparent).size() - 1;
+        while(first < last - 1)
+        {
+            int cntr = first + (last - first) / 2;
+
+            if(start <= indexes.value(iparent).value(cntr))
+                first = cntr;
+            else last = cntr;
+        }
+        for(int i = first; i < indexes.value(iparent).size(); ++i)
+            indexes[iparent][i] = indexes.value(iparent).value(i) + end - start;
+    }
 }
 
 void EFilterProxyModel::proxyRowsMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destinationParent, int destinationRow)
@@ -496,9 +634,12 @@ void EFilterProxyModel::proxyRowsMoved(const QModelIndex &sourceParent, int sour
 
 void EFilterProxyModel::proxyRowsRemoved(const QModelIndex &parent, int start, int end)
 {
-    Q_UNUSED(parent);
-    Q_UNUSED(start);
-    Q_UNUSED(end);
+    for(int i = start; i <= end; ++i)
+    {
+        QModelIndex eidx = sourceModel()->index(start,0,parent);
+        if(eidx != QModelIndex())
+            deleteRow(i,parent);
+    }
 }
 
 void EFilterProxyModel::runSorting(int column, Qt::SortOrder order)
@@ -514,7 +655,7 @@ bool EFilterProxyModel::runFiltering(int row, const QModelIndex &parent)
     {
         if(!_filters.isEmpty())
         {
-            for(int i = row; row < sourceModel()->rowCount(parent); ++i)
+            for(int i = row; i < sourceModel()->rowCount(parent); ++i)
             {
                 QModelIndex nparent = sourceModel()->index(i,0,parent);
                 if(sourceModel()->rowCount(nparent) && nparent != QModelIndex())
@@ -556,7 +697,7 @@ bool EFilterProxyModel::runFiltering(int row, const QModelIndex &parent)
 void EFilterProxyModel::reset()
 {
     beginResetModel();
-    _filters.clear();
+    indexes.clear();
     clearSrcMap();
     runFiltering();
     endResetModel();
@@ -582,7 +723,14 @@ bool EFilterProxyModel::matchFilters(int row, const QModelIndex &parent) const
                 switch (cur_oper)
                 {
                 case Like:
+                {
+                    QString cdata = cur_idx.data(fltr.data_role).toString();
+                    QString pattern = QRegExp::escape(fltr.filter_value.toString());
+                    pattern = QString("^%1$").arg(pattern.replace("%",".*"));
+                    QRegExp regexp(pattern,Qt::CaseInsensitive);
+                    result = (cdata.indexOf(regexp) == -1 ? false : true);
                     break;
+                }
                 case Larger:
                     result = (equal_flag ? (cur_idx.data(fltr.data_role) >= fltr.filter_value)
                                          : (cur_idx.data(fltr.data_role) > fltr.filter_value));
@@ -598,7 +746,7 @@ bool EFilterProxyModel::matchFilters(int row, const QModelIndex &parent) const
                     result = false;
                     break;
                 case Equal:
-                    result = (cur_idx.data(fltr.data_role) == fltr.filter_value);
+                    result = equal(cur_idx.data(fltr.data_role), fltr.filter_value);
                     break;
 
                 default:
@@ -623,15 +771,48 @@ void EFilterProxyModel::addRow(int row, const QModelIndex &parent)
     if(sourceModel())
     {
         QModelIndex iprnt = mapFromSource(parent);
+        QModelIndex eidx = sourceModel()->index(row,0,parent);
 
-        if(iprnt == QModelIndex() && parent != QModelIndex())
+        if(parent == QModelIndex())
+        {
+            beginInsertRows(iprnt,rowCount(iprnt),rowCount(iprnt));
+            indexes[iprnt].append(row);
+            endInsertRows();
             return;
+        }
 
-        indexes[iprnt].append(row);
+        QList<QPair<QModelIndex,int> > row_list;
+
+        while(eidx.parent() != QModelIndex() && iprnt == QModelIndex())
+        {
+            QPair<QModelIndex, int> cur_lvl;
+            cur_lvl.first = eidx.parent();
+            cur_lvl.second = eidx.row();
+            row_list.prepend(cur_lvl);
+
+            eidx = eidx.parent();
+            iprnt = mapFromSource(eidx.parent());
+        }
+
+        QList<QPair<QModelIndex,int> >::iterator i = row_list.begin();
+        while(i != row_list.end())
+        {
+            QModelIndex eprnt = (*i).first.parent();
+            iprnt = mapFromSource(eprnt);
+
+            beginInsertRows(iprnt,rowCount(iprnt),rowCount(iprnt));
+            if(eprnt != QModelIndex() && !_srcmap.contains(eprnt))
+                _srcmap.insert(parent,new QModelIndex(iprnt));
+
+            indexes[iprnt].append(row);
+            endInsertRows();
+
+            ++i;
+        }
     }
 }
 
-void EFilterProxyModel::deleteRow(int row, const QModelIndex &parent)
+void EFilterProxyModel::deleteRow(int row, const QModelIndex &parent, bool deep)
 {
     if(sourceModel())
     {
@@ -639,9 +820,49 @@ void EFilterProxyModel::deleteRow(int row, const QModelIndex &parent)
         if(iprnt == QModelIndex() && parent != QModelIndex())
             return;
 
-        int irkey = indexes.value(iprnt).indexOf(row);
-        if(irkey != -1)
-            indexes[iprnt].removeAt(irkey);
+        if(deep) //удалять по восходящей всех родителей, не удовлетворяющих фильтрам
+        {
+            deleteRow(row,parent);
+
+            QModelIndex newparent = parent;
+            int newrow = row;
+
+            do
+            {
+                newrow = newparent.row();
+                newparent = newparent.parent();
+
+                if(matchFilters(newrow,newparent)) //если это строка удовлетворяет фильтрам, то выходим
+                   break;
+
+                deleteRow(newrow,newparent); //иначе удаляем строку
+            }while(newparent != QModelIndex());
+        }
+        else //удалить только потомков и саму строку
+        {
+            int irkey = indexes.value(iprnt).indexOf(row);
+            if(irkey != -1)
+            {
+                QModelIndex neweprnt = sourceModel()->index(row,0,parent); //определяем нового внешнего родителя
+                QModelIndex newiprnt = mapFromSource(neweprnt); //определяем нового внутреннего родителя
+                if(newiprnt != QModelIndex()) //если все корректно преобразовалось
+                    for(int i = rowCount(newiprnt) - 1; i >= 0; --i) //в цикле перебираем все строки
+                        if(hasChildren(index(i,0,newiprnt))) //проверяем, имеет ли строка потомков
+                        {   //если есть потомки
+                            QModelIndex eidx = sourceModel()->index(i,0,neweprnt);
+                            deleteRow(eidx.row(),eidx.parent()); //вызываем удаление для потомков
+                        }
+
+                indexes[iprnt].removeAt(irkey); //удаляем строку
+            }
+
+            if(!rowCount(iprnt))
+            {
+                //если у внутреннего родителя нет потомков, то удаляем его из списка родителей
+                indexes.remove(iprnt);
+                removeSrcMap(parent);
+            }
+        }
     }
 }
 
@@ -673,91 +894,130 @@ void EFilterProxyModel::clearSrcMap()
 
 bool operator >(const QVariant &val1, const QVariant &val2)
 {
-    int digits = QVariant::Int | QVariant::Bool | QVariant::LongLong | QVariant::Size;
-    int unsigned_digits =  QVariant::UInt | QVariant::ULongLong;
-    int float_digits = QVariant::Double | QVariant::SizeF;
-    int date = QVariant::Date | QVariant::DateTime;
-
-    if(val1.type() & digits)
-        return val1.toLongLong() > val2.toLongLong();
-
-    else if(val1.type() & unsigned_digits)
+    switch (val1.type()) {
+    case QVariant::UInt:
+    case QVariant::ULongLong:
         return val1.toULongLong() > val2.toULongLong();
 
-    else if(val1.type() & float_digits)
+    case QVariant::Double:
+    case QVariant::SizeF:
         return val1.toDouble() > val2.toDouble();
 
-    else if(val1.type() & date)
-        return val1.toDateTime() > val2.toDateTime();
+    case QVariant::DateTime:
+        if(val2.type() == QVariant::DateTime)
+            return val1.toDateTime() > val2.toDateTime();
+    case QVariant::Date:
+        return val1.toDate() > val2.toDate();
 
-    return false;
+    case QVariant::Int:
+    case QVariant::Bool:
+    case QVariant::LongLong:
+    case QVariant::Size:
+        return val1.toLongLong() > val2.toLongLong();
+
+    default:
+        return false;
+    }
 }
 
 
 bool operator <(const QVariant &val1, const QVariant &val2)
 {
-    int digits = QVariant::Int | QVariant::Bool | QVariant::LongLong | QVariant::Size;
-    int unsigned_digits =  QVariant::UInt | QVariant::ULongLong;
-    int float_digits = QVariant::Double | QVariant::SizeF;
-    int date = QVariant::Date | QVariant::DateTime;
-
-    if(val1.type() & digits)
-        return val1.toLongLong() < val2.toLongLong();
-
-    else if(val1.type() & unsigned_digits)
+    switch (val1.type()) {
+    case QVariant::UInt:
+    case QVariant::ULongLong:
         return val1.toULongLong() < val2.toULongLong();
 
-    else if(val1.type() & float_digits)
+    case QVariant::Double:
+    case QVariant::SizeF:
         return val1.toDouble() < val2.toDouble();
 
-    else if(val1.type() & date)
-        return val1.toDateTime() < val2.toDateTime();
+    case QVariant::DateTime:
+        if(val2.type() == QVariant::DateTime)
+            return val1.toDateTime() < val2.toDateTime();
+    case QVariant::Date:
+        return val1.toDate() < val2.toDate();
 
-    return false;
+    case QVariant::Int:
+    case QVariant::Bool:
+    case QVariant::LongLong:
+    case QVariant::Size:
+        return val1.toLongLong() < val2.toLongLong();
+
+    default:
+        return false;
+    }
 }
 
 
 bool operator <=(const QVariant &val1, const QVariant &val2)
 {
-    int digits = QVariant::Int | QVariant::Bool | QVariant::LongLong | QVariant::Size;
-    int unsigned_digits =  QVariant::UInt | QVariant::ULongLong;
-    int float_digits = QVariant::Double | QVariant::SizeF;
-    int date = QVariant::Date | QVariant::DateTime;
-
-    if(val1.type() & digits)
-        return val1.toLongLong() <= val2.toLongLong();
-
-    else if(val1.type() & unsigned_digits)
+    switch (val1.type()) {
+    case QVariant::UInt:
+    case QVariant::ULongLong:
         return val1.toULongLong() <= val2.toULongLong();
 
-    else if(val1.type() & float_digits)
+    case QVariant::Double:
+    case QVariant::SizeF:
         return val1.toDouble() <= val2.toDouble();
 
-    else if(val1.type() & date)
-        return val1.toDateTime() <= val2.toDateTime();
+    case QVariant::DateTime:
+        if(val2.type() == QVariant::DateTime)
+            return val1.toDateTime() <= val2.toDateTime();
+    case QVariant::Date:
+        return val1.toDate() <= val2.toDate();
 
-    return false;
+    case QVariant::Int:
+    case QVariant::Bool:
+    case QVariant::LongLong:
+    case QVariant::Size:
+        return val1.toLongLong() <= val2.toLongLong();
+
+    default:
+        return false;
+    }
 }
 
 
 bool operator >=(const QVariant &val1, const QVariant &val2)
 {
-    int digits = QVariant::Int | QVariant::Bool | QVariant::LongLong | QVariant::Size;
-    int unsigned_digits =  QVariant::UInt | QVariant::ULongLong;
-    int float_digits = QVariant::Double | QVariant::SizeF;
-    int date = QVariant::Date | QVariant::DateTime;
-
-    if(val1.type() & digits)
-        return val1.toLongLong() >= val2.toLongLong();
-
-    else if(val1.type() & unsigned_digits)
+    switch (val1.type()) {
+    case QVariant::UInt:
+    case QVariant::ULongLong:
         return val1.toULongLong() >= val2.toULongLong();
 
-    else if(val1.type() & float_digits)
+    case QVariant::Double:
+    case QVariant::SizeF:
         return val1.toDouble() >= val2.toDouble();
 
-    else if(val1.type() & date)
-        return val1.toDateTime() >= val2.toDateTime();
+    case QVariant::DateTime:
+        if(val2.type() == QVariant::DateTime)
+            return val1.toDateTime() >= val2.toDateTime();
+    case QVariant::Date:
+        return val1.toDate() >= val2.toDate();
 
-    return false;
+    case QVariant::Int:
+    case QVariant::Bool:
+    case QVariant::LongLong:
+    case QVariant::Size:
+        return val1.toLongLong() >= val2.toLongLong();
+
+    default:
+        return false;
+    }
+}
+
+
+bool equal(const QVariant &val1, const QVariant &val2)
+{
+    switch (val1.type()) {
+    case QVariant::DateTime:
+        if(val2.type() == QVariant::DateTime)
+            return val1.toDateTime() == val2.toDateTime();
+    case QVariant::Date:
+        return val1.toDate() == val2.toDate();
+
+    default:
+        return val1 == val2;
+    }
 }

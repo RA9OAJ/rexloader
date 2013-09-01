@@ -16,6 +16,7 @@ bool operator >(const QVariant &val1, const QVariant &val2);
 bool operator <(const QVariant &val1, const QVariant &val2);
 bool operator <=(const QVariant &val1, const QVariant &val2);
 bool operator >=(const QVariant &val1, const QVariant &val2);
+bool equal(const QVariant &val1, const QVariant &val2);
 
 struct EFFilter { //структура хранения данных фильтра
     int data_role;
@@ -110,7 +111,7 @@ protected:
 private:
     bool matchFilters(int row, const QModelIndex &parent) const;
     void addRow(int row, const QModelIndex &parent);
-    void deleteRow(int row, const QModelIndex &parent);
+    void deleteRow(int row, const QModelIndex &parent, bool deep = false);
     void removeSrcMap(const QModelIndex &key);
     void insertSrcMap(const QModelIndex &key, const QModelIndex &val);
     void clearSrcMap();
