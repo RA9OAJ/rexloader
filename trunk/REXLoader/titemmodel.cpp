@@ -96,7 +96,7 @@ int TItemModel::columnCount(const QModelIndex &parent) const
 
 void TItemModel::updateRow(int row)
 {
-    for(int i=0; i <= columnCount(QModelIndex())+1; i++)
+    for(int i=0; i < columnCount(QModelIndex()); i++)
     {
         QModelIndex ModelIndex = index(row, i, QModelIndex());
         emit dataChanged(ModelIndex, ModelIndex);
@@ -143,6 +143,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
 
     if(index.row() > grow || index.column() > gcolumn+1)return QVariant();
     qr->seek(index.row());
+
     int row = index.row();
     int col = index.column();
 
@@ -408,7 +409,9 @@ QModelIndex TItemModel::parent(const QModelIndex &child) const
 
 QModelIndex TItemModel::index(int row, int column, const QModelIndex &parent) const
 {
-    Q_UNUSED(parent)
+    if(parent != QModelIndex())
+        return QModelIndex();
+
     if(row > grow || column > gcolumn+1 || !qr) return QModelIndex();
     qr->seek(row);
 

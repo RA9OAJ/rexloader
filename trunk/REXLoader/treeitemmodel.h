@@ -31,6 +31,7 @@ public:
     explicit TreeItemModel(QObject *parent = 0);
     virtual ~TreeItemModel();
 
+    virtual QModelIndex buddy(const QModelIndex &index) const;
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     virtual int rowCount(const QModelIndex &parent) const;
     virtual int columnCount(const QModelIndex &parent) const;

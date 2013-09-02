@@ -187,6 +187,7 @@ private:
     QHash<QString,int> plugproto; //хэш дескрипторов плагинов с соответствующими протоколами
     TItemModel *model; //модель для работы с данными БД задач
     TreeItemModel *treemodel; //модель информационного дерева
+    EFilterProxyModel *efmodel; //прокси модель расширенного фильтра
     QSortFilterProxyModel *sfmodel; //прокси-модель для сортировки
     PluginListModel *plugmodel; //модель отображения списка плагинов
 

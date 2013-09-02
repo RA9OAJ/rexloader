@@ -34,6 +34,11 @@ TreeItemModel::~TreeItemModel()
     if(qr)delete(qr);
 }
 
+QModelIndex TreeItemModel::buddy(const QModelIndex &index) const
+{
+    return index;
+}
+
 QVariant TreeItemModel::data(const QModelIndex &index, int role) const
 {
     switch(role)
@@ -548,7 +553,7 @@ int TreeItemModel::taskCount(const QModelIndex &index,  bool incomplete) const
     }
 
     query.clear();
-    query.prepare("SELECT COUNT(*) FROM tasks WHERE categoryid=:id" + filter);
+    query.prepare("SELECT COUNT(*) FROM tasks WHERE categoryid=:id AND (arch IS NULL OR arch<>'1')" + filter);
     query.bindValue("id",id);
 
     if(!query.exec())

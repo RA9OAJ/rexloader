@@ -522,6 +522,9 @@ void EFilterProxyModel::proxyDataChanget(const QModelIndex &topLeft, const QMode
         return;
     }
 
+    if(topLeft == QModelIndex() || bottomRight == QModelIndex())
+        return;
+
     int tLeft = -1, bRight = -1;
     QList<int> fltr_columns = _filters.keys();
     bool filter_col = false;
