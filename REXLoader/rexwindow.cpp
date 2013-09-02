@@ -89,7 +89,7 @@ void REXWindow::pluginStatus(bool stat)
 
     readSettings();
 
-    plugmgr->notify(tr("REXLoader"),tr("Приложение успешно запущено"),5);
+    plugmgr->notify("REXLoader",tr("Приложение успешно запущено"),5);
     if(ui->actionPoweroff->isChecked() || ui->actionHibernate->isChecked() || ui->actionSuspend->isChecked())
         plugmgr->notify(tr("Внимание!"),tr("Активирован режим <b>автоматического выключения ПК</b> по завершении всех заданий"),13);
 
@@ -103,8 +103,11 @@ void REXWindow::createInterface()
     //model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     model->updateModel();
     sfmodel = new QSortFilterProxyModel(this);
+    efmodel = new EFilterProxyModel(this);
+    efmodel->setSourceModel(model);
+    efmodel->addFilter(16,100, EFilterProxyModel::Not | EFilterProxyModel::Equal,1);
     sfmodel->setSortRole(100);
-    sfmodel->setSourceModel(model);
+    sfmodel->setSourceModel(efmodel);
     ui->tableView->setModel(sfmodel);
     ui->tableView->setSortingEnabled(true);
     ui->tableView->sortByColumn(0,Qt::AscendingOrder);
@@ -538,7 +541,7 @@ void REXWindow::setEnabledTaskMenu(bool stat)
     }
 
     QModelIndex curIdx = sfmodel->index(ui->tableView->currentIndex().row(),9);
-    curIdx = sfmodel->mapToSource(curIdx);
+    curIdx = efmodel->mapToSource(sfmodel->mapToSource(curIdx));
     if(ui->tableView->selectionModel()->selectedRows().size() < 2 && model->data(curIdx,100).toInt() == LInterface::FINISHED)
         ui->menu_7->setEnabled(false);
     else
@@ -1275,7 +1278,7 @@ void REXWindow::deleteTask()
         tasklist.remove(row_id);
     }
 
-    qr.prepare("DELETE FROM tasks WHERE"+where);
+    qr.prepare("UPDATE tasks SET arch='1' WHERE"+where);
 
     if(!qr.exec())
     {
@@ -1317,6 +1320,7 @@ void REXWindow::startTask()
         else where += QString(" OR id=%1").arg(QString::number(id_row));
 
         QModelIndex index = sfmodel->mapToSource(select->selectedRows(9).value(i));
+        index = efmodel->mapToSource(index);
         model->addToCache(index.row(),9,-100);
     }
     if(where.isEmpty())return;
@@ -1326,6 +1330,7 @@ void REXWindow::startTask()
     for(int i=0; i < select->selectedRows().length(); i++)
     {
         QModelIndex index = sfmodel->mapToSource(select->selectedRows(9).value(i));
+        index = efmodel->mapToSource(index);
         model->updateRow(index.row());
     }
     manageTaskQueue();
@@ -1395,6 +1400,7 @@ void REXWindow::redownloadTask()
         else where += QString(" OR id=%1").arg(QString::number(select->selectedRows(0).value(i).data(100).toInt()));
 
         QModelIndex index = sfmodel->mapToSource(select->selectedRows(9).value(i));
+        index = efmodel->mapToSource(index);
         model->addToCache(index.row(),9,-100);
         model->updateRow(index.row());
     }
@@ -1455,6 +1461,7 @@ void REXWindow::stopTask()
     for(int i=0; i < select->selectedRows().length(); i++)
     {
         QModelIndex index = sfmodel->mapToSource(select->selectedRows(9).value(i));
+        index = efmodel->mapToSource(index);
         model->updateRow(index.row());
     }
     manageTaskQueue();
@@ -1553,7 +1560,7 @@ void REXWindow::stopAllTasks()
 }
 
 void REXWindow::syncTaskData()
-{    
+{
     if(tasklist.isEmpty())return;
 
     QList<int> keys = tasklist.keys();
@@ -2002,7 +2009,7 @@ void REXWindow::updateStatusBar()
         setEnabledTaskMenu(true);
 
         QModelIndex curIndex = selection->currentIndex();
-        int row_id = sfmodel->mapToSource(curIndex).row();
+        int row_id = efmodel->mapToSource(sfmodel->mapToSource(curIndex)).row();
 
         switch(model->index(row_id,9).data(100).toInt())
         {
@@ -2679,6 +2686,7 @@ void REXWindow::showTaskDialog()
 
         TaskDialog *dlg = new TaskDialog(downDir,this);
         QModelIndex index = sfmodel->mapToSource(select->selectedRows(0).value(i));
+        index = efmodel->mapToSource(index);
         dlg->setSourceData(model, index, pluglist, tasklist);
         connect(dlg,SIGNAL(rejected()),this,SLOT(closeTaskDialog()));
         connect(dlg,SIGNAL(startTask(int)),this,SLOT(startTask(int)));

@@ -221,7 +221,7 @@ void AddTaskDialog::addTask()
 {
     QSqlQuery qr(mydb);
 
-    qr.prepare("SELECT count(*) FROM tasks WHERE url=:url;");
+    qr.prepare("SELECT count(*) FROM tasks WHERE url=:url AND (arch IS NULL OR arch<>'1');");
     qr.bindValue("url", gui->urlBox->currentText());
     if(!qr.exec())
     {
