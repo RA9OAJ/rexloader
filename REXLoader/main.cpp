@@ -331,7 +331,7 @@ void addURL(const QStringList &_argv)
 bool firstProcess()
 {
     QSharedMemory lock_mem("rexloader");
-    if(!lock_mem.create(32))
+    if(!lock_mem.create(64))
         lock_mem.attach();
 
     if(lock_mem.isAttached())
@@ -340,6 +340,7 @@ bool firstProcess()
         QString dtime;
         //data.setRawData((char*)lock_mem.data(),lock_mem.size());
         dtime = data;
+        dtime = dtime.split("\r\n").value(0);
 
         QDateTime proc_time;
         QDateTime cur_time = QDateTime::currentDateTime();
@@ -347,6 +348,12 @@ bool firstProcess()
 
         if(proc_time.secsTo(cur_time) > 5)
             return true;
+
+        lock_mem.lock();
+        int pos = dtime.toAscii().size();
+        QString need_show = "\r\n1";
+        memcpy(lock_mem.data() + pos,need_show.toAscii().data(),need_show.toAscii().size());
+        lock_mem.unlock();
     }
     return false;
 }

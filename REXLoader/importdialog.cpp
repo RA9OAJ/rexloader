@@ -431,11 +431,6 @@ void ImportDialog::addUrl(const QString &url)
     ui->foundURLs->setText(QString::number(++fndurl));
 }
 
-void ImportDialog::readNewLine(qint64 cnt)
-{
-    ui->totalStrings->setText(QString::number(cnt));
-}
-
 void ImportDialog::initialize()
 {
     if(!parent())setWindowIcon(QIcon(":/appimages/trayicon.png"));

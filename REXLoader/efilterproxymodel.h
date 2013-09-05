@@ -23,6 +23,12 @@ struct EFFilter { //структура хранения данных фильт�
     int filter_operator;
     QVariant filter_value;
 
+    EFFilter(int drole = -1, int foper = -1)
+    {
+        data_role = drole;
+        filter_operator = foper;
+    }
+
     EFFilter& operator=(EFFilter eff)
     {
         data_role = eff.data_role;
@@ -88,13 +94,20 @@ public:
     virtual QSize span(const QModelIndex &index) const;
     virtual Qt::DropActions supportedDropActions() const;
     QAbstractItemModel *sourceModel() const;
+
+    QList<EFFilter> filters(int key_column) const;
+    QList<EFFilter> getAllFilters() const;
+    bool containsFilter(int key_column, int filter_role, int _operator_, const QVariant &filter_val) const;
     
 signals:
     
 public slots:
     void addFilter(int key_column, int filter_role, int _operator_, const QVariant &filter_val);
-    void clearFilter(int key_column);
+    void deleteFilter(int key_column);
     void clearAllFilters();
+    void prepareFilter(int key_column, int filter_role, int _operator_, const QVariant &filter_val);
+    void prepareToRemoveFilter(int key_column);
+    void execPrepared();
 
     void proxyDataChanget(const QModelIndex & topLeft, const QModelIndex & bottomRight);
     void proxyHeaderDataChanget(Qt::Orientation orientation, int first, int last);
@@ -118,6 +131,9 @@ private:
 
 private:
     QAbstractItemModel *_src; //ссылка на модель-источник
+    QMultiHash<int, EFFilter> _prepared; //подготовленные фильтры
+    QList<int> _for_remove; //список фильтров для удалениея
+
     QMultiHash<int, EFFilter> _filters; //фильтры
     QHash<QModelIndex,QModelIndex*> _srcmap; //хэш соответствия строк из модели отфильтрованным строкам
     QPair<int,int> _sort_param; //параметры сортировки

@@ -105,7 +105,7 @@ void REXWindow::createInterface()
     sfmodel = new QSortFilterProxyModel(this);
     efmodel = new EFilterProxyModel(this);
     efmodel->setSourceModel(model);
-    efmodel->addFilter(16,100, EFilterProxyModel::Not | EFilterProxyModel::Equal,1);
+    efmodel->addFilter(16,100, EFilterProxyModel::Equal,"");
     sfmodel->setSortRole(100);
     sfmodel->setSourceModel(efmodel);
     ui->tableView->setModel(sfmodel);
@@ -453,6 +453,14 @@ void REXWindow::setTaskFilter(const QModelIndex &index)
     if(id_cat == 1 || id_cat == -1)
     {
         sfmodel->setFilterRegExp("");
+
+        if(!efmodel->containsFilter(16,100,EFilterProxyModel::Equal,""))
+        {
+            efmodel->prepareToRemoveFilter(16);
+            efmodel->prepareFilter(16,100,EFilterProxyModel::Equal,"");
+            efmodel->execPrepared();
+            ui->tableView->hideColumn(16);
+        }
         return;
     }
 
@@ -461,14 +469,42 @@ void REXWindow::setTaskFilter(const QModelIndex &index)
     int subcat_cnt = treemodel->rowCount(index);
     QString filter = "";
 
-    if(id_cat < 0)
+    if(id_cat < 0 && id_cat > -8) //если выделен элемент фильра статусов
     {
         key_column = 9;
         model_column = 3;
         mindex = treemodel->index(index.row(),3,index.parent());
         filter = QString("(^%1$)").arg(QString::number(treemodel->data(mindex,100).toInt()));
+
+        if(!efmodel->containsFilter(16,100,EFilterProxyModel::Equal,""))
+        {
+            efmodel->prepareToRemoveFilter(16);
+            efmodel->prepareFilter(16,100,EFilterProxyModel::Equal,"");
+            efmodel->execPrepared();
+            ui->tableView->hideColumn(16);
+        }
     }
-    else filter = QString("(^%1$)").arg(QString::number(id_cat));
+    else if(id_cat <= -8 && id_cat >= -12) //если выделен элемент фильтра удалённых заданий
+    {
+        sfmodel->setFilterRegExp(""); //сбрасываем фильтр для статусов и категорий
+
+        efmodel->prepareToRemoveFilter(16);
+        efmodel->prepareFilter(16,100, EFilterProxyModel::Not | EFilterProxyModel::Equal,"");
+        efmodel->execPrepared();
+        ui->tableView->showColumn(16);
+    }
+    else //если выделен элемент фильтра по категориям
+    {
+        filter = QString("(^%1$)").arg(QString::number(id_cat));
+
+        if(!efmodel->containsFilter(16,100,EFilterProxyModel::Equal,""))
+        {
+            efmodel->prepareToRemoveFilter(16);
+            efmodel->prepareFilter(16,100,EFilterProxyModel::Equal,"");
+            efmodel->execPrepared();
+            ui->tableView->hideColumn(16);
+        }
+    }
     if(subcat_cnt)
     {
         QModelIndex child;
@@ -1048,12 +1084,25 @@ void REXWindow::lockProcess(bool flag)
         if(!lock_mem)
         {
             lock_mem = new QSharedMemory("rexloader",this);
-            lock_mem->create(32);
+            lock_mem->create(64);
         }
-        else lock_mem->attach();
+        else
+        {
+            lock_mem->attach();
+            QByteArray data(( const char*)lock_mem->data(),lock_mem->size());
+            QString sdata = data;
+            sdata = sdata.split("\r\n").value(1,0);
+
+            if(sdata == "1")
+            {
+                if(isVisible())
+                    activateWindow();
+                else QTimer::singleShot(0,this,SLOT(showHideSlot()));
+            }
+        }
 
         lock_mem->lock();
-        QString dtime = QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:ss");
+        QString dtime = QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:ss") + "\r\n0";
         memcpy(lock_mem->data(),dtime.toAscii().data(),dtime.toAscii().size());
         lock_mem->unlock();
     }
@@ -1278,7 +1327,9 @@ void REXWindow::deleteTask()
         tasklist.remove(row_id);
     }
 
-    qr.prepare("UPDATE tasks SET arch='1' WHERE"+where);
+    QString cdtime = QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:ss");
+    qr.prepare("UPDATE tasks SET arch=:dtime WHERE"+where);
+    qr.bindValue(":dtime",cdtime);
 
     if(!qr.exec())
     {
