@@ -258,6 +258,12 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
             }
         }
 
+        if(index.column() == 16)
+        {
+            QDateTime deldtime = QDateTime::fromString(myData(row,col).toString(),"yyyy-MM-ddThh:mm:ss");
+            return deldtime;
+        }
+
         return myData(row,col);
     }
 
@@ -352,7 +358,8 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         case 2:
         case 4:
         case 5:
-        case 6: return (QVariant)(Qt::AlignRight | Qt::AlignVCenter);
+        case 6:
+        case 16: return (QVariant)(Qt::AlignRight | Qt::AlignVCenter);
 
         default: return QVariant();
         }
@@ -390,6 +397,7 @@ QVariant TItemModel::headerData(int section, Qt::Orientation orientation, int ro
         case 6: return tr("Время скачивания");
         case 9: return tr("Статус");
         case 12: return tr("Примечание");
+        case 16: return tr("Дата удаления");
 
         default: return qr->record().field(section).name();
         }

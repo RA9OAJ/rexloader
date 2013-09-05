@@ -50,7 +50,6 @@ signals:
 public slots:
     void import();
     void addUrl(const QString &url);
-    void readNewLine(qint64 cnt);
 
 protected:
     void loadDatabaseData();

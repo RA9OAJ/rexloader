@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>409</width>
+    <width>503</width>
     <height>340</height>
    </rect>
   </property>
@@ -16,26 +16,6 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Строки</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="totalStrings">
-       <property name="text">
-        <string>0</string>
-       </property>
-      </widget>
-     </item>
      <item>
       <widget class="QLabel" name="label_3">
        <property name="font">

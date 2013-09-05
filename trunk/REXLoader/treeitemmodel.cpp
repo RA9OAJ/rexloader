@@ -212,7 +212,7 @@ void TreeItemModel::addFiltersSubtree()
     filters << tr("Недавно") << -9 << -8 << 0;
     filters << tr("Сегодня") << -10 << -8 << 1;
     filters << tr("Вчера") << -11 << -8 << 2;
-    filters << tr("За месяц") << -11 << -8 << 3;
+    filters << tr("За месяц") << -12 << -8 << 3;
 
     QModelIndex parent = QModelIndex();
     QHash<QModelIndex, int> cur_nodes;

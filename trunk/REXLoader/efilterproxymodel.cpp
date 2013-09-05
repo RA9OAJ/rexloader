@@ -82,7 +82,6 @@ QModelIndex EFilterProxyModel::index(int row, int column, const QModelIndex &par
     {
         if(_filters.isEmpty())
         {
-            qDebug()<<"1";
             QModelIndex eidx = mapToSource(parent);
             const QModelIndex *iprnt = _srcmap.value(eidx,0);
             eidx = sourceModel()->index(row,column,eidx);
@@ -466,6 +465,16 @@ QAbstractItemModel *EFilterProxyModel::sourceModel() const
     return _src;
 }
 
+QList<EFFilter> EFilterProxyModel::filters(int key_column) const
+{
+    return _filters.values(key_column);
+}
+
+QList<EFFilter> EFilterProxyModel::getAllFilters() const
+{
+    return _filters.values();
+}
+
 void EFilterProxyModel::addFilter(int key_column, int filter_role, int _operator_, const QVariant &filter_val)
 {
     if(!sourceModel())
@@ -494,7 +503,7 @@ void EFilterProxyModel::addFilter(int key_column, int filter_role, int _operator
     endResetModel();
 }
 
-void EFilterProxyModel::clearFilter(int key_column)
+void EFilterProxyModel::deleteFilter(int key_column)
 {
     beginResetModel();
     _filters.remove(key_column);
@@ -511,6 +520,52 @@ void EFilterProxyModel::clearAllFilters()
     indexes.clear();
     endResetModel();
 
+}
+
+void EFilterProxyModel::prepareFilter(int key_column, int filter_role, int _operator_, const QVariant &filter_val)
+{
+    EFFilter cur;
+    cur.data_role = filter_role;
+    cur.filter_operator = _operator_;
+    cur.filter_value = filter_val;
+
+    QList<EFFilter> list = _prepared.values(filter_role);
+
+    foreach (EFFilter fltr, list) {
+        if (fltr == cur)
+            return;
+    }
+
+    _prepared.insertMulti(key_column,cur);
+}
+
+void EFilterProxyModel::prepareToRemoveFilter(int key_column)
+{
+    _for_remove.append(key_column);
+}
+
+void EFilterProxyModel::execPrepared()
+{
+    bool need_clean = !_for_remove.isEmpty();
+
+    foreach (int col, _for_remove) //удаляем запланированные для удаления филтры
+        _filters.remove(col);
+
+    _for_remove.clear();
+
+    bool need_filtering = !_prepared.isEmpty();
+    _filters += _prepared;
+    _prepared.clear();
+
+    beginResetModel();
+    /*if(need_clean) //услови для будущей оптимизации процесса фильтрации при добавлении нового условия
+    {*/
+        indexes.clear();
+        clearSrcMap();
+    //}
+    if(need_filtering)
+        runFiltering();
+    endResetModel();
 }
 
 void EFilterProxyModel::proxyDataChanget(const QModelIndex &topLeft, const QModelIndex &bottomRight)
@@ -1023,4 +1078,15 @@ bool equal(const QVariant &val1, const QVariant &val2)
     default:
         return val1 == val2;
     }
+}
+
+
+bool EFilterProxyModel::containsFilter(int key_column, int filter_role, int _operator_, const QVariant &filter_val) const
+{
+    EFFilter fltr;
+    fltr.data_role = filter_role;
+    fltr.filter_operator = _operator_;
+    fltr.filter_value = filter_val;
+
+    return _filters.contains(key_column,fltr);
 }
