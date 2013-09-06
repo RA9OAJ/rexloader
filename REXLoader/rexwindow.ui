@@ -114,12 +114,6 @@
      <height>25</height>
     </size>
    </property>
-   <property name="styleSheet">
-    <string notr="true">QMenuBar 
-{
-Font-size: 13px;
-}</string>
-   </property>
    <widget class="QMenu" name="menuURL">
     <property name="title">
      <string>&amp;URL</string>

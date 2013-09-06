@@ -208,6 +208,7 @@ private:
     FloatingWindow *fwnd; //плавающее окно
     QList<int> updated_tasks; //список обновленных заданий, ожидающих запуска на исполнение
     SearchLine *search_line;
+    QDateTime appStartTime;
 };
 
 #endif // REXWINDOW_H
