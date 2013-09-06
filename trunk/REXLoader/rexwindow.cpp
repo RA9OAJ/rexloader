@@ -46,6 +46,7 @@ REXWindow::REXWindow(QWidget *parent) :
     ui->splitter->setSizes(sz);
     ui->splitter_2->setSizes(sz1);
 
+    appStartTime = QDateTime::currentDateTime();
     trayicon = new QSystemTrayIcon(this);
     trayicon->setIcon(QIcon(":/appimages/trayicon.png"));
     trayicon->show();
@@ -489,7 +490,25 @@ void REXWindow::setTaskFilter(const QModelIndex &index)
         sfmodel->setFilterRegExp(""); //сбрасываем фильтр для статусов и категорий
 
         efmodel->prepareToRemoveFilter(16);
-        efmodel->prepareFilter(16,100, EFilterProxyModel::Not | EFilterProxyModel::Equal,"");
+        switch (id_cat) {
+        case -9://недавно (за 3 последних часа)
+            efmodel->prepareFilter(16,Qt::DisplayRole,EFilterProxyModel::Larger,QDateTime::currentDateTime().addSecs(-3600*3));
+            break;
+        case -10: //сегодня
+            efmodel->prepareFilter(16,Qt::DisplayRole,EFilterProxyModel::Equal,QDate::currentDate());
+            break;
+        case -11://3 дня
+            efmodel->prepareFilter(16,Qt::DisplayRole,EFilterProxyModel::Larger,QDate::currentDate().addDays(-4));
+            break;
+        case -12://месяц
+            efmodel->prepareFilter(16,Qt::DisplayRole,EFilterProxyModel::Larger,QDate::currentDate().addDays(-31));
+            break;
+
+        default://все удаленные
+            efmodel->prepareFilter(16,Qt::DisplayRole, EFilterProxyModel::Not | EFilterProxyModel::Equal,"");
+            break;
+        }
+
         efmodel->execPrepared();
         ui->tableView->showColumn(16);
     }
@@ -1093,7 +1112,7 @@ void REXWindow::lockProcess(bool flag)
             QString sdata = data;
             sdata = sdata.split("\r\n").value(1,0);
 
-            if(sdata == "1")
+            if(sdata == "1" && appStartTime.secsTo(QDateTime::currentDateTime()) > 10) //блокирует реакцию на повторный запуск программы на 10 секунд после старта приложения
             {
                 if(isVisible())
                     activateWindow();

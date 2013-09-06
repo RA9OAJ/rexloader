@@ -352,7 +352,7 @@ bool firstProcess()
         lock_mem.lock();
         int pos = dtime.toAscii().size();
         QString need_show = "\r\n1";
-        memcpy(lock_mem.data() + pos,need_show.toAscii().data(),need_show.toAscii().size());
+        memcpy((char*)lock_mem.data() + pos,need_show.toAscii().data(),need_show.toAscii().size());
         lock_mem.unlock();
     }
     return false;

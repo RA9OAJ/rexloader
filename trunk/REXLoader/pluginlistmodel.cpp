@@ -96,10 +96,10 @@ QVariant PluginListModel::data(const QModelIndex &index, int role) const
         default: return QVariant();
         }
     }
-    else if(index.row() >= plugproto->size() + 1)
+    else if(index.row() > plugproto->size())
     {
         QStringList plgs = fileplugins->keys();
-        QString plgpath = plgs.value(index.row() - plugproto->size() - notifplugins->size()-1);
+        QString plgpath = plgs.value(index.row() - plugproto->size() - notifplugins->size());
         PluginInfo pluginfo(fileplugins->value(plgpath));
 
         switch(role)
