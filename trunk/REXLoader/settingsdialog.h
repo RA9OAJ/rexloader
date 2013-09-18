@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QFileDialog>
 #include "pluginlistmodel.h"
 #include "pluginitemdelegate.h"
+#include "systemiconswrapper/systemiconswrapper.h"
 
 namespace Ui {
     class SettingsDialog;
@@ -61,6 +62,7 @@ public slots:
     void setSettingAttribute(const QString &key, const QVariant &value);
     void updateInterface();
     void selectCurrentSubsettings(SettingsSection sect = GENERAL);
+    void updateIcons();
 
 protected:
     void closeEvent(QCloseEvent *event);

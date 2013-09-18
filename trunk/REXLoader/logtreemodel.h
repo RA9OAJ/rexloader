@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDateTime>
 
 #include "../plugins/LoaderInterface.h"
+#include "systemiconswrapper/systemiconswrapper.h"
 
 class LogTreeModel : public QAbstractItemModel
 {

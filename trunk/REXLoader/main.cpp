@@ -238,9 +238,9 @@ void checkDatabase()
     QSqlDatabase::removeDatabase(dbname);
 }
 
-void addURL(const QStringList &_argv)
+bool addURL(const QStringList &_argv)
 {
-    if(_argv.size() <= 1)return;
+    if(_argv.size() <= 1)return false;
 
     QString homedir = QDir::homePath()+"/.config/rexloader";
     QDir homeapp;
@@ -248,7 +248,7 @@ void addURL(const QStringList &_argv)
     if(!homeapp.cd(homedir))
     {
         //Здесь добавляем сообщение в error.log
-        return;
+        return false;
     }
 
     {
@@ -258,7 +258,7 @@ void addURL(const QStringList &_argv)
         if(!db.open())
         {
             //Здесь добавляем сообщение в error.log
-            return;
+            return false;
         }
 
         dbname = db.connectionName();
@@ -297,7 +297,7 @@ void addURL(const QStringList &_argv)
         }
 
         if(address.isEmpty())
-            return;
+            return false;
 
         url.clear();
         url = QUrl::fromEncoded(address.toUtf8());
@@ -311,7 +311,7 @@ void addURL(const QStringList &_argv)
             if(!qr.exec())
             {
                 //тут записываем сообщение об ошибке в error.log
-                return;
+                return false;
             }
         }
         else if(QFile::exists(address))
@@ -321,14 +321,15 @@ void addURL(const QStringList &_argv)
             if(!qr.exec())
             {
                 //тут записываем сообщение об ошибке в error.log
-                return;
+                return false;
             }
         }
     }
     QSqlDatabase::removeDatabase(dbname);
+    return true;
 }
 
-bool firstProcess()
+bool firstProcess(bool need_show = true)
 {
     QSharedMemory lock_mem("rexloader");
     if(!lock_mem.create(64))
@@ -349,11 +350,14 @@ bool firstProcess()
         if(proc_time.secsTo(cur_time) > 5)
             return true;
 
-        lock_mem.lock();
-        int pos = dtime.toAscii().size();
-        QString need_show = "\r\n1";
-        memcpy((char*)lock_mem.data() + pos,need_show.toAscii().data(),need_show.toAscii().size());
-        lock_mem.unlock();
+        if(need_show)
+        {
+            lock_mem.lock();
+            int pos = dtime.toAscii().size();
+            QString need_show = "\r\n1";
+            memcpy((char*)lock_mem.data() + pos,need_show.toAscii().data(),need_show.toAscii().size());
+            lock_mem.unlock();
+        }
     }
     return false;
 }
@@ -406,13 +410,9 @@ int main(int argc, char *argv[])
     checkDatabase();
 
     QApplication::setQuitOnLastWindowClosed(false);
-    addURL(a.arguments());
-    if(firstProcess())
+    bool added_url = addURL(a.arguments());
+    if(firstProcess(!added_url))
     {
-        /*QTranslator qt_translator;
-        QString trans_file = "qt_"+QLocale::system().name().split("_").value(0)+".qm";
-        if(qt_translator.load(trans_file,QLibraryInfo::location(QLibraryInfo::TranslationsPath))) a.installTranslator(&qt_translator);
-        */
         setAppLanguage(&a);
 
         REXWindow w;

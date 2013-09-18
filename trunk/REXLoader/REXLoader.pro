@@ -52,7 +52,8 @@ SOURCES += main.cpp\
     taskschedulerdialog.cpp \
     searchline/searchline.cpp \
     searchline/popuplist.cpp \
-    efilterproxymodel.cpp
+    efilterproxymodel.cpp \
+    systemiconswrapper/systemiconswrapper.cpp
 
 HEADERS  += rexwindow.h \
     titemmodel.h \
@@ -82,7 +83,8 @@ HEADERS  += rexwindow.h \
     taskschedulerdialog.h \
     searchline/searchline.h \
     searchline/popuplist.h \
-    efilterproxymodel.h
+    efilterproxymodel.h \
+    systemiconswrapper/systemiconswrapper.h
 
 FORMS    += rexwindow.ui \
     addtaskdialog.ui \

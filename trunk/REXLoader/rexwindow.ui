@@ -373,7 +373,7 @@
   <action name="actionDelURLFiles">
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/appimages/delete_all._48x48png</normaloff>:/appimages/delete_all._48x48png</iconset>
+     <normaloff>:/appimages/delete_all._48x48.png</normaloff>:/appimages/delete_all._48x48.png</iconset>
    </property>
    <property name="text">
     <string>Удалить URL и файл</string>

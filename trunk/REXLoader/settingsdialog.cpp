@@ -36,8 +36,18 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui->downDir->setText(QDir::home().path()+"/"+tr("Загрузки"));
     ui->logDir->setText(QDir::home().path()+"/.rexloader/logs");
 
-#ifdef Q_OS_WIN32
+    ui->iconsStyle->addItem(tr("Встроенные иконки"),QString("internal"));
+    ui->iconsStyle->addItem(tr("Иконки системы"),QString("default"));
+
+#ifdef Q_OS_LINUX
+    ui->iconsStyle->setCurrentIndex(ui->iconsStyle->findData(QString("default")));
+#else
+    ui->iconsStyle->setCurrentIndex(ui->iconsStyle->findData(QString("internal")));
     ui->checkBoxAutostart->setEnabled(false);
+
+    ui->iconsStyle->setEnabled(false);
+    ui->iconsStyle->setHidden(true);
+    ui->label_30->setHidden(true);
 #endif
 
     connect(ui->listWidget,SIGNAL(clicked(QModelIndex)),this,SLOT(selectSubSettings()));
@@ -95,6 +105,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     sets.insert("suspend",false);
 
     resize(size().width(),220);
+    updateIcons();
     applySets();
 }
 
@@ -175,6 +186,18 @@ void SettingsDialog::show()
 {
     if(!isVisible())
     {
+        ui->iconsStyle->clear();
+        ui->iconsStyle->addItem(tr("Встроенные иконки"),QString("internal"));
+        ui->iconsStyle->addItem(tr("Иконки системы"),QString("default"));
+        QList<QPair<QString,QString> > themes_lst = SystemIconsWrapper::systemThemes();
+        QList<QPair<QString,QString> >::iterator it = themes_lst.begin();
+        while(it != themes_lst.end())
+        {
+            ui->iconsStyle->addItem(it->first,it->second);
+            ++it;
+        }
+        ui->iconsStyle->setCurrentIndex(ui->iconsStyle->findData(sets.value("icons_style",QString("default")).toString()));
+
         QDialog::show();
 
         QDesktopWidget ds;
@@ -238,6 +261,7 @@ void SettingsDialog::applySets()
     sets.insert("on_finish_font_color",ui->onFinishFontColor->currentColor());
     sets.insert("table_word_wrap",ui->tableWordWrap->isChecked());
     sets.insert("speed_on_kBps",ui->downSpdKBps->isChecked());
+    sets.insert("icons_style",ui->iconsStyle->itemData(ui->iconsStyle->currentIndex()));
 
     sets.insert("log_dir",ui->logDir->text());
     sets.insert("log_autosave",ui->logAutisave->isChecked());
@@ -346,6 +370,7 @@ void SettingsDialog::cancelSets()
     ui->onFinishFontColor->setColor(sets.value("on_finish_font_color").value<QColor>());
     ui->tableWordWrap->setChecked(sets.value("table_word_wrap").toBool());
     ui->downSpdKBps->setChecked(sets.value("speed_on_kBps").toBool());
+    ui->iconsStyle->setCurrentIndex(ui->iconsStyle->findData(sets.value("icons_style",QString("default")).toString()));
 
     ui->logDir->setText(sets.value("log_dir").toString());
     ui->logAutisave->setChecked(sets.value("log_autosave").toBool());
@@ -477,6 +502,22 @@ void SettingsDialog::selectCurrentSubsettings(SettingsDialog::SettingsSection se
 
     ui->listWidget->setCurrentRow(rowid,QItemSelectionModel::Select);
     selectSubSettings();
+}
+
+void SettingsDialog::updateIcons()
+{
+    ui->listWidget->item(0)->setIcon(SystemIconsWrapper::icon("actions/configure",22,":/appimages/settings.png"));
+    ui->listWidget->item(1)->setIcon(SystemIconsWrapper::icon("devices/network-wired",22,":/appimages/network.png"));
+    ui->listWidget->item(2)->setIcon(SystemIconsWrapper::icon("actions/download",22,":/appimages/downloads.png"));
+    ui->listWidget->item(3)->setIcon(SystemIconsWrapper::icon("applications/preferences-system-windows",22,":/appimages/gui.png"));
+    ui->listWidget->item(4)->setIcon(SystemIconsWrapper::icon("applications/preferences-plugin",22,":/appimages/plugins.png"));
+    ui->listWidget->item(5)->setIcon(SystemIconsWrapper::icon("status/dialog-information",22,":/appimages/log_info.png"));
+
+    ui->label_21->setPixmap(SystemIconsWrapper::pixmap("status/dialog-information",28,":/appimages/log_info.png"));
+    ui->label_22->setPixmap(SystemIconsWrapper::pixmap("status/dialog-warning",28,":/appimages/log_warning.png"));
+    ui->label_23->setPixmap(SystemIconsWrapper::pixmap("status/dialog-error",28,":/appimages/error_24x24.png"));
+    ui->label_24->setPixmap(SystemIconsWrapper::pixmap("actions/go-previous",28,":/appimages/out_arrow.png"));
+    ui->label_25->setPixmap(SystemIconsWrapper::pixmap("actions/go-next",28,":/appimages/in_arrow.png"));
 }
 
 void SettingsDialog::resetFontsColors()

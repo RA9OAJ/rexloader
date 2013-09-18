@@ -49,6 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "floating_window/floatingwindow.h"
 #include "searchline/searchline.h"
 #include "efilterproxymodel.h"
+#include "systemiconswrapper/systemiconswrapper.h"
 
 #include "../plugins/LoaderInterface.h"
 
@@ -83,6 +84,7 @@ public slots:
     void scanNewTaskQueue(); //сканирует очередь url для добавления в очередь заданий
     void scanClipboard(); //сканирует буфер обмена на наличие доступного для скачивания URL
     void showImportFileDialog(); //отображает диалог для выбора файла импорта
+    void updateIcons();
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -208,7 +210,9 @@ private:
     FloatingWindow *fwnd; //плавающее окно
     QList<int> updated_tasks; //список обновленных заданий, ожидающих запуска на исполнение
     SearchLine *search_line;
-    QDateTime appStartTime;
+    bool showFlag;
+
+    QString last_theme;
 };
 
 #endif // REXWINDOW_H

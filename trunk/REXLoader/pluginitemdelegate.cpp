@@ -168,9 +168,9 @@ void PluginItemDelegate::paintOther(QPainter *painter, const QStyleOptionViewIte
     staffTextBox.setLeft(staffTextBox.left() + dx);
 
     if(index.data(PluginListModel::PlugState).toBool())
-        painter->drawImage(staffTextBox.x(),staffTextBox.y() + 1,QImage(":/appimages/yes_16x16.png"));
+        painter->drawImage(staffTextBox.x(),staffTextBox.y() + 1,SystemIconsWrapper::image("actions/dialog-ok",16,":/appimages/yes_16x16.png"));
     else
-        painter->drawImage(staffTextBox.x(),staffTextBox.y() + 1,QImage(":/appimages/no_16x16.png"));
+        painter->drawImage(staffTextBox.x(),staffTextBox.y() + 1,SystemIconsWrapper::image("actions/dialog-cancel",16,":/appimages/no_16x16.png"));
 
     //автор плагина, лицензия
     staffTextBox.setRect(3,option.rect.height()/2.0f,option.rect.width(),option.rect.height()/2.0f);

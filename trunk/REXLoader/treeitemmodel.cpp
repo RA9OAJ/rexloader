@@ -575,15 +575,15 @@ QVariant TreeItemModel::iconByIndex(const QModelIndex &idx) const
     switch(data(id,100).toInt())
     {
     case -2:
-        return QIcon(":/appimages/start_24x24.png");
+        return SystemIconsWrapper::icon("actions/media-playback-start",22,":/appimages/start_24x24.png");
     case -3:
-        return QIcon(":/appimages/queue_24x24.png");
+        return SystemIconsWrapper::icon("actions/chronometer",22,":/appimages/queue_24x24.png");
     case -4:
-        return QIcon(":/appimages/pause_24x24.png");
+        return SystemIconsWrapper::icon("actions/media-playback-pause",22,":/appimages/pause_24x24.png");
     case -5:
-        return QIcon(":/appimages/finish_24x24.png");
+        return SystemIconsWrapper::icon("actions/task-complete",22,":/appimages/finish_24x24.png");
     case -6:
-        return QIcon(":/appimages/error_24x24.png");
+        return SystemIconsWrapper::icon("status/dialog-error",22,":/appimages/error_24x24.png");
 
     default: return QVariant();
     }
