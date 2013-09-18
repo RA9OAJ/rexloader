@@ -7,14 +7,23 @@
     <x>0</x>
     <y>0</y>
     <width>518</width>
-    <height>1818</height>
+    <height>1901</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
     <number>2</number>
    </property>
    <item>
@@ -197,7 +206,7 @@
              <bool>true</bool>
             </property>
             <property name="text">
-             <string>Запуска вместе с ОС</string>
+             <string>Запускать вместе с ОС</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -332,7 +341,16 @@
           <string>Сеть</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_4">
-          <property name="margin">
+          <property name="leftMargin">
+           <number>1</number>
+          </property>
+          <property name="topMargin">
+           <number>1</number>
+          </property>
+          <property name="rightMargin">
+           <number>1</number>
+          </property>
+          <property name="bottomMargin">
            <number>1</number>
           </property>
           <item>
@@ -560,7 +578,7 @@
                    <item>
                     <widget class="QLineEdit" name="proxyAddress">
                      <property name="inputMask">
-                      <string>000.000.000.000; </string>
+                      <string>000.000.000.000</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignCenter</set>
@@ -984,6 +1002,27 @@
           <string>Интерфейс</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_10">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_25">
+            <item>
+             <widget class="QLabel" name="label_30">
+              <property name="text">
+               <string>Стиль иконок приложения</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="iconsStyle">
+              <property name="minimumSize">
+               <size>
+                <width>150</width>
+                <height>0</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
           <item>
            <widget class="QTabWidget" name="tabWidget_2">
             <property name="currentIndex">

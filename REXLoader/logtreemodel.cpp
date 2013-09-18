@@ -64,11 +64,11 @@ QVariant LogTreeModel::data(const QModelIndex &index, int role) const
         {
             switch(mtype)
             {
-            case LInterface::MT_INFO: return QIcon(":/appimages/log_info.png");
-            case LInterface::MT_WARNING: return QIcon(":/appimages/log_warning.png");
-            case LInterface::MT_ERROR: return QIcon(":/appimages/error_24x24.png");
-            case LInterface::MT_IN: return QIcon(":/appimages/in_arrow.png");
-            case LInterface::MT_OUT: return QIcon(":/appimages/out_arrow.png");
+            case LInterface::MT_INFO: return SystemIconsWrapper::icon("status/dialog-information",22,":/appimages/log_info.png");
+            case LInterface::MT_WARNING: return SystemIconsWrapper::icon("status/dialog-warning",22,":/appimages/log_warning.png");
+            case LInterface::MT_ERROR: return SystemIconsWrapper::icon("status/dialog-error",22,":/appimages/error_24x24.png");
+            case LInterface::MT_IN: return SystemIconsWrapper::icon("actions/go-previous",22,":/appimages/in_arrow.png");
+            case LInterface::MT_OUT: return SystemIconsWrapper::icon("actions/go-next",22,":/appimages/in_arrow.png");
             default: return QVariant();
             }
         }

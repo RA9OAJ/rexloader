@@ -46,7 +46,8 @@ REXWindow::REXWindow(QWidget *parent) :
     ui->splitter->setSizes(sz);
     ui->splitter_2->setSizes(sz1);
 
-    appStartTime = QDateTime::currentDateTime();
+    SystemIconsWrapper::cachedIcons(true);
+    showFlag = false;
     trayicon = new QSystemTrayIcon(this);
     trayicon->setIcon(QIcon(":/appimages/trayicon.png"));
     trayicon->show();
@@ -209,19 +210,19 @@ void REXWindow::createInterface()
     lasterror->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
     QSpacerItem *spacer = new QSpacerItem(100,10,QSizePolicy::Expanding);
     QLabel *onplayIcon = new QLabel(ui->statusBar);
-    onplayIcon->setPixmap(QPixmap(":/appimages/start_16x16.png"));
+    onplayIcon->setObjectName("onplayIcon");
     QLabel *onplay = new QLabel(ui->statusBar);
     onplay->setObjectName("onplay");
     QLabel *onpauseIcon = new QLabel(ui->statusBar);
-    onpauseIcon->setPixmap(QPixmap(":/appimages/pause_16x16.png"));
+    onpauseIcon->setObjectName("onpauseIcon");
     QLabel *onpause = new QLabel(ui->statusBar);
     onpause->setObjectName("onpause");
     QLabel *onqueueIcon = new QLabel(ui->statusBar);
-    onqueueIcon->setPixmap(QPixmap(":/appimages/queue_16x16.png"));
+    onqueueIcon->setObjectName("onqueueIcon");
     QLabel *onqueue = new QLabel(ui->statusBar);
     onqueue->setObjectName("onqueue");
     QLabel *onerrorIcon = new QLabel(ui->statusBar);
-    onerrorIcon->setPixmap(QPixmap(":/appimages/error_16x16.png"));
+    onerrorIcon->setObjectName("onerrorIcon");
     QLabel *onerror = new QLabel(ui->statusBar);
     onerror->setObjectName("onerror");
     onerror->setMinimumWidth(20);
@@ -350,7 +351,7 @@ void REXWindow::createInterface()
     trayact = new QAction(this);
     trayact->setObjectName("exitAct");
     trayact->setText(tr("Выход"));
-    trayact->setIcon(QIcon(":/appimages/exit.png"));
+    //trayact->setIcon(QIcon(":/appimages/exit.png"));
     connect(trayact,SIGNAL(triggered()),this,SLOT(close()));
     traymenu->addAction(trayact);
     ui->menu_4->addSeparator();
@@ -413,6 +414,8 @@ void REXWindow::createInterface()
     }
     ui->tableView->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->tableView->horizontalHeader(),SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(showTableHeaderContextMenu(QPoint)));
+
+    //updateIcons();
 }
 
 void REXWindow::showTableContextMenu(const QPoint &pos)
@@ -1112,9 +1115,11 @@ void REXWindow::lockProcess(bool flag)
             QString sdata = data;
             sdata = sdata.split("\r\n").value(1,0);
 
-            if(sdata == "1" && appStartTime.secsTo(QDateTime::currentDateTime()) > 10) //блокирует реакцию на повторный запуск программы на 10 секунд после старта приложения
+            if(sdata == "1")
             {
-                if(isVisible())
+                if(!showFlag)
+                    showFlag = true;
+                else if(isVisible())
                     activateWindow();
                 else QTimer::singleShot(0,this,SLOT(showHideSlot()));
             }
@@ -1143,6 +1148,16 @@ void REXWindow::scheduler()
     if(trayicon->isSystemTrayAvailable() && !trayicon->isVisible())
         trayicon->show();
 
+    if(SystemIconsWrapper::defaultUserTheme() != last_theme && SystemIconsWrapper::theme() == "default") //отслеживаем изменение темы рабочего стола
+    {
+#ifdef Q_OS_LINUX
+        last_theme = SystemIconsWrapper::defaultUserTheme();
+        SystemIconsWrapper::setTheme("default");
+#else
+        last_theme = "internal";
+#endif
+        QTimer::singleShot(0,this,SLOT(updateIcons()));
+    }
 
     QTimer::singleShot(1000,this,SLOT(scheduler()));
 }
@@ -2086,13 +2101,22 @@ void REXWindow::updateStatusBar()
         case LInterface::SEND_QUERY:
         case LInterface::ACCEPT_QUERY:
         case LInterface::REDIRECT:
-        case LInterface::ON_LOAD: status->setPixmap(QPixmap(":/appimages/start_16x16.png")); speed->setVisible(true); break;
+        case LInterface::ON_LOAD:
+            status->setPixmap(SystemIconsWrapper::pixmap("actions/media-playback-start",16,":/appimages/start_16x16.png"));
+            speed->setVisible(true);
+            break;
         case LInterface::STOPPING:
-        case LInterface::ON_PAUSE: status->setPixmap(QPixmap(":/appimages/pause_16x16.png")); break;
-        case LInterface::FINISHED: status->setPixmap(QPixmap(":/appimages/finish_16x16.png")); break;
-        case -100: status->setPixmap(QPixmap(":/appimages/queue_16x16.png")); break;
+        case LInterface::ON_PAUSE:
+            status->setPixmap(SystemIconsWrapper::pixmap("actions/media-playback-pause",16,":/appimages/pause_16x16.png"));
+            break;
+        case LInterface::FINISHED:
+            status->setPixmap(SystemIconsWrapper::pixmap("actions/task-complete",16,":/appimages/finish_16x16.png"));
+            break;
+        case -100:
+            status->setPixmap(SystemIconsWrapper::pixmap("actions/chronometer",16,":/appimages/queue_16x16.png"));
+            break;
         default:
-            status->setPixmap(QPixmap(":/appimages/error_16x16.png"));
+            status->setPixmap(SystemIconsWrapper::pixmap("status/dialog-error",16,":/appimages/error_16x16.png"));
             break;
         }
         status->setVisible(true);
@@ -2103,7 +2127,7 @@ void REXWindow::updateStatusBar()
         ui->actionPHight->setChecked(false);
         ui->actionPVeryHight->setChecked(false);
 
-        switch(sfmodel->sourceModel()->index(row_id,13).data(100).toInt())
+        switch(model->index(row_id,13).data(100).toInt())
         {
         case 0: priority->setPixmap(QPixmap(":/appimages/pverylow_16x16.png")); ui->actionPVeryLow->setChecked(true); break;
         case 1: priority->setPixmap(QPixmap(":/appimages/plow_16x16.png")); ui->actionPLow->setChecked(true); break;
@@ -2115,17 +2139,17 @@ void REXWindow::updateStatusBar()
             break;
         }
         priority->setVisible(true);
-        QUrl cur_url = QUrl::fromEncoded(sfmodel->sourceModel()->index(row_id,1).data(Qt::DisplayRole).toByteArray());
+        QUrl cur_url = QUrl::fromEncoded(model->index(row_id,1).data(Qt::DisplayRole).toByteArray());
         urllbl->setText(QString("<a href='%1'>%2</a>").arg(cur_url.toString(),TItemModel::shortUrl(cur_url.toString())));
         urllbl->setVisible(true);
         progress->setMaximum(100);
-        int curVal = sfmodel->sourceModel()->index(row_id,5).data(100).toLongLong() > 0 ? ((qint64)100*sfmodel->sourceModel()->index(row_id,4).data(100).toLongLong()/sfmodel->sourceModel()->index(row_id,5).data(100).toLongLong()) : 0;
+        int curVal = model->index(row_id,5).data(100).toLongLong() > 0 ? ((qint64)100*model->index(row_id,4).data(100).toLongLong()/model->index(row_id,5).data(100).toLongLong()) : 0;
         progress->setValue(curVal);
-        lefttime->setText(tr("Осталось: %1").arg(sfmodel->sourceModel()->index(row_id,18).data(Qt::DisplayRole).toString()));
+        lefttime->setText(tr("Осталось: %1").arg(model->index(row_id,18).data(Qt::DisplayRole).toString()));
         lefttime->setVisible(true);
-        lasterror->setText(sfmodel->sourceModel()->index(row_id,7).data(100).toString());
+        lasterror->setText(model->index(row_id,7).data(100).toString());
         lasterror->setVisible(true);
-        if(!sfmodel->sourceModel()->index(row_id,17).data().toString().isEmpty()) speed->setText(tr("Скорость: %1").arg(sfmodel->sourceModel()->index(row_id,17).data().toString()));
+        if(!model->index(row_id,17).data().toString().isEmpty()) speed->setText(tr("Скорость: %1").arg(model->index(row_id,17).data().toString()));
         else speed->hide();
     }
 
@@ -2186,6 +2210,44 @@ void REXWindow::showImportFileDialog()
     connect(dlg,SIGNAL(filesSelected(QStringList)),this,SLOT(importUrlFromFile(QStringList)));
 
     dlg->show();
+}
+
+void REXWindow::updateIcons()
+{
+    ui->treeView->setEnabled(false);
+    ui->treeView->setEnabled(true);
+
+    QLabel *lbl = ui->statusBar->findChild<QLabel*>("onplayIcon");
+    lbl->setPixmap(SystemIconsWrapper::pixmap("actions/media-playback-start",16,":/appimages/start_16x16.png"));
+    lbl = ui->statusBar->findChild<QLabel*>("onpauseIcon");
+    lbl->setPixmap(SystemIconsWrapper::pixmap("actions/media-playback-pause",16,":/appimages/pause_16x16.png"));
+    lbl = ui->statusBar->findChild<QLabel*>("onqueueIcon");
+    lbl->setPixmap(SystemIconsWrapper::pixmap("actions/chronometer",16,":/appimages/queue_16x16.png"));
+    lbl = ui->statusBar->findChild<QLabel*>("onerrorIcon");
+    lbl->setPixmap(SystemIconsWrapper::pixmap("status/dialog-error",16,":/appimages/error_16x16.png"));
+
+    QAction *act = findChild<QAction*>("exitAct");
+    act->setIcon(SystemIconsWrapper::icon("actions/application-exit",48,":/appimages/exit.png"));
+
+    ui->actionAdd_URL->setIcon(SystemIconsWrapper::icon("actions/list-add",48,":/appimages/add_48x48.png"));
+    ui->actionDelURL->setIcon(SystemIconsWrapper::icon("actions/list-remove",48,":/appimages/delete_48x48.png"));
+    ui->actionDelURLFiles->setIcon(SystemIconsWrapper::icon("actions/edit-delete",48,":/appimages/delete_all._48x48.png"));
+    ui->actionStart->setIcon(SystemIconsWrapper::icon("actions/media-playback-start",48,":/appimages/start_48x48.png"));
+    ui->actionStop->setIcon(SystemIconsWrapper::icon("actions/media-playback-pause",48,":/appimages/pause_48x48.png"));
+    ui->actionImportURL->setIcon(SystemIconsWrapper::icon("actions/document-import",48,":/appimages/import.png"));
+    ui->actionStartAll->setIcon(SystemIconsWrapper::icon("actions/media-seek-forward",48,":/appimages/start_all_48x48.png"));
+    ui->actionStopAll->setIcon(SystemIconsWrapper::icon("actions/media-playback-stop",48,":/appimages/pause_all_48x8.png"));
+    ui->actionRedownload->setIcon(SystemIconsWrapper::icon("actions/view-refresh",48,":/appimages/redownload.png"));
+    ui->actionOpenTask->setIcon(SystemIconsWrapper::icon("actions/system-run",48,":/appimages/open_task.png"));
+    ui->actionOpenDir->setIcon(SystemIconsWrapper::icon("actions/document-open-folder",48,":/appimages/open_folder.png"));
+    ui->actionAppSettings->setIcon(SystemIconsWrapper::icon("actions/configure",48,":/appimages/settings.png"));
+    ui->actionPoweroff->setIcon(SystemIconsWrapper::icon("actions/system-shudown",48,":/appimages/shutdown.png"));
+    ui->actionSuspend->setIcon(SystemIconsWrapper::icon("actions/system-suspend",48,":/appimages/suspend.png"));
+    ui->actionHibernate->setIcon(SystemIconsWrapper::icon("actions/system-suspend-hibernate",48,":/appimages/hibernate.png"));
+    ui->actionpluginsShow->setIcon(SystemIconsWrapper::icon("applications/preferences-plugin",48,":/appimages/plugins.png"));
+    ui->actionSchedule->setIcon(SystemIconsWrapper::icon("actions/view-calendar-tasks",48,":/appimages/schedule.png"));
+
+    settDlg->updateIcons();
 }
 
 void REXWindow::calculateSpeed()
@@ -2456,6 +2518,12 @@ void REXWindow::readSettings()
     {
         fwnd->disableWindow(true);
         fwnd->hide();
+    }
+
+    if(SystemIconsWrapper::theme() != settDlg->value("icons_style").toString())
+    {
+        SystemIconsWrapper::setTheme(settDlg->value("icons_style").toString());
+        updateIcons();
     }
 
     setTaskCnt();

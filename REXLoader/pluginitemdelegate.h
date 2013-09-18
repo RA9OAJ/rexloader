@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QFont>
 #include <QStyleOptionViewItem>
 #include "pluginlistmodel.h"
+#include "systemiconswrapper/systemiconswrapper.h"
 
 class PluginItemDelegate : public QStyledItemDelegate
 {

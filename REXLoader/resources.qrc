@@ -39,7 +39,7 @@
         <file alias="network.png">images/network.png</file>
         <file alias="downloads.png">images/download.png</file>
         <file alias="gui.png">images/gui.png</file>
-        <file alias="delete_all._48x48png">images/delete_all_48x48.png</file>
+        <file alias="delete_all._48x48.png">images/delete_all_48x48.png</file>
         <file alias="redownload.png">images/redownload.png</file>
         <file alias="open_folder.png">images/open_folder.png</file>
         <file alias="exit.png">images/exit.png</file>
