@@ -33,6 +33,7 @@ REXWindow::REXWindow(QWidget *parent) :
     down_speed = 2048*8; // 2Mbps
     plug_state.clear();
     lock_mem = 0;
+    preStat = 0;
 
     QList<int> sz;
     QList<int> sz1;
@@ -210,19 +211,23 @@ void REXWindow::createInterface()
     lasterror->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
     QSpacerItem *spacer = new QSpacerItem(100,10,QSizePolicy::Expanding);
     QLabel *onplayIcon = new QLabel(ui->statusBar);
+    onplayIcon->setPixmap(SystemIconsWrapper::pixmap("actions/media-playback-start",16,":/appimages/start_16x16.png"));
     onplayIcon->setObjectName("onplayIcon");
     QLabel *onplay = new QLabel(ui->statusBar);
     onplay->setObjectName("onplay");
     QLabel *onpauseIcon = new QLabel(ui->statusBar);
     onpauseIcon->setObjectName("onpauseIcon");
+    onpauseIcon->setPixmap(SystemIconsWrapper::pixmap("actions/media-playback-pause",16,":/appimages/pause_16x16.png"));
     QLabel *onpause = new QLabel(ui->statusBar);
     onpause->setObjectName("onpause");
     QLabel *onqueueIcon = new QLabel(ui->statusBar);
     onqueueIcon->setObjectName("onqueueIcon");
+    onqueueIcon->setPixmap(SystemIconsWrapper::pixmap("actions/chronometer",16,":/appimages/queue_16x16.png"));
     QLabel *onqueue = new QLabel(ui->statusBar);
     onqueue->setObjectName("onqueue");
     QLabel *onerrorIcon = new QLabel(ui->statusBar);
     onerrorIcon->setObjectName("onerrorIcon");
+    onerrorIcon->setPixmap(SystemIconsWrapper::pixmap("status/dialog-error",16,":/appimages/error_16x16.png"));
     QLabel *onerror = new QLabel(ui->statusBar);
     onerror->setObjectName("onerror");
     onerror->setMinimumWidth(20);
@@ -1159,6 +1164,9 @@ void REXWindow::scheduler()
         QTimer::singleShot(0,this,SLOT(updateIcons()));
     }
 
+    if((ui->menuBar->pos().y() == centralWidget()->pos().y() || ui->menuBar->pos().y() == ui->mainToolBar->pos().y()) && isVisible())
+        QTimer::singleShot(0,ui->menuBar,SLOT(hide()));
+
     QTimer::singleShot(1000,this,SLOT(scheduler()));
 }
 
@@ -1223,6 +1231,11 @@ void REXWindow::showHideSlot()
     else
     {
         setHidden(false);
+        if(preStat)
+        {
+            setHidden(true);
+            QTimer::singleShot(0,this,SLOT(show()));
+        }
         setWindowState(preStat);
         activateWindow();
         act->setText(tr("Скрыть"));
