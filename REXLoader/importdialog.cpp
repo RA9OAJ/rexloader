@@ -410,7 +410,7 @@ void ImportDialog::import()
     ImportMaster *importmaster = new ImportMaster(this);
     connect(importmaster,SIGNAL(finished()),importmaster,SLOT(deleteLater()));
     connect(importmaster,SIGNAL(foundString(QString)),this,SLOT(addUrl(QString)));
-    connect(importmaster,SIGNAL(totalStringLoaded(qint64)),this,SLOT(readNewLine(qint64)));
+    //connect(importmaster,SIGNAL(totalStringLoaded(qint64)),this,SLOT(readNewLine(qint64)));
     QString proto;
     foreach(proto,protocols)
         importmaster->addProtocol(proto);

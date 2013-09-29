@@ -513,11 +513,11 @@ void SettingsDialog::updateIcons()
     ui->listWidget->item(4)->setIcon(SystemIconsWrapper::icon("applications/preferences-plugin",22,":/appimages/plugins.png"));
     ui->listWidget->item(5)->setIcon(SystemIconsWrapper::icon("status/dialog-information",22,":/appimages/log_info.png"));
 
-    ui->label_21->setPixmap(SystemIconsWrapper::pixmap("status/dialog-information",28,":/appimages/log_info.png"));
-    ui->label_22->setPixmap(SystemIconsWrapper::pixmap("status/dialog-warning",28,":/appimages/log_warning.png"));
-    ui->label_23->setPixmap(SystemIconsWrapper::pixmap("status/dialog-error",28,":/appimages/error_24x24.png"));
-    ui->label_24->setPixmap(SystemIconsWrapper::pixmap("actions/go-previous",28,":/appimages/out_arrow.png"));
-    ui->label_25->setPixmap(SystemIconsWrapper::pixmap("actions/go-next",28,":/appimages/in_arrow.png"));
+    ui->label_21->setPixmap(SystemIconsWrapper::pixmap("status/dialog-information",22,":/appimages/log_info.png"));
+    ui->label_22->setPixmap(SystemIconsWrapper::pixmap("status/dialog-warning",22,":/appimages/log_warning.png"));
+    ui->label_23->setPixmap(SystemIconsWrapper::pixmap("status/dialog-error",22,":/appimages/error_24x24.png"));
+    ui->label_24->setPixmap(SystemIconsWrapper::pixmap("actions/go-previous",22,":/appimages/out_arrow.png"));
+    ui->label_25->setPixmap(SystemIconsWrapper::pixmap("actions/go-next",22,":/appimages/in_arrow.png"));
 }
 
 void SettingsDialog::resetFontsColors()

@@ -678,6 +678,8 @@ void EFilterProxyModel::proxyRowsInsrted(const QModelIndex &parent, int start, i
         }
         for(int i = first; i < indexes.value(iparent).size(); ++i)
             indexes[iparent][i] = indexes.value(iparent).value(i) + end - start;
+
+        runFiltering(start,parent,end - start + 1);
     }
 }
 
@@ -706,14 +708,15 @@ void EFilterProxyModel::runSorting(int column, Qt::SortOrder order)
     Q_UNUSED(order);
 }
 
-bool EFilterProxyModel::runFiltering(int row, const QModelIndex &parent)
+bool EFilterProxyModel::runFiltering(int row, const QModelIndex &parent, int row_count)
 {
     int cnt = 0;
     if(sourceModel())
     {
         if(!_filters.isEmpty())
         {
-            for(int i = row; i < sourceModel()->rowCount(parent); ++i)
+            int end = (row_count < 0 ? sourceModel()->rowCount(parent) : row + row_count);
+            for(int i = row; i < end; ++i)
             {
                 QModelIndex nparent = sourceModel()->index(i,0,parent);
                 if(sourceModel()->rowCount(nparent) && nparent != QModelIndex())
@@ -740,7 +743,8 @@ bool EFilterProxyModel::runFiltering(int row, const QModelIndex &parent)
 
             for(int i = row; i < sourceModel()->rowCount(parent); ++i) //перебираем все строки
             {//перебираем все элементы строки и ищем элементы-родители
-                for(int y = 0; y < sourceModel()->columnCount(parent); ++y)
+                int end = (row_count < 0 ? sourceModel()->rowCount(parent) : row + row_count);
+                for(int y = 0; y < end; ++y)
                 {
                     QModelIndex eidx = sourceModel()->index(i,y,parent);
                     if(sourceModel()->hasChildren(eidx))

@@ -292,6 +292,7 @@ void REXWindow::createInterface()
     connect(qApp->clipboard(),SIGNAL(dataChanged()),this,SLOT(scanClipboard()));
     connect(ui->actionAbout,SIGNAL(triggered()),this,SLOT(showAbout()));
     connect(ui->actionpluginsShow,SIGNAL(triggered()),this,SLOT(showSettDialog()));
+    connect(ui->actionRecover,SIGNAL(triggered()),this,SLOT(revertTask()));
 
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);
@@ -385,6 +386,17 @@ void REXWindow::createInterface()
     tblMenu->addSeparator();
     tblMenu->addAction(ui->actionTaskPropert);
 
+    //Настраиваем меню для таблицы задач в режиме корзины
+    QMenu *trashMenu = new QMenu(this);
+    trashMenu->setObjectName("trashMenu");
+    trashMenu->addAction(ui->actionOpenTask);
+    trashMenu->addAction(ui->actionOpenDir);
+    trashMenu->addSeparator();
+    trashMenu->addAction(ui->actionDelURL);
+    trashMenu->addAction(ui->actionDelURLFiles);
+    trashMenu->addSeparator();
+    trashMenu->addAction(ui->actionRecover);
+
     //Настраиваем меню для дерева категорий и фильтров
     QMenu *treeMenu = new QMenu(this);
     treeMenu->setObjectName("treeMenu");
@@ -434,7 +446,10 @@ void REXWindow::showTableContextMenu(const QPoint &pos)
     }
     setEnabledTaskMenu(true);
 
-    QMenu *mnu = findChild<QMenu*>("tblMenu");
+    QMenu *mnu;
+    if(efmodel->containsFilter(16,100,EFilterProxyModel::Equal,""))
+        mnu = findChild<QMenu*>("tblMenu");
+    else mnu = findChild<QMenu*>("trashMenu");
     if(mnu)mnu->popup(QCursor::pos());
 }
 
@@ -469,7 +484,9 @@ void REXWindow::setTaskFilter(const QModelIndex &index)
             efmodel->prepareFilter(16,100,EFilterProxyModel::Equal,"");
             efmodel->execPrepared();
             ui->tableView->hideColumn(16);
+            ui->actionRecover->setVisible(false);
         }
+
         return;
     }
 
@@ -491,10 +508,12 @@ void REXWindow::setTaskFilter(const QModelIndex &index)
             efmodel->prepareFilter(16,100,EFilterProxyModel::Equal,"");
             efmodel->execPrepared();
             ui->tableView->hideColumn(16);
+            ui->actionRecover->setVisible(false);
         }
     }
     else if(id_cat <= -8 && id_cat >= -12) //если выделен элемент фильтра удалённых заданий
     {
+        ui->actionRecover->setVisible(true);
         sfmodel->setFilterRegExp(""); //сбрасываем фильтр для статусов и категорий
 
         efmodel->prepareToRemoveFilter(16);
@@ -1374,9 +1393,14 @@ void REXWindow::deleteTask()
         tasklist.remove(row_id);
     }
 
-    QString cdtime = QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:ss");
-    qr.prepare("UPDATE tasks SET arch=:dtime WHERE"+where);
-    qr.bindValue(":dtime",cdtime);
+    if(efmodel->containsFilter(16,100,EFilterProxyModel::Equal,""))
+    {
+        QString cdtime = QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:ss");
+        qr.prepare("UPDATE tasks SET arch=:dtime WHERE"+where);
+        qr.bindValue(":dtime",cdtime);
+    }
+    else
+        qr.prepare("DELETE FROM tasks WHERE"+where);
 
     if(!qr.exec())
     {
@@ -1431,6 +1455,46 @@ void REXWindow::startTask()
         index = efmodel->mapToSource(index);
         model->updateRow(index.row());
     }
+    manageTaskQueue();
+}
+
+void REXWindow::revertTask()
+{
+    QItemSelectionModel *select = ui->tableView->selectionModel();
+    if(!select->hasSelection())return; //если ничего невыделено, то выходим
+
+    QSqlQuery qr(QSqlDatabase::database());
+
+    QMap<int,int> cat_map;
+    QString where;
+    for(int i=0; i < select->selectedRows().length(); i++)
+    {
+        int row_id = select->selectedRows().value(i).data(Qt::DisplayRole).toInt();
+        cat_map.insert(select->selectedRows().value(i).data(Qt::DisplayRole).toInt(),0);
+
+        if(!i)
+            where += QString(" id=%1").arg(QString::number(row_id));
+        else
+            where += QString(" OR id=%1").arg(QString::number(row_id));
+    }
+
+    qr.prepare("UPDATE tasks SET arch=null WHERE"+where);
+
+    if(!qr.exec())
+    {
+        logmgr->appendLog(-1,0,LInterface::MT_ERROR,
+                          tr("Ошибка выполнения SQL запроса"),
+                          tr("Запрос: %1\nОшибка: %2").arg(qr.executedQuery(),qr.lastError().text())
+                          );
+        qDebug()<<"void REXWindow::revertTask(): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
+    }
+
+    model->updateModel(); //обновляем таблицу задач
+    model->clearCache();
+
+    foreach(int cur_row, cat_map.keys()) //обновляем счетчики в строках категорий
+        treemodel->updateRow(treemodel->indexById(cur_row));
+
     manageTaskQueue();
 }
 
@@ -2259,6 +2323,7 @@ void REXWindow::updateIcons()
     ui->actionHibernate->setIcon(SystemIconsWrapper::icon("actions/system-suspend-hibernate",48,":/appimages/hibernate.png"));
     ui->actionpluginsShow->setIcon(SystemIconsWrapper::icon("applications/preferences-plugin",48,":/appimages/plugins.png"));
     ui->actionSchedule->setIcon(SystemIconsWrapper::icon("actions/view-calendar-tasks",48,":/appimages/schedule.png"));
+    ui->actionRecover->setIcon(SystemIconsWrapper::icon("actions/document-revert",48,":/appimages/revert_48x48.png"));
 
     settDlg->updateIcons();
 }

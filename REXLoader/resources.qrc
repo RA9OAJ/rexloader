@@ -58,6 +58,7 @@
         <file alias="sections3.png">images/sections3.png</file>
         <file alias="sections4.png">images/sections4.png</file>
         <file alias="sections5.png">images/sections5.png</file>
+        <file alias="revert_48x48.png">images/revert_48x48.png</file>
     </qresource>
     <qresource prefix="/searchline">
         <file alias="find.png">images/searchline/find.png</file>

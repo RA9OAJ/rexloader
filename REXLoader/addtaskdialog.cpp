@@ -162,7 +162,7 @@ AddTaskDialog::~AddTaskDialog()
 void AddTaskDialog::loadDatabaseData()
 {
     QSqlQuery qr(mydb);
-    qr.exec("SELECT id,url FROM tasks ORDER BY id ASC LIMIT 99");
+    qr.exec("SELECT id,url FROM tasks ORDER BY id DESC LIMIT 99");
 
     while(qr.next())
         gui->urlBox->addItem(qr.value(1).toString());
