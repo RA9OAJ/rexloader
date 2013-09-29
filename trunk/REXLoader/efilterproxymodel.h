@@ -118,7 +118,7 @@ public slots:
 
 protected:
     virtual void runSorting(int column, Qt::SortOrder order = Qt::AscendingOrder);
-    virtual bool runFiltering(int row = 0, const QModelIndex &parent = QModelIndex());
+    virtual bool runFiltering(int row = 0, const QModelIndex &parent = QModelIndex(), int row_count = -1);
     void reset();
 
 private:

@@ -553,7 +553,7 @@ int TreeItemModel::taskCount(const QModelIndex &index,  bool incomplete) const
     }
 
     query.clear();
-    query.prepare("SELECT COUNT(*) FROM tasks WHERE categoryid=:id AND (arch IS NULL OR arch<>'1')" + filter);
+    query.prepare("SELECT COUNT(*) FROM tasks WHERE categoryid=:id AND (arch IS NULL OR arch = '0')" + filter);
     query.bindValue("id",id);
 
     if(!query.exec())

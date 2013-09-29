@@ -350,7 +350,8 @@ void HttpSection::dataAnalising()
         switch(reqid)
         {
         case 200:
-            totalsize = header["content-length"].toLongLong();
+            if(header.contains("content-length"))
+                totalsize = header["content-length"].toLongLong();
             emit totalSize(totalsize);
             emit fileType(header["content-type"]);
 

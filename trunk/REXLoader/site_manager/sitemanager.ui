@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SiteManager</class>
+ <widget class="QMainWindow" name="SiteManager">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionCreateSiteProfile"/>
+   <addaction name="actionEditSiteProfile"/>
+   <addaction name="actionRemoveSiteProfile"/>
+   <addaction name="separator"/>
+   <addaction name="actionEnableSiteProfile"/>
+   <addaction name="actionDisableSiteProfile"/>
+   <addaction name="separator"/>
+   <addaction name="actionCopySiteProfile"/>
+   <addaction name="actionExport"/>
+   <addaction name="actionImportSiteProfile"/>
+  </widget>
+  <action name="actionCreateSiteProfile">
+   <property name="text">
+    <string>Create site</string>
+   </property>
+   <property name="toolTip">
+    <string>Creates a site profile</string>
+   </property>
+  </action>
+  <action name="actionRemoveSiteProfile">
+   <property name="text">
+    <string>Remove site</string>
+   </property>
+   <property name="toolTip">
+    <string>Removes a site profile</string>
+   </property>
+  </action>
+  <action name="actionEnableSiteProfile">
+   <property name="text">
+    <string>Enable site</string>
+   </property>
+   <property name="toolTip">
+    <string>Enables a site profile</string>
+   </property>
+  </action>
+  <action name="actionDisableSiteProfile">
+   <property name="text">
+    <string>Disable site</string>
+   </property>
+   <property name="toolTip">
+    <string>Disables a site profile</string>
+   </property>
+  </action>
+  <action name="actionCopySiteProfile">
+   <property name="text">
+    <string>Copy site</string>
+   </property>
+   <property name="toolTip">
+    <string>Copies a site profile</string>
+   </property>
+  </action>
+  <action name="actionEditSiteProfile">
+   <property name="text">
+    <string>Edit site</string>
+   </property>
+   <property name="toolTip">
+    <string>Allows edit a site profile</string>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="text">
+    <string>Export</string>
+   </property>
+   <property name="toolTip">
+    <string>Exports a site profiles</string>
+   </property>
+  </action>
+  <action name="actionImportSiteProfile">
+   <property name="text">
+    <string>Import</string>
+   </property>
+   <property name="toolTip">
+    <string>Imports a site profile</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

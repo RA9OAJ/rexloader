@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #define P_VERSION "0.1a.3"
-#define P_BUILD_DATE "2012-05-24"
+#define P_BUILD_DATE "2013-09-29"
 
 #include "httploader.h"
 
@@ -64,7 +64,7 @@ QStringList HttpLoader::pluginInfo() const
 {
     QStringList pinfo;
     pinfo << QString("Plugin: ") + tr("HttpLoader");
-    pinfo << QString("Authors: ") + tr("Sarvaritdino R.");
+    pinfo << QString("Authors: ") + tr("Sarvaritdinov R.");
     pinfo << QString("Place: Russia, Barabinsk, 2011-2012");
     pinfo << QString("Build date: ") + QString(P_BUILD_DATE);
     pinfo << QString("Version: ") + QString(P_VERSION);
@@ -723,6 +723,7 @@ void HttpLoader::sectError(int _errno)
     if(!sect || !tsk)return;
     int id_task = task_list->key(tsk);
     int er = 0;
+    int last_err = tsk->error_number;
 
     switch(_errno)
     {
@@ -774,6 +775,23 @@ void HttpLoader::sectError(int _errno)
     case QAbstractSocket::ProxyConnectionRefusedError:
     case QAbstractSocket::ProxyConnectionClosedError:
     case QAbstractSocket::ProxyConnectionTimeoutError:
+    case 401:
+        if(last_err == LInterface::UNAUTHORIZED)
+            ++tsk->errors_cnt;
+
+        if(tsk->errors_cnt >= maxErrors)
+        {
+            tsk->status = LInterface::ERROR_TASK;
+            tsk->error_number = LInterface::ERRORS_MAX_COUNT;
+            stopDownload(id_task);
+            mathSpeed();
+        }
+        else
+        {
+            tsk->error_number = LInterface::UNAUTHORIZED;
+            emit needAuthorization(id_task);
+        }
+        break;
     case 400:
     case 403:
     case 409:

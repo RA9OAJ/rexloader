@@ -78,7 +78,7 @@ QPixmap SystemIconsWrapper::pixmap(const QString &name, int size, const QString 
     }
 #endif
 
-    return QPixmap(alt_name);
+    return QPixmap(alt_name).scaledToWidth(size,Qt::SmoothTransformation);
 }
 
 QList<QPair<QString, QString> > SystemIconsWrapper::systemThemes()
