@@ -2478,7 +2478,7 @@ void REXWindow::acceptQAction(QAbstractButton *btn)
 
 void REXWindow::scanTasksOnStart()
 {
-    QSqlQuery qr("SELECT COUNT(*) FROM tasks WHERE tstatus=0");
+    QSqlQuery qr("SELECT COUNT(*) FROM tasks WHERE tstatus=0 AND arch IS NULL");
     if(!qr.exec())
     {
         logmgr->appendLog(-1,0,LInterface::MT_ERROR,
