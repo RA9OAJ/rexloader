@@ -50,6 +50,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "searchline/searchline.h"
 #include "efilterproxymodel.h"
 #include "systemiconswrapper/systemiconswrapper.h"
+#include "site_manager/sitemanager.h"
 
 #include "../plugins/LoaderInterface.h"
 
@@ -170,8 +171,9 @@ private:
 
     Ui::REXWindow *ui;
     QSystemTrayIcon *trayicon; //объект системного лотка
-    QMovie *movie; //мувик для реализауии анимации в трее
+    QMovie *movie; //мувик для реализации анимации в трее
     SettingsDialog *settDlg;
+    SiteManager *siteManager;
     QSharedMemory *lock_mem;
 
     PluginManager *plugmgr;
