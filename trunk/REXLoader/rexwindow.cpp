@@ -52,6 +52,7 @@ REXWindow::REXWindow(QWidget *parent) :
     trayicon = new QSystemTrayIcon(this);
     trayicon->setIcon(QIcon(":/appimages/trayicon.png"));
     trayicon->show();
+    siteManager = new SiteManager(this);
     movie = new QMovie(this);
     movie->setFileName(":/appimages/onload.gif");
     movie->setCacheMode(QMovie::CacheAll);
@@ -293,6 +294,7 @@ void REXWindow::createInterface()
     connect(ui->actionAbout,SIGNAL(triggered()),this,SLOT(showAbout()));
     connect(ui->actionpluginsShow,SIGNAL(triggered()),this,SLOT(showSettDialog()));
     connect(ui->actionRecover,SIGNAL(triggered()),this,SLOT(revertTask()));
+    connect(ui->actionShowSiteManager,SIGNAL(triggered()),siteManager,SLOT(show()));
 
     //кнопка-меню для выбора скорости
     spdbtn = new QToolButton(this);
@@ -2324,6 +2326,7 @@ void REXWindow::updateIcons()
     ui->actionpluginsShow->setIcon(SystemIconsWrapper::icon("applications/preferences-plugin",48,":/appimages/plugins.png"));
     ui->actionSchedule->setIcon(SystemIconsWrapper::icon("actions/view-calendar-tasks",48,":/appimages/schedule.png"));
     ui->actionRecover->setIcon(SystemIconsWrapper::icon("actions/document-revert",48,":/appimages/revert_48x48.png"));
+    ui->actionShowSiteManager->setIcon(SystemIconsWrapper::icon("categories/applications-internet",48,":/appimages/internet.png"));
 
     settDlg->updateIcons();
 }
@@ -3268,6 +3271,8 @@ void REXWindow::prepareToQuit()
     stop_flag = true;
     stopAllTasks();
     saveSettings();
+    siteManager->close();
+    siteManager->deleteLater();
 }
 
 void REXWindow::setProxy(int id_task, int id_proto, bool global)
