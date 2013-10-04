@@ -1812,14 +1812,14 @@ void REXWindow::syncTaskData()
             case LInterface::FILE_READ_ERROR:errStr = tr("Невозможно прочитать локальный файл.");break;
             case LInterface::HOST_NOT_FOUND: errStr = tr("Удаленнй сервер не найден.");break;
             case LInterface::CONNECT_ERROR: errStr = tr("Ошибка подключения к удалённому серверу.");break;
-            case LInterface::CONNECT_LOST: errStr = tr("Подключение к удаленному серверу потеряно.");break;
+            case LInterface::CONNECT_LOST: errStr = tr("Подключение к удаленному серверу потеряно или истекло верям ожидания подключения к узлу.");break;
             case LInterface::SERVER_REJECT_QUERY: errStr = tr("Сервер отклонил запрос на соединение.");break;
             case LInterface::PROXY_NOT_FOUND: errStr = tr("Прокси не найден.");break;
             case LInterface::PROXY_AUTH_ERROR: errStr = tr("Не удалось пройти аутентификацию на прокси.");break;
             case LInterface::PROXY_ERROR: errStr = tr("Ошибка протокола прокси.");break;
-            case LInterface::PROXY_CONNECT_CLOSE: errStr = tr("Прокси неожиданно разорвал соединение.");break;
-            case LInterface::PROXY_CONNECT_REFUSED: errStr = tr("Прокси отверг попытку подключения.");break;
-            case LInterface::PROXY_TIMEOUT: errStr = tr("Таймаут прокси.");break;
+            case LInterface::PROXY_CONNECT_CLOSE: errStr = tr("Прокси сервер неожиданно разорвал соединение.");break;
+            case LInterface::PROXY_CONNECT_REFUSED: errStr = tr("Прокси сервер отверг попытку подключения.");break;
+            case LInterface::PROXY_TIMEOUT: errStr = tr("Таймаут подключения к прокси серверу.");break;
             case LInterface::ERRORS_MAX_COUNT: errStr = tr("Достигнуто максимальное количество ошибок.");break;
             default:
                 errStr = ldr->errorString(errno_);
