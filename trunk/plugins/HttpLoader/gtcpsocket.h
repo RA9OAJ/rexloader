@@ -43,6 +43,10 @@ public:
     bool getMode() const;
     bool getShedulerStatus() const;
     bool getTransferStatus() const;
+    void connectToHost(const QHostAddress &address, quint16 port, OpenMode mode);
+    void connectToHost(const QString &hostName, quint16 port, OpenMode mode);
+    void connectToHostEncrypted(const QString &hostName, quint16 port, const QString &sslPeerName, OpenMode mode);
+    void connectToHostEncrypted(const QString &hostName, quint16 port, OpenMode mode);
 
 signals:
     void readyToRead();
@@ -57,6 +61,7 @@ public slots:
 protected slots:
     void connectedAct();
     void sheduler();
+    void connectTimeOut();
 
 protected:
     virtual qint64 readData(char *data, qint64 maxlen);

@@ -760,6 +760,8 @@ void HttpLoader::sectError(int _errno)
     case QAbstractSocket::ProxyNotFoundError:
     case QAbstractSocket::ProxyAuthenticationRequiredError:
     case QAbstractSocket::ProxyProtocolError:
+    case QAbstractSocket::ConnectionRefusedError:
+    case QAbstractSocket::ProxyConnectionRefusedError:
     case 404:
         if(tsk->sections_cnt < 2)
         {
@@ -767,15 +769,8 @@ void HttpLoader::sectError(int _errno)
             stopDownload(id_task);
             break;
         }
-    case HttpSection::SERV_CONNECT_ERROR:
-    case HttpSection::FILE_NOT_AVAILABLE:
-    case QAbstractSocket::RemoteHostClosedError:
-    case QAbstractSocket::ConnectionRefusedError:
-    case QAbstractSocket::SocketTimeoutError:
-    case QAbstractSocket::ProxyConnectionRefusedError:
-    case QAbstractSocket::ProxyConnectionClosedError:
-    case QAbstractSocket::ProxyConnectionTimeoutError:
     case 401:
+    {
         if(last_err == LInterface::UNAUTHORIZED)
             ++tsk->errors_cnt;
 
@@ -792,6 +787,13 @@ void HttpLoader::sectError(int _errno)
             emit needAuthorization(id_task);
         }
         break;
+    }
+    case HttpSection::SERV_CONNECT_ERROR:
+    case HttpSection::FILE_NOT_AVAILABLE:
+    case QAbstractSocket::RemoteHostClosedError:
+    case QAbstractSocket::SocketTimeoutError:
+    case QAbstractSocket::ProxyConnectionClosedError:
+    case QAbstractSocket::ProxyConnectionTimeoutError:
     case 400:
     case 403:
     case 409:

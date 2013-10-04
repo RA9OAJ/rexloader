@@ -103,6 +103,16 @@ void GTcpSocket::sheduler()
     if(mode) {QTimer::singleShot(10, this, SLOT(sheduler()));}
 }
 
+void GTcpSocket::connectTimeOut()
+{
+    if(state() != QSslSocket::ConnectedState)
+    {
+        emit error(QSslSocket::ConnectionRefusedError);
+        abort();
+        shedule_now = false;
+    }
+}
+
 void GTcpSocket::transferAct()
 {
     if(shedule_now)return; //если уже идет обмен с внешними буферами, то выходим
@@ -270,4 +280,32 @@ void GTcpSocket::stopTransfer()
 bool GTcpSocket::getTransferStatus() const
 {
     return t_flag;
+}
+
+void GTcpSocket::connectToHost(const QHostAddress &address, quint16 port, QIODevice::OpenMode mode)
+{
+    QTimer::singleShot(timeout_interval * 1000,this,SLOT(connectTimeOut()));
+
+    QSslSocket::connectToHost(address,port,mode);
+}
+
+void GTcpSocket::connectToHost(const QString &hostName, quint16 port, QIODevice::OpenMode mode)
+{
+    QTimer::singleShot(timeout_interval * 1000,this,SLOT(connectTimeOut()));
+
+    QSslSocket::connectToHost(hostName,port,mode);
+}
+
+void GTcpSocket::connectToHostEncrypted(const QString &hostName, quint16 port, const QString &sslPeerName, QIODevice::OpenMode mode)
+{
+    QTimer::singleShot(timeout_interval * 1000,this,SLOT(connectTimeOut()));
+
+    QSslSocket::connectToHostEncrypted(hostName,port,sslPeerName,mode);
+}
+
+void GTcpSocket::connectToHostEncrypted(const QString &hostName, quint16 port, QIODevice::OpenMode mode)
+{
+    QTimer::singleShot(timeout_interval * 1000,this,SLOT(connectTimeOut()));
+
+    QSslSocket::connectToHostEncrypted(hostName,port,mode);
 }
