@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QNetworkProxy>
 #include "httpsection.h"
 #include "../LoaderInterface.h"
+#include "authentification.h"
 
 class Task{
 public:
