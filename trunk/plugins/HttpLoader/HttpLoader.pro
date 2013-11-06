@@ -11,11 +11,13 @@ DESTDIR = ../../usr/lib/rexloader/plugins
 
 SOURCES = httploader.cpp \
     httpsection.cpp \
-    gtcpsocket.cpp
+    gtcpsocket.cpp \
+    authentification.cpp
 
 HEADERS = httploader.h \
     httpsection.h \
-    gtcpsocket.h
+    gtcpsocket.h \
+    authentification.h
 
 TRANSLATIONS = lang/ru_RU.ts
 
