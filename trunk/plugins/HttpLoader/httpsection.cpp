@@ -498,6 +498,12 @@ void HttpSection::dataAnalising()
             chunked_load += inbuf.size() - lbufs;
             cur_bloc = inbuf.size() - lbufs;
         }
+        else if(header.contains("content-encoding"))
+        {
+            inbuf.append(soc->readAll());
+            fl->write(ungzipData(inbuf));
+            inbuf.clear();
+        }
         else cur_bloc = fl->write(soc->readAll());
 
         if(chunked_size > 0 && chunked_size - chunked_load == 0) //если скачка по методу Chunked
