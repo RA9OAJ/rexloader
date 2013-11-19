@@ -102,6 +102,7 @@ public:
     qint64 last_size;
     qint64 cur_speed;
     QString etag;
+    Authentification authMaster;
 };
 
 class HttpLoader : public LoaderInterface

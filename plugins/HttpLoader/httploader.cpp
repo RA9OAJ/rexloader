@@ -281,7 +281,7 @@ void HttpLoader::startDownload(int id_task)
     HttpSection *sect = new HttpSection();
     sect->setUrlToDownload(QString(tsk->url.toEncoded()));
     sect->setFileName(tsk->filepath);
-    if(!tsk->authData.isEmpty())sect->setAuthorizationData(tsk->authData);
+    if(!tsk->authMaster.isEmpty())sect->setAuthorizationData(tsk->authMaster.getAuthString(tsk->url));
     sect->setUserAgent(uAgent);
     if(!tsk->referer.isEmpty())sect->setReferer(tsk->referer);
     sect->setLastModified(tsk->last_modif);
@@ -618,7 +618,7 @@ void HttpLoader::addSection(int id_task)
     HttpSection *sect = new HttpSection();
     sect->setUrlToDownload(_url.toString());
     sect->setFileName(_task->filepath);
-    if(!_task->authData.isEmpty())sect->setAuthorizationData(_task->authData);
+    if(!_task->authMaster.isEmpty())sect->setAuthorizationData(_task->authMaster.getAuthString(_url));
     sect->setUserAgent(uAgent);
     if(!_task->referer.isEmpty())sect->setReferer(_task->referer);
     sect->setLastModified(_task->last_modif);
@@ -783,8 +783,21 @@ void HttpLoader::sectError(int _errno)
         }
         else
         {
-            tsk->error_number = LInterface::UNAUTHORIZED;
-            emit needAuthorization(id_task);
+            if(tsk->authData.isEmpty() || tsk->error_number == LInterface::UNAUTHORIZED)
+            {
+                tsk->error_number = LInterface::UNAUTHORIZED;
+                emit needAuthorization(id_task);
+            }
+            else
+            {
+                tsk->error_number = LInterface::UNAUTHORIZED;
+                QString user = tsk->authData.split("\r\n").value(0),
+                        passwd = tsk->authData.split("\r\n").value(1);
+                tsk->authMaster.setUsername(user);
+                tsk->authMaster.setPassword(passwd);
+                tsk->authMaster.setServerAuthData(sect->getHeader().value("www-authenticate"));
+                startDownload(id_task);
+            }
         }
         break;
     }

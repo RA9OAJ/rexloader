@@ -3,6 +3,7 @@
 
 Authentification::Authentification()
 {
+    options.clear();
 }
 
 QString Authentification::getAuthString(const QUrl &url, const QString &body)
@@ -16,6 +17,8 @@ QString Authentification::getAuthString(const QUrl &url, const QString &body)
         options["_entity_body"] = body;
         return md5Digest();
     }
+    else if(option("_method").toInt() == Basic)
+        return basic();
 
     return QString();
 }
@@ -38,7 +41,7 @@ QVariant Authentification::option(const QString &opt) const
 
 void Authentification::setUsername(const QString &user)
 {
-    options["username"] = "\"" + user + "\"";
+    options["_username"] = "\"" + user + "\"";
 }
 
 void Authentification::setPassword(const QString &passwd)
@@ -46,15 +49,20 @@ void Authentification::setPassword(const QString &passwd)
     options["_password"] = passwd;
 }
 
+bool Authentification::isEmpty() const
+{
+    return options.isEmpty();
+}
+
 QString Authentification::md5Digest()
 {
     options["_nc"] = options["_nc"].toInt() + 1;
     QString h1,h2;
     QCryptographicHash hash(QCryptographicHash::Md5);
-    qDebug()<<"h1="<<QString("%1:%2:%3").arg(unquote(option("username").toString()),
+    /*qDebug()<<"h1="<<QString("%1:%2:%3").arg(unquote(option("_username").toString()),
                                              unquote(option("realm").toString()),
-                                             option("_password").toString());
-    hash.addData((QString("%1:%2:%3").arg(unquote(option("username").toString()),
+                                             option("_password").toString());*/
+    hash.addData((QString("%1:%2:%3").arg(unquote(option("_username").toString()),
                                           unquote(option("realm").toString()),
                                           option("_password").toString()).toAscii()));
 
@@ -64,7 +72,7 @@ QString Authentification::md5Digest()
     QString qop = option("qop").toString();
     if(qop.indexOf(QRegExp("auth[^-]{1}")) != -1 || qop.isEmpty())
     {
-        qDebug()<<"h2="<<(QString("%1:%2").arg("GET",unquote(option("uri").toString())));
+        /*qDebug()<<"h2="<<(QString("%1:%2").arg("GET",unquote(option("uri").toString())));*/
         hash.addData((QString("%1:%2").arg("GET",unquote(option("uri").toString()))).toAscii());
         h2 = hash.result().toHex();
     }
@@ -91,17 +99,38 @@ QString Authentification::md5Digest()
                  unquote(options["qop"].toString()),
                  h2
                  ).toAscii()));
-    qDebug()<<"result="<<(QString("%1:%2:%3:%4:%5:%6").arg(h1,
+    /*qDebug()<<"result="<<(QString("%1:%2:%3:%4:%5:%6").arg(h1,
                                                            unquote(option("nonce").toString()),
                                                            options["nc"].toString(),
                                                            unquote(options["cnonce"].toString()),
                                                            unquote(options["qop"].toString()),
                                                            h2
-                                                           ));
-    QString result = hash.result().toHex();
-    qDebug()<<result/*<<options*/;
-    return QString();
+                                                           ));*/
+    options["response"] = QString("\"%1\"").arg(QString(hash.result().toHex()));
 
+    QString out = QString(" Digest username=%1,").arg(options.value("_username").toString());
+    QStringList keys = options.keys();
+    foreach(QString key, keys)
+    {
+        if(options.value(key).toString().mid(0,1) == "_")
+            continue;
+
+        out += QString(" %1=%2,").arg(key,options.value(key).toString());
+    }
+    out = out.mid(0,out.size()-2);
+
+    return out;
+
+}
+
+QString Authentification::basic()
+{
+    if(options.value("_username").toString().isEmpty() || options.value("_password").toString().isEmpty())
+        return QString();
+
+    QString base64_auth = QString("%1:%2").arg(options.value("_username").toString(),
+                                                  options.value("_password").toString()).toAscii().toBase64();
+    return QString(" Basic %1").arg(base64_auth);
 }
 
 void Authentification::parseHttpHeader(const QString &hdr)
@@ -132,7 +161,6 @@ void Authentification::parseHttpHeader(const QString &hdr)
             continue;
 
         options[cur.mid(0,spos)] = cur.mid(spos + 1);
-        qDebug()<<cur.mid(0,spos) + "=" + cur.mid(spos + 1);
     }
 }
 

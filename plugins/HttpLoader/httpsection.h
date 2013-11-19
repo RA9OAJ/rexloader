@@ -77,6 +77,7 @@ public:
     QString getCookie() const;
     bool freedMemory()const;
     void setProxy(const QUrl &_proxy, QNetworkProxy::ProxyType _ptype, const QString &base64_userdata);
+    QHash<QString,QString> getHeader() const;
 
 public slots:
     void transferActSlot(); //слот-посредник

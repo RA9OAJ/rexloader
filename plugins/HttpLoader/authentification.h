@@ -19,6 +19,7 @@ public:
     QVariant option(const QString &opt) const;
     void setUsername(const QString &user);
     void setPassword(const QString &passwd);
+    bool isEmpty() const;
 
 private:
     enum AuthMethod
@@ -28,6 +29,7 @@ private:
     };
 
     QString md5Digest();
+    QString basic();
     void parseHttpHeader(const QString &hdr);
     QString unquote(const QString &val) const;
 

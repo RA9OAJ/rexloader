@@ -287,7 +287,7 @@ void HttpSection::sendHeader()
         }
     }
     if(!authorization.isEmpty())
-        _header += QString("Authorization: Basic %1\r\n").arg(authorization);
+        _header += QString("Authorization: %1\r\n").arg(authorization);
     if(!referer.isEmpty())_header += QString("Referer: %1\r\n").arg(referer);
     if(!cookie_string.isEmpty())
         _header += QString("Cookie: %1\r\n").arg(cookie_string);
@@ -636,6 +636,11 @@ void HttpSection::setProxy(const QUrl &_proxy, QNetworkProxy::ProxyType _ptype, 
     proxyaddr = _proxy;
     proxytype = _ptype;
     proxy_auth = base64_userdata;
+}
+
+QHash<QString, QString> HttpSection::getHeader() const
+{
+    return header;
 }
 
 QByteArray HttpSection::ungzipData(QByteArray &data)
