@@ -499,11 +499,7 @@ void HttpSection::dataAnalising()
             cur_bloc = inbuf.size() - lbufs;
         }
         else if(header.contains("content-encoding"))
-        {
             inbuf.append(soc->readAll());
-            fl->write(ungzipData(inbuf));
-            inbuf.clear();
-        }
         else cur_bloc = fl->write(soc->readAll());
 
         if(chunked_size > 0 && chunked_size - chunked_load == 0) //если скачка по методу Chunked
@@ -523,8 +519,15 @@ void HttpSection::dataAnalising()
         emit transferCompleted(cur_bloc);
 
         qint64 targetsize = finish_s ? finish_s - start_s + 1 : totalsize - start_s;
-        if((soc->state() != QTcpSocket::ConnectedState && soc->bytesAvailable() == 0 && soc->bytesAvailableOnNetwork() == 0) || totalload == targetsize)
+        if((soc->state() != QTcpSocket::ConnectedState && soc->bytesAvailable() == 0 && soc->bytesAvailableOnNetwork() == 0) || (totalload == targetsize && totalload != 0))
         {
+            if(header.contains("content-encoding") && inbuf.size())
+            {
+                totalload = fl->write(ungzipData(inbuf));
+                emit transferCompleted(totalload);
+                inbuf.clear();
+            }
+
             fl->close();
             stopDownloading();
             emit downloadingCompleted();
