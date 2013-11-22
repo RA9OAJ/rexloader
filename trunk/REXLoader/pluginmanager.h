@@ -52,6 +52,7 @@ public:
 public slots:
     void startDownload(int id_task);
     void stopDownload(int id_task);
+    void setAuthorizationData(int id_task, const QString &auth);
 
 private:
     QHash<int,LoaderInterface*> *pluglist; //хэш ссылок на плагины
@@ -106,6 +107,7 @@ signals:
 public slots:
     void startDownload(int id_task);
     void stopDownload(int id_tsk);
+    void setAuthorizationData(int id_task);
     void exeQuery(const QString &query);
     void appendLog(int id_task, int id_sect, int ms_type, const QString &title, const QString &more);
     void notify(const QString &title, const QString &msg, int timeout = 10, const QStringList &acts = QStringList(), int type = NotifInterface::INFO, QImage* img=0);

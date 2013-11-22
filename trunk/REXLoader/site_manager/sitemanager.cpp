@@ -16,6 +16,16 @@ SiteManager::~SiteManager()
     db = QSqlDatabase::database();
 }
 
+QString SiteManager::authData(const QUrl &url)
+{
+    return QString();
+}
+
+void SiteManager::authAction(int id_task, const QUrl &url)
+{
+
+}
+
 void SiteManager::updateIcons()
 {
 }
@@ -28,6 +38,13 @@ void SiteManager::show()
     if(isVisible())
         activateWindow();
     else QMainWindow::show();
+}
+
+void SiteManager::authDataForUrl(const QUrl &url, const QString &auth)
+{
+    int id_task = task_map.value(url,-1);
+    if(id_task != -1)
+        emit authEntered(id_task,auth);
 }
 
 void SiteManager::closeEvent(QCloseEvent *e)
