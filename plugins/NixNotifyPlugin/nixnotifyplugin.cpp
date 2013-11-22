@@ -110,7 +110,8 @@ void NixNotifyPlugin::closeNotify(unsigned int id)
     {
         unsigned int cid = 0;
         foreach(cid,nlist)
-            closeNotify(cid);
+            if(cid)
+                closeNotify(cid);
         return;
     }
     dbusNotification.call(QDBus::AutoDetect, "CloseNotification", id);

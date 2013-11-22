@@ -280,6 +280,10 @@ void PluginManager::stopDownload(int id_tsk)
     emit stopTask(id_tsk);
 }
 
+void PluginManager::setAuthorizationData(int id_task)
+{
+}
+
 void PluginManager::exeQuery(const QString &query)
 {
     emit needExecQuery(query);
@@ -382,6 +386,15 @@ void PluginOperator::stopDownload(int id_task)
     if(!task)return;
     int plug = id_task/100;
     pluglist->value(plug)->stopDownload(task);
+}
+
+void PluginOperator::setAuthorizationData(int id_task, const QString &auth)
+{
+    if(!pluglist)return;
+    int task = id_task%100;
+    if(!task)return;
+    int plug = id_task/100;
+    pluglist->value(plug)->setAuthorizationData(task,auth);
 }
 
 void PluginManager::loadLocale(const QLocale &locale)

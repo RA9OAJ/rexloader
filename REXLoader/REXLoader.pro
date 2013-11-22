@@ -54,7 +54,8 @@ SOURCES += main.cpp\
     searchline/popuplist.cpp \
     efilterproxymodel.cpp \
     systemiconswrapper/systemiconswrapper.cpp \
-    site_manager/sitemanager.cpp
+    site_manager/sitemanager.cpp \
+    site_manager/logindialog.cpp
 
 HEADERS  += rexwindow.h \
     titemmodel.h \
@@ -86,7 +87,8 @@ HEADERS  += rexwindow.h \
     searchline/popuplist.h \
     efilterproxymodel.h \
     systemiconswrapper/systemiconswrapper.h \
-    site_manager/sitemanager.h
+    site_manager/sitemanager.h \
+    site_manager/logindialog.h
 
 FORMS    += rexwindow.ui \
     addtaskdialog.ui \
@@ -95,7 +97,8 @@ FORMS    += rexwindow.ui \
     categorydialog.ui \
     taskdialog.ui \
     taskschedulerdialog.ui \
-    site_manager/sitemanager.ui
+    site_manager/sitemanager.ui \
+    site_manager/logindialog.ui
 
 RESOURCES += \
     resources.qrc
