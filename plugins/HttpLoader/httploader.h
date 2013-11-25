@@ -153,7 +153,7 @@ public:
 signals:
     void sheduleImpulse(); //сигнал генериться с интервалом шедулера
     void messageAvailable(int id_task, int id_sect, int ms_type, const QString &title, const QString &more); //сигнал сообщает о наличии служебных сообщений для задания id_task
-    void needAuthorization(int id_task); //сигнал сообщает о необходимости авторизации
+    void needAuthorization(int id_task, const QUrl &url); //сигнал сообщает о необходимости авторизации
 
 protected:
     void mathSpeed(); //перерасчитывает скорость секций всех закачек;

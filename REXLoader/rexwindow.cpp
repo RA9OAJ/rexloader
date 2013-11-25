@@ -66,6 +66,7 @@ REXWindow::REXWindow(QWidget *parent) :
     openDataBase();
 
     plugmgr = new PluginManager(this);
+    plugmgr->setSiteManager(siteManager);
     connect(plugmgr,SIGNAL(pluginStatus(bool)),this,SLOT(pluginStatus(bool)));
     connect(qApp,SIGNAL(aboutToQuit()),this,SLOT(prepareToQuit()));
     connect(this,SIGNAL(needExecQuery(QString)),plugmgr,SLOT(exeQuery(QString)));
