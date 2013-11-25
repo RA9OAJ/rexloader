@@ -6,6 +6,7 @@
 #include <QtSql/QtSql>
 
 #include <../systemiconswrapper/systemiconswrapper.h>
+#include "logindialog.h"
 
 namespace Ui {
 class SiteManager;

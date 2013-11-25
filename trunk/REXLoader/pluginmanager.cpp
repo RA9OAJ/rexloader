@@ -36,6 +36,7 @@ PluginManager::PluginManager(QObject *parent) :
     connect(this,SIGNAL(needLoadOtherPlugin(QString)),this,SLOT(loadOtherPlugin(QString)),Qt::QueuedConnection);
     connect(this,SIGNAL(needLoadNotifPlugin(int)),this,SLOT(loadNotifPlugin(int)),Qt::QueuedConnection);
     connect(this,SIGNAL(needCreatePlugWidget(int)),this,SLOT(createPlugWidget(int)),Qt::QueuedConnection);
+    site_mgr = 0;
     first_run = false;
     updOper = 0;
     menu = new QMenu(tr("Действия с файлами"));
@@ -66,6 +67,7 @@ void PluginManager::run()
     PluginOperator *oper = new PluginOperator();
     connect(this,SIGNAL(startTask(int)),oper,SLOT(startDownload(int)),Qt::QueuedConnection);
     connect(this,SIGNAL(stopTask(int)),oper,SLOT(stopDownload(int)),Qt::QueuedConnection);
+    connect(this,SIGNAL(authData(int,QString)),oper,SLOT(setAuthorizationData(int,QString)),Qt::QueuedConnection);
     oper->setPluglist(pluglist);
 
     for(int i=0; i<pluginDirs->size(); i++)
@@ -120,6 +122,7 @@ void PluginManager::run()
             emit needCreatePlugWidget(pluglist->size());
 
             connect(ldr,SIGNAL(messageAvailable(int,int,int,QString,QString)),this,SLOT(appendLog(int,int,int,QString,QString)),Qt::QueuedConnection);
+            connect(ldr,SIGNAL(needAuthorization(int,QUrl)),this,SLOT(needAuthorization(int,QUrl)),Qt::QueuedConnection);
 
             QStringList protocols = ldr->protocols();
             for(int x=0; x<protocols.size(); x++)
@@ -177,6 +180,21 @@ void PluginManager::unloadOtherPlugin(const QString &plgid)
         translators.remove(plgid);
     }
     updateFilePluginMenu();
+}
+
+void PluginManager::needAuthorization(int id_task, const QUrl &url)
+{
+    LoaderInterface *ldr = qobject_cast<LoaderInterface*>(sender());
+    if(ldr && site_mgr)
+    {
+        int tsk = pluglist->key(ldr)*100;
+        if(!tsk)
+            return;
+
+        tsk += id_task;
+        site_mgr->authAction(tsk,url);
+    }
+
 }
 
 void PluginManager::loadOtherPlugin(const QString &filepath)
@@ -280,8 +298,9 @@ void PluginManager::stopDownload(int id_tsk)
     emit stopTask(id_tsk);
 }
 
-void PluginManager::setAuthorizationData(int id_task)
+void PluginManager::setAuthorizationData(int id_task, const QString &auth)
 {
+    emit authData(id_task,auth);
 }
 
 void PluginManager::exeQuery(const QString &query)
@@ -352,6 +371,12 @@ void PluginManager::setDatabaseFile(const QString &dbfile)
     db = dbfile;
 }
 
+void PluginManager::setSiteManager(SiteManager *mgr)
+{
+    site_mgr = mgr;
+    connect(site_mgr,SIGNAL(authEntered(int,QString)),this,SLOT(setAuthorizationData(int,QString)));
+}
+
 //---------------------PluginOperator----------------------
 
 PluginOperator::PluginOperator(QObject *parent) :
@@ -395,6 +420,7 @@ void PluginOperator::setAuthorizationData(int id_task, const QString &auth)
     if(!task)return;
     int plug = id_task/100;
     pluglist->value(plug)->setAuthorizationData(task,auth);
+    pluglist->value(plug)->startDownload(task);
 }
 
 void PluginManager::loadLocale(const QLocale &locale)

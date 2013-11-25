@@ -112,7 +112,7 @@ QString Authentification::md5Digest()
     QStringList keys = options.keys();
     foreach(QString key, keys)
     {
-        if(options.value(key).toString().mid(0,1) == "_")
+        if(key.mid(0,1) == "_")
             continue;
 
         out += QString(" %1=%2,").arg(key,options.value(key).toString());

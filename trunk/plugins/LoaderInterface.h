@@ -126,7 +126,7 @@ public:
 
 signals:
     virtual void messageAvailable(int id_task, int id_sect, int ms_type, const QString &title, const QString &more)=0; //сигнал сообщает о наличии служебных сообщений для задания id_task
-    virtual void needAuthorization(int id_task)=0; //сигнал сообщает о необходимости авторизации
+    virtual void needAuthorization(int id_task, const QUrl &url)=0; //сигнал сообщает о необходимости авторизации
 };
 
 

@@ -41,6 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "titemmodel.h"
 #include "logtreemodel.h"
 #include "pluginlistmodel.h"
+#include "site_manager/sitemanager.h"
 
 class PluginOperator : public QObject
 {
@@ -82,6 +83,7 @@ public:
     void setPlugLists(QHash<int,QString> *files, QHash<int,LoaderInterface*> *list, QHash<QString,int> *proto, QHash<int,int> *tsklist);
     void setDefaultSettings(const int &tasks, const int &threads, const qint64 &speed, const int &att_interval);
     void setDatabaseFile(const QString &dbfile);
+    void setSiteManager(SiteManager *mgr);
     void loadLocale(const QLocale &locale);
     void restorePluginsState(const QByteArray &stat);
     void setPluginListModel(PluginListModel *mdl);
@@ -103,11 +105,12 @@ signals:
     void needLoadOtherPlugin(const QString &filepath);
     void needLoadNotifPlugin(int id);
     void needCreatePlugWidget(int plug_id);
+    void authData(int id_task, const QString &auth);
 
 public slots:
     void startDownload(int id_task);
     void stopDownload(int id_tsk);
-    void setAuthorizationData(int id_task);
+    void setAuthorizationData(int id_task, const QString &auth);
     void exeQuery(const QString &query);
     void appendLog(int id_task, int id_sect, int ms_type, const QString &title, const QString &more);
     void notify(const QString &title, const QString &msg, int timeout = 10, const QStringList &acts = QStringList(), int type = NotifInterface::INFO, QImage* img=0);
@@ -115,6 +118,7 @@ public slots:
     void actionAnalizer();
     void updateFilePluginMenu();
     void unloadOtherPlugin(const QString &plgid);
+    void needAuthorization(int id_task, const QUrl &url);
 
 protected:
     void run();
@@ -152,6 +156,7 @@ private:
     QTableView *tab_view;
     QHash<int, QWidget*> plug_widgets;
     QLocale _locale;
+    SiteManager *site_mgr;
 };
 
 #endif // PLUGINMANAGER_H

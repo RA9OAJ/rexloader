@@ -273,7 +273,7 @@ long long int HttpLoader::totalDownSpeed() const
 
 void HttpLoader::startDownload(int id_task)
 {
-    if(!task_list->contains(id_task) || taskStatus(id_task) != LInterface::ON_PAUSE)return;
+    if(!task_list->contains(id_task) || (taskStatus(id_task) != LInterface::ON_PAUSE && errorNo(id_task) != LInterface::UNAUTHORIZED))return;
     if(!task_list->value(id_task))return;
 
     Task *tsk = task_list->value(id_task);
@@ -281,7 +281,12 @@ void HttpLoader::startDownload(int id_task)
     HttpSection *sect = new HttpSection();
     sect->setUrlToDownload(QString(tsk->url.toEncoded()));
     sect->setFileName(tsk->filepath);
-    if(!tsk->authMaster.isEmpty())sect->setAuthorizationData(tsk->authMaster.getAuthString(tsk->url));
+    if(!tsk->authMaster.isEmpty() && !tsk->authData.isEmpty())
+    {
+        tsk->authMaster.setUsername(tsk->authData.split("\r\n").value(0));
+        tsk->authMaster.setPassword(tsk->authData.split("\r\n").value(1));
+        sect->setAuthorizationData(tsk->authMaster.getAuthString(tsk->url));
+    }
     sect->setUserAgent(uAgent);
     if(!tsk->referer.isEmpty())sect->setReferer(tsk->referer);
     sect->setLastModified(tsk->last_modif);
@@ -786,7 +791,8 @@ void HttpLoader::sectError(int _errno)
             if(tsk->authData.isEmpty() || tsk->error_number == LInterface::UNAUTHORIZED)
             {
                 tsk->error_number = LInterface::UNAUTHORIZED;
-                emit needAuthorization(id_task);
+                tsk->authMaster.setServerAuthData(sect->getHeader().value("www-authenticate"));
+                emit needAuthorization(id_task, tsk->url);
             }
             else
             {
@@ -853,7 +859,6 @@ void HttpLoader::sectError(int _errno)
         tsk->error_number = _errno;
         break;
     }
-
 }
 
 void HttpLoader::acceptSectionData()
