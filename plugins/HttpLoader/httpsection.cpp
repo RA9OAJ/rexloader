@@ -110,6 +110,7 @@ void HttpSection::run()
     else
     {
         port = (url.port() == -1 ? 443:url.port());
+        s->setPeerVerifyMode(QSslSocket::VerifyNone);
         s->connectToHostEncrypted(url.encodedHost(), port, QTcpSocket::ReadWrite);
     }
     //exec();
@@ -613,7 +614,7 @@ QString HttpSection::fileName() const
 QString HttpSection::attachedFileName(const QString &cont_dispos) const
 {
     if(cont_dispos.indexOf("filename") < 0) return QString();
-    QStringList words = cont_dispos.split("; ");
+    QStringList words = cont_dispos.split(";");
     for(int i = 0; i<words.size(); ++i)
     {
         if(words.value(i).indexOf("filename")<0)continue;
