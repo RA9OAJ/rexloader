@@ -747,7 +747,8 @@ bool EFilterProxyModel::runFiltering(int row, const QModelIndex &parent, int row
                 for(int y = 0; y < end; ++y)
                 {
                     QModelIndex eidx = sourceModel()->index(i,y,parent);
-                    if(sourceModel()->hasChildren(eidx))
+
+                    if(eidx != QModelIndex() && sourceModel()->hasChildren(eidx))
                         runFiltering(0,eidx); //вызываем фильтрацию для элемента-родителя
                 }
             }

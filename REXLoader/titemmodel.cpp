@@ -409,6 +409,13 @@ void TItemModel::setSpdFormat(bool out_bytes)
     out_spdf = out_bytes;
 }
 
+bool TItemModel::hasChildren(const QModelIndex &parent) const
+{
+    if(parent != QModelIndex())
+        return false;
+    return true;
+}
+
 QModelIndex TItemModel::parent(const QModelIndex &child) const
 {
     Q_UNUSED(child)
@@ -433,7 +440,7 @@ QModelIndex TItemModel::index(int row, int column, const QModelIndex &parent) co
     {
 
         int sec = 0;
-        if(myData(row,11).toLongLong() != 0)sec = (myData(row,5).toLongLong()-myData(row,4).toLongLong())/myData(row,11).toLongLong();;
+        if(myData(row,11).toLongLong() != 0)sec = (myData(row,5).toLongLong()-myData(row,4).toLongLong())/myData(row,11).toLongLong();
         return createIndex(row,column,&sec); //добавление виртуальной колонки
     }
     QVariant val = qr->value(column);
