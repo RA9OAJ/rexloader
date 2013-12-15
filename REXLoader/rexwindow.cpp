@@ -1399,7 +1399,7 @@ void REXWindow::deleteTask()
     if(efmodel->containsFilter(16,100,EFilterProxyModel::Equal,""))
     {
         QString cdtime = QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:ss");
-        qr.prepare("UPDATE tasks SET arch=:dtime WHERE"+where);
+        qr.prepare("UPDATE tasks SET tstatus=-200, arch=:dtime WHERE"+where);
         qr.bindValue(":dtime",cdtime);
     }
     else
@@ -1481,7 +1481,7 @@ void REXWindow::revertTask()
             where += QString(" OR id=%1").arg(QString::number(row_id));
     }
 
-    qr.prepare("UPDATE tasks SET arch=null WHERE"+where);
+    qr.prepare("UPDATE tasks SET tstatus='0', arch=null WHERE"+where);
 
     if(!qr.exec())
     {
@@ -1533,13 +1533,13 @@ void REXWindow::startTask(int id)
 
 void REXWindow::startAllTasks()
 {    
-    emit needExecQuery("UPDATE tasks SET tstatus=-100, lasterror='' WHERE tstatus IN (-100,0)");
+    emit needExecQuery("UPDATE tasks SET tstatus=-100, lasterror='' WHERE tstatus IN (-100,0) AND arch IS NULL");
 
     QSortFilterProxyModel fltr;
     fltr.setSourceModel(model);
     fltr.setFilterRole(100);
     fltr.setFilterKeyColumn(9);
-    fltr.setFilterFixedString("0");
+    fltr.setFilterRegExp("^0$");
     for(int i = 0; i < fltr.rowCount(); ++i)
     {
         QModelIndex index = fltr.mapToSource(fltr.index(i,0));

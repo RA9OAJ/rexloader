@@ -157,6 +157,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
             case LInterface::ON_PAUSE:
             case LInterface::ERROR_TASK:
             case -100:
+            case -200:
             case LInterface::FINISHED: return QVariant();
 
             default:
@@ -173,6 +174,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
             case LInterface::ON_PAUSE:
             case LInterface::ERROR_TASK:
             case -100:
+            case -200:
             case LInterface::FINISHED: return QVariant();
 
             default:
@@ -228,6 +230,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
             case LInterface::ON_PAUSE: return tr("Остановлено") + sz;
             case LInterface::ERROR_TASK: return tr("Ошибка") + sz;
             case -100: return QString(tr("Ожидание")) + sz;
+            case -200: return QString(tr("Удалено")) + sz;
             case LInterface::ACCEPT_QUERY:
             case LInterface::SEND_QUERY:
             case LInterface::REDIRECT:
@@ -249,6 +252,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
             case LInterface::ON_PAUSE:
             case LInterface::ERROR_TASK:
             case -100:
+            case -200:
             case LInterface::FINISHED: return QVariant();
 
             default:
@@ -271,6 +275,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
     {
         switch(myData(row,9).toInt())
         {
+        case -200:
         case LInterface::ON_PAUSE: return row_colors.value((int)LInterface::ON_PAUSE);//QColor("#fff3a4");
         case LInterface::ERROR_TASK: return row_colors.value((int)LInterface::ERROR_TASK);//QColor("#ff5757");
         case -100: return row_colors.value(-100);//QColor("#ffbdbd");
@@ -292,6 +297,7 @@ QVariant TItemModel::data(const QModelIndex &index, int role) const
         case LInterface::ON_PAUSE: return SystemIconsWrapper::icon("actions/media-playback-pause",22,":/appimages/pause_24x24.png");
         case LInterface::ERROR_TASK: return SystemIconsWrapper::icon("status/dialog-error",22,":/appimages/error_24x24.png");
         case -100: return SystemIconsWrapper::icon("actions/chronometer",22,":/appimages/queue_24x24.png");
+        case -200: return SystemIconsWrapper::icon("places/user-trash",22,":/appimages/deleted.png");
         case LInterface::ACCEPT_QUERY:
         case LInterface::SEND_QUERY:
         case LInterface::REDIRECT:
