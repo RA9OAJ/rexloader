@@ -123,7 +123,8 @@ void GraphWidget::renderDiagram(QPainter *p)
     for(int i = size().width()-1; i >= 0 && y < points.size(); --i, ++y)
     {
         int height = (size().height()-3)*points.value(y)/max;
-        p->drawLine(i,size().height()-1-height,i,size().height()-1);
+        if(points.value(y))
+            p->drawLine(i,size().height()-1-height,i,size().height()-1);
     }
 
     p->restore();

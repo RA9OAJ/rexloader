@@ -181,7 +181,9 @@ void TaskDialog::scheduler()
             break;
         }
 
-        default: ui->statusLabel->setText(ldr->value(proto_id)->statusString(status)); break;
+        default:
+            if(proto_id)
+                ui->statusLabel->setText(ldr->value(proto_id)->statusString(status)); break;
         }
 
         ui->sectionLabel->setText(sect_cnt == 0 ? "":QString::number(sect_cnt));
