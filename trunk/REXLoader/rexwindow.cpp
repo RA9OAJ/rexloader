@@ -199,7 +199,7 @@ void REXWindow::createInterface()
     QLabel *speed = new QLabel(widget);
     speed->setObjectName("speed");
     speed->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
-    speed->setMaximumWidth(110);
+    //speed->setMaximumWidth(110);
     QProgressBar *prgBar = new QProgressBar(widget);
     prgBar->setObjectName("prgBar");
     QLabel *timeleft = new QLabel(widget);
@@ -572,14 +572,21 @@ void REXWindow::openTask()
 {
     QItemSelectionModel *selected = ui->tableView->selectionModel();
     if(!selected->selectedRows().size())return; //если ничего не выделено
+    TableView *sndr = qobject_cast<TableView*>(sender());
+
     QStringList pathlist;
     QList<QModelIndex> rows = selected->selectedRows(3);
     for(int i = 0; i < rows.size(); ++i)
     {
-        QString path = rows.value(i).data(100).toString();
-        if(pathlist.contains(path))continue;
-        pathlist.append(path);
-        QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+        if(sndr == ui->tableView && rows.value(i).model()->index(rows.value(i).row(),9).data(100).toInt() != LInterface::FINISHED)
+            showTaskDialog(rows.value(i).model()->index(rows.value(i).row(),0).data(100).toInt()); //показываем окно задания, если задание не завершено
+        else
+        {//открываем закаченный файл
+            QString path = rows.value(i).data(100).toString();
+            if(pathlist.contains(path))continue;
+            pathlist.append(path);
+            QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+        }
     }
 }
 
@@ -2157,7 +2164,8 @@ void REXWindow::updateStatusBar()
             total_l += model->data(cur_index,100).toLongLong();
             cur_index = model->index(row,5);
             total_s += model->data(cur_index,100).toLongLong();
-            cur_index = model->index(row,5);
+            cur_index = model->index(row,11);
+            total_speed += cur_index.data(100).toLongLong();
         }
 
         QStringList spd_ = TItemModel::speedForHumans(total_speed);
@@ -2237,10 +2245,22 @@ void REXWindow::updateStatusBar()
     filter.setSourceModel(model);
     filter.setFilterRole(100);
     filter.setFilterKeyColumn(9);
-    filter.setFilterRegExp(QString("(^%1$)").arg(QString::number(LInterface::ON_LOAD)));
+    filter.setFilterRegExp(QString("(^[(%1)(%2)]{1}$)").arg(QString::number(LInterface::ON_LOAD), QString::number(LInterface::SEND_QUERY)));
     onplay->setText(QString::number(filter.rowCount()));
-    //if(filter.rowCount() > 0)startTrayIconAnimaion();
-    //else stopTrayIconAnimation();
+
+    if(filter.rowCount() > 0)
+    {
+        progress->setVisible(true);
+        speed->setVisible(true);
+        lefttime->setVisible(true);
+    }
+    else
+    {
+        progress->setVisible(false);
+        speed->setVisible(false);
+        lefttime->setVisible(false);
+    }
+
     filter.setFilterRegExp(QString("(^%1$)").arg(QString::number(LInterface::ON_PAUSE)));
     onpause->setText(QString::number(filter.rowCount()));
     filter.setFilterRegExp(QString("(^%1$)").arg(QString::number(-100)));
