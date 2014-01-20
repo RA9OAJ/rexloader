@@ -21,7 +21,7 @@ QString SiteManager::authData(const QUrl &url)
     return QString();
 }
 
-void SiteManager::authAction(int id_task, const QUrl &url)
+void SiteManager::authAction(int id_task, const QUrl &url, AuthBaseType base_type)
 {
     task_map.insert(url,id_task);
     LoginDialog *dlg = new LoginDialog(this);

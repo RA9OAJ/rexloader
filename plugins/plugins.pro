@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
-SUBDIRS = HttpLoader HashCalculator
+SUBDIRS = HttpLoader HashCalculator #FtpLoader
 
 unix{
     SUBDIRS += NixNotifyPlugin
