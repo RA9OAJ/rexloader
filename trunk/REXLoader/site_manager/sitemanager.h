@@ -21,8 +21,13 @@ public:
     ~SiteManager();
     QString authData(const QUrl &url);
 
+    enum AuthBaseType{
+        SITE,
+        PROXY
+    };
+
 public slots:
-    void authAction(int id_task, const QUrl &url);
+    void authAction(int id_task, const QUrl &url, AuthBaseType base_type = SITE);
     void updateIcons();
     void show();
 

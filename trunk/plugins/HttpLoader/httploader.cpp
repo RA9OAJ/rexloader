@@ -776,10 +776,10 @@ void HttpLoader::sectError(int _errno)
         }
     case 401:
     {
-        if(last_err == LInterface::UNAUTHORIZED)
+        if(last_err == LInterface::UNAUTHORIZED) //при неудачной авторизации накручиваем счетчик ошибок
             ++tsk->errors_cnt;
 
-        if(tsk->errors_cnt >= maxErrors)
+        if(tsk->errors_cnt >= maxErrors) // если достигнуто максимальное кол-во ошибок
         {
             tsk->status = LInterface::ERROR_TASK;
             tsk->error_number = LInterface::ERRORS_MAX_COUNT;
@@ -788,13 +788,13 @@ void HttpLoader::sectError(int _errno)
         }
         else
         {
-            if(tsk->authData.isEmpty() || tsk->error_number == LInterface::UNAUTHORIZED)
+            if(tsk->authData.isEmpty() || tsk->error_number == LInterface::UNAUTHORIZED) //при пером ответе с кодом 401
             {
                 tsk->error_number = LInterface::UNAUTHORIZED;
                 tsk->authMaster.setServerAuthData(sect->getHeader().value("www-authenticate"));
                 emit needAuthorization(id_task, tsk->url);
             }
-            else
+            else //при следующих ответах 401
             {
                 tsk->error_number = LInterface::UNAUTHORIZED;
                 QString user = tsk->authData.split("\r\n").value(0),
