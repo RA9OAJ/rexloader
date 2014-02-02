@@ -1817,7 +1817,8 @@ void REXWindow::syncTaskData()
             case LInterface::FILE_SIZE_ERROR: errStr = tr("Размер файла на сервере отличается от размера задания.");break;
             case LInterface::FILE_CREATE_ERROR: errStr = tr("Невозможно создать файл на локальном диске.");break;
             case LInterface::FILE_WRITE_ERROR: errStr = tr("Невозможно записать в локальный файл.");break;
-            case LInterface::FILE_READ_ERROR:errStr = tr("Невозможно прочитать локальный файл.");break;
+            case LInterface::FILE_READ_ERROR: errStr = tr("Невозможно прочитать локальный файл.");break;
+            case LInterface::FILE_GONE: errStr = tr("Файл больше не доступен по этому адресу.");break;
             case LInterface::HOST_NOT_FOUND: errStr = tr("Удаленнй сервер не найден.");break;
             case LInterface::CONNECT_ERROR: errStr = tr("Ошибка подключения к удалённому серверу.");break;
             case LInterface::CONNECT_LOST: errStr = tr("Подключение к удаленному серверу потеряно или истекло верям ожидания подключения к узлу.");break;
@@ -2341,7 +2342,7 @@ void REXWindow::updateIcons()
     ui->actionOpenTask->setIcon(SystemIconsWrapper::icon("actions/system-run",48,":/appimages/open_task.png"));
     ui->actionOpenDir->setIcon(SystemIconsWrapper::icon("actions/document-open-folder",48,":/appimages/open_folder.png"));
     ui->actionAppSettings->setIcon(SystemIconsWrapper::icon("actions/configure",48,":/appimages/settings.png"));
-    ui->actionPoweroff->setIcon(SystemIconsWrapper::icon("actions/system-shudown",48,":/appimages/shutdown.png"));
+    ui->actionPoweroff->setIcon(SystemIconsWrapper::icon("actions/system-shutdown",48,":/appimages/shutdown.png"));
     ui->actionSuspend->setIcon(SystemIconsWrapper::icon("actions/system-suspend",48,":/appimages/suspend.png"));
     ui->actionHibernate->setIcon(SystemIconsWrapper::icon("actions/system-suspend-hibernate",48,":/appimages/hibernate.png"));
     ui->actionpluginsShow->setIcon(SystemIconsWrapper::icon("applications/preferences-plugin",48,":/appimages/plugins.png"));

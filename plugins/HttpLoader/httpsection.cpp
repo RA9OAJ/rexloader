@@ -279,13 +279,14 @@ void HttpSection::sendHeader()
     {
         _header += QString("Range: bytes=%1-%2").arg(QString::number(start_s+totalload), (finish_s == 0 ? "":QString::number(finish_s)));
         _header += "\r\n";
-        if(!_etag.isEmpty())
+        _header += "Pragma: no-cache\r\nCache-Control: no-cache\r\n";
+        /*if(!_etag.isEmpty())
             _header += QString("If-Range: %1\r\n").arg(_etag);
         else if(!lastmodified.isNull())
         {
             QLocale locale(QLocale::C);
             _header += QString("If-Range: %1\r\n").arg(locale.toString(lastmodified,"ddd, dd MMM yyyy hh:mm:ss 'GMT'"));
-        }
+        }*/
     }
     if(!authorization.isEmpty())
         _header += QString("Authorization: %1\r\n").arg(authorization);
@@ -394,7 +395,7 @@ void HttpSection::dataAnalising()
                 QLocale locale(QLocale::C);
                 lastmodified = locale.toDateTime(header["last-modified"], "ddd, dd MMM yyyy hh:mm:ss 'GMT'");
             }
-            if(!lastmodified.isNull() && header.contains("last-modified"))
+            /*if(!lastmodified.isNull() && header.contains("last-modified"))
             {
                 QLocale locale(QLocale::C);
                 QDateTime _dtime = locale.toDateTime(header["last-modified"], "ddd, dd MMM yyyy hh:mm:ss 'GMT'");
@@ -405,7 +406,7 @@ void HttpSection::dataAnalising()
                     stopDownloading();
                     return;
                 }
-            }
+            }*/
             break;
         case 301:
         case 302:
@@ -434,6 +435,7 @@ void HttpSection::dataAnalising()
         case 404:
         case 405:
         case 409:
+        case 410:
         case 416:
         case 503:
             stopDownloading();
@@ -618,7 +620,14 @@ QString HttpSection::attachedFileName(const QString &cont_dispos) const
     for(int i = 0; i<words.size(); ++i)
     {
         if(words.value(i).indexOf("filename")<0)continue;
-        QString str = words.value(i).split("filename=",QString::KeepEmptyParts).value(1);
+
+        QString split_word = "filename=";
+        if(words.value(i).indexOf("filename*") != -1)
+        {
+            split_word = "filename\\*=\\w+[-]{0,1}\\w+''";
+        }
+
+        QString str = words.value(i).split(QRegExp(split_word),QString::KeepEmptyParts).value(1);
         if(str.toAscii()[0] == '"' && str.toAscii()[str.toAscii().size()-1] == '"')
             str = str.replace(QRegExp("(^\")|(\"$)"),"");
         str = str.replace(QRegExp("[\r\n;]$"),"");
