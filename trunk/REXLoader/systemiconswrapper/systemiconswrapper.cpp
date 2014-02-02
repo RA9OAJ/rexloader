@@ -59,6 +59,7 @@ QPixmap SystemIconsWrapper::pixmap(const QString &name, int size, const QString 
             QString cur_path = theme_root + _cur_theme.value(section).value(*it) + "/";
             ext = fileSuffix(cur_path);
             cur_path += flname + ext;
+
             if(QFile::exists(cur_path))
                 iconpath = cur_path;
 

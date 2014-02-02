@@ -741,6 +741,7 @@ void HttpLoader::sectError(int _errno)
     case QAbstractSocket::ProxyNotFoundError: tsk->error_number = LInterface::PROXY_NOT_FOUND; break;
     case QAbstractSocket::ProxyAuthenticationRequiredError: tsk->error_number = LInterface::PROXY_AUTH_ERROR; break;
     case QAbstractSocket::ProxyProtocolError: tsk->error_number = LInterface::PROXY_ERROR; break;
+    case 410: tsk->error_number = LInterface::FILE_GONE; break;
     case 404: tsk->error_number = LInterface::FILE_NOT_FOUND; break;
     case HttpSection::SERV_CONNECT_ERROR: er = LInterface::CONNECT_ERROR; break;
     case QAbstractSocket::ConnectionRefusedError: er = LInterface::CONNECT_ERROR; break;
@@ -757,23 +758,6 @@ void HttpLoader::sectError(int _errno)
 
     switch(_errno)
     {
-    case HttpSection::SIZE_ERROR:
-    case HttpSection::DATE_ERROR:
-    case HttpSection::WRITE_ERROR:
-    case QAbstractSocket::HostNotFoundError:
-    case QAbstractSocket::NetworkError:
-    case QAbstractSocket::ProxyNotFoundError:
-    case QAbstractSocket::ProxyAuthenticationRequiredError:
-    case QAbstractSocket::ProxyProtocolError:
-    case QAbstractSocket::ConnectionRefusedError:
-    case QAbstractSocket::ProxyConnectionRefusedError:
-    case 404:
-        if(tsk->sections_cnt < 2)
-        {
-            tsk->status = LInterface::ERROR_TASK; //в случае критичных ошибок
-            stopDownload(id_task);
-            break;
-        }
     case 401:
     {
         if(last_err == LInterface::UNAUTHORIZED) //при неудачной авторизации накручиваем счетчик ошибок
@@ -807,6 +791,26 @@ void HttpLoader::sectError(int _errno)
         }
         break;
     }
+
+    case HttpSection::SIZE_ERROR:
+    case HttpSection::DATE_ERROR:
+    case HttpSection::WRITE_ERROR:
+    case QAbstractSocket::HostNotFoundError:
+    case QAbstractSocket::NetworkError:
+    case QAbstractSocket::ProxyNotFoundError:
+    case QAbstractSocket::ProxyAuthenticationRequiredError:
+    case QAbstractSocket::ProxyProtocolError:
+    case QAbstractSocket::ConnectionRefusedError:
+    case QAbstractSocket::ProxyConnectionRefusedError:
+    case 404:
+    case 410:
+        if(tsk->sections_cnt < 2)
+        {
+            tsk->status = LInterface::ERROR_TASK; //в случае критичных ошибок
+            stopDownload(id_task);
+            break;
+        }
+
     case HttpSection::SERV_CONNECT_ERROR:
     case HttpSection::FILE_NOT_AVAILABLE:
     case QAbstractSocket::RemoteHostClosedError:
