@@ -336,16 +336,24 @@ void HttpSection::dataAnalising()
         {
             if(flname[flname.size()-1]!='/' && flinfo.isDir())flname += "/";
             if(flname[flname.size()-1]!='/' && header.contains("content-disposition")) flname = flinfo.absolutePath() + "/";
-            QString _tmpname = attachedFileName(header["content-disposition"]);
+            QStringList _tmpname = attachedFileName(header["content-disposition"]);
 
             if(_tmpname.isEmpty())
             {
                 flinfo.setFile(url.path());
-                _tmpname = flinfo.fileName();
+                _tmpname[0] = flinfo.fileName();
             }
 
-            if(_tmpname.isEmpty())_tmpname = "noname.html";
-            flname += _tmpname + QString(".%1.rldr").arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmss"));
+            if(_tmpname[0].isEmpty())_tmpname[0] = "noname.html";
+
+            if(_tmpname[0].indexOf(QRegExp("(%[0-9a-zA-Z]{2})")) > -1)
+            {
+                QTextCodec *codec = QTextCodec::codecForName(_tmpname.value(1).toAscii());
+                if(codec)
+                    _tmpname[0] = codec->toUnicode(QByteArray::fromPercentEncoding(_tmpname.value(0).toAscii()));
+            }
+
+            flname += _tmpname.value(0) + QString(".%1.rldr").arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmss"));
         }
 
         //---------------------------
@@ -613,27 +621,34 @@ QString HttpSection::fileName() const
     return flname;
 }
 
-QString HttpSection::attachedFileName(const QString &cont_dispos) const
+QStringList HttpSection::attachedFileName(const QString &cont_dispos) const
 {
-    if(cont_dispos.indexOf("filename") < 0) return QString();
+    if(cont_dispos.indexOf("filename") < 0) return QStringList();
     QStringList words = cont_dispos.split(";");
     for(int i = 0; i<words.size(); ++i)
     {
         if(words.value(i).indexOf("filename")<0)continue;
 
         QString split_word = "filename=";
+        QString codepage;
         if(words.value(i).indexOf("filename*") != -1)
         {
             split_word = "filename\\*=\\w+[-]{0,1}\\w+''";
+            codepage = words.value(i).split("filename*=").value(1).split("''").value(0);
         }
 
         QString str = words.value(i).split(QRegExp(split_word),QString::KeepEmptyParts).value(1);
         if(str.toAscii()[0] == '"' && str.toAscii()[str.toAscii().size()-1] == '"')
             str = str.replace(QRegExp("(^\")|(\"$)"),"");
         str = str.replace(QRegExp("[\r\n;]$"),"");
-        return str;
+
+        QStringList out;
+        out << str;
+        out << codepage;
+
+        return out;
     }
-    return QString();
+    return QStringList();
 }
 
 void HttpSection::setProxy(const QUrl &_proxy, QNetworkProxy::ProxyType _ptype, const QString &base64_userdata)
