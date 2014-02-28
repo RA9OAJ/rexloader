@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QLocale>
 #include <QPointer>
 #include <QNetworkProxy>
+#include <QTextCodec>
 #include "../LoaderInterface.h"
 #include "zlib.h"
 #include "gtcpsocket.h"
@@ -104,7 +105,7 @@ signals:
 
 protected:
     void run();
-    QString attachedFileName(const QString &cont_dispos) const; //возвращает имя вложенного файла, если сервер организовал вложение, иначе пустую QString
+    QStringList attachedFileName(const QString &cont_dispos) const; //возвращает имя вложенного файла, если сервер организовал вложение, иначе пустую QString
 
 protected slots:
     void sendHeader(); // слот посылает запрос на получение содержимого по URL
