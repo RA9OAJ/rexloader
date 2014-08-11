@@ -546,7 +546,7 @@ void EFilterProxyModel::prepareToRemoveFilter(int key_column)
 
 void EFilterProxyModel::execPrepared()
 {
-    bool need_clean = !_for_remove.isEmpty();
+    //bool need_clean = !_for_remove.isEmpty();
 
     foreach (int col, _for_remove) //удаляем запланированные для удаления филтры
         _filters.remove(col);

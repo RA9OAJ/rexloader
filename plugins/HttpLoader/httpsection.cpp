@@ -341,12 +341,12 @@ void HttpSection::dataAnalising()
             if(_tmpname.isEmpty())
             {
                 flinfo.setFile(url.path());
-                _tmpname[0] = flinfo.fileName();
+                _tmpname.append(flinfo.fileName());
             }
 
-            if(_tmpname[0].isEmpty())_tmpname[0] = "noname.html";
+            if(_tmpname.value(0).isEmpty())_tmpname.append("noname.html");
 
-            if(_tmpname[0].indexOf(QRegExp("(%[0-9a-zA-Z]{2})")) > -1)
+            if(_tmpname.value(0).indexOf(QRegExp("(%[0-9a-zA-Z]{2})")) > -1)
             {
                 QTextCodec *codec = QTextCodec::codecForName(_tmpname.value(1).toAscii());
                 if(codec)

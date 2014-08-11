@@ -71,6 +71,7 @@ public:
     virtual QWidget* widgetSettings(const QString &file_path); //возвращает указатель на виджет настроек плагина (file_path - путь до папки сохранения настрое плагина), или 0 при отсутствии настроек
 
 signals:
+    void sheduleImpulse(); //сигнал генериться с интервалом шедулера
     virtual void messageAvailable(int id_task, int id_sect, int ms_type, const QString &title, const QString &more); //сигнал сообщает о наличии служебных сообщений для задания id_task
     virtual void needAuthorization(int id_task, const QUrl &url); //сигнал сообщает о необходимости авторизации
 };
