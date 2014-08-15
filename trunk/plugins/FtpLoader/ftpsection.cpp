@@ -1,8 +1,12 @@
 #include "ftpsection.h"
 
+qint16 FtpSection::_start_port = 0;
+qint16 FtpSection::_end_port = 0;
+
 FtpSection::FtpSection(QObject *parent) :
     QObject(parent)
 {
+    clear();
 }
 
 FtpSection::~FtpSection()
@@ -45,6 +49,16 @@ void FtpSection::setFtpMode(FtpSection::FtpMode mode)
 
 void FtpSection::setPortPool(qint16 start_port, qint16 end_port)
 {
+    if(end_port >= start_port)
+    {
+        _start_port = start_port;
+        _end_port = end_port;
+    }
+    else
+    {
+        _start_port = end_port;
+        _end_port = start_port;
+    }
 }
 
 void FtpSection::setProxyType(QNetworkProxy::ProxyType ptype)
@@ -96,10 +110,18 @@ int FtpSection::errorNumber() const
 
 void FtpSection::setAuthorizationData(const QString &data_base64)
 {
+    authdata = data_base64;
 }
 
 void FtpSection::clear()
 {
+    start_flag = false;
+    ftp_mode = FtpPassive;
+    proxytype = QNetworkProxy::NoProxy;
+    start_byte = end_byte = 0;
+    _errnum = -1;
+    ftp_stack.clear();
+    authdata = "anonymous\r\nanonymous";
 }
 
 int FtpSection::socketError() const
@@ -128,11 +150,22 @@ void FtpSection::transferActSlot()
 
 void FtpSection::startDownloading()
 {
+    if(start_flag)
+        return;
+
+    start_flag = true;
     run();
 }
 
 void FtpSection::stopDownloading()
 {
+   start_flag = false;
+   if(msoc && msoc->state() == QTcpSocket::ConnectedState)
+   {
+       if(!soc)
+           sendCommand("QUIT");
+       else sendCommand("ABOR");
+   }
 }
 
 void FtpSection::setDownSpeed(qint64 spd)
@@ -144,7 +177,7 @@ void FtpSection::setDownSpeed(qint64 spd)
 void FtpSection::run()
 {
     fl = new QFile();
-    GTcpSocket *s = new GTcpSocket();
+    QTcpSocket *s = new QTcpSocket();
     msoc = s;
 
     if(proxytype != QNetworkProxy::NoProxy)
@@ -166,37 +199,154 @@ void FtpSection::run()
         s->setProxy(*myproxy);
     }
 
-
-    s->setMode(false); //переключаем режим сокета на внешний тайминг
-    //s->setDownSpeed(spd);
-    //connect(s,SIGNAL(connected()),this,SLOT(sendHeader()));
-    connect(s,SIGNAL(readyToRead()),this,SLOT(dataAnalising()));
-    connect(this,SIGNAL(beginTransfer()),s,SLOT(transferAct())); //переключаем внутренний шедулер сокета на внешний таймер
-    connect(this,SIGNAL(setSpd(qint64)),s,SLOT(setDownSpeed(qint64)));
+    connect(s,SIGNAL(readyRead()),this,SLOT(dataAnalising()));
     connect(s,SIGNAL(error(QAbstractSocket::SocketError)), this,SLOT(socketErrorSlot(QAbstractSocket::SocketError))); //обрабатываем ошибки сокета
 
     int port = (url.port() == -1 ? 21:url.port());
     s->connectToHost(url.encodedHost(), port, QTcpSocket::ReadWrite); //устанавливаем соединение
+    ftp_stack.append(Pair("CONNECT",0));
 
     emit sectionMessage(LInterface::MT_INFO,tr("Попытка соединения с %1 на порту %2").arg(url.host(),QString::number(port)),QString());
 }
 
-void FtpSection::sendHeader()
+QString FtpSection::nextCommand() const
 {
+    return cmd_stack.first();
+}
 
+QString FtpSection::takeNextCommand()
+{
+    return cmd_stack.takeFirst();
+}
+
+IPAddress FtpSection::getAddress(const QString &str) const
+{
+    IPAddress addr;
+    if(str.indexOf(",") > -1)
+    {
+        QString src = str;
+        src = src.replace(QRegExp("^.+\\(+"),"");
+        src = src.replace(QRegExp("\\)\\..+"),"");
+        QString srcp = src;
+        addr.first = src.replace(QRegExp("(,\\d{1,3}){2}$"),"").replace(",",".");
+        srcp.replace(QRegExp("^(\\d{1,3},){4}"),"");
+        addr.second = (srcp.split(",").value(0).toInt()*256) + srcp.split(",").value(1).toInt();
+    }
+    else if(str.indexOf(".") > -1)
+    {
+
+    }
+    return addr;
+}
+
+void FtpSection::sendCommand(const QString &cmd)
+{
+    ftp_stack.append(Pair(cmd.split(" ").value(0),0));
+    msoc->write(QString(cmd+"\r\n").toAscii());
+    //msoc->flush();
+
+    QString msg = cmd;
+    if(cmd.indexOf("PASS ") == 0)
+        msg = msg.replace(cmd.split(" ").value(1),QString("******"));
+    emit sectionMessage(LInterface::MT_IN,msg,QString());
+}
+
+void FtpSection::sendNextCommand()
+{
+    sendCommand(takeNextCommand());
+}
+
+void FtpSection::appendNextCommand(const QString &cmd)
+{
+    cmd_stack.append(cmd);
 }
 
 void FtpSection::dataAnalising()
 {
-    if(msoc->canReadLine())
+    if(ftp_stack.last().first == "CONNECT")
+        emit sectionMessage(LInterface::MT_INFO,tr("Соединение с %1 установлено на порту %2").arg(url.host(),QString::number(msoc->peerPort())),QString());
+
+    QString ansvr,msg;
+    while(msoc->canReadLine() || msoc->waitForReadyRead(10))
     {
         QString str = msoc->readLine(4096);
-        int ftp_code = str.split(" ").value(0).toInt();
-        emit sectionMessage(LInterface::MT_IN,str,QString());
+        QString spltr = str.indexOf("-") == 3 ? "-" : " ";
+
+        int ftp_code = str.split(spltr).value(0).toInt();
+        if(ftp_code)
+        {
+            ftp_stack.last().second = ftp_code;
+            if(!ansvr.isEmpty())
+                msg += ansvr;
+
+            ansvr = str;
+        }
+        else msg += str;
+    }
+    emit sectionMessage(LInterface::MT_IN,ansvr,msg);
+
+    switch (ftp_stack.last().second) {
+    case 220:
+        //указываем логин логина
+        sendCommand(QString("USER %1").arg(authdata.split("\r\n").value(0)));
+        break;
+    case 331:
+        //указываем пароля
+        sendCommand(QString("PASS %1").arg(authdata.split("\r\n").value(1)));
+        break;
+    case 230:
+        //логин совершен
+        sendCommand("HELP");
+        break;
+    case 214:
+        //ответ на запрос HELP
+        if(msg.indexOf("REST") != -1)
+            emit acceptRanges();
+        sendCommand("TYPE I");
+        appendNextCommand(QString("LIST %1").arg(url.path().isEmpty() ? "/" : url.path()));
+        break;
+    case 200: //ответ на TYPE
+        if(ftp_mode == FtpPassive)
+            sendCommand("PASV");
+        else
+        {
+            //тут идет подготовка к открытию и прослушиванию порта из пула портов
+            //sendCommand("PORT %1,%2,%3,%4,%5,%6").arg();
+        }
+        break;
+    case 227:
+        //тут создае сокет данных и подключаемся по указанному сервером адресу
+
+        //sendNextCommand();
+        break;
+    case 530:
+        //некорректный логин
+        _errnum = AUTH_ERROR;
+        stopDownloading();
+        emit errorSignal(_errnum);
+        break;
+    case 421:
+    case 221: //quit
+        if(msoc->isOpen())
+            msoc->close();
+
+        while(msoc->isOpen())
+            msoc->waitForDisconnected();
+
+        msoc->deleteLater();
+        msoc = 0;
+        _start_port = false;
+        break;
+    default:
+        break;
     }
 }
 
 void FtpSection::socketErrorSlot(QAbstractSocket::SocketError _err)
 {
+    if(_err == QTcpSocket::SocketTimeoutError || (ftp_stack.last().first == "QUIT" && _err == QTcpSocket::RemoteHostClosedError))
+        return;
 
+    stopDownloading();
+    emit errorSignal(_err);
 }
