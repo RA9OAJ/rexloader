@@ -12,9 +12,13 @@
 #include <QTime>
 #include <QStringList>
 #include <QNetworkProxy>
+#include <QDebug>
 
 #include "gtcpsocket.h"
 #include "../LoaderInterface.h"
+
+#define Pair QPair<QString,int>
+#define IPAddress QPair<QString,int>
 
 class FtpSection : public QObject
 {
@@ -28,7 +32,8 @@ public:
         DATE_ERROR = -3, //Изменилась дата модификации на сервере | критичная
         WRITE_ERROR = -4, //Ошибка записи в файл | критичная
         SERV_CONNECT_ERROR = -5, //Сервер разорвал соединение | не критичная
-        FILE_NOT_AVAILABLE = -6 //файл больше недоступен по данной ссылке
+        FILE_NOT_AVAILABLE = -6, //файл больше недоступен по данной ссылке
+        AUTH_ERROR = -7 //не прошел авторизацию
     };
 
     enum FtpMode{
@@ -83,21 +88,28 @@ signals:
 protected slots:
     void run();
 
+protected:
+    QString nextCommand() const;
+    QString takeNextCommand();
+    IPAddress getAddress(const QString &str) const;
+
 protected slots:
-    void sendHeader(); // слот посылает запрос на получение содержимого по URL
+    void sendCommand(const QString &cmd); // слот осылает FTP комманды
+    void sendNextCommand(); //отправляет очередную команду из очереди команд
+    void appendNextCommand(const QString &cmd); // слот для добавления комманд в очередь для последующего последовательного исполнения
     void dataAnalising(); // слот вызывается при наличии во входном буфере сокета данных и анализирует их, сдесь же происходит и запись в файл
     void socketErrorSlot(QAbstractSocket::SocketError _err);//слот для обработки ошибок сокета
 
 private:
     QPointer<QFile> fl; //файл для записи данных
-    QPointer<GTcpSocket> msoc; //управляющий сокет
+    QPointer<QTcpSocket> msoc; //управляющий сокет
     QPointer<GTcpSocket> soc; //сокет данных
     QString filename; //путь до локального файла
     QUrl url; //URL файла
     FtpMode ftp_mode; //режим работы FTP клиента
     int _errnum; //номер внутренней ошибки
 
-    QByteArray mbuf; //буфер для управляющего сокета
+    bool start_flag; //флаг остановки процесса скачивания
     QByteArray inbuf; //буфер для входящих данных
 
     qint64 start_byte; //начальный байт секции
@@ -114,9 +126,11 @@ private:
     QString proxy_auth; //данны для аутентификации на прокси сервере
     QNetworkProxy *myproxy; //прокси
 
-    QHash<qint16,int> port_pool;
-    qint16 start_port;
-    qint16 end_port;
+    static QHash<qint16,bool> port_pool; //пул портов
+    static qint16 _start_port;
+    static qint16 _end_port;
+    QList<Pair> ftp_stack;
+    QStringList cmd_stack;
 
 };
 
