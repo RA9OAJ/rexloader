@@ -18,7 +18,7 @@ Please submit bug reports and feature requests via our issues tracker: https://g
 
 <h2>Screen Shots / Снимки экрана</h2>
 
-<img src="http://spolab.ru/images/articles/rexloader1.png" width="400" />  <img src="http://spolab.ru/images/articles/REXLoader-win7.png" width="400" />
+<img src="http://spolab.ru/images/articles/rexloader1.png" width="250" />  <img src="http://spolab.ru/images/articles/REXLoader-win7.png" width="250" />
 
 ---
 
