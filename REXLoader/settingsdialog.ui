@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>518</width>
-    <height>1901</height>
+    <width>591</width>
+    <height>2049</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1925,7 +1925,7 @@
                <string comment="Время жизни в секундах">с</string>
               </property>
               <property name="minimum">
-               <number>10</number>
+               <number>300</number>
               </property>
               <property name="maximum">
                <number>999999</number>

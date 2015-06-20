@@ -1266,7 +1266,7 @@ void REXWindow::showHideSlot()
             QTimer::singleShot(0,this,SLOT(show()));
         }
         setWindowState(preStat);
-        activateWindow();
+        QTimer::singleShot(0,this,SLOT(raise()));
         act->setText(tr("Скрыть"));
     }
 }
