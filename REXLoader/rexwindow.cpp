@@ -1243,6 +1243,27 @@ void REXWindow::showHideSlot(QSystemTrayIcon::ActivationReason type)
 {
     if(type == QSystemTrayIcon::DoubleClick && settDlg->value("tray_doubleclick").toBool()) showHideSlot();
     else if(type == QSystemTrayIcon::Trigger && !settDlg->value("tray_doubleclick").toBool()) showHideSlot();
+
+    //------------Fixing issues #21 (Don't work double click for tray icon)--------------------
+    else if(type == QSystemTrayIcon::Trigger && settDlg->value("tray_doubleclick").toBool())
+    {
+        QTimer *tmr = findChild<QTimer*>("DCTimer");
+        if(!tmr)
+        {
+            tmr = new QTimer(this);
+            tmr->setObjectName("DCTimer");
+            tmr->setInterval(qApp->doubleClickInterval()+1);
+            connect(tmr,SIGNAL(timeout()),tmr,SLOT(stop()));
+        }
+
+        if(tmr->isActive())
+        {
+            tmr->stop();
+            showHideSlot();
+        }
+        else tmr->start();
+    }
+    //-----------------------------------------------------------------------------------------
 }
 
 void REXWindow::showHideSlot()
