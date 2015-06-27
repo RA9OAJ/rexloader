@@ -267,6 +267,8 @@ bool addURL(const QStringList &_argv)
         QSqlQuery qr;
         int par_id = 0;
         QString params,address;
+        QString cur_param;
+        QMap<QString,QString> other_params;
         for(int i=1; i<_argv.size(); i++)
         {
             if(_argv.value(i) == "-o" || _argv.value(i) == "--options")
@@ -279,6 +281,12 @@ bool addURL(const QStringList &_argv)
                 par_id = 0;
                 continue;
             }
+            else if(_argv.value(i).indexOf(QRegExp("^((--filename)|(--path)){1}(=){1}(\"){0,1}")) != -1)
+            {
+                cur_param = _argv.value(i).split("=").value(0).replace("--","");
+                other_params[cur_param].clear();
+                par_id = 2;
+            }
 
             switch(par_id)
             {
@@ -290,6 +298,12 @@ bool addURL(const QStringList &_argv)
                     params += _argv.value(i);
                 else
                     params += QString("\n\n%1").arg(_argv.value(i));
+                break;
+            case 2:
+                if(_argv.value(i).indexOf(QRegExp("^((--filename)|(--path)){1}(=){1}(\"){0,1}")) != -1)
+                    other_params[cur_param] = _argv.value(i).replace(QRegExp("^((--filename)|(--path)){1}(=){1}"),"");
+                else
+                    other_params[cur_param] += " " + _argv.value(i);
                 break;
             default:
                 continue;
@@ -304,9 +318,15 @@ bool addURL(const QStringList &_argv)
 
         if((url.isValid() && !url.scheme().isEmpty()) || QFile::exists(address))
         {
-            qr.prepare("INSERT INTO newtasks (url, params) VALUES (:url, :params)");
+            QString flnm;
+            qr.prepare("INSERT INTO newtasks (url, filename, params) VALUES (:url, :filename, :params)");
             if(url.scheme() == "file") qr.bindValue(":url",address.right(address.size()-7));
             else qr.bindValue(":url",url.toString()/*_argv.value(i)*/);
+            if(other_params.value("path") != "")
+                flnm = other_params.value("path") + "\r\n";
+            if(other_params.value("filename") != "")
+                flnm += other_params.value("filename");
+            qr.bindValue(":filename",flnm);
             qr.bindValue(":params",params);
             if(!qr.exec())
             {

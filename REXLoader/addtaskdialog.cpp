@@ -99,6 +99,28 @@ void AddTaskDialog::setParams(const QString &params)
     dop_params = params;
 }
 
+void AddTaskDialog::setOtherFilename(const QString &flname)
+{
+    if(flname.isEmpty())
+        return;
+
+    gui->fileName->setText(flname);
+    getCategory(gui->fileName->text());
+}
+
+void AddTaskDialog::setOtherPath(const QString &path)
+{
+    if(path.isEmpty())
+        return;
+
+    bool flg = false;
+    if(!QDir().exists(path))
+        flg = QDir().mkpath(path);
+
+    if(flg)
+        gui->locationEdit->setText(path);
+}
+
 void AddTaskDialog::setValidProtocols(const QHash<QString, int> &schemes)
 {
     protocols = schemes.keys();
@@ -291,7 +313,10 @@ void AddTaskDialog::addTask()
     QString flname;
     if(gui->fileName->text().isEmpty()) flname = (flinfo.fileName() != QString() ? flinfo.fileName() + "." + dtime.toString("yyyyMMddhhmmss") + ".rldr" : "noname.html");
     else flname = gui->fileName->text();
-    flname = gui->locationEdit->text() + "/" + flname;
+
+    QString dir = gui->locationEdit->text();
+    if(dir.right(1) == "/") flname = dir + flname;
+    else flname = dir + "/" + flname;
 
     qr.clear();
     if(additional_flag && gui->urlBox->currentText() == defUrl)

@@ -61,6 +61,7 @@
         <file alias="revert_48x48.png">images/revert_48x48.png</file>
         <file alias="internet.png">images/internet.png</file>
         <file alias="deleted.png">images/deleted.png</file>
+        <file alias="trayicon_new.png">images/RExLoader_New_128x128.png</file>
     </qresource>
     <qresource prefix="/searchline">
         <file alias="find.png">images/searchline/find.png</file>

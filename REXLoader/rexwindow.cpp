@@ -1079,6 +1079,18 @@ void REXWindow::scanNewTaskQueue()
                 dlg->setValidProtocols(plugproto);
                 dlg->setNewUrl(qr.value(1).toString());
                 dlg->setParams(qr.value(3).toString());
+
+                if(qr.value(2).toString() != "")
+                {
+                    if(qr.value(2).toString().indexOf("\r\n") != -1)
+                    {
+                        QStringList drfl = qr.value(2).toString().split("\r\n");
+                        dlg->setOtherFilename(drfl.value(1));
+                        dlg->setOtherPath(drfl.value(0));
+                    }
+                    else dlg->setOtherFilename(qr.value(2).toString());
+                }
+
                 dlg->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
                 if(!settDlg->value("notshow_adding").toBool())
                 {
@@ -1287,7 +1299,7 @@ void REXWindow::showHideSlot()
             QTimer::singleShot(0,this,SLOT(show()));
         }
         setWindowState(preStat);
-        QTimer::singleShot(0,this,SLOT(raise()));
+        QTimer::singleShot(5,this,SLOT(raise()));
         act->setText(tr("Скрыть"));
     }
 }

@@ -43,6 +43,8 @@ public:
     void setValidProtocols(const QHash<QString,int> &schemes);
     void setNewUrl(const QString &url);
     void setParams(const QString &params);
+    void setOtherFilename(const QString &flname);
+    void setOtherPath(const QString &path);
     void setAdditionalInfo(const QString &flnm, qint64 cursz, qint64 totalsz, const QString &mime);
     void setUpdateMode(const QModelIndex &idx);
 
