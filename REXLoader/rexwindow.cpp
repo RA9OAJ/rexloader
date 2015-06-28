@@ -259,7 +259,8 @@ void REXWindow::createInterface()
     connect(ui->actionStop,SIGNAL(triggered()),this,SLOT(stopTask()));
     connect(ui->actionStartAll,SIGNAL(triggered()),this,SLOT(startAllTasks()));
     connect(ui->actionStopAll,SIGNAL(triggered()),this,SLOT(stopAllTasks()));
-    connect(ui->tableView,SIGNAL(clicked(QModelIndex)),this,SLOT(updateStatusBar()));
+    //connect(ui->tableView,SIGNAL(clicked(QModelIndex)),this,SLOT(updateStatusBar()));
+    connect(ui->tableView,SIGNAL(clicked(int)),this,SLOT(updateStatusBar()));
     connect(ui->tableView,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(showTableContextMenu(QPoint)));
     connect(ui->treeView,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(showTreeContextMenu(QPoint)));
     connect(ui->actionOpenDir,SIGNAL(triggered()),this,SLOT(openTaskDir()));
@@ -1104,7 +1105,7 @@ void REXWindow::scanNewTaskQueue()
                     {
                         QString notif = tr("Протокол <b>%1</b> не поддерживается. Невозможно скачать файл по URL <b>%2</b>").arg(url.scheme().toLower(),url.toString());
                         plugmgr->notify(tr("Ошибка"), notif, 10, QStringList(), NotifInterface::WARNING);
-                        notif = notif.replace(QRegExp("(<b>)|(</b>)"),"");
+                        notif.replace(QRegExp("(<b>)|(</b>)"),"");
                         plugmgr->appendLog(-1,0, LInterface::MT_WARNING,notif,QString());
                     }
                 }
@@ -1113,7 +1114,7 @@ void REXWindow::scanNewTaskQueue()
             {
                 QString notif = tr("Протокол <b>%1</b> не поддерживается. Невозможно скачать файл по URL <b>%2</b>").arg(url.scheme().toLower(),url.toString());
                 plugmgr->notify(tr("Ошибка"), notif, 10, QStringList(), NotifInterface::WARNING);
-                notif = notif.replace(QRegExp("(<b>)|(</b>)"),"");
+                notif.replace(QRegExp("(<b>)|(</b>)"),"");
                 plugmgr->appendLog(-1,0, LInterface::MT_WARNING,notif,QString());
             }
         }
@@ -1365,9 +1366,9 @@ void REXWindow::startTaskNumber(int id_row, const QUrl &url, const QString &file
     model->addToCache(srcIdx.row(),9,LInterface::ON_LOAD);
     model->updateRow(srcIdx.row());
 
-    QString fldir = (flinfo.isDir() || flinfo.fileName() == "noname.html") ? flinfo.absolutePath():flinfo.absoluteFilePath();
+    QString fldir = flinfo.isDir() ? flinfo.absolutePath():flinfo.absoluteFilePath();
     flinfo.setFile(fldir);
-    if(!flinfo.isDir() && fldir.right(5) != ".rldr") fldir += "." + QDateTime::currentDateTime().toString("yyyyMMddhhmmss") + ".rldr";
+    //if(!flinfo.isDir() && fldir.right(5) != "") fldir += "." + QDateTime::currentDateTime().toString("yyyyMMddhhmmss") + ".rldr";
     tasklist.insert(id_row, id_task + id_proto*100);
     pluglist.value(id_proto)->setTaskFilePath(id_task,fldir);
     pluglist.value(id_proto)->setAdvancedOptions(id_task,model->data(model->index(srcIdx.row(),14),100).toString());
@@ -1572,7 +1573,7 @@ void REXWindow::startTask(int id)
 }
 
 void REXWindow::startAllTasks()
-{    
+{
     emit needExecQuery("UPDATE tasks SET tstatus=-100, lasterror='' WHERE tstatus IN (-100,0) AND arch IS NULL");
 
     QSortFilterProxyModel fltr;
@@ -1808,6 +1809,8 @@ void REXWindow::syncTaskData()
         qint64 totalsize = ldr->totalSize(id_task);
         qint64 totalload = ldr->totalLoadedOnTask(id_task);
         QString filepath = ldr->taskFilePath(id_task);
+        QString fl_sql = filepath;
+        fl_sql.replace("'","''");
         QFileInfo flinfo(filepath);
         if(flinfo.isDir())
         {
@@ -1870,7 +1873,7 @@ void REXWindow::syncTaskData()
             QString query = QString("UPDATE tasks SET totalsize='%1', currentsize='%2', filename='%3', downtime='%4', tstatus='%5', speed_avg='%6',lasterror='%7' WHERE id=%8").arg(
                         QString::number(totalsize),
                         QString::number(totalload),
-                        filepath.replace("'","''"),
+                        fl_sql,
                         QString::number(downtime),
                         QString::number(tstatus),
                         QString::number(speedAvg),
@@ -1955,10 +1958,11 @@ void REXWindow::syncTaskData()
 
                 if(dlglist.contains(id_row)) dlglist.value(id_row)->close();
             }
+
             QString query = QString("UPDATE tasks SET totalsize='%1', currentsize='%2', filename='%3', downtime=%4, tstatus=%5, speed_avg='%6' WHERE id=%7").arg(
                         QString::number(totalsize),
                         QString::number(totalload),
-                        filepath.replace("'","''"),
+                        fl_sql,
                         QString::number(downtime),
                         QString::number(tstatus),
                         QString::number(speedAvg),
@@ -2039,9 +2043,10 @@ void REXWindow::manageTaskQueue()
         {
             QString err = tr("Протокол '%1' не поддерживается. Проверьте наличие соответствующего плагина и его состояние.")
                     .arg(_url.scheme().toUpper());
+            QString err_sql = err;
             QString query = QString("UPDATE tasks SET tstatus=%1, lasterror='%2' WHERE id=%3").arg(
                         QString::number((int)LInterface::ERROR_TASK),
-                        err.replace("'","''"),
+                        err_sql.replace("'","''"),
                         QString::number(id_row));
             emit needExecQuery(query);
 

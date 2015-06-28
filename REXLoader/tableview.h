@@ -35,10 +35,9 @@ signals:
     void showTaskProp();
     void clicked(int table_id);
 
-public slots:
-
 protected slots:
     void sendSelectSignal(const QModelIndex &idx);
+    virtual void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
 
 protected:
     void keyPressEvent(QKeyEvent *event);

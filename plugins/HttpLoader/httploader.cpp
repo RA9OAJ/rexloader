@@ -431,7 +431,7 @@ void HttpLoader::redirectToUrl(const QString &_url)
     tsk->mirrors.insert(-1, QUrl::fromEncoded(_url.toAscii()));
     // Исправление ошибки с именем файла при редиректе
     QFileInfo flinfo(tsk->filepath);
-    if(!flinfo.exists() && !flinfo.isDir() && flinfo.absoluteDir().exists())
+    if(!flinfo.exists() && flinfo.absoluteDir().exists() && flinfo.fileName().indexOf(QRegExp(".[0-9]{14}.rldr$")) != -1)
         sect->setFileName(flinfo.absoluteDir().absolutePath());
     //------------------------------
 

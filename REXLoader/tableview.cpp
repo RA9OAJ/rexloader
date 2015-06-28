@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "tableview.h"
+#include <QDebug>
 
 TableView::TableView(QWidget *parent) :
     QTableView(parent)
@@ -80,7 +81,16 @@ void TableView::keyReleaseEvent(QKeyEvent *event)
 void TableView::sendSelectSignal(const QModelIndex &idx)
 {
     if(!model()) return;
+
     QModelIndex _idx = model()->index(idx.row(),0,idx.parent());
     int table_id = model()->data(_idx,100).toInt();
     emit clicked(table_id);
+}
+
+void TableView::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    QTableView::selectionChanged(selected,deselected);
+
+    if(!selected.count())
+        emit clicked(0);
 }

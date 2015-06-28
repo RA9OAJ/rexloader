@@ -455,6 +455,9 @@ void HttpSection::dataAnalising()
         }
         if(!fl->isOpen())
         {
+            if(flname.right(5) != ".rldr")
+                flname += QString(".%1.rldr").arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmss"));
+
             fl->setFileName(flname);
             if(fl->exists())fl->open(QFile::ReadWrite);
             else fl->open(QFile::WriteOnly);
@@ -639,8 +642,8 @@ QStringList HttpSection::attachedFileName(const QString &cont_dispos) const
 
         QString str = words.value(i).split(QRegExp(split_word),QString::KeepEmptyParts).value(1);
         if(str.toAscii()[0] == '"' && str.toAscii()[str.toAscii().size()-1] == '"')
-            str = str.replace(QRegExp("(^\")|(\"$)"),"");
-        str = str.replace(QRegExp("[\r\n;]$"),"");
+            str.replace(QRegExp("(^\")|(\"$)"),"");
+        str.replace(QRegExp("[\r\n;]$"),"");
 
         QStringList out;
         out << str;
