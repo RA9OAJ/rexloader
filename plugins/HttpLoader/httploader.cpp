@@ -318,6 +318,8 @@ void HttpLoader::startDownload(int id_task)
     connect(sect,SIGNAL(acceptRanges()),this,SLOT(addInAQueue())/*, Qt::QueuedConnection*/);
     connect(sect,SIGNAL(sectionMessage(int,QString,QString)),this,SLOT(addMessage(int,QString,QString)));
     connect(sect,SIGNAL(rangeNotAccepted()),this,SLOT(makeSingleSection()));
+    if(!tsk->totalLoad() && tsk->filepath.indexOf(QRegExp(".[0-9]{14}.rldr$")) == -1)
+        connect(sect,SIGNAL(newFileName(QString)),this,SLOT(newFileName(QString)));
 
     int sect_id = 0;
     if(tsk->map[0] || tsk->map[1] || tsk->map[2] || tsk->map[4] || tsk->map[6] || tsk->map[8] || tsk->map[10]) //если уже распределены границы, то загружаем данные о первой недокачанной секции
@@ -719,6 +721,13 @@ void HttpLoader::addMessage(int ms_type, const QString &message, const QString &
     Task *tsk = task_list->value(sections->value(sect));
     int task_id = sections->value(sect,0);
     if(task_id) emit messageAvailable(task_id, tsk->sections.key(sect),ms_type,message,more);
+}
+
+void HttpLoader::newFileName(const QString &flname)
+{
+    Task* tsk = getTaskSender(sender());
+    if(!tsk) return;
+    tsk->filepath = flname;
 }
 
 void HttpLoader::sectError(int _errno)

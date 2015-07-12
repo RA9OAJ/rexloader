@@ -102,6 +102,7 @@ signals:
     void transferCompleted(qint64); //генерится при удачной записи скачанных данных в файл
     void beginTransfer(); //сигнал-посредник
     void sectionMessage(int ms_type,const QString &message, const QString &more); //сигнал сообщения о событии от секции
+    void newFileName(const QString &flname); //сигнал сообщает распознанное в запросе имя файла
 
 protected:
     void run();
