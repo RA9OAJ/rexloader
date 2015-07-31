@@ -2192,8 +2192,8 @@ void REXWindow::updateStatusBar()
         filter.setFilterRole(100);
         filter.setFilterRegExp("(^[1-4]$)");
 
-        qint64 total_s, total_l, total_speed;
-        total_s = total_l = total_speed = 0;
+        qint64 total_s, total_l/*, _total_speed*/;
+        total_s = total_l = /*_total_speed =*/ 0;
 
         QModelIndex cur_index;
         for(int i = 0; i < filter.rowCount(); i++)
@@ -2203,11 +2203,11 @@ void REXWindow::updateStatusBar()
             total_l += model->data(cur_index,100).toLongLong();
             cur_index = model->index(row,5);
             total_s += model->data(cur_index,100).toLongLong();
-            cur_index = model->index(row,11);
-            total_speed += cur_index.data(100).toLongLong();
+            /*cur_index = model->index(row,11);
+            _total_speed += cur_index.data(100).toLongLong();*/
         }
 
-        QStringList spd_ = TItemModel::speedForHumans(total_speed);
+        QStringList spd_ = TItemModel::speedForHumans(total_speed,true,settDlg->value("speed_on_kBps").toBool());
         speed->setText(tr("Скорость: %1").arg(spd_.value(0)+spd_.value(1)));
         progress->setMaximum(100);
         int cur_val = total_s ? 100*total_l/total_s : 0;
