@@ -12,7 +12,7 @@ We provide precompiled binaries packages for several platforms:
  * Fedora, Cent OS, Scientific Linux — http://software.opensuse.org/download.html?project=home:DarkSS:fedora&package=rexloader 
  * Gentoo users could compile the program using qMellon overlay: http://overlay.qmellon.googlecode.com/hg/net-misc/rexloader/ 
 
-Please submit bug reports and feature requests via our issues tracker: https://github.com/DAP-DarkneSS/rexloader/issues
+Please submit bug reports and feature requests via our issues tracker: https://github.com/RA9OAJ/rexloader/issues
 
 ---
 
