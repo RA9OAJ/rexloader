@@ -178,6 +178,7 @@ protected slots:
     void addRetSection();
     void makeSingleSection(); //запускает полное скачивание файла в 1 поток для вызвавшей секции
     void addMessage(int ms_type,const QString &message, const QString &more); //слот для приема сообщений о событиях от секций заданий
+    void newFileName(const QString &flname); //вызывается при распознании или изменении имения файла
 
     Task* getTaskSender(QObject* _sender) const;
 

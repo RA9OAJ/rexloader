@@ -354,6 +354,7 @@ void HttpSection::dataAnalising()
             }
 
             flname += _tmpname.value(0) + QString(".%1.rldr").arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmss"));
+            emit newFileName(flname);
         }
 
         //---------------------------
@@ -456,7 +457,10 @@ void HttpSection::dataAnalising()
         if(!fl->isOpen())
         {
             if(flname.right(5) != ".rldr")
+            {
                 flname += QString(".%1.rldr").arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmss"));
+                emit newFileName(flname);
+            }
 
             fl->setFileName(flname);
             if(fl->exists())fl->open(QFile::ReadWrite);
