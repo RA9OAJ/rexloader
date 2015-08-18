@@ -32,6 +32,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPluginLoader>
 #include <QSortFilterProxyModel>
 #include <QtGui>
+#if QT_VERSION >= 0x050000
+#include <QtWidgets>
+#endif
 #include <QSharedMemory>
 #include "titemmodel.h"
 #include "addtaskdialog.h"
