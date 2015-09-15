@@ -78,7 +78,7 @@ void PluginManager::run()
         for(int y=0; y<plg.size(); y++)
         {
             QPluginLoader plug(pluginDirs->value(i)+"/"+plg.value(y));
-            if(!plug.load())continue;
+            if(!plug.load()){qDebug()<<plug.errorString();continue;}
             QObject *pobject = plug.instance();
             LoaderInterface *ldr = qobject_cast<LoaderInterface*>(pobject);
             if(!ldr)

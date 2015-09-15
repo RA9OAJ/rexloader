@@ -127,47 +127,47 @@
         <translation>Section created</translation>
     </message>
     <message>
-        <location filename="../httpsection.cpp" line="117"/>
+        <location filename="../httpsection.cpp" line="125"/>
         <source>Попытка соединения с %1 на порту %2</source>
         <translation>Trying to connect to %1 on port %2</translation>
     </message>
     <message>
-        <location filename="../httpsection.cpp" line="132"/>
+        <location filename="../httpsection.cpp" line="140"/>
         <source>Установлено смещение в секции на %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../httpsection.cpp" line="143"/>
+        <location filename="../httpsection.cpp" line="151"/>
         <source>Установлены границы секции с %1 байта по %2 байт</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../httpsection.cpp" line="252"/>
+        <location filename="../httpsection.cpp" line="260"/>
         <source>Секция остановлена</source>
         <translation>Section stopped</translation>
     </message>
     <message>
-        <location filename="../httpsection.cpp" line="270"/>
+        <location filename="../httpsection.cpp" line="278"/>
         <source>Соединение с узлом установлено</source>
         <translation>Connected to host</translation>
     </message>
     <message>
-        <location filename="../httpsection.cpp" line="298"/>
+        <location filename="../httpsection.cpp" line="312"/>
         <source>Отправка HTTP заголовка</source>
         <translation>Sending HTTP header</translation>
     </message>
     <message>
-        <location filename="../httpsection.cpp" line="329"/>
+        <location filename="../httpsection.cpp" line="343"/>
         <source>Получен ответ %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../httpsection.cpp" line="377"/>
+        <location filename="../httpsection.cpp" line="391"/>
         <source>Докачка не поддерживается</source>
         <translation>Resume is not supported</translation>
     </message>
     <message>
-        <location filename="../httpsection.cpp" line="399"/>
+        <location filename="../httpsection.cpp" line="413"/>
         <source>Докачка поддерживается</source>
         <translation>Resume is supported</translation>
     </message>

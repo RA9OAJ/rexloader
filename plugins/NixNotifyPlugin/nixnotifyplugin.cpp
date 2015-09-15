@@ -157,6 +157,4 @@ const QDBusArgument &operator>>(const QDBusArgument &a,  iiibiiay &i)
 
 #if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(NixNotifyPlugin, NixNotifyPlugin)
-#else
-Q_PLUGIN_METADATA(IID "NixNotifyPlugin" CLASS NixNotifyPlugin)
 #endif

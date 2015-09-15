@@ -1224,6 +1224,4 @@ QWidget *HttpLoader::widgetSettings(const QString &file_path)
 
 #if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(HttpLoader, HttpLoader)
-#else
-Q_PLUGIN_METADATA(IID "HttpLoader" CLASS HttpLoader)
 #endif

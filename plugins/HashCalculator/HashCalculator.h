@@ -30,6 +30,9 @@ class HashCalculator : public QObject,
                        public FileInterface
 {
     Q_OBJECT
+#if QT_VERSION >= 0x050000
+    Q_PLUGIN_METADATA(IID "hashcalculator")
+#endif
     Q_INTERFACES(FileInterface)
 
 public:

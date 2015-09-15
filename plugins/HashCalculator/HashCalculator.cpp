@@ -110,6 +110,4 @@ QStringList HashCalculator::pluginInfo() const
 
 #if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(hashcalculator, HashCalculator)
-#else
-Q_PLUGIN_METADATA(IID "hashcalculator" CLASS HashCalculator)
 #endif

@@ -48,7 +48,11 @@ Q_DECLARE_METATYPE(iiibiiay)
 class NixNotifyPlugin : public NotifInterface
 {
     Q_OBJECT
+#if QT_VERSION >= 0x050000
+    Q_PLUGIN_METADATA(IID "NixNotifyPlugin")
+#endif
     Q_INTERFACES(NotifInterface)
+
 public:
     explicit NixNotifyPlugin();
     ~NixNotifyPlugin();
