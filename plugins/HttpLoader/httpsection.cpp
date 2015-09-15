@@ -80,7 +80,7 @@ void HttpSection::run()
         myproxy->setType(proxytype);
         if(proxy_auth != "")
         {
-            QString udata(QByteArray::fromBase64(proxy_auth.toAscii()));
+            QString udata(QByteArray::fromBase64(proxy_auth.toLatin1()));
             QStringList _udata = udata.split(":");
             if(_udata.size() > 1)
             {
@@ -105,13 +105,21 @@ void HttpSection::run()
     if(url.scheme().toLower() == "http")
     {
         port = (url.port() == -1 ? 80:url.port());
+#if QT_VERSION < 0x050000
         s->connectToHost(url.encodedHost(), port, QTcpSocket::ReadWrite); //устанавливаем соединение
+#else
+        s->connectToHost(QUrl::toAce(url.host(QUrl::FullyEncoded)), port, QTcpSocket::ReadWrite);
+#endif
     }
     else
     {
         port = (url.port() == -1 ? 443:url.port());
         s->setPeerVerifyMode(QSslSocket::VerifyNone);
+#if QT_VERSION < 0x050000
         s->connectToHostEncrypted(url.encodedHost(), port, QTcpSocket::ReadWrite);
+#else
+        s->connectToHostEncrypted(QUrl::toAce(url.host(QUrl::FullyEncoded)), port, QTcpSocket::ReadWrite);
+#endif
     }
     //exec();
     emit sectionMessage(LInterface::MT_INFO,tr("Попытка соединения с %1 на порту %2").arg(url.host(),QString::number(port)),QString());
@@ -155,7 +163,7 @@ int HttpSection::errorNumber() const
 
 void HttpSection::setUrlToDownload(const QString &url_target)
 {
-    url = QUrl::fromEncoded(url_target.toAscii());
+    url = QUrl::fromEncoded(url_target.toLatin1());
 }
 
 void HttpSection::setUserAgent(const QString &uagent)
@@ -269,8 +277,14 @@ void HttpSection::sendHeader()
     if(!soc)return;
     emit sectionMessage(LInterface::MT_INFO,tr("Соединение с узлом установлено"),QString());
 
-    QString target = (proxytype != QNetworkProxy::NoProxy) ? url.toEncoded() : url.encodedPath();
+    QString target = (proxytype != QNetworkProxy::NoProxy) ? url.toEncoded() :
+#if QT_VERSION < 0x050000
+                                                             url.encodedPath();
     if(!url.encodedQuery().isEmpty()) target += "?" + url.encodedQuery();
+#else
+                                                             url.path(QUrl::FullyEncoded);
+    if(!url.query(QUrl::FullyEncoded).isEmpty()) target += "?" + url.query(QUrl::FullyEncoded);
+#endif
     QString _header = QString("GET %1 HTTP/1.1\r\nHost: %2\r\nAccept: */*\r\nAccept-Encoding: gzip, deflate\r\nUser-Agent: %3\r\n").arg(target,url.host(),user_agent);
 
     if(start_s > finish_s && finish_s != 0){qint64 _tmp = finish_s; finish_s = start_s; start_s = _tmp;}
@@ -294,7 +308,7 @@ void HttpSection::sendHeader()
     if(!cookie_string.isEmpty())
         _header += QString("Cookie: %1\r\n").arg(cookie_string);
     _header += QString("Connection: Keep-Alive\r\n\r\n");
-    soc->write(_header.toAscii().data());
+    soc->write(_header.toLatin1().data());
     emit sectionMessage(LInterface::MT_OUT,tr("Отправка HTTP заголовка"),_header);
 }
 
@@ -311,7 +325,7 @@ void HttpSection::dataAnalising()
         {
             QString cur_str = soc->readLine(1024);
             _request += cur_str;
-            last_buf_size += cur_str.toAscii().length();
+            last_buf_size += cur_str.toLatin1().length();
 
             if(cur_str.indexOf("HTTP/") == 0) {header["HTTP"] = cur_str.split(" ").value(1); continue;}
             if(cur_str.indexOf("\r\n") == 0 || cur_str.indexOf(0x0A) == 0) {mode = 1; break;}
@@ -348,9 +362,9 @@ void HttpSection::dataAnalising()
 
             if(_tmpname.value(0).indexOf(QRegExp("(%[0-9a-zA-Z]{2})")) > -1)
             {
-                QTextCodec *codec = QTextCodec::codecForName(_tmpname.value(1).toAscii());
+                QTextCodec *codec = QTextCodec::codecForName(_tmpname.value(1).toLatin1());
                 if(codec)
-                    _tmpname[0] = codec->toUnicode(QByteArray::fromPercentEncoding(_tmpname.value(0).toAscii()));
+                    _tmpname[0] = codec->toUnicode(QByteArray::fromPercentEncoding(_tmpname.value(0).toLatin1()));
             }
 
             flname += _tmpname.value(0) + QString(".%1.rldr").arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmss"));
@@ -645,7 +659,7 @@ QStringList HttpSection::attachedFileName(const QString &cont_dispos) const
         }
 
         QString str = words.value(i).split(QRegExp(split_word),QString::KeepEmptyParts).value(1);
-        if(str.toAscii()[0] == '"' && str.toAscii()[str.toAscii().size()-1] == '"')
+        if(str.toLatin1()[0] == '"' && str.toLatin1()[str.toLatin1().size()-1] == '"')
             str.replace(QRegExp("(^\")|(\"$)"),"");
         str.replace(QRegExp("[\r\n;]$"),"");
 

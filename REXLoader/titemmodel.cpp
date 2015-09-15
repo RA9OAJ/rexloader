@@ -128,6 +128,12 @@ void TItemModel::clearCache(int row)
     cache.remove(row);
 }
 
+void TItemModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
+
 QVariant TItemModel::myData(int row, int col) const
 {
     qr->seek(row);

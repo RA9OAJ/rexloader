@@ -122,7 +122,7 @@ void ImportDialog::loadDatabaseData()
 int ImportDialog::getCategory(const QString &file)
 {
     QString fl = file;
-    QUrl nurl = QUrl::fromEncoded(fl.toAscii());
+    QUrl nurl = QUrl::fromEncoded(fl.toLatin1());
     QFileInfo flinfo(nurl.toString(QUrl::RemoveFragment | QUrl::RemoveQuery));
 
     QSqlQuery qr(mydb), qr1(mydb);
@@ -439,7 +439,12 @@ void ImportDialog::initialize()
     ui->tableWidget->horizontalHeader()->hide();
     ui->tableWidget->verticalHeader()->hide();
     ui->tableWidget->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+#if QT_VERSION < 0x050000
     ui->tableWidget->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     ui->tableWidget->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+#else
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+#endif
     ui->tableWidget->setColumnCount(1);
 }

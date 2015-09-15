@@ -4,8 +4,12 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql webkit
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets
+QT       += core sql network
+greaterThan(QT_MAJOR_VERSION, 4){
+    QT += widgets webkitwidgets
+} else {
+    QT += gui webkit
+}
 
 unix{
 QT += dbus

@@ -83,8 +83,8 @@ QByteArray SearchLine::saveSearchState()
     out << (qint32) lst.size();
     foreach (QString cur, lst)
     {
-        out << (qint32) cur.toAscii().size();
-        out.writeRawData(cur.toAscii().data(),cur.toAscii().size());
+        out << (qint32) cur.toLatin1().size();
+        out.writeRawData(cur.toLatin1().data(),cur.toLatin1().size());
     }
 
     return outbuf;

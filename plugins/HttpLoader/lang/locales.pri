@@ -1,7 +1,7 @@
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
-TRANSLATIONS += $$files(*.ts)
+TRANSLATIONS += $$files($$PWD/*.ts)
 
 isEmpty(QMAKE_LRELEASE) {
     win32:QMAKE_LRELEASE = $$[QT_INSTALL_BINS]\lrelease.exe

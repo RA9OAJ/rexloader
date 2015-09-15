@@ -117,7 +117,11 @@ void REXWindow::createInterface()
     ui->tableView->setSortingEnabled(true);
     ui->tableView->sortByColumn(0,Qt::AscendingOrder);
     ui->tableView->setAutoScroll(true);
+#if QT_VERSION < 0x050000
     ui->tableView->horizontalHeader()->setMovable(true);
+#else
+    ui->tableView->horizontalHeader()->setSectionsMovable(true);
+#endif
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableView->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->tableView->hideColumn(0);
@@ -832,7 +836,7 @@ void REXWindow::saveSettings()
                                       "Icon=rexloader\r\n"
                                       "Categories=Network;Qt;FileTransfer;\r\n"
                                       "Type=Application\r\n");
-            fl.write(desktop.toAscii());
+            fl.write(desktop.toLatin1());
             fl.close();
         }
         else qDebug()<<"void REXWindow::saveSettings(1) Error: can't create desktop file";
@@ -1174,7 +1178,7 @@ void REXWindow::lockProcess(bool flag)
 
         lock_mem->lock();
         QString dtime = QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:ss") + "\r\n0";
-        memcpy(lock_mem->data(),dtime.toAscii().data(),dtime.toAscii().size());
+        memcpy(lock_mem->data(),dtime.toLatin1().data(),dtime.toLatin1().size());
         lock_mem->unlock();
     }
     else

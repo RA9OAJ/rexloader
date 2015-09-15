@@ -20,8 +20,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef CATEGORYDIALOG_H
 #define CATEGORYDIALOG_H
 
-#include <QDialog>
 #include <QtGui>
+#include <QDialog>
+#include <QFileDialog>
+#include <QPushButton>
 #include "treeitemmodel.h"
 #include "filenamevalidator.h"
 

@@ -136,7 +136,7 @@ iiibiiay::iiibiiay(QImage *img)
     alpha = img->hasAlphaChannel();
     channels = (img->isGrayscale()?1:(alpha?4:3));
     bitPerPixel = img->depth()/channels;
-    data.append((char*)img->bits(),img->numBytes());
+    data.append((char*)img->bits(),img->byteCount());
 }
 
 QDBusArgument &operator<<(QDBusArgument &a, const iiibiiay &i)
@@ -155,4 +155,8 @@ const QDBusArgument &operator>>(const QDBusArgument &a,  iiibiiay &i)
     return a;
 }
 
+#if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(NixNotifyPlugin, NixNotifyPlugin)
+#else
+Q_PLUGIN_METADATA(IID "NixNotifyPlugin" CLASS NixNotifyPlugin)
+#endif

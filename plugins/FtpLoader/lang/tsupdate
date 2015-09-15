@@ -1,9 +1,10 @@
-#/bin/bash
+﻿#/bin/bash
 
 for filename in *.*
 do
   if [ -f "$filename" ]
   then
+    lupdate -codecfortr utf8 -pro "../FtpLoader.pro" -ts "$filename"
     lupdate-qt4 -codecfortr utf8 -pro "../FtpLoader.pro" -ts "$filename"
   fi
 done

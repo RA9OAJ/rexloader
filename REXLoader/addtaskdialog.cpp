@@ -443,7 +443,7 @@ void AddTaskDialog::getCategory(const QString &file)
     QString fl;
     if(additional_flag && gui->urlBox->currentText() == defUrl)fl = myfilename;
     else fl = file;
-    QUrl nurl = QUrl::fromEncoded(fl.toAscii());
+    QUrl nurl = QUrl::fromEncoded(fl.toLatin1());
     QFileInfo flinfo(nurl.toString(QUrl::RemoveFragment | QUrl::RemoveQuery));
 
     QSqlQuery qr(mydb), qr1(mydb);

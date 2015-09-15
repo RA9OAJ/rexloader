@@ -1,3 +1,12 @@
+QT += core
+
+greaterThan(QT_MAJOR_VERSION, 4){
+    QT += widgets
+}
+else {
+    QT += gui
+}
+
 TARGET         = hashcalculator
 DESTDIR        = ../../usr/lib/rexloader/plugins
 TEMPLATE       = lib

@@ -612,28 +612,28 @@ QByteArray PluginManager::pluginsState() const
 
     foreach(QString proto, plugproto->keys())
     {
-        if(!proto.toAscii().size()) continue;
-        stat << proto.toAscii().size(); //размерность строки с названием протокола
-        stat.writeRawData(proto.toAscii().data(),proto.toAscii().size()); //строка с названием протокола
+        if(!proto.toLatin1().size()) continue;
+        stat << proto.toLatin1().size(); //размерность строки с названием протокола
+        stat.writeRawData(proto.toLatin1().data(),proto.toLatin1().size()); //строка с названием протокола
         int id = plugproto->value(proto); //id плагина
         QString filepath = plugfiles->value(id,QString()); //путь до плагина
 
-        stat << ((filepath.toAscii().size() > 0) ? filepath.toAscii().size() : -1); //размер строки пути файла плагина
+        stat << ((filepath.toLatin1().size() > 0) ? filepath.toLatin1().size() : -1); //размер строки пути файла плагина
         if(filepath == "") continue;
 
-        stat.writeRawData(filepath.toAscii().data(),filepath.toAscii().size()); //путь до файла плагина
+        stat.writeRawData(filepath.toLatin1().data(),filepath.toLatin1().size()); //путь до файла плагина
     }
 
     if(notifplugin.second)
     {
         QString notif = "NOTIF";
-        stat << notif.toAscii().size();
-        stat.writeRawData(notif.toAscii().data(),notif.toAscii().size());
+        stat << notif.toLatin1().size();
+        stat.writeRawData(notif.toLatin1().data(),notif.toLatin1().size());
 
         QString filepath = notifplugins.value(notifplugin.second).last();
         filepath = filepath.replace("Filepath: ","");
-        stat << filepath.toAscii().size();
-        stat.writeRawData(filepath.toAscii().data(),filepath.toAscii().size());
+        stat << filepath.toLatin1().size();
+        stat.writeRawData(filepath.toLatin1().data(),filepath.toLatin1().size());
     }
 
     if(!fileplugin.isEmpty())
@@ -643,10 +643,10 @@ QByteArray PluginManager::pluginsState() const
         foreach(filepath,plgs)
         {
             QString file = "FILE";
-            stat << file.toAscii().size();
-            stat.writeRawData(file.toAscii().data(),file.toAscii().size());
-            stat << filepath.toAscii().size();
-            stat.writeRawData(filepath.toAscii().data(),filepath.toAscii().size());
+            stat << file.toLatin1().size();
+            stat.writeRawData(file.toLatin1().data(),file.toLatin1().size());
+            stat << filepath.toLatin1().size();
+            stat.writeRawData(filepath.toLatin1().data(),filepath.toLatin1().size());
         }
     }
 

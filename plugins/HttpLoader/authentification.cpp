@@ -13,7 +13,11 @@ QString Authentification::getAuthString(const QUrl &url, const QString &body)
 
     if(option("_method").toInt() == Digest_MD5)
     {
+#if QT_VERSION < 0x050000
         options["uri"] = "\"" + url.encodedPath() + "\"";
+#else
+        options["uri"] = "\"" + url.path(QUrl::FullyEncoded) + "\"";
+#endif
         options["_entity_body"] = body;
         return md5Digest();
     }
@@ -64,7 +68,7 @@ QString Authentification::md5Digest()
                                              option("_password").toString());*/
     hash.addData((QString("%1:%2:%3").arg(unquote(option("_username").toString()),
                                           unquote(option("realm").toString()),
-                                          option("_password").toString()).toAscii()));
+                                          option("_password").toString()).toLatin1()));
 
     h1 = hash.result().toHex();
     hash.reset();
@@ -73,16 +77,16 @@ QString Authentification::md5Digest()
     if(qop.indexOf(QRegExp("auth[^-]{1}")) != -1 || qop.isEmpty())
     {
         /*qDebug()<<"h2="<<(QString("%1:%2").arg("GET",unquote(option("uri").toString())));*/
-        hash.addData((QString("%1:%2").arg("GET",unquote(option("uri").toString()))).toAscii());
+        hash.addData((QString("%1:%2").arg("GET",unquote(option("uri").toString()))).toLatin1());
         h2 = hash.result().toHex();
     }
     else if(qop.indexOf("auth-int") != -1)
     {
-        hash.addData(option("_entity_body").toString().toAscii());
+        hash.addData(option("_entity_body").toString().toLatin1());
         QString entity_body = hash.result().toHex();
 
         hash.reset();
-        hash.addData((QString("%1:%2:%3").arg("GET",unquote(option("uri").toString()),entity_body)).toAscii());
+        hash.addData((QString("%1:%2:%3").arg("GET",unquote(option("uri").toString()),entity_body)).toLatin1());
         h2 = hash.result();
     }
     else return QString();
@@ -98,7 +102,7 @@ QString Authentification::md5Digest()
                  unquote(options["cnonce"].toString()),
                  unquote(options["qop"].toString()),
                  h2
-                 ).toAscii()));
+                 ).toLatin1()));
     /*qDebug()<<"result="<<(QString("%1:%2:%3:%4:%5:%6").arg(h1,
                                                            unquote(option("nonce").toString()),
                                                            options["nc"].toString(),
@@ -129,7 +133,7 @@ QString Authentification::basic()
         return QString();
 
     QString base64_auth = QString("%1:%2").arg(options.value("_username").toString(),
-                                                  options.value("_password").toString()).toAscii().toBase64();
+                                                  options.value("_password").toString()).toLatin1().toBase64();
     return QString(" Basic %1").arg(base64_auth);
 }
 

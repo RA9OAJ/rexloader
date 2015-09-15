@@ -589,3 +589,9 @@ QVariant TreeItemModel::iconByIndex(const QModelIndex &idx) const
     }
 
 }
+
+void TreeItemModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}

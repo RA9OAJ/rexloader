@@ -430,7 +430,7 @@ void HttpLoader::redirectToUrl(const QString &_url)
     if(!sect || !sections->contains(sect)) return;
 
     Task *tsk = getTaskSender(sender());
-    tsk->mirrors.insert(-1, QUrl::fromEncoded(_url.toAscii()));
+    tsk->mirrors.insert(-1, QUrl::fromEncoded(_url.toLatin1()));
     // Исправление ошибки с именем файла при редиректе
     QFileInfo flinfo(tsk->filepath);
     if(!flinfo.exists() && flinfo.absoluteDir().exists() && flinfo.fileName().indexOf(QRegExp(".[0-9]{14}.rldr$")) != -1)
@@ -564,12 +564,12 @@ void HttpLoader::syncFileMap(Task* _task)
     int _lenght = _task->url.toEncoded().size();
     file << (qint32)_lenght; //длина строки с URL
     file.writeRawData(_task->url.toEncoded().data(), _task->url.toEncoded().size()); //строка с URL
-    _lenght = _task->referer.toAscii().size();
+    _lenght = _task->referer.toLatin1().size();
     file << (qint32)_lenght; //длина строки реферера, если нет, то 0
-    if(_lenght) file.writeRawData(_task->referer.toAscii().data(),_task->referer.toAscii().size());
-    _lenght = (qint32)_task->MIME.toAscii().size();
+    if(_lenght) file.writeRawData(_task->referer.toLatin1().data(),_task->referer.toLatin1().size());
+    _lenght = (qint32)_task->MIME.toLatin1().size();
     file << (qint32)_lenght; //длина строки с MIME-типом файла
-    if(_lenght) file.writeRawData(_task->MIME.toAscii().data(), _task->MIME.toAscii().size());
+    if(_lenght) file.writeRawData(_task->MIME.toLatin1().data(), _task->MIME.toLatin1().size());
     qint64 total_ = _task->size;
     file << total_;
     for(int i = 0; i < 13; i++)
@@ -577,7 +577,7 @@ void HttpLoader::syncFileMap(Task* _task)
     QString lastmodif = _task->last_modif.toString("yyyy-MM-ddTHH:mm:ss");
     _lenght = lastmodif.size();
     file << (qint32)_lenght; //длина строки с датой
-    if(_lenght) file.writeRawData(lastmodif.toAscii().data(), _lenght);
+    if(_lenght) file.writeRawData(lastmodif.toLatin1().data(), _lenght);
     file << spos; //метка начала блока метаданных
 
     fl.close();
@@ -1222,4 +1222,8 @@ QWidget *HttpLoader::widgetSettings(const QString &file_path)
     return 0;
 }
 
+#if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(HttpLoader, HttpLoader)
+#else
+Q_PLUGIN_METADATA(IID "HttpLoader" CLASS HttpLoader)
+#endif

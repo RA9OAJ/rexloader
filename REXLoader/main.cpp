@@ -373,9 +373,9 @@ bool firstProcess(bool need_show = true)
         if(need_show)
         {
             lock_mem.lock();
-            int pos = dtime.toAscii().size();
+            int pos = dtime.toLatin1().size();
             QString need_show = "\r\n1";
-            memcpy((char*)lock_mem.data() + pos,need_show.toAscii().data(),need_show.toAscii().size());
+            memcpy((char*)lock_mem.data() + pos,need_show.toLatin1().data(),need_show.toLatin1().size());
             lock_mem.unlock();
         }
     }
@@ -423,8 +423,10 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("REXLoader");
 
     QTextCodec::setCodecForLocale(QTextCodec::codecForLocale());
+#if QT_VERSION < 0x050000
     QTextCodec::setCodecForCStrings(QTextCodec::codecForLocale());
     QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
+#endif
 
     QApplication a(argc, argv);
     checkDatabase();

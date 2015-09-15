@@ -165,7 +165,11 @@ void LogManager::manageTabs(int table_id)
         QTreeView *view = getTreeView(wgt);
         view->setModel(model());
         view->header()->hide();
+#if QT_VERSION < 0x050000
         view->header()->setResizeMode(0, QHeaderView::ResizeToContents);
+#else
+        view->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+#endif
         view->header()->setStretchLastSection(false);
         view->hideColumn(1);
         view->hideColumn(2);
@@ -195,7 +199,11 @@ void LogManager::manageTabs(int table_id)
             QTreeView *view = getTreeView(wgt);
             view->setModel(model(table_id,i));
             view->header()->hide();
+#if QT_VERSION < 0x050000
             view->header()->setResizeMode(0, QHeaderView::ResizeToContents);
+#else
+            view->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+#endif
             view->header()->setStretchLastSection(false);
             view->hideColumn(1);
             view->hideColumn(2);
@@ -211,7 +219,11 @@ void LogManager::manageTabs(int table_id)
         {
             view->setModel(mdl);
             view->header()->hide();
+#if QT_VERSION < 0x050000
             view->header()->setResizeMode(0, QHeaderView::ResizeToContents);
+#else
+            view->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+#endif
             view->header()->setStretchLastSection(false);
             view->hideColumn(1);
             view->hideColumn(2);
