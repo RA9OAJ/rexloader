@@ -366,7 +366,7 @@ bool firstProcess(bool need_show = true)
         QDateTime proc_time;
         QDateTime cur_time = QDateTime::currentDateTime();
         proc_time = QDateTime::fromString(dtime,"yyyy-MM-ddThh:mm:ss");
-        if(!proc_time.isValid()) proc_time = QDateTime::fromString("0001-01-01T00:00:01","yyyy-MM-ddThh:mm:ss");
+        if(!proc_time.isValid()) proc_time = QDateTime::fromString("1970-01-01T00:00:01","yyyy-MM-ddThh:mm:ss");
 
         if(proc_time.secsTo(cur_time) > 5)
             return true;

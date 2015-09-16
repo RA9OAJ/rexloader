@@ -1300,11 +1300,11 @@ void REXWindow::showHideSlot()
         setHidden(false);
         if(preStat)
         {
-            setHidden(true);
-            QTimer::singleShot(0,this,SLOT(show()));
+            //setHidden(true);
+            QTimer::singleShot(5,this,SLOT(show()));
         }
         setWindowState(preStat);
-        QTimer::singleShot(5,this,SLOT(raise()));
+        QTimer::singleShot(10,this,SLOT(raise()));
         act->setText(tr("Скрыть"));
     }
 }
