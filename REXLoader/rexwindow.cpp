@@ -737,7 +737,7 @@ void REXWindow::setTaskPriority()
     }
     QSqlQuery qr(QSqlDatabase::database());
     qr.prepare("UPDATE tasks SET priority=:priority WHERE "+where);
-    qr.bindValue("priority",newprior);
+    qr.bindValue(":priority",newprior);
     if(!qr.exec())
     {
         logmgr->appendLog(-1,0,LInterface::MT_ERROR,
@@ -753,8 +753,8 @@ void REXWindow::setTaskPriority(int id, int prior)
 {
     QSqlQuery qr(QSqlDatabase::database());
     qr.prepare("UPDATE tasks SET priority=:priority WHERE id=:id");
-    qr.bindValue("priority",prior);
-    qr.bindValue("id",id);
+    qr.bindValue(":priority",prior);
+    qr.bindValue(":id",id);
     if(!qr.exec())
     {
         logmgr->appendLog(-1,0,LInterface::MT_ERROR,
@@ -966,8 +966,8 @@ void REXWindow::openDataBase()
 
     QSqlQuery qr;
     qr.prepare("UPDATE tasks SET tstatus=:newstatus WHERE tstatus=:tstatus;");
-    qr.bindValue("newstatus",-100);
-    qr.bindValue("tstatus",LInterface::ON_LOAD);
+    qr.bindValue(":newstatus",-100);
+    qr.bindValue(":tstatus",LInterface::ON_LOAD);
 
     if(!qr.exec())
     {
@@ -1125,7 +1125,7 @@ void REXWindow::scanNewTaskQueue()
 
         QSqlQuery qr1;
         qr1.prepare("DELETE FROM newtasks WHERE id=:id");
-        qr1.bindValue("id",qr.value(0));
+        qr1.bindValue(":id",qr.value(0));
 
         if(!qr1.exec())
         {
@@ -1550,8 +1550,8 @@ void REXWindow::startTask(int id)
 {
     QSqlQuery qr(QSqlDatabase::database());
     qr.prepare("UPDATE tasks SET tstatus=-100, lasterror='' WHERE id=:id AND tstatus <> :tstatus");
-    qr.bindValue("id",id);
-    qr.bindValue("tstatus",(int)LInterface::FINISHED);
+    qr.bindValue(":id",id);
+    qr.bindValue(":tstatus",(int)LInterface::FINISHED);
 
     if(!qr.exec())
     {
@@ -1688,7 +1688,7 @@ void REXWindow::stopTask(int id)
 
     QSqlQuery qr(QSqlDatabase::database());
     qr.prepare("UPDATE tasks SET tstatus=0, lasterror='' WHERE id=:id");
-    qr.bindValue("id",id);
+    qr.bindValue(":id",id);
 
     if(!qr.exec())
     {
@@ -1795,8 +1795,8 @@ void REXWindow::syncTaskData()
         if(tstatus == LInterface::NO_TASK)
         {
             qr.prepare("UPDATE tasks SET tstatus=:tstatus WHERE id=:id");
-            qr.bindValue("tstatus",-100);
-            qr.bindValue("id",id_row);
+            qr.bindValue(":tstatus",-100);
+            qr.bindValue(":id",id_row);
 
             if(!qr.exec())
             {
@@ -2504,8 +2504,8 @@ void REXWindow::acceptQAction(QAbstractButton *btn)
 
         QSqlQuery qr;
         qr.prepare("UPDATE tasks SET filename=:filename WHERE id=:id");
-        qr.bindValue("filename",file.fileName());
-        qr.bindValue("id",params.value("id"));
+        qr.bindValue(":filename",file.fileName());
+        qr.bindValue(":id",params.value("id"));
         if(!qr.exec())
         {
             logmgr->appendLog(-1,0,LInterface::MT_ERROR,
@@ -2757,7 +2757,7 @@ void REXWindow::deleteCategory()
 
     QSqlQuery qr;
     qr.prepare("DELETE FROM categories WHERE id=:id"); //удаляем категорию
-    qr.bindValue("id",id);
+    qr.bindValue(":id",id);
     if(!qr.exec())
     {
         logmgr->appendLog(-1,0,LInterface::MT_ERROR,
@@ -2769,8 +2769,8 @@ void REXWindow::deleteCategory()
 
     qr.clear();
     qr.prepare("UPDATE categories SET parent_id=:pid WHERE parent_id=:id");
-    qr.bindValue("pid",parent_id);
-    qr.bindValue("id",id);
+    qr.bindValue(":pid",parent_id);
+    qr.bindValue(":id",id);
     if(!qr.exec())
     {
         logmgr->appendLog(-1,0,LInterface::MT_ERROR,
@@ -2782,8 +2782,8 @@ void REXWindow::deleteCategory()
 
     qr.clear();
     qr.prepare("UPDATE tasks SET categoryid=:catid WHERE categoryid=:id"); //привязываем закачки удаляемой категории к её родителю
-    qr.bindValue("catid",parent_id);
-    qr.bindValue("id",id);
+    qr.bindValue(":catid",parent_id);
+    qr.bindValue(":id",id);
     if(!qr.exec())
     {
         logmgr->appendLog(-1,0,LInterface::MT_ERROR,
@@ -2827,8 +2827,8 @@ void REXWindow::updateTreeModel(const QString cat_name, int row, int parent_id, 
     if(!cat_name.isEmpty())
     {
         qr.prepare("SELECT title, id, dir, extlist, parent_id FROM categories WHERE title=:title AND parent_id=:parent");
-        qr.bindValue("title", cat_name);
-        qr.bindValue("parent", parent_id);
+        qr.bindValue(":title", cat_name);
+        qr.bindValue(":parent", parent_id);
 
         if(!qr.exec())
         {
@@ -2844,7 +2844,7 @@ void REXWindow::updateTreeModel(const QString cat_name, int row, int parent_id, 
     else
     {
         qr.prepare("SELECT title, id, dir, extlist, parent_id FROM categories WHERE id=:id");
-        qr.bindValue("id", cat_id);
+        qr.bindValue(":id", cat_id);
 
         if(!qr.exec())
         {

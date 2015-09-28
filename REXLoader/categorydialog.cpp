@@ -61,10 +61,10 @@ void CategoryDialog::applyCategory()
         parent_id = model->data(model->index(parent.row(), 1, parent.parent()),100).toInt();
 
         qr.prepare("INSERT INTO categories(title, dir, extlist, parent_id) VALUES (:title, :dir, :extlist, :parent)");
-        qr.bindValue("title", ui->cattitle->text());
-        qr.bindValue("dir", ui->catpath->text());
-        qr.bindValue("extlist", ui->textEdit->document()->toPlainText());
-        qr.bindValue("parent", parent_id);
+        qr.bindValue(":title", ui->cattitle->text());
+        qr.bindValue(":dir", ui->catpath->text());
+        qr.bindValue(":extlist", ui->textEdit->document()->toPlainText());
+        qr.bindValue(":parent", parent_id);
 
         if(!qr.exec())
         {
@@ -84,8 +84,8 @@ void CategoryDialog::applyCategory()
             ui->treeView->setEnabled(false);
             qr.clear();
             qr.prepare("SELECT id FROM categories WHERE title=:title AND parent_id=:parent");
-            qr.bindValue("title", ui->cattitle->text());
-            qr.bindValue("parent",parent_id);
+            qr.bindValue(":title", ui->cattitle->text());
+            qr.bindValue(":parent",parent_id);
 
             if(!qr.exec())
             {
@@ -103,10 +103,10 @@ void CategoryDialog::applyCategory()
     }
 
     qr.prepare("UPDATE categories SET title=:title, dir=:dir, extlist=:ext WHERE id=:id");
-    qr.bindValue("title", ui->cattitle->text());
-    qr.bindValue("dir", ui->catpath->text());
-    qr.bindValue("ext", ui->textEdit->document()->toPlainText());
-    qr.bindValue("id", internal_id);
+    qr.bindValue(":title", ui->cattitle->text());
+    qr.bindValue(":dir", ui->catpath->text());
+    qr.bindValue(":ext", ui->textEdit->document()->toPlainText());
+    qr.bindValue(":id", internal_id);
 
     if(!qr.exec())
     {
@@ -198,8 +198,8 @@ void CategoryDialog::formValidator()
 
         QSqlQuery qr(mydb);
         qr.prepare("SELECT COUNT(*) FROM categories WHERE title=:title AND parent_id=:parent");
-        qr.bindValue("title",ui->cattitle->text());
-        qr.bindValue("parent",parent_id);
+        qr.bindValue(":title",ui->cattitle->text());
+        qr.bindValue(":parent",parent_id);
 
         if(!qr.exec())
         {

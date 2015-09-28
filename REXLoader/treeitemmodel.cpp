@@ -535,7 +535,7 @@ int TreeItemModel::taskCount(const QModelIndex &index,  bool incomplete) const
     QString filter = incomplete ? QString(" AND tstatus <> %1").arg(QString::number((int)LInterface::FINISHED)) : "";
     QSqlQuery query;
     query.prepare("SELECT id FROM categories WHERE parent_id=:id");
-    query.bindValue("id",id);
+    query.bindValue(":id",id);
 
     if(!query.exec())
     {
@@ -554,7 +554,7 @@ int TreeItemModel::taskCount(const QModelIndex &index,  bool incomplete) const
 
     query.clear();
     query.prepare("SELECT COUNT(*) FROM tasks WHERE categoryid=:id AND (arch IS NULL OR arch = '0')" + filter);
-    query.bindValue("id",id);
+    query.bindValue(":id",id);
 
     if(!query.exec())
     {

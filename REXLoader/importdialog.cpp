@@ -129,10 +129,10 @@ int ImportDialog::getCategory(const QString &file)
     qr.prepare("SELECT id,extlist FROM categories WHERE extlist LIKE :ext1 OR extlist LIKE :ext2 OR extlist LIKE :ext3 OR extlist LIKE :ext4");
     qr1.prepare("SELECT id,extlist FROM categories WHERE extlist LIKE '%\%U%' ESCAPE '\\' ");
     QString ext_ = flinfo.suffix().toLower();
-    qr.bindValue("ext1", QString("% %1 %").arg(ext_));
-    qr.bindValue("ext2", QString("%1 %").arg(flinfo.suffix()));
-    qr.bindValue("ext3", QString("% %1").arg(flinfo.suffix()));
-    qr.bindValue("ext4", QString("%1").arg(flinfo.suffix()));
+    qr.bindValue(":ext1", QString("% %1 %").arg(ext_));
+    qr.bindValue(":ext2", QString("%1 %").arg(flinfo.suffix()));
+    qr.bindValue(":ext3", QString("% %1").arg(flinfo.suffix()));
+    qr.bindValue(":ext4", QString("%1").arg(flinfo.suffix()));
     if(!qr.exec())
     {
         //тут запись в журнал ошибок
@@ -336,7 +336,7 @@ bool ImportDialog::addTask(QTableWidgetItem *itm)
     QSqlQuery qr(mydb);
 
     qr.prepare("SELECT count(*) FROM tasks WHERE url=:url;");
-    qr.bindValue("url", itm->text());
+    qr.bindValue(":url", itm->text());
     if(!qr.exec())
     {
         //тут запись в журнал ошибок
@@ -368,13 +368,13 @@ bool ImportDialog::addTask(QTableWidgetItem *itm)
 
     qr.clear();
     qr.prepare("INSERT INTO tasks(url,filename,datecreate,tstatus,categoryid,priority) VALUES(:url,:filename,:datecreate,:tstatus,:categoryid,:priority);");
-    qr.bindValue("url", itm->text());
-    qr.bindValue("filename",flname);
-    qr.bindValue("datecreate",dtime.toString("yyyy-MM-ddThh:mm:ss"));
-    if(itm->data(102).toBool()) qr.bindValue("tstatus",0);
-    else qr.bindValue("tstatus",-100);
-    qr.bindValue("categoryid",catId);
-    qr.bindValue("priority",2);
+    qr.bindValue(":url", itm->text());
+    qr.bindValue(":filename",flname);
+    qr.bindValue(":datecreate",dtime.toString("yyyy-MM-ddThh:mm:ss"));
+    if(itm->data(102).toBool()) qr.bindValue(":tstatus",0);
+    else qr.bindValue(":tstatus",-100);
+    qr.bindValue(":categoryid",catId);
+    qr.bindValue(":priority",2);
 
     if(!qr.exec())
     {

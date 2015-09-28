@@ -244,7 +244,7 @@ void AddTaskDialog::addTask()
     QSqlQuery qr(mydb);
 
     qr.prepare("SELECT count(*) FROM tasks WHERE url=:url AND (arch IS NULL OR arch<>'1');");
-    qr.bindValue("url", gui->urlBox->currentText());
+    qr.bindValue(":url", gui->urlBox->currentText());
     if(!qr.exec())
     {
         //тут запись в журнал ошибок
@@ -278,8 +278,8 @@ void AddTaskDialog::addTask()
     {
         qr.clear();
         qr.prepare("INSERT INTO categories(title,dir,extlist,parent_id) VALUES(:title,:dir,'',1);");
-        qr.bindValue("title",gui->categoryBox->currentText());
-        qr.bindValue("dir",gui->locationEdit->text());
+        qr.bindValue(":title",gui->categoryBox->currentText());
+        qr.bindValue(":dir",gui->locationEdit->text());
 
         if(!qr.exec())
         {
@@ -291,8 +291,8 @@ void AddTaskDialog::addTask()
 
         qr.clear();
         qr.prepare("SELECT id FROM categories WHERE title=:title AND dir=:dir;");
-        qr.bindValue("title",gui->categoryBox->currentText());
-        qr.bindValue("dir",gui->locationEdit->text());
+        qr.bindValue(":title",gui->categoryBox->currentText());
+        qr.bindValue(":dir",gui->locationEdit->text());
 
         if(!qr.exec())
         {
@@ -322,32 +322,32 @@ void AddTaskDialog::addTask()
     if(additional_flag && gui->urlBox->currentText() == defUrl)
     {
         qr.prepare("INSERT INTO tasks(url,datecreate,filename,currentsize,totalsize,mime,tstatus,categoryid,priority,note, params) VALUES(:url,:datecreate,:filename,:currentsize,:totalsize,:mime,:tstatus,:categoryid,:priority,:note,:params)");
-        qr.bindValue("url", gui->urlBox->currentText());
-        qr.bindValue("datecreate",dtime.toString("yyyy-MM-ddThh:mm:ss"));
-        qr.bindValue("filename",myfilename);
-        qr.bindValue("currentsize",currentsize);
-        qr.bindValue("totalsize",totalsize);
-        qr.bindValue("mime",mymime);
-        if(priority < 0)qr.bindValue("tstatus",0);
-        else qr.bindValue("tstatus",-100);
-        qr.bindValue("categoryid",catId);
-        qr.bindValue("priority",2);
-        qr.bindValue("note",gui->textEdit->document()->toPlainText());
-        qr.bindValue("params",dop_params);
+        qr.bindValue(":url", gui->urlBox->currentText());
+        qr.bindValue(":datecreate",dtime.toString("yyyy-MM-ddThh:mm:ss"));
+        qr.bindValue(":filename",myfilename);
+        qr.bindValue(":currentsize",currentsize);
+        qr.bindValue(":totalsize",totalsize);
+        qr.bindValue(":mime",mymime);
+        if(priority < 0)qr.bindValue(":tstatus",0);
+        else qr.bindValue(":tstatus",-100);
+        qr.bindValue(":categoryid",catId);
+        qr.bindValue(":priority",2);
+        qr.bindValue(":note",gui->textEdit->document()->toPlainText());
+        qr.bindValue(":params",dop_params);
 
     }
     else
     {
         qr.prepare("INSERT INTO tasks(url,filename,datecreate,tstatus,categoryid,priority,note,params) VALUES(:url,:filename,:datecreate,:tstatus,:categoryid,:priority,:note,:params);");
-        qr.bindValue("url", gui->urlBox->currentText());
-        qr.bindValue("filename",flname);
-        qr.bindValue("datecreate",dtime.toString("yyyy-MM-ddThh:mm:ss"));
-        if(priority < 0)qr.bindValue("tstatus",0);
-        else qr.bindValue("tstatus",-100);
-        qr.bindValue("categoryid",catId);
-        qr.bindValue("priority",2);
-        qr.bindValue("note",gui->textEdit->document()->toPlainText());
-        qr.bindValue("params",dop_params);
+        qr.bindValue(":url", gui->urlBox->currentText());
+        qr.bindValue(":filename",flname);
+        qr.bindValue(":datecreate",dtime.toString("yyyy-MM-ddThh:mm:ss"));
+        if(priority < 0)qr.bindValue(":tstatus",0);
+        else qr.bindValue(":tstatus",-100);
+        qr.bindValue(":categoryid",catId);
+        qr.bindValue(":priority",2);
+        qr.bindValue(":note",gui->textEdit->document()->toPlainText());
+        qr.bindValue(":params",dop_params);
     }
     if(!qr.exec())
     {
@@ -387,7 +387,7 @@ void AddTaskDialog::acceptQAction(QAbstractButton *btn)
         {
             QSqlQuery qr(mydb);
             qr.prepare("DELETE FROM tasks WHERE url=:url;");
-            qr.bindValue("url",gui->urlBox->currentText());
+            qr.bindValue(":url",gui->urlBox->currentText());
 
             if(!qr.exec())
             {
@@ -450,10 +450,10 @@ void AddTaskDialog::getCategory(const QString &file)
     qr.prepare("SELECT id,extlist FROM categories WHERE extlist LIKE :ext1 OR extlist LIKE :ext2 OR extlist LIKE :ext3 OR extlist LIKE :ext4");
     qr1.prepare("SELECT id,extlist FROM categories WHERE extlist LIKE '%\%U%' ESCAPE '\\' ");
     QString ext_ = flinfo.suffix().toLower();
-    qr.bindValue("ext1", QString("% %1 %").arg(ext_));
-    qr.bindValue("ext2", QString("%1 %").arg(flinfo.suffix()));
-    qr.bindValue("ext3", QString("% %1").arg(flinfo.suffix()));
-    qr.bindValue("ext4", QString("%1").arg(flinfo.suffix()));
+    qr.bindValue(":ext1", QString("% %1 %").arg(ext_));
+    qr.bindValue(":ext2", QString("%1 %").arg(flinfo.suffix()));
+    qr.bindValue(":ext3", QString("% %1").arg(flinfo.suffix()));
+    qr.bindValue(":ext4", QString("%1").arg(flinfo.suffix()));
     if(!qr.exec())
     {
         //тут запись в журнал ошибок
