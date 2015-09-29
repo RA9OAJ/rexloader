@@ -124,6 +124,7 @@ void REXWindow::createInterface()
 #endif
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableView->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui->tableView->horizontalHeader()->setHighlightSections(false);
     ui->tableView->hideColumn(0);
     ui->tableView->hideColumn(1);
     ui->tableView->hideColumn(4);
@@ -863,6 +864,7 @@ void REXWindow::loadSettings()
 
     settings.beginGroup("Windgets Interface");
     ui->tableView->horizontalHeader()->restoreState(settings.value("TasksTable").toByteArray());
+    if(ui->tableView->horizontalHeader()->highlightSections()) ui->tableView->horizontalHeader()->setHighlightSections(false);
     ui->splitter_2->restoreState(settings.value("WindowHSplitter").toByteArray());
     ui->splitter->restoreState(settings.value("WindowVSplitter").toByteArray());
     ui->actionHight->setChecked(settings.value("S_hight",true).toBool());
@@ -927,8 +929,7 @@ void REXWindow::loadSettings()
     ui->tableView->hideColumn(13);
     ui->tableView->hideColumn(14);
     ui->tableView->hideColumn(15);
-    ui->tableView->hideColumn(16);
-
+    ui->tableView->hideColumn(16);   
 }
 
 void REXWindow::scanClipboard()
