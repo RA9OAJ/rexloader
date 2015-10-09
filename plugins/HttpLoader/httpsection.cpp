@@ -571,7 +571,7 @@ void HttpSection::dataAnalising()
 void HttpSection::socketErrorSlot(QAbstractSocket::SocketError _err)
 {
     _errno = _err;
-    if(_err == QAbstractSocket::RemoteHostClosedError)
+    if(_err == QAbstractSocket::RemoteHostClosedError && soc)
     {
         qint64 targetsize = finish_s ? finish_s - start_s + 1 : totalsize - start_s;
         qint64 canload = totalload + soc->bytesAvailableOnNetwork() + soc->bytesAvailable();

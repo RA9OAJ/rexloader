@@ -2272,7 +2272,7 @@ void REXWindow::updateStatusBar()
         }
         priority->setVisible(true);
         QUrl cur_url = QUrl::fromEncoded(model->index(row_id,1).data(Qt::DisplayRole).toByteArray());
-        urllbl->setText(QString("<a href='%1'>%2</a>").arg(cur_url.toString(),TItemModel::shortUrl(cur_url.toString())));
+        urllbl->setText(QString("<a href='%1'>%2</a>").arg(cur_url.toString(QUrl::FullyEncoded),TItemModel::shortUrl(cur_url.toString(QUrl::FullyEncoded))));
         urllbl->setVisible(true);
         progress->setMaximum(100);
         int curVal = model->index(row_id,5).data(100).toLongLong() > 0 ? ((qint64)100*model->index(row_id,4).data(100).toLongLong()/model->index(row_id,5).data(100).toLongLong()) : 0;
