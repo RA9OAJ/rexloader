@@ -30,10 +30,10 @@ EMessageBox::EMessageBox(QWidget *parent) :
     timer = new QTimer(this);
     connect(timer,SIGNAL(timeout()),this,SLOT(tickTimer()));
     setWindowModality(Qt::WindowModal);
-    timer->start(1000);
     setWindowTitle("REXLoader - "+tr("Файл уже существует!"));
     wtitle = windowTitle();
     moveToCenter();
+    timer->start(1000);
 }
 
 EMessageBox::~EMessageBox()
@@ -57,20 +57,24 @@ void EMessageBox::setDefaultTimeout(int sec)
 
 void EMessageBox::setDefaultButton(QPushButton *button)
 {
+    timer->stop();
     defBtn = button;
     if(!defBtn)return;
     if(timeout)
     {
         btntext = defBtn->text();
+        btntext.replace("&","");
         defBtn->setText(btntext + QString(" (%1)").arg(QString::number(timeout)));
         QMessageBox::setWindowTitle(wtitle + QString(" (%1)").arg(QString::number(timeout)));
     }
 
     QMessageBox::setDefaultButton(button);
+    timer->start(1000);
 }
 
 void EMessageBox::setDefaultButton(StandardButton button)
 {
+    timer->stop();
     QMessageBox::setDefaultButton(button);
 
     if(timeout)
@@ -78,9 +82,11 @@ void EMessageBox::setDefaultButton(StandardButton button)
         defBtn = defaultButton();
         if(!defBtn)return;
         btntext = defBtn->text();
+        btntext.replace("&","");
         defBtn->setText(btntext + QString(" (%1)").arg(QString::number(timeout)));
         QMessageBox::setWindowTitle(wtitle + QString(" (%1)").arg(QString::number(timeout)));
     }
+    timer->start(1000);
 }
 
 void EMessageBox::tickTimer()
@@ -89,8 +95,13 @@ void EMessageBox::tickTimer()
 
     --timeout;
 
-    if(defBtn->text().indexOf(btntext) != 0)
+    QString btntxt = defBtn->text();
+    btntxt.replace("&","");
+    if(btntxt.indexOf(btntext) != 0)
+    {
         btntext = defBtn->text();
+        btntext.replace("&","");
+    }
     defBtn->setText(btntext + QString(" (%1)").arg(QString::number(timeout)));
     QMessageBox::setWindowTitle(wtitle + QString(" (%1)").arg(QString::number(timeout)));
 

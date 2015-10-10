@@ -1406,6 +1406,8 @@ void REXWindow::deleteTask()
         if(result == EMessageBox::Cancel)return;
     }
 
+    ui->treeView->setEnabled(false);
+
     stopTask(); //останавливаем задания, попавшие в выделение
 
     QSqlQuery qr(QSqlDatabase::database());
@@ -1459,6 +1461,9 @@ void REXWindow::deleteTask()
                           );
         qDebug()<<"void REXWindow::deleteTask(): SQL: " + qr.executedQuery() + "; Error: " + qr.lastError().text();
     }
+
+
+    ui->treeView->setEnabled(true);
 
     model->updateModel(); //обновляем таблицу задач
     model->clearCache();
@@ -1627,8 +1632,8 @@ void REXWindow::stopTask()
 {
     QItemSelectionModel *select = ui->tableView->selectionModel();
     if(!select->hasSelection())return; //если ничего не выделено, то выходим
-
     QString where;
+    QList<int> toupdate;
     for(int i=0; i < select->selectedRows().length(); i++)
     {
         //QString filepath = select->selectedRows(3).value(i).data(100).toString(); //путь к локальному файлу закачки
@@ -1644,6 +1649,8 @@ void REXWindow::stopTask()
         case LInterface::ACCEPT_QUERY: break;
         default: continue;
         }
+
+        toupdate.append(i);
 
         int id_proto = plugproto.value(_url.scheme().toLower()); // id плагина с соответствующим протоколом
         //int id_task = tasklist.value(id_row)%100; // id задачи
@@ -1669,12 +1676,23 @@ void REXWindow::stopTask()
     }
 
     updateTaskSheet();
-    for(int i=0; i < select->selectedRows().length(); i++)
+
+    if(!toupdate.isEmpty())
+    {
+        foreach(int cur, toupdate)
+        {
+            QModelIndex index = sfmodel->mapToSource(select->selectedRows(9).value(cur));
+            index = efmodel->mapToSource(index);
+            model->updateRow(index.row());
+        }
+    }
+
+    /*for(int i=0; i < select->selectedRows().length(); i++)
     {
         QModelIndex index = sfmodel->mapToSource(select->selectedRows(9).value(i));
         index = efmodel->mapToSource(index);
         model->updateRow(index.row());
-    }
+    }*/
     manageTaskQueue();
     syncTaskData();
 }
