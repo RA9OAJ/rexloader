@@ -51,7 +51,6 @@ REXWindow::REXWindow(QWidget *parent) :
     showFlag = false;
     trayicon = new QSystemTrayIcon(this);
     trayicon->setIcon(QIcon(":/appimages/trayicon.png"));
-    trayicon->show();
     siteManager = new SiteManager(this);
     movie = new QMovie(this);
     movie->setFileName(":/appimages/onload.gif");
