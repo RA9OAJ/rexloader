@@ -37,7 +37,7 @@ GTcpSocket::GTcpSocket(QObject *parent) :
     inspeed = 0;
     outspeed = 0;
     last_interval = 0;
-    timeout_interval = 30;
+    timeout_interval = 300;
 
     connect(this, SIGNAL(connected()), this, SLOT(connectedAct()));
 }

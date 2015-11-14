@@ -623,7 +623,7 @@ void HttpLoader::addSection(int id_task)
 
     QUrl _url = _task->mirrors.contains(-1) ? _task->mirrors.value(-1) : _task->url;
     HttpSection *sect = new HttpSection();
-    sect->setUrlToDownload(_url.toString());
+    sect->setUrlToDownload(QString(_url.toEncoded()));
     sect->setFileName(_task->filepath);
     if(!_task->authMaster.isEmpty())sect->setAuthorizationData(_task->authMaster.getAuthString(_url));
     sect->setUserAgent(uAgent);
@@ -1060,23 +1060,26 @@ void HttpLoader::acceptRang()
     sect->stopDownloading();
 
     qint64 sect_size = tsk->size / tsk->_maxSections;
-    qint64 load_section = tsk->map[2*sect_id-1];
+    qint64 load_section = tsk->map[2*sect_id-1]; //определяем, сколько загружено в секции
+    int fis_id = 1;
 
     for(int i = 1; i < tsk->_maxSections; ++i)
     {
-        tsk->map[2*i]=sect_size*i;
-        if(load_section > sect_size*i)
+        tsk->map[2*i]=sect_size*i; //определяем правую границу i-той секции
+        if(load_section > sect_size*i) //если в секции загружено больше правой границы
         {
-            tsk->map[2*i-1] = sect_size;
-            if(load_section - sect_size*i < sect_size)
-                tsk->map[2*i+1] = load_section - sect_size;
+            tsk->map[2*i-1] = sect_size; //делаем размер загруженных данным в секции равным размеру секции
+            fis_id++;
+            if(load_section - sect_size*i <= sect_size) //если реально загруженные данные в секции пересекли правую границу i-той секции
+                tsk->map[2*i+1] = load_section - sect_size; //записывам размер излишне скаченных байт в следующую секцию
+            load_section -= sect_size;
         }
     }
 
     QUrl _url = tsk->mirrors.contains(-1) ? tsk->mirrors.value(-1) : tsk->url;
     sect->setUrlToDownload(QString(_url.toEncoded()));
-    sect->setSection(tsk->map[0], tsk->map[2]-1);
-    sect->setOffset(tsk->map[1]);
+    sect->setSection(tsk->map[fis_id*2-2], tsk->map[fis_id*2]-1);
+    sect->setOffset(tsk->map[fis_id*2-1]);
     mathSpeed();
     sect->startDownloading();
 }
