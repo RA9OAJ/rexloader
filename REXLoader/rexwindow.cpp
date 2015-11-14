@@ -1760,9 +1760,9 @@ void REXWindow::stopAllTasks()
         fltr.setFilterRole(100);
         fltr.setFilterKeyColumn(9);
         fltr.setFilterFixedString("-100");
-        for(int i = 0; i < fltr.rowCount(); ++i)
+        while(fltr.rowCount())
         {
-            QModelIndex index = fltr.mapToSource(fltr.index(i,0));
+            QModelIndex index = fltr.mapToSource(fltr.index(0,0));
             model->addToCache(index.row(),9,0);
             model->updateRow(index.row());
         }
@@ -1969,10 +1969,10 @@ void REXWindow::syncTaskData()
                     fl.rename(newFilename);
                     filepath = newFilename;
                     QFileInfo flinfo(filepath);
-                    logmgr->appendLog(-1,0,LInterface::MT_INFO,tr("Скачивание файла %1 завершено").arg(flinfo.fileName()),QString());
+                    logmgr->appendLog(-1,0,LInterface::MT_INFO,tr("Загрузка файла %1 завершена").arg(flinfo.fileName()),QString());
                     logmgr->deleteTaskLogLater(id_row);
 
-                    plugmgr->notify(tr("Задание завершено"),tr("Скачивание файла <b>%1</b> завершено").arg(flinfo.fileName()),10,
+                    plugmgr->notify(tr("Задание завершено"),tr("Загрузка файла <b>%1</b> завершена").arg(flinfo.fileName()),10,
                                     getActionMap(AB_OPENDIR | AB_OPENFILE, filepath));
 
                     checkFileType(pluglist.value(id_proto)->mimeType(id_task),filepath);

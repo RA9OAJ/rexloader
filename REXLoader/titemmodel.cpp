@@ -96,12 +96,15 @@ int TItemModel::columnCount(const QModelIndex &parent) const
 
 void TItemModel::updateRow(int row)
 {
-    for(int i=0; i < columnCount(QModelIndex()); i++)
+    /*for(int i=0; i < columnCount(QModelIndex()); i++)
     {
         QModelIndex ModelIndex = index(row, i, QModelIndex());
         emit dataChanged(ModelIndex, ModelIndex);
         qApp->processEvents();
-    }
+    }*/
+    QModelIndex startIndex = index(row,0,QModelIndex());
+    QModelIndex endIndex = index(row,columnCount(QModelIndex()) - 1,QModelIndex());
+    emit dataChanged(startIndex,endIndex);
 }
 
 void TItemModel::updateRow()
